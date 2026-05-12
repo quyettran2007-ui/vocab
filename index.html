@@ -7,15 +7,15 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --bg-gradient-start: #080818;
             --bg-gradient-mid: #0d0d2b;
             --bg-gradient-end: #121230;
-            --glass-bg: rgba(255, 255, 255, 0.04);
-            --glass-bg-strong: rgba(255, 255, 255, 0.07);
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-bg-strong: rgba(255, 255, 255, 0.09);
             --glass-border: rgba(255, 255, 255, 0.09);
             --glass-border-bright: rgba(255, 255, 255, 0.18);
             --glass-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255,255,255,0.07) inset;
@@ -95,10 +95,14 @@
             --tag-border: rgba(79, 70, 229, 0.2);
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         * { margin:0; padding:0; box-sizing:border-box; }
 
         body {
-            font-family: 'DM Sans', 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(155deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             display: flex;
@@ -108,10 +112,12 @@
             color: var(--text-primary);
             transition: background 0.5s, color 0.3s;
             overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: none;
         }
 
         /* Atmospheric blobs */
-        body::before, body::after { content:""; position:fixed; border-radius:50%; z-index:0; pointer-events:none; }
+        body::before, body::after { content:""; position:fixed; border-radius:50%; z-index:0; pointer-events:none; will-change: transform; }
         body::before {
             width: 700px; height: 700px;
             background: radial-gradient(circle at 40% 40%, var(--blob1), transparent 65%);
@@ -137,6 +143,7 @@
             filter: blur(80px);
             animation: floatBlob 20s 5s infinite alternate;
             border-radius: 50%;
+            will-change: transform;
         }
 
         @keyframes floatBlob {
@@ -149,6 +156,7 @@
             width: 100%; max-width: 1000px;
             display: flex; flex-direction: column; gap: 20px;
             animation: pageIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
+            contain: layout style;
         }
 
         @keyframes pageIn {
@@ -206,7 +214,6 @@
         }
         .badge-count {
             background: var(--glass-bg-strong);
-            backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             border-radius: 40px;
             padding: 8px 18px;
@@ -230,8 +237,7 @@
             background: var(--note-bg);
             color: var(--text-primary);
             font-size: 0.95rem;
-            font-family: 'DM Sans', sans-serif;
-            backdrop-filter: blur(12px);
+            font-family: 'Inter', sans-serif;
             transition: border-color var(--transition), box-shadow var(--transition);
             outline: none;
         }
@@ -262,9 +268,8 @@
             background: var(--btn-bg);
             color: var(--text-secondary);
             font-weight: 600; font-size: 0.78rem;
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             cursor: pointer;
-            backdrop-filter: blur(8px);
             transition: all var(--transition);
             white-space: nowrap;
             letter-spacing: 0.01em;
@@ -303,8 +308,7 @@
             background: var(--btn-bg);
             color: var(--text-secondary);
             font-weight: 600; font-size: 0.78rem;
-            font-family: 'DM Sans', sans-serif;
-            backdrop-filter: blur(8px);
+            font-family: 'Inter', sans-serif;
             cursor: pointer; max-width: 160px;
             outline: none;
             transition: all var(--transition);
@@ -327,8 +331,7 @@
             border-radius: 50px; border: 1px solid var(--btn-border);
             background: var(--glass-bg);
             color: var(--text-primary);
-            font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
-            backdrop-filter: blur(8px);
+            font-size: 0.88rem; font-family: 'Inter', sans-serif;
             outline: none; transition: border-color var(--transition), box-shadow var(--transition);
         }
         .add-word-row input:focus {
@@ -341,7 +344,7 @@
             background: linear-gradient(135deg, var(--accent), var(--accent-2));
             border: none; color: #fff;
             font-weight: 700; font-size: 0.85rem;
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             cursor: pointer;
             box-shadow: 0 4px 18px var(--accent-glow);
             transition: all var(--transition);
@@ -361,8 +364,6 @@
         /* ===== VOCAB CARD ===== */
         .vocab-card {
             background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
             border-top: 1px solid var(--glass-border-bright);
             border-radius: var(--border-radius);
@@ -371,6 +372,8 @@
             transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
             display: flex; flex-direction: column; gap: 8px;
             position: relative;
+            will-change: transform;
+            contain: layout style;
             animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both;
         }
         @keyframes cardIn {
@@ -435,7 +438,7 @@
             border-radius: var(--border-radius-sm);
             padding: 10px 12px;
             color: var(--textarea-color);
-            font-size: 0.8rem; font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem; font-family: 'Inter', sans-serif;
             resize: vertical; min-height: 40px;
             outline: none;
             transition: border-color var(--transition), box-shadow var(--transition);
@@ -560,7 +563,7 @@
             background: var(--glass-bg); border: 1px solid var(--glass-border);
             border-radius: 50px; padding: 8px 20px;
             color: var(--text-secondary); cursor: pointer;
-            font-size: 0.82rem; font-family: 'DM Sans', sans-serif; font-weight: 600;
+            font-size: 0.82rem; font-family: 'Inter', sans-serif; font-weight: 600;
             transition: all var(--transition);
         }
         .flashcard-shuffle:hover {
