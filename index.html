@@ -3,1403 +3,1379 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📝 Vocab Notes – Glass Morphism</title>
+    <title>📝 Vocab Notes – by Quyet</title>
 
-    <!-- Font Inter từ Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 
     <style>
-        /* ========== DARK MODE (mặc định) ========== */
         :root {
-            --bg-gradient-start: #0f0c29;
-            --bg-gradient-mid: #1a1a40;
-            --bg-gradient-end: #24243e;
-            --glass-bg: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(255, 255, 255, 0.14);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-            --glass-blur: blur(18px);
-            --text-primary: #edeef2;
-            --text-secondary: #b0b5cc;
-            --accent: #7c8cf8;
-            --accent-glow: rgba(124, 140, 248, 0.45);
-            --highlight-bg: rgba(255, 215, 0, 0.28);
-            --highlight-text: #ffd966;
-            --card-hover-bg: rgba(255, 255, 255, 0.10);
-            --note-bg: rgba(0, 0, 0, 0.22);
-            --note-border: rgba(255, 255, 255, 0.16);
-            --note-focus-border: #7c8cf8;
-            --btn-bg: rgba(255, 255, 255, 0.08);
-            --btn-border: rgba(255, 255, 255, 0.18);
-            --btn-hover-bg: rgba(255, 255, 255, 0.16);
-            --danger: #ff6b7a;
-            --success: #5eeab4;
-            --border-radius: 18px;
-            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --overlay-bg: rgba(0, 0, 0, 0.7);
-            --blob1: #6c72cb;
-            --blob2: #a25ea8;
+            --bg-gradient-start: #080818;
+            --bg-gradient-mid: #0d0d2b;
+            --bg-gradient-end: #121230;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-bg-strong: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.09);
+            --glass-border-bright: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255,255,255,0.07) inset;
+            --glass-blur: blur(24px);
+            --text-primary: #f0f2ff;
+            --text-secondary: #8b91c4;
+            --text-muted: #555a8a;
+            --accent: #818cf8;
+            --accent-2: #a78bfa;
+            --accent-glow: rgba(129, 140, 248, 0.4);
+            --accent-glow-2: rgba(167, 139, 250, 0.3);
+            --highlight-bg: rgba(251, 191, 36, 0.22);
+            --highlight-text: #fbbf24;
+            --card-hover-bg: rgba(255, 255, 255, 0.08);
+            --note-bg: rgba(0, 0, 0, 0.25);
+            --note-border: rgba(255, 255, 255, 0.1);
+            --note-focus-border: #818cf8;
+            --btn-bg: rgba(255, 255, 255, 0.06);
+            --btn-border: rgba(255, 255, 255, 0.12);
+            --btn-hover-bg: rgba(255, 255, 255, 0.12);
+            --danger: #f87171;
+            --success: #34d399;
+            --border-radius: 20px;
+            --border-radius-sm: 12px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --overlay-bg: rgba(0, 0, 0, 0.8);
+            --blob1: #4f46e5;
+            --blob2: #7c3aed;
+            --blob3: #2563eb;
             --badge-text: #fff;
-            --placeholder-color: #7f83a8;
-            --textarea-color: #d2d6f0;
+            --placeholder-color: #4f5580;
+            --textarea-color: #c4caed;
             --indicator-color: #6f74a0;
+            --toast-bg: rgba(15,15,40,0.92);
+            --toast-text: #f0f2ff;
+            --tag-bg: rgba(129, 140, 248, 0.15);
+            --tag-text: #a5b0ff;
+            --tag-border: rgba(129, 140, 248, 0.25);
         }
-
-        /* ========== LIGHT MODE ========== */
         [data-theme="light"] {
-            --bg-gradient-start: #e8ecf5;
-            --bg-gradient-mid: #dfe4f2;
-            --bg-gradient-end: #d5dbf0;
-            --glass-bg: rgba(255, 255, 255, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.7);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --text-primary: #1a1d35;
-            --text-secondary: #4a4f6a;
-            --accent: #4a5cd4;
-            --accent-glow: rgba(74, 92, 212, 0.3);
-            --highlight-bg: rgba(255, 200, 0, 0.35);
-            --highlight-text: #7a5500;
-            --card-hover-bg: rgba(255, 255, 255, 0.7);
-            --note-bg: rgba(0, 0, 0, 0.04);
-            --note-border: rgba(0, 0, 0, 0.12);
-            --note-focus-border: #4a5cd4;
-            --btn-bg: rgba(255, 255, 255, 0.4);
-            --btn-border: rgba(0, 0, 0, 0.1);
-            --btn-hover-bg: rgba(255, 255, 255, 0.7);
+            --bg-gradient-start: #eef0fb;
+            --bg-gradient-mid: #e8eaf8;
+            --bg-gradient-end: #dfe3f5;
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-bg-strong: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-border-bright: rgba(255, 255, 255, 0.95);
+            --glass-shadow: 0 20px 60px rgba(79, 70, 229, 0.1), 0 1px 0 rgba(255,255,255,0.9) inset;
+            --text-primary: #1a1d3a;
+            --text-secondary: #4a5080;
+            --text-muted: #8890c0;
+            --accent: #4f46e5;
+            --accent-2: #7c3aed;
+            --accent-glow: rgba(79, 70, 229, 0.25);
+            --accent-glow-2: rgba(124, 58, 237, 0.2);
+            --highlight-bg: rgba(251, 191, 36, 0.3);
+            --highlight-text: #92400e;
+            --card-hover-bg: rgba(255, 255, 255, 0.85);
+            --note-bg: rgba(0, 0, 0, 0.03);
+            --note-border: rgba(0, 0, 0, 0.1);
+            --note-focus-border: #4f46e5;
+            --btn-bg: rgba(255, 255, 255, 0.5);
+            --btn-border: rgba(0, 0, 0, 0.08);
+            --btn-hover-bg: rgba(255, 255, 255, 0.85);
             --overlay-bg: rgba(0, 0, 0, 0.5);
-            --blob1: #aab4f0;
-            --blob2: #d4a0dc;
-            --badge-text: #1a1d35;
-            --placeholder-color: #888ba8;
-            --textarea-color: #2a2d44;
+            --blob1: #c7d2fe;
+            --blob2: #ddd6fe;
+            --blob3: #bfdbfe;
+            --badge-text: #1a1d3a;
+            --placeholder-color: #9095b8;
+            --textarea-color: #2a2d4a;
             --indicator-color: #5a5e80;
+            --toast-bg: rgba(26,29,58,0.92);
+            --toast-text: #f0f2ff;
+            --tag-bg: rgba(79, 70, 229, 0.1);
+            --tag-text: #3730a3;
+            --tag-border: rgba(79, 70, 229, 0.2);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(145deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 60%, var(--bg-gradient-end) 100%);
+            font-family: 'DM Sans', 'Inter', sans-serif;
+            background: linear-gradient(155deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 28px 16px 60px;
-            background-attachment: fixed;
+            padding: 36px 20px 80px;
             color: var(--text-primary);
-            letter-spacing: -0.01em;
-            -webkit-font-smoothing: antialiased;
-            transition: background 0.4s ease, color 0.3s ease;
+            transition: background 0.5s, color 0.3s;
+            overflow-x: hidden;
         }
 
-        /* Floating decorative blobs */
-        body::before,
-        body::after {
-            content: "";
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(120px);
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.35;
-            transition: background 0.5s ease;
-        }
+        /* Atmospheric blobs */
+        body::before, body::after { content:""; position:fixed; border-radius:50%; z-index:0; pointer-events:none; }
         body::before {
-            width: 520px;
-            height: 520px;
-            background: radial-gradient(circle, var(--blob1) 0%, transparent 70%);
-            top: -140px;
-            right: -120px;
-            animation: floatBlob 15s ease-in-out infinite alternate;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle at 40% 40%, var(--blob1), transparent 65%);
+            top: -200px; right: -200px;
+            opacity: 0.18;
+            filter: blur(80px);
+            animation: floatBlob 18s infinite alternate;
         }
         body::after {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, var(--blob2) 0%, transparent 70%);
-            bottom: -100px;
-            left: -100px;
-            animation: floatBlob 20s ease-in-out infinite alternate-reverse;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle at 60% 60%, var(--blob2), transparent 65%);
+            bottom: -150px; left: -150px;
+            opacity: 0.15;
+            filter: blur(80px);
+            animation: floatBlob 24s infinite alternate-reverse;
+        }
+        .blob3 {
+            position: fixed; z-index: 0; pointer-events: none;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, var(--blob3), transparent 65%);
+            top: 40%; left: -100px;
+            opacity: 0.1;
+            filter: blur(80px);
+            animation: floatBlob 20s 5s infinite alternate;
+            border-radius: 50%;
         }
 
         @keyframes floatBlob {
-            0% {
-                transform: translate(0, 0) scale(1);
-            }
-            100% {
-                transform: translate(45px, -55px) scale(1.2);
-            }
+            0% { transform: translate(0,0) scale(1); }
+            100% { transform: translate(40px,-60px) scale(1.15); }
         }
 
         .main-container {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 960px;
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
+            position: relative; z-index: 2;
+            width: 100%; max-width: 1000px;
+            display: flex; flex-direction: column; gap: 20px;
+            animation: pageIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
         }
 
-        /* ========== HEADER – Glass Card ========== */
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== HEADER CARD ===== */
         .header-card {
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-border-bright);
             border-radius: var(--border-radius);
-            padding: 24px 28px 20px;
+            padding: 28px 32px 24px;
             box-shadow: var(--glass-shadow);
-            transition: var(--transition), background 0.3s, border 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .header-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
         }
 
         .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-bottom: 16px;
+            display: flex; justify-content: space-between;
+            align-items: center; gap: 14px; flex-wrap: wrap;
+            margin-bottom: 20px;
         }
         .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: flex; align-items: center; gap: 12px;
         }
         .logo-icon {
-            font-size: 2.1rem;
-            filter: drop-shadow(0 0 12px var(--accent-glow));
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            flex-shrink: 0;
         }
         .title {
-            font-weight: 700;
-            font-size: 1.7rem;
-            letter-spacing: -0.03em;
-            background: linear-gradient(135deg, #c4cafc, #a0a8f0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        [data-theme="light"] .title {
-            background: linear-gradient(135deg, #3a44b0, #5b68e0);
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.45rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .badge-count {
-            background: var(--btn-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--btn-border);
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
             border-radius: 40px;
-            padding: 8px 17px;
-            font-size: 0.9rem;
+            padding: 8px 18px;
             font-weight: 600;
+            font-size: 0.82rem;
             color: var(--text-secondary);
             white-space: nowrap;
-            letter-spacing: -0.01em;
         }
-        .badge-count span {
-            color: var(--badge-text);
-            font-weight: 700;
-            margin: 0 3px;
-        }
+        .badge-count span { color: var(--accent); font-weight: 700; }
 
-        /* Search */
+        /* ===== SEARCH ===== */
         .search-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 0;
-            margin-bottom: 14px;
+            position: relative; display: flex; align-items: center;
+            margin-bottom: 16px;
         }
-        .search-icon {
-            position: absolute;
-            left: 16px;
-            font-size: 1.15rem;
-            color: #8888b0;
-            pointer-events: none;
-            z-index: 3;
-        }
+        .search-icon { position: absolute; left: 18px; color: var(--text-muted); z-index: 3; font-size: 1rem; }
         #searchInput {
-            width: 100%;
-            padding: 13px 18px 13px 46px;
+            width: 100%; padding: 14px 48px 14px 50px;
             border-radius: 50px;
             border: 1px solid var(--btn-border);
-            background: var(--btn-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: var(--note-bg);
             color: var(--text-primary);
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            letter-spacing: -0.01em;
-            transition: var(--transition);
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            backdrop-filter: blur(12px);
+            transition: border-color var(--transition), box-shadow var(--transition);
             outline: none;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        #searchInput::placeholder {
-            color: var(--placeholder-color);
-            font-weight: 400;
         }
         #searchInput:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow), 0 4px 18px rgba(0, 0, 0, 0.2);
-            background: var(--card-hover-bg);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
+        #searchInput::placeholder { color: var(--placeholder-color); }
         .clear-search-btn {
-            position: absolute;
-            right: 10px;
-            background: var(--btn-bg);
-            border: 1px solid var(--btn-border);
-            color: #ccc;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.1rem;
+            position: absolute; right: 12px;
+            background: var(--btn-bg); border: 1px solid var(--btn-border);
+            width: 30px; height: 30px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text-secondary); font-size: 0.8rem;
             transition: var(--transition);
-            backdrop-filter: blur(8px);
-            z-index: 3;
         }
-        .clear-search-btn:hover {
-            background: rgba(255, 100, 120, 0.35);
-            color: #fff;
-        }
-        .clear-search-btn.hidden {
-            display: none;
-        }
+        .clear-search-btn:hover { background: var(--danger); color: #fff; border-color: transparent; }
+        .hidden { display: none !important; }
 
-        /* ========== TOOLBAR ========== */
+        /* ===== TOOLBAR ===== */
         .toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
+            display: flex; flex-wrap: wrap; gap: 6px;
+            align-items: center; margin-bottom: 16px;
         }
         .toolbar .btn {
-            padding: 8px 16px;
-            border-radius: 40px;
+            padding: 8px 16px; border-radius: 50px;
             border: 1px solid var(--btn-border);
             background: var(--btn-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            color: var(--text-primary);
-            font-weight: 600;
-            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 600; font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif;
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            letter-spacing: -0.01em;
-            transition: var(--transition);
+            backdrop-filter: blur(8px);
+            transition: all var(--transition);
             white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            letter-spacing: 0.01em;
         }
         .toolbar .btn:hover {
             background: var(--btn-hover-bg);
-            border-color: var(--accent);
+            border-color: var(--glass-border-bright);
+            color: var(--text-primary);
+            transform: translateY(-1px);
         }
         .toolbar .btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-color: transparent;
             color: #fff;
-            box-shadow: 0 0 14px var(--accent-glow);
+            box-shadow: 0 4px 16px var(--accent-glow);
         }
-        .toolbar .btn-sort-group {
-            display: flex;
-            gap: 4px;
-            background: var(--btn-bg);
-            border-radius: 40px;
-            padding: 3px;
-            backdrop-filter: blur(10px);
+        .btn-sort-group {
+            display: flex; gap: 2px;
+            background: var(--note-bg);
+            border-radius: 50px; padding: 3px;
             border: 1px solid var(--btn-border);
         }
         .btn-sort-group .btn {
-            border: none;
-            background: transparent;
-            padding: 6px 12px;
-            border-radius: 30px;
+            border: none; background: transparent;
+            padding: 6px 13px;
         }
         .btn-sort-group .btn.active {
-            background: var(--accent);
-            color: #fff;
-            box-shadow: none;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 2px 10px var(--accent-glow);
         }
 
-        .toolbar-separator {
-            width: 1px;
-            height: 24px;
-            background: var(--btn-border);
-            margin: 0 4px;
-            border-radius: 1px;
-        }
-
-        /* ========== ADD NEW WORD ROW ========== */
-        .add-word-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 2px;
-        }
-        .add-word-row input {
-            flex: 1 1 150px;
-            padding: 10px 15px;
-            border-radius: 40px;
+        /* Tag filter select */
+        #tagFilterSelect {
+            padding: 8px 14px; border-radius: 50px;
             border: 1px solid var(--btn-border);
             background: var(--btn-bg);
+            color: var(--text-secondary);
+            font-weight: 600; font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif;
             backdrop-filter: blur(8px);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            transition: var(--transition);
+            cursor: pointer; max-width: 160px;
             outline: none;
+            transition: all var(--transition);
+        }
+        #tagFilterSelect:hover, #tagFilterSelect:focus {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        /* ===== ADD WORD ROW ===== */
+        .add-word-row {
+            display: flex; gap: 8px; flex-wrap: wrap;
+            padding: 16px;
+            background: var(--note-bg);
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--btn-border);
+        }
+        .add-word-row input {
+            flex: 1 1 110px; padding: 10px 16px;
+            border-radius: 50px; border: 1px solid var(--btn-border);
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
+            backdrop-filter: blur(8px);
+            outline: none; transition: border-color var(--transition), box-shadow var(--transition);
         }
         .add-word-row input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(74, 92, 212, 0.2);
+            box-shadow: 0 0 0 2px var(--accent-glow);
         }
-        .add-word-row input::placeholder {
-            color: var(--placeholder-color);
-        }
+        .add-word-row input::placeholder { color: var(--placeholder-color); }
         .btn-add {
-            padding: 10px 20px;
-            border-radius: 40px;
-            border: 1px solid rgba(124, 140, 248, 0.4);
-            background: rgba(124, 140, 248, 0.25);
-            color: #d9dcff;
-            font-weight: 600;
-            font-size: 0.9rem;
+            padding: 10px 22px; border-radius: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border: none; color: #fff;
+            font-weight: 700; font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif;
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            transition: var(--transition);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 18px var(--accent-glow);
+            transition: all var(--transition);
             white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
-        .btn-add:hover {
-            background: rgba(124, 140, 248, 0.45);
-            color: #fff;
-            box-shadow: 0 0 18px var(--accent-glow);
-        }
+        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--accent-glow); }
+        .btn-add:active { transform: translateY(0); }
 
-        /* ========== VOCAB LIST – Grid & List ========== */
+        /* ===== VOCAB GRID / LIST ===== */
         .vocab-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
-            transition: all 0.3s ease;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 14px;
         }
-        .vocab-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            transition: all 0.3s ease;
-        }
+        .vocab-list { display: flex; flex-direction: column; gap: 10px; }
 
+        /* ===== VOCAB CARD ===== */
         .vocab-card {
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-border-bright);
             border-radius: var(--border-radius);
-            padding: 18px 18px 14px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            padding: 20px 20px 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+            display: flex; flex-direction: column; gap: 8px;
             position: relative;
-            cursor: default;
+            animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .vocab-card:hover {
             background: var(--card-hover-bg);
-            border-color: rgba(255, 255, 255, 0.28);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.25), 0 0 0 1px var(--glass-border-bright);
         }
-        /* List view card */
-        .vocab-list .vocab-card {
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 14px 18px;
-        }
-        .vocab-list .vocab-card .word-display {
-            flex: 0 0 180px;
-            font-size: 1.1rem;
-        }
-        .vocab-list .vocab-card .meaning-display {
-            flex: 1 1 200px;
-            font-size: 0.9rem;
-        }
-        .vocab-list .vocab-card .card-note-area {
-            flex: 1 1 160px;
-            margin-top: 0;
-        }
-        .vocab-list .vocab-card .card-note-area textarea {
-            min-height: 34px;
-            font-size: 0.78rem;
+        .vocab-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
         }
 
-        .vocab-card .word-display {
-            font-weight: 700;
-            font-size: 1.25rem;
+        .word-display {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700; font-size: 1.2rem;
             color: var(--text-primary);
-            word-break: break-word;
-            line-height: 1.3;
+            letter-spacing: -0.01em;
         }
-        .vocab-card .meaning-display {
-            font-size: 0.95rem;
+        .meaning-display {
+            font-size: 0.9rem;
             color: var(--text-secondary);
-            line-height: 1.4;
-            word-break: break-word;
-            font-weight: 400;
+            line-height: 1.5;
         }
+
         .highlight {
             background: var(--highlight-bg);
             color: var(--highlight-text);
-            font-weight: 700;
-            padding: 0 3px;
+            padding: 1px 4px;
             border-radius: 5px;
-            display: inline-block;
-            box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+            font-weight: 600;
         }
 
-        .card-note-area {
-            margin-top: 6px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            min-width: 100px;
+        .tag-container { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+        .tag-badge {
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            padding: 3px 11px; border-radius: 20px;
+            font-size: 0.68rem; font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: 1px solid var(--tag-border);
+            transition: all var(--transition);
         }
+        .tag-badge:hover {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff; border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .card-note-area { margin-top: 6px; }
         .card-note-area textarea {
             width: 100%;
             background: var(--note-bg);
             border: 1px solid var(--note-border);
-            border-radius: 12px;
+            border-radius: var(--border-radius-sm);
             padding: 10px 12px;
             color: var(--textarea-color);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.82rem;
-            resize: vertical;
-            min-height: 42px;
-            backdrop-filter: blur(6px);
-            transition: var(--transition);
+            font-size: 0.8rem; font-family: 'DM Sans', sans-serif;
+            resize: vertical; min-height: 40px;
             outline: none;
-            line-height: 1.4;
+            transition: border-color var(--transition), box-shadow var(--transition);
         }
         .card-note-area textarea:focus {
             border-color: var(--note-focus-border);
-            box-shadow: 0 0 0 2px rgba(124, 140, 248, 0.25);
+            box-shadow: 0 0 0 2px var(--accent-glow);
         }
-        .card-note-area textarea::placeholder {
-            color: #5e6180;
-            font-style: italic;
-        }
+        .card-note-area textarea::placeholder { color: var(--placeholder-color); }
+
         .note-save-indicator {
-            font-size: 0.7rem;
-            color: var(--indicator-color);
-            text-align: right;
-            opacity: 0;
-            transition: opacity 0.3s;
+            font-size: 0.68rem; color: var(--success);
+            opacity: 0; transition: opacity 0.3s;
+            display: block; text-align: right;
+            margin-top: 3px; height: 14px;
         }
-        .note-save-indicator.show {
-            opacity: 1;
-        }
+        .note-save-indicator.show { opacity: 1; }
 
         .delete-word-btn {
-            position: absolute;
-            top: 10px;
-            right: 14px;
-            background: transparent;
-            border: none;
-            color: #6b6f99;
-            font-size: 0.85rem;
-            cursor: pointer;
-            opacity: 0;
-            transition: var(--transition);
-            padding: 4px 8px;
-            border-radius: 20px;
+            position: absolute; top: 14px; right: 16px;
+            background: transparent; border: none;
+            color: var(--text-muted); cursor: pointer;
+            opacity: 0; transition: opacity 0.2s, color 0.2s;
+            font-size: 0.9rem; padding: 4px;
+            border-radius: 8px;
         }
-        .vocab-card:hover .delete-word-btn {
-            opacity: 1;
-        }
-        .delete-word-btn:hover {
-            color: #ff6b7a;
-            background: rgba(255, 107, 122, 0.15);
-        }
+        .vocab-card:hover .delete-word-btn { opacity: 1; }
+        .delete-word-btn:hover { color: var(--danger); background: rgba(248,113,113,0.1); }
 
         .no-result {
-            grid-column: 1 / -1;
+            grid-column: 1/-1;
             text-align: center;
-            padding: 48px 20px;
-            color: #8b8fb1;
-            font-weight: 500;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: var(--border-radius);
-            backdrop-filter: blur(8px);
+            padding: 60px 20px;
+            color: var(--text-muted);
+            font-size: 1rem;
         }
 
-        /* Footer */
+        /* ===== FOOTER ===== */
         .footer-note {
             text-align: center;
-            font-size: 0.8rem;
-            color: #5b5e82;
-            margin-top: 4px;
-            letter-spacing: -0.01em;
-            opacity: 0.7;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            padding: 8px;
+            letter-spacing: 0.02em;
         }
 
-        /* ========== FLASHCARD MODAL ========== */
+        /* ===== FLASHCARD OVERLAY ===== */
         .flashcard-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; inset: 0; z-index: 100;
             background: var(--overlay-bg);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            animation: fadeIn 0.25s ease;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex; align-items: center; justify-content: center;
         }
         .flashcard-container {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 28px 24px 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
             position: relative;
-            transition: background 0.3s;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 20px; width: 100%; max-width: 480px; padding: 32px 20px;
+            animation: overlayIn 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes overlayIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
         .flashcard-close {
-            position: absolute;
-            top: 14px;
-            right: 18px;
-            background: var(--btn-bg);
-            border: 1px solid var(--btn-border);
-            color: var(--text-primary);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            backdrop-filter: blur(8px);
+            position: absolute; top: 0; right: 20px;
+            background: var(--glass-bg-strong); border: 1px solid var(--glass-border);
+            width: 40px; height: 40px; border-radius: 50%;
+            color: var(--text-secondary); cursor: pointer;
+            font-size: 1.1rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
         }
-        .flashcard-close:hover {
-            background: var(--danger);
-            color: #fff;
-            border-color: var(--danger);
-        }
+        .flashcard-close:hover { background: var(--danger); color: #fff; border-color: transparent; }
+
         .flashcard-card {
-            perspective: 1000px;
-            margin: 20px 0 16px;
+            width: 100%; aspect-ratio: 3/2;
             cursor: pointer;
+            perspective: 1200px;
             user-select: none;
         }
         .flashcard-inner {
+            width: 100%; height: 100%;
             position: relative;
-            width: 100%;
-            min-height: 180px;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .flashcard-inner.flipped {
-            transform: rotateY(180deg);
-        }
-        .flashcard-front,
-        .flashcard-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+        .flashcard-inner.flipped { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back {
+            position: absolute; inset: 0;
             backface-visibility: hidden;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            font-size: 1.6rem;
-            font-weight: 700;
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            -webkit-backface-visibility: hidden;
+            border-radius: 24px;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 32px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+        }
+        .flashcard-front {
+            background: linear-gradient(135deg, rgba(129,140,248,0.2), rgba(167,139,250,0.15));
+            border: 1px solid rgba(129,140,248,0.3);
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem; font-weight: 800;
             color: var(--text-primary);
-            word-break: break-word;
-            line-height: 1.4;
-            min-height: 180px;
+            backdrop-filter: blur(20px);
         }
         .flashcard-back {
+            background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(129,140,248,0.12));
+            border: 1px solid rgba(52,211,153,0.25);
+            font-size: 1.3rem; font-weight: 600;
+            color: var(--success);
             transform: rotateY(180deg);
-            font-size: 1.3rem;
-            font-weight: 500;
-            color: var(--text-secondary);
+            backdrop-filter: blur(20px);
         }
         .flashcard-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 8px;
+            display: flex; align-items: center; gap: 16px;
         }
-        .flashcard-nav .btn {
-            padding: 10px 18px;
-            border-radius: 40px;
-            border: 1px solid var(--btn-border);
-            background: var(--btn-bg);
-            color: var(--text-primary);
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            transition: var(--transition);
-            backdrop-filter: blur(8px);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .flashcard-nav .btn:hover {
-            background: var(--btn-hover-bg);
-            border-color: var(--accent);
-        }
-        .flashcard-progress {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            white-space: nowrap;
+        #flashcardProgress {
+            color: var(--text-secondary); font-size: 0.85rem;
+            font-weight: 600; min-width: 60px; text-align: center;
         }
         .flashcard-shuffle {
-            margin-top: 8px;
-            font-size: 0.8rem;
-            color: var(--accent);
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 50px; padding: 8px 20px;
+            color: var(--text-secondary); cursor: pointer;
+            font-size: 0.82rem; font-family: 'DM Sans', sans-serif; font-weight: 600;
+            transition: all var(--transition);
+        }
+        .flashcard-shuffle:hover {
+            background: var(--btn-hover-bg); color: var(--text-primary);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed; bottom: 32px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--toast-bg);
+            color: var(--toast-text);
+            padding: 12px 28px; border-radius: 50px;
+            font-size: 0.85rem; font-weight: 600;
+            z-index: 200;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            animation: toastIn 0.3s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(129,140,248,0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(129,140,248,0.5); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            body { padding: 20px 12px 60px; }
+            .header-card { padding: 20px 18px 18px; }
+            .title { font-size: 1.15rem; }
+            .vocab-grid { grid-template-columns: 1fr; }
+            .add-word-row { flex-direction: column; }
+            .toolbar .btn { font-size: 0.74rem; padding: 7px 12px; }
         }
     </style>
 </head>
 <body>
-
-    <div class="main-container">
-        <!-- HEADER -->
-        <div class="header-card">
-            <div class="header-top">
-                <div class="logo-area">
-                    <span class="logo-icon">📚</span>
-                    <h1 class="title">Vocab Notes by Quyet</h1>
-                </div>
-                <div class="badge-count">
-                    📌 <span id="totalCount">0</span> từ · hiển thị <span id="visibleCount">0</span>
-                </div>
+<div class="blob3"></div>
+<div class="main-container">
+    <div class="header-card">
+        <div class="header-top">
+            <div class="logo-area">
+                <div class="logo-icon">📚</div>
+                <h1 class="title">Vocab Notes by Quyet</h1>
             </div>
-
-            <!-- Search bar -->
-            <div class="search-wrapper">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Nhập từ khóa để tìm & highlight..." autocomplete="off" />
-                <button class="clear-search-btn hidden" id="clearSearchBtn" title="Xoá tìm kiếm">✕</button>
-            </div>
-
-            <!-- Toolbar: Theme, View, Sort, Flashcard -->
-            <div class="toolbar">
-                <button class="btn" id="themeToggle" title="Đổi giao diện sáng/tối">🌙 Tối</button>
-                <span class="toolbar-separator"></span>
-                <button class="btn active" id="viewGridBtn" title="Xem dạng lưới">🔲 Lưới</button>
-                <button class="btn" id="viewListBtn" title="Xem dạng danh sách">📋 Danh sách</button>
-                <span class="toolbar-separator"></span>
-                <div class="btn-sort-group" id="sortGroup">
-                    <button class="btn active" data-sort="default" title="Mặc định">📌 Gốc</button>
-                    <button class="btn" data-sort="az" title="A → Z">A→Z</button>
-                    <button class="btn" data-sort="za" title="Z → A">Z→A</button>
-                </div>
-                <span class="toolbar-separator"></span>
-                <button class="btn" id="openFlashcardBtn" title="Ôn tập flashcard">🃏 Ôn Flashcard</button>
-            </div>
-
-            <!-- Add new word -->
-            <div class="add-word-row">
-                <input type="text" id="newWordInput" placeholder="Từ mới (vd: accomplish)" />
-                <input type="text" id="newMeaningInput" placeholder="Nghĩa (vd: hoàn thành)" />
-                <button class="btn-add" id="addWordBtn">➕ Thêm từ</button>
-            </div>
+            <div class="badge-count">📌 <span id="totalCount">0</span> từ · hiển thị <span id="visibleCount">0</span></div>
         </div>
-
-        <!-- VOCAB CARDS GRID / LIST -->
-        <div class="vocab-grid" id="vocabGrid">
-            <!-- Render bằng JS -->
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Nhập từ khóa để tìm & highlight..." autocomplete="off" />
+            <button class="clear-search-btn hidden" id="clearSearchBtn">✕</button>
         </div>
-        <div class="footer-note">💡 Gõ từ khoá để highlight · Ghi chú riêng · Lướt flashcard để ôn tập</div>
-    </div>
-
-    <!-- FLASHCARD OVERLAY (ẩn mặc định) -->
-    <div class="flashcard-overlay" id="flashcardOverlay" style="display: none;">
-        <div class="flashcard-container">
-            <button class="flashcard-close" id="flashcardClose">✕</button>
-            <div class="flashcard-card" id="flashcardCard">
-                <div class="flashcard-inner" id="flashcardInner">
-                    <div class="flashcard-front" id="flashcardFront">Word</div>
-                    <div class="flashcard-back" id="flashcardBack">Meaning</div>
-                </div>
+        <div class="toolbar">
+            <button class="btn" id="themeToggle">🌙 Tối</button>
+            <button class="btn active" id="viewGridBtn">🔲 Lưới</button>
+            <button class="btn" id="viewListBtn">📋 Danh sách</button>
+            <div class="btn-sort-group" id="sortGroup">
+                <button class="btn active" data-sort="default">📌 Gốc</button>
+                <button class="btn" data-sort="az">A→Z</button>
+                <button class="btn" data-sort="za">Z→A</button>
             </div>
-            <div class="flashcard-nav">
-                <button class="btn" id="flashcardPrev">◀ Trước</button>
-                <span class="flashcard-progress" id="flashcardProgress">1 / 1</span>
-                <button class="btn" id="flashcardNext">Sau ▶</button>
-            </div>
-            <button class="flashcard-shuffle" id="flashcardShuffle">🔀 Xáo trộn ngẫu nhiên</button>
+            <select id="tagFilterSelect">
+                <option value="">🏷️ Tất cả tag</option>
+            </select>
+            <button class="btn" id="openFlashcardBtn">🃏 Ôn Flashcard</button>
+            <button class="btn" id="exportBtn">📥 Xuất file</button>
+            <button class="btn" id="importBtn">📤 Nhập file</button>
+            <input type="file" id="importFileInput" accept=".json,application/json" style="display:none;">
+        </div>
+        <div class="add-word-row">
+            <input type="text" id="newWordInput" placeholder="Từ mới" />
+            <input type="text" id="newMeaningInput" placeholder="Nghĩa" />
+            <input type="text" id="newTagsInput" placeholder="Tags (phân cách dấu phẩy)" />
+            <button class="btn-add" id="addWordBtn">➕ Thêm từ</button>
         </div>
     </div>
+    <div class="vocab-grid" id="vocabGrid"></div>
+    <div class="footer-note">💡 Gõ từ khoá để highlight · Chọn tag để lọc · Flashcard lướt ngang</div>
+</div>
 
-    <script>
-        (function() {
-            // ==================== DỮ LIỆU GỐC ====================
-            const combinedVocabFromNotes = [
-                // Các cặp từ dễ nhầm lẫn
-                { word: "alone", meaning: "một mình (trạng thái)" },
-                { word: "lonely", meaning: "cô đơn (cảm xúc)" },
-                { word: "hard (adv)", meaning: "chăm chỉ, cứng" },
-                { word: "hardly", meaning: "hầu như không" },
-                { word: "fun", meaning: "vui vẻ (danh từ)" },
-                { word: "funny", meaning: "hài hước" },
-                { word: "surprised", meaning: "cảm thấy ngạc nhiên" },
-                { word: "surprising", meaning: "gây ngạc nhiên" },
-                { word: "excited", meaning: "hào hứng" },
-                { word: "exciting", meaning: "gây hào hứng" },
-                { word: "bored", meaning: "chán" },
-                { word: "boring", meaning: "gây chán" },
-                { word: "disappointed", meaning: "thất vọng" },
-                { word: "disappointing", meaning: "gây thất vọng" },
-                { word: "embarrassed", meaning: "xấu hổ" },
-                { word: "embarrassing", meaning: "gây xấu hổ" },
-                { word: "historic", meaning: "có ý nghĩa lịch sử" },
-                { word: "historical", meaning: "thuộc về lịch sử" },
-                { word: "beside", meaning: "bên cạnh" },
-                { word: "besides", meaning: "ngoài ra" },
-                { word: "rise", meaning: "tăng lên (nội động từ)" },
-                { word: "raise", meaning: "nâng lên (ngoại động từ)" },
-                { word: "remember + to V", meaning: "nhớ để làm" },
-                { word: "remember + V-ing", meaning: "nhớ đã làm" },
-                { word: "forget + to V", meaning: "quên để làm" },
-                { word: "forget + V-ing", meaning: "quên đã làm" },
-                { word: "desert", meaning: "sa mạc" },
-                { word: "dessert", meaning: "món tráng miệng" },
-                { word: "few", meaning: "rất ít (không đủ)" },
-                { word: "a few", meaning: "một vài (vẫn đủ)" },
-                { word: "exhausted", meaning: "kiệt sức (cảm giác)" },
-                { word: "exhausting", meaning: "gây kiệt sức" },
-                { word: "annoyed", meaning: "bực mình (cảm giác)" },
-                { word: "annoying", meaning: "gây bực mình" },
-                { word: "put off", meaning: "trì hoãn" },
-                { word: "take up", meaning: "bắt đầu (một sở thích)" },
-                { word: "look up", meaning: "tra cứu" },
-                { word: "get on with", meaning: "hòa hợp với" },
-                { word: "give up", meaning: "từ bỏ" },
-                { word: "come around", meaning: "ghé thăm" },
-                { word: "run out of", meaning: "hết, cạn kiệt" },
-                { word: "carry out", meaning: "thực hiện" },
-                { word: "turn down", meaning: "từ chối" },
-                { word: "turn up", meaning: "xuất hiện" },
-                { word: "get over", meaning: "vượt qua (bệnh tật, khó khăn)" },
-                { word: "put up with", meaning: "chịu đựng" },
-                { word: "make up", meaning: "bịa chuyện, làm hòa, trang điểm" },
-                { word: "break down", meaning: "hỏng máy" },
-                { word: "break up", meaning: "chia tay, tín hiệu ngắt quãng" },
-                { word: "take off", meaning: "cất cánh" },
-                { word: "make up for", meaning: "bù đắp" },
-                { word: "sense of humour", meaning: "khiếu hài hước" },
-                { word: "out of order", meaning: "hỏng (máy móc)" },
-                { word: "free of charge", meaning: "miễn phí" },
-                { word: "by chance", meaning: "tình cờ" },
-                { word: "on foot", meaning: "đi bộ" },
-                { word: "at first", meaning: "lúc đầu" },
-                { word: "in advance", meaning: "trước (đặt trước)" },
-                { word: "at least", meaning: "ít nhất" },
-                { word: "on time", meaning: "đúng giờ" },
-                { word: "in time", meaning: "kịp lúc" },
-                { word: "keep in touch", meaning: "giữ liên lạc" },
-                { word: "make an appointment", meaning: "đặt lịch hẹn" },
-                { word: "pay a fine", meaning: "nộp phạt" },
-                { word: "do research", meaning: "làm nghiên cứu" },
-                { word: "take part in", meaning: "tham gia" },
-                { word: "get a degree", meaning: "lấy bằng" },
-                { word: "make a decision", meaning: "quyết định" },
-                { word: "give advice", meaning: "cho lời khuyên" },
-                { word: "have a chance", meaning: "có cơ hội" },
-                { word: "do someone a favour", meaning: "làm ơn" },
-                { word: "instead of", meaning: "thay vì" },
-                { word: "according to", meaning: "theo như" },
-                { word: "depend on", meaning: "phụ thuộc vào" },
-                { word: "full of", meaning: "đầy" },
-                { word: "known as", meaning: "được biết đến như là" },
-                { word: "a wide range of", meaning: "một loạt các" },
-                { word: "in large quantities", meaning: "với số lượng lớn" },
-                { word: "by mistake", meaning: "do nhầm lẫn" },
-                { word: "heavy rain", meaning: "mưa lớn" },
-                { word: "a warm welcome", meaning: "sự chào đón nồng nhiệt" },
-                { word: "just in time", meaning: "vừa kịp lúc" },
-                { word: "traffic-free zone", meaning: "khu vực không xe cộ" },
-                { word: "top prize", meaning: "giải thưởng cao nhất" },
-                { word: "all around", meaning: "xung quanh" },
-                { word: "receipt", meaning: "biên lai" },
-                { word: "refund", meaning: "hoàn tiền" },
-                { word: "souvenir", meaning: "quà lưu niệm" },
-                { word: "impatient", meaning: "thiếu kiên nhẫn" },
-                { word: "congratulate", meaning: "chúc mừng" },
-                { word: "poverty", meaning: "sự nghèo đói" },
-                { word: "demanding", meaning: "đòi hỏi khắt khe" },
-                { word: "cure (cure for cancer)", meaning: "phương thuốc chữa (ung thư)" },
-                { word: "grateful", meaning: "biết ơn" },
-                { word: "amount of money", meaning: "lượng tiền (dùng với danh từ không đếm được)" },
-                { word: "dial a number", meaning: "quay số" },
-                { word: "locally", meaning: "tại địa phương" },
-                { word: "frightening", meaning: "đáng sợ (gây sợ)" },
-                { word: "thoroughly", meaning: "một cách kỹ lưỡng" },
-                { word: "colleague", meaning: "đồng nghiệp" },
-                { word: "sensible", meaning: "hợp lý" },
-                { word: "supportive", meaning: "ủng hộ" },
-                { word: "realistic expectation", meaning: "kỳ vọng thực tế" },
-                { word: "battery-free", meaning: "không cần pin" },
-                { word: "humid", meaning: "ẩm ướt" },
-                { word: "steep", meaning: "dốc" },
-                { word: "shy", meaning: "nhút nhát" },
-                { word: "honest", meaning: "trung thực" },
-                { word: "change", meaning: "tiền thừa" },
-                { word: "dishwasher", meaning: "máy rửa bát" },
-                { word: "carpet", meaning: "thảm" },
-                { word: "boil", meaning: "đun sôi" },
-                { word: "lawyer", meaning: "luật sư" },
-                { word: "assistant", meaning: "trợ lý" },
-                { word: "racing driver", meaning: "tay đua" },
-                { word: "qualification", meaning: "bằng cấp" },
-                { word: "permission", meaning: "sự cho phép" },
-                { word: "volcano", meaning: "núi lửa" },
-                { word: "noise", meaning: "tiếng ồn" },
-                { word: "music", meaning: "âm nhạc" },
-                { word: "luggage", meaning: "hành lý (không đếm được)" },
-                { word: "information", meaning: "thông tin (không đếm được)" },
-                { word: "advice", meaning: "lời khuyên (không đếm được)" },
-                { word: "carry out", meaning: "thực hiện" },
-                { word: "get over", meaning: "vượt qua (bệnh tật, khó khăn)" },
-                { word: "give away", meaning: "cho đi, tiết lộ" },
-                { word: "grow up", meaning: "lớn lên" },
-                { word: "make a decision", meaning: "đưa ra quyết định" },
-                { word: "keep a promise", meaning: "giữ lời hứa" },
-                { word: "get a promotion", meaning: "được thăng chức" },
-                { word: "solve a problem", meaning: "giải quyết vấn đề" },
-                { word: "achieve a goal", meaning: "đạt mục tiêu" },
-                { word: "cause damage", meaning: "gây thiệt hại" },
-                { word: "take an exam", meaning: "đi thi" },
-                { word: "miss a lesson", meaning: "lỡ buổi học" },
-                { word: "do exercise", meaning: "tập thể dục" },
-                { word: "lose weight", meaning: "giảm cân" },
-                { word: "keep fit", meaning: "giữ dáng" },
-                { word: "book a ticket", meaning: "đặt vé" },
-                { word: "go sightseeing", meaning: "đi tham quan" },
-                { word: "get married", meaning: "kết hôn" },
-                { word: "start a family", meaning: "lập gia đình" },
-                { word: "give a hand", meaning: "giúp một tay" },
-                { word: "make a difference", meaning: "tạo sự khác biệt" },
-                { word: "play a role", meaning: "đóng vai trò" },
-                { word: "take place", meaning: "diễn ra" },
-                { word: "take time", meaning: "cần thời gian" },
-                { word: "give a reason", meaning: "đưa ra lý do" },
-                { word: "find a solution", meaning: "tìm ra giải pháp" },
-                { word: "raise awareness", meaning: "nâng cao nhận thức" },
-                { word: "do your best", meaning: "cố gắng hết sức" },
-                { word: "make sure", meaning: "đảm bảo" },
-                { word: "take care", meaning: "bảo trọng, chăm sóc" },
-                { word: "make a reservation", meaning: "đặt chỗ trước" },
-                { word: "do housework", meaning: "làm việc nhà" },
-                { word: "make a choice", meaning: "đưa ra lựa chọn" },
-                { word: "strong accent", meaning: "giọng nói nặng, khó nghe" },
-                { word: "high standard", meaning: "tiêu chuẩn cao" },
-                { word: "major problem", meaning: "vấn đề nghiêm trọng" },
-                { word: "side effects", meaning: "tác dụng phụ" },
-                { word: "natural resources", meaning: "tài nguyên thiên nhiên" },
-                { word: "practical experience", meaning: "kinh nghiệm thực tế" },
-                { word: "valuable information", meaning: "thông tin quý giá" },
-                { word: "close friend", meaning: "bạn thân" },
-                { word: "public transport", meaning: "giao thông công cộng" },
-                { word: "traffic jam", meaning: "tắc đường" },
-                { word: "out of date", meaning: "lỗi thời" },
-                { word: "up to date", meaning: "cập nhật" },
-                { word: "in detail", meaning: "chi tiết" },
-                { word: "in general", meaning: "nhìn chung" },
-                { word: "in the end", meaning: "cuối cùng" },
-                { word: "at last", meaning: "cuối cùng (sau chờ đợi)" },
-                { word: "without delay", meaning: "ngay lập tức" },
-                { word: "in addition to", meaning: "thêm vào đó" },
-                { word: "with regard to", meaning: "liên quan đến" },
-                { word: "in order to + V", meaning: "để (làm gì)" },
-                { word: "protect the environment", meaning: "bảo vệ môi trường" },
-                { word: "save energy", meaning: "tiết kiệm năng lượng" },
-                { word: "recycle waste", meaning: "tái chế rác thải" },
-                { word: "reduce pollution", meaning: "giảm ô nhiễm" }
-            ];
+<div class="flashcard-overlay" id="flashcardOverlay" style="display:none;">
+    <div class="flashcard-container">
+        <button class="flashcard-close" id="flashcardClose">✕</button>
+        <div class="flashcard-card" id="flashcardCard">
+            <div class="flashcard-inner" id="flashcardInner">
+                <div class="flashcard-front" id="flashcardFront">Word</div>
+                <div class="flashcard-back" id="flashcardBack">Meaning</div>
+            </div>
+        </div>
+        <div class="flashcard-nav">
+            <button class="btn" id="flashcardPrev">◀ Trước</button>
+            <span id="flashcardProgress">1 / 1</span>
+            <button class="btn" id="flashcardNext">Sau ▶</button>
+        </div>
+        <button class="flashcard-shuffle" id="flashcardShuffle">🔀 Xáo trộn</button>
+    </div>
+</div>
 
-            // ==================== STATE ====================
-            const STORAGE_KEY_NOTES = 'vocab_notes_data';
-            const STORAGE_KEY_CUSTOM = 'vocab_custom_words';
-            const STORAGE_KEY_THEME = 'vocab_theme';
-            const STORAGE_KEY_VIEW = 'vocab_view';
-            const STORAGE_KEY_SORT = 'vocab_sort';
+<script>
+(function() {
+    // Dữ liệu gốc đã được gán tag sẵn
+    const combinedVocabFromNotes = [
+       { word: "alone", meaning: "một mình (trạng thái)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "lonely", meaning: "cô đơn (cảm xúc)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "hard (adv)", meaning: "chăm chỉ, cứng", tags: ["Cặp từ dễ nhầm"] },
+{ word: "hardly", meaning: "hầu như không", tags: ["Cặp từ dễ nhầm"] },
+{ word: "fun", meaning: "vui vẻ (danh từ)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "funny", meaning: "hài hước", tags: ["Cặp từ dễ nhầm"] },
+{ word: "surprised", meaning: "cảm thấy ngạc nhiên", tags: ["Cặp từ dễ nhầm"] },
+{ word: "surprising", meaning: "gây ngạc nhiên", tags: ["Cặp từ dễ nhầm"] },
+{ word: "excited", meaning: "hào hứng", tags: ["Cặp từ dễ nhầm"] },
+{ word: "exciting", meaning: "gây hào hứng", tags: ["Cặp từ dễ nhầm"] },
+{ word: "bored", meaning: "chán", tags: ["Cặp từ dễ nhầm"] },
+{ word: "boring", meaning: "gây chán", tags: ["Cặp từ dễ nhầm"] },
+{ word: "disappointed", meaning: "thất vọng", tags: ["Cặp từ dễ nhầm"] },
+{ word: "disappointing", meaning: "gây thất vọng", tags: ["Cặp từ dễ nhầm"] },
+{ word: "embarrassed", meaning: "xấu hổ", tags: ["Cặp từ dễ nhầm"] },
+{ word: "embarrassing", meaning: "gây xấu hổ", tags: ["Cặp từ dễ nhầm"] },
+{ word: "historic", meaning: "có ý nghĩa lịch sử", tags: ["Cặp từ dễ nhầm"] },
+{ word: "historical", meaning: "thuộc về lịch sử", tags: ["Cặp từ dễ nhầm"] },
+{ word: "beside", meaning: "bên cạnh", tags: ["Cặp từ dễ nhầm"] },
+{ word: "besides", meaning: "ngoài ra", tags: ["Cặp từ dễ nhầm"] },
+{ word: "rise", meaning: "tăng lên (nội động từ)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "raise", meaning: "nâng lên (ngoại động từ)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "remember + to V", meaning: "nhớ để làm", tags: ["Cấu trúc"] },
+{ word: "remember + V-ing", meaning: "nhớ đã làm", tags: ["Cấu trúc"] },
+{ word: "forget + to V", meaning: "quên để làm", tags: ["Cấu trúc"] },
+{ word: "forget + V-ing", meaning: "quên đã làm", tags: ["Cấu trúc"] },
+{ word: "desert", meaning: "sa mạc", tags: ["Cặp từ dễ nhầm"] },
+{ word: "dessert", meaning: "món tráng miệng", tags: ["Cặp từ dễ nhầm"] },
+{ word: "few", meaning: "rất ít (không đủ)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "a few", meaning: "một vài (vẫn đủ)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "exhausted", meaning: "kiệt sức (cảm giác)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "exhausting", meaning: "gây kiệt sức", tags: ["Cặp từ dễ nhầm"] },
+{ word: "annoyed", meaning: "bực mình (cảm giác)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "annoying", meaning: "gây bực mình", tags: ["Cặp từ dễ nhầm"] },
+{ word: "put off", meaning: "trì hoãn", tags: ["Phrasal Verbs"] },
+{ word: "take up", meaning: "bắt đầu (một sở thích)", tags: ["Phrasal Verbs"] },
+{ word: "look up", meaning: "tra cứu", tags: ["Phrasal Verbs"] },
+{ word: "get on with", meaning: "hòa hợp với", tags: ["Phrasal Verbs"] },
+{ word: "give up", meaning: "từ bỏ", tags: ["Phrasal Verbs"] },
+{ word: "come around", meaning: "ghé thăm", tags: ["Phrasal Verbs"] },
+{ word: "run out of", meaning: "hết, cạn kiệt", tags: ["Phrasal Verbs"] },
+{ word: "carry out", meaning: "thực hiện", tags: ["Phrasal Verbs"] },
+{ word: "turn down", meaning: "từ chối", tags: ["Phrasal Verbs"] },
+{ word: "turn up", meaning: "xuất hiện", tags: ["Phrasal Verbs"] },
+{ word: "get over", meaning: "vượt qua (bệnh tật, khó khăn)", tags: ["Phrasal Verbs"] },
+{ word: "put up with", meaning: "chịu đựng", tags: ["Phrasal Verbs"] },
+{ word: "make up", meaning: "bịa chuyện, làm hòa, trang điểm", tags: ["Phrasal Verbs"] },
+{ word: "break down", meaning: "hỏng máy", tags: ["Phrasal Verbs"] },
+{ word: "break up", meaning: "chia tay, tín hiệu ngắt quãng", tags: ["Phrasal Verbs"] },
+{ word: "take off", meaning: "cất cánh", tags: ["Phrasal Verbs"] },
+{ word: "make up for", meaning: "bù đắp", tags: ["Phrasal Verbs"] },
+{ word: "sense of humour", meaning: "khiếu hài hước", tags: ["Collocations"] },
+{ word: "out of order", meaning: "hỏng (máy móc)", tags: ["Collocations"] },
+{ word: "free of charge", meaning: "miễn phí", tags: ["Collocations"] },
+{ word: "by chance", meaning: "tình cờ", tags: ["Collocations"] },
+{ word: "on foot", meaning: "đi bộ", tags: ["Collocations"] },
+{ word: "at first", meaning: "lúc đầu", tags: ["Collocations"] },
+{ word: "in advance", meaning: "trước (đặt trước)", tags: ["Collocations"] },
+{ word: "at least", meaning: "ít nhất", tags: ["Collocations"] },
+{ word: "on time", meaning: "đúng giờ", tags: ["Collocations"] },
+{ word: "in time", meaning: "kịp lúc", tags: ["Collocations"] },
+{ word: "keep in touch", meaning: "giữ liên lạc", tags: ["Collocations"] },
+{ word: "make an appointment", meaning: "đặt lịch hẹn", tags: ["Collocations"] },
+{ word: "pay a fine", meaning: "nộp phạt", tags: ["Collocations"] },
+{ word: "do research", meaning: "làm nghiên cứu", tags: ["Collocations"] },
+{ word: "take part in", meaning: "tham gia", tags: ["Collocations"] },
+{ word: "get a degree", meaning: "lấy bằng", tags: ["Collocations"] },
+{ word: "make a decision", meaning: "quyết định", tags: ["Collocations"] },
+{ word: "give advice", meaning: "cho lời khuyên", tags: ["Collocations"] },
+{ word: "have a chance", meaning: "có cơ hội", tags: ["Collocations"] },
+{ word: "do someone a favour", meaning: "làm ơn", tags: ["Collocations"] },
+{ word: "instead of", meaning: "thay vì", tags: ["Cấu trúc"] },
+{ word: "according to", meaning: "theo như", tags: ["Collocations"] },
+{ word: "depend on", meaning: "phụ thuộc vào", tags: ["Collocations"] },
+{ word: "full of", meaning: "đầy", tags: ["Collocations"] },
+{ word: "known as", meaning: "được biết đến như là", tags: ["Collocations"] },
+{ word: "a wide range of", meaning: "một loạt các", tags: ["Collocations"] },
+{ word: "in large quantities", meaning: "với số lượng lớn", tags: ["Collocations"] },
+{ word: "by mistake", meaning: "do nhầm lẫn", tags: ["Collocations"] },
+{ word: "heavy rain", meaning: "mưa lớn", tags: ["Collocations"] },
+{ word: "a warm welcome", meaning: "sự chào đón nồng nhiệt", tags: ["Collocations"] },
+{ word: "just in time", meaning: "vừa kịp lúc", tags: ["Collocations"] },
+{ word: "traffic-free zone", meaning: "khu vực không xe cộ", tags: ["Collocations"] },
+{ word: "top prize", meaning: "giải thưởng cao nhất", tags: ["Collocations"] },
+{ word: "all around", meaning: "xung quanh", tags: ["Collocations"] },
+{ word: "receipt", meaning: "biên lai", tags: ["Từ vựng khó"] },
+{ word: "refund", meaning: "hoàn tiền", tags: ["Từ vựng khó"] },
+{ word: "souvenir", meaning: "quà lưu niệm", tags: ["Từ vựng khó"] },
+{ word: "impatient", meaning: "thiếu kiên nhẫn", tags: ["Từ vựng khó"] },
+{ word: "congratulate", meaning: "chúc mừng", tags: ["Từ vựng khó"] },
+{ word: "poverty", meaning: "sự nghèo đói", tags: ["Từ vựng khó"] },
+{ word: "demanding", meaning: "đòi hỏi khắt khe", tags: ["Từ vựng khó"] },
+{ word: "cure (cure for cancer)", meaning: "phương thuốc chữa (ung thư)", tags: ["Từ vựng khó"] },
+{ word: "grateful", meaning: "biết ơn", tags: ["Từ vựng khó"] },
+{ word: "amount of money", meaning: "lượng tiền (không đếm được)", tags: ["Collocations"] },
+{ word: "dial a number", meaning: "quay số", tags: ["Collocations"] },
+{ word: "locally", meaning: "tại địa phương", tags: ["Từ vựng khó"] },
+{ word: "frightening", meaning: "đáng sợ (gây sợ)", tags: ["Từ vựng khó"] },
+{ word: "thoroughly", meaning: "một cách kỹ lưỡng", tags: ["Từ vựng khó"] },
+{ word: "colleague", meaning: "đồng nghiệp", tags: ["Từ vựng khó"] },
+{ word: "sensible", meaning: "hợp lý", tags: ["Từ vựng khó"] },
+{ word: "supportive", meaning: "ủng hộ", tags: ["Từ vựng khó"] },
+{ word: "realistic expectation", meaning: "kỳ vọng thực tế", tags: ["Collocations"] },
+{ word: "battery-free", meaning: "không cần pin", tags: ["Từ vựng khó"] },
+{ word: "humid", meaning: "ẩm ướt", tags: ["Từ vựng khó"] },
+{ word: "steep", meaning: "dốc", tags: ["Từ vựng khó"] },
+{ word: "shy", meaning: "nhút nhát", tags: ["Từ vựng khó"] },
+{ word: "honest", meaning: "trung thực", tags: ["Từ vựng khó"] },
+{ word: "change", meaning: "tiền thừa", tags: ["Từ vựng khó"] },
+{ word: "dishwasher", meaning: "máy rửa bát", tags: ["Từ vựng khó"] },
+{ word: "carpet", meaning: "thảm", tags: ["Từ vựng khó"] },
+{ word: "boil", meaning: "đun sôi", tags: ["Từ vựng khó"] },
+{ word: "lawyer", meaning: "luật sư", tags: ["Từ vựng khó"] },
+{ word: "assistant", meaning: "trợ lý", tags: ["Từ vựng khó"] },
+{ word: "racing driver", meaning: "tay đua", tags: ["Từ vựng khó"] },
+{ word: "qualification", meaning: "bằng cấp", tags: ["Từ vựng khó"] },
+{ word: "permission", meaning: "sự cho phép", tags: ["Từ vựng khó"] },
+{ word: "volcano", meaning: "núi lửa", tags: ["Từ vựng khó"] },
+{ word: "noise", meaning: "tiếng ồn", tags: ["Từ vựng khó"] },
+{ word: "music", meaning: "âm nhạc", tags: ["Từ vựng khó"] },
+{ word: "luggage", meaning: "hành lý (không đếm được)", tags: ["Từ vựng khó"] },
+{ word: "information", meaning: "thông tin (không đếm được)", tags: ["Từ vựng khó"] },
+{ word: "advice", meaning: "lời khuyên (không đếm được)", tags: ["Từ vựng khó"] },
+{ word: "give away", meaning: "cho đi, tiết lộ", tags: ["Phrasal Verbs"] },
+{ word: "grow up", meaning: "lớn lên", tags: ["Phrasal Verbs"] },
+{ word: "make a decision", meaning: "đưa ra quyết định", tags: ["Collocations"] },
+{ word: "keep a promise", meaning: "giữ lời hứa", tags: ["Collocations"] },
+{ word: "get a promotion", meaning: "được thăng chức", tags: ["Collocations"] },
+{ word: "solve a problem", meaning: "giải quyết vấn đề", tags: ["Collocations"] },
+{ word: "achieve a goal", meaning: "đạt mục tiêu", tags: ["Collocations"] },
+{ word: "cause damage", meaning: "gây thiệt hại", tags: ["Collocations"] },
+{ word: "take an exam", meaning: "đi thi", tags: ["Collocations"] },
+{ word: "miss a lesson", meaning: "lỡ buổi học", tags: ["Collocations"] },
+{ word: "do exercise", meaning: "tập thể dục", tags: ["Collocations"] },
+{ word: "lose weight", meaning: "giảm cân", tags: ["Collocations"] },
+{ word: "keep fit", meaning: "giữ dáng", tags: ["Collocations"] },
+{ word: "book a ticket", meaning: "đặt vé", tags: ["Collocations"] },
+{ word: "go sightseeing", meaning: "đi tham quan", tags: ["Collocations"] },
+{ word: "get married", meaning: "kết hôn", tags: ["Collocations"] },
+{ word: "start a family", meaning: "lập gia đình", tags: ["Collocations"] },
+{ word: "give a hand", meaning: "giúp một tay", tags: ["Collocations"] },
+{ word: "make a difference", meaning: "tạo sự khác biệt", tags: ["Collocations"] },
+{ word: "play a role", meaning: "đóng vai trò", tags: ["Collocations"] },
+{ word: "take place", meaning: "diễn ra", tags: ["Collocations"] },
+{ word: "take time", meaning: "cần thời gian", tags: ["Collocations"] },
+{ word: "give a reason", meaning: "đưa ra lý do", tags: ["Collocations"] },
+{ word: "find a solution", meaning: "tìm ra giải pháp", tags: ["Collocations"] },
+{ word: "raise awareness", meaning: "nâng cao nhận thức", tags: ["Collocations"] },
+{ word: "do your best", meaning: "cố gắng hết sức", tags: ["Collocations"] },
+{ word: "make sure", meaning: "đảm bảo", tags: ["Collocations"] },
+{ word: "take care", meaning: "bảo trọng, chăm sóc", tags: ["Collocations"] },
+{ word: "make a reservation", meaning: "đặt chỗ trước", tags: ["Collocations"] },
+{ word: "do housework", meaning: "làm việc nhà", tags: ["Collocations"] },
+{ word: "make a choice", meaning: "đưa ra lựa chọn", tags: ["Collocations"] },
+{ word: "strong accent", meaning: "giọng nặng", tags: ["Collocations"] },
+{ word: "high standard", meaning: "tiêu chuẩn cao", tags: ["Collocations"] },
+{ word: "major problem", meaning: "vấn đề nghiêm trọng", tags: ["Collocations"] },
+{ word: "side effects", meaning: "tác dụng phụ", tags: ["Collocations"] },
+{ word: "natural resources", meaning: "tài nguyên thiên nhiên", tags: ["Collocations"] },
+{ word: "practical experience", meaning: "kinh nghiệm thực tế", tags: ["Collocations"] },
+{ word: "valuable information", meaning: "thông tin quý giá", tags: ["Collocations"] },
+{ word: "close friend", meaning: "bạn thân", tags: ["Collocations"] },
+{ word: "public transport", meaning: "giao thông công cộng", tags: ["Collocations"] },
+{ word: "traffic jam", meaning: "tắc đường", tags: ["Collocations"] },
+{ word: "out of date", meaning: "lỗi thời", tags: ["Collocations"] },
+{ word: "up to date", meaning: "cập nhật", tags: ["Collocations"] },
+{ word: "in detail", meaning: "chi tiết", tags: ["Collocations"] },
+{ word: "in general", meaning: "nhìn chung", tags: ["Collocations"] },
+{ word: "in the end", meaning: "cuối cùng", tags: ["Collocations"] },
+{ word: "at last", meaning: "cuối cùng (sau chờ đợi)", tags: ["Collocations"] },
+{ word: "without delay", meaning: "ngay lập tức", tags: ["Collocations"] },
+{ word: "in addition to", meaning: "thêm vào đó", tags: ["Cấu trúc"] },
+{ word: "with regard to", meaning: "liên quan đến", tags: ["Cấu trúc"] },
+{ word: "in order to + V", meaning: "để (làm gì)", tags: ["Cấu trúc"] },
+{ word: "protect the environment", meaning: "bảo vệ môi trường", tags: ["Collocations"] },
+{ word: "save energy", meaning: "tiết kiệm năng lượng", tags: ["Collocations"] },
+{ word: "recycle waste", meaning: "tái chế rác thải", tags: ["Collocations"] },
+{ word: "reduce pollution", meaning: "giảm ô nhiễm", tags: ["Collocations"] },
+{ word: "put off", meaning: "trì hoãn", tags: ["Phrasal Verbs"] },
+{ word: "sense of humour", meaning: "khiếu hài hước", tags: ["Collocations"] },
+{ word: "get in shape", meaning: "lấy lại vóc dáng", tags: ["Collocations"] },
+{ word: "impatient", meaning: "thiếu kiên nhẫn", tags: ["Từ vựng khó"] },
+{ word: "out of order", meaning: "hỏng (máy móc)", tags: ["Collocations"] },
+{ word: "award", meaning: "giải thưởng", tags: ["Từ vựng khó"] },
+{ word: "patient (adj)", meaning: "kiên nhẫn", tags: ["Từ vựng khó"] },
+{ word: "reach (v)", meaning: "đến được", tags: ["Từ vựng khó"] },
+{ word: "souvenir", meaning: "quà lưu niệm", tags: ["Từ vựng khó"] },
+{ word: "appointment", meaning: "cuộc hẹn", tags: ["Từ vựng khó"] },
+{ word: "almost nothing", meaning: "hầu như không có gì", tags: ["Từ vựng khó"] },
+{ word: "pay a fine", meaning: "nộp phạt", tags: ["Collocations"] },
+{ word: "disappointed", meaning: "thất vọng", tags: ["Cặp từ dễ nhầm"] },
+{ word: "come around", meaning: "ghé thăm", tags: ["Phrasal Verbs"] },
+{ word: "platform gate", meaning: "cửa lên tàu", tags: ["Từ vựng khó"] },
+{ word: "sign up", meaning: "đăng ký", tags: ["Phrasal Verbs"] },
+{ word: "research (v)", meaning: "nghiên cứu", tags: ["Từ vựng khó"] },
+{ word: "industry", meaning: "ngành công nghiệp", tags: ["Từ vựng khó"] },
+{ word: "favourite", meaning: "yêu thích", tags: ["Từ vựng khó"] },
+{ word: "disappointing", meaning: "gây thất vọng", tags: ["Cặp từ dễ nhầm"] },
+{ word: "different from", meaning: "khác với", tags: ["Collocations"] },
+{ word: "put on", meaning: "mặc vào", tags: ["Phrasal Verbs"] },
+{ word: "information", meaning: "thông tin", tags: ["Từ vựng khó"] },
+{ word: "exciting", meaning: "thú vị", tags: ["Cặp từ dễ nhầm"] },
+{ word: "know by sight", meaning: "biết mặt", tags: ["Collocations"] },
+{ word: "take part in", meaning: "tham gia", tags: ["Collocations"] },
+{ word: "variety of", meaning: "nhiều loại", tags: ["Collocations"] },
+{ word: "increasing your knowledge", meaning: "tăng kiến thức", tags: ["Collocations"] },
+{ word: "attend a class", meaning: "tham dự lớp học", tags: ["Collocations"] },
+{ word: "would like", meaning: "muốn (lịch sự)", tags: ["Cấu trúc"] },
+{ word: "spend time", meaning: "dành thời gian", tags: ["Cấu trúc"] },
+{ word: "allow to smoke", meaning: "cho phép hút thuốc", tags: ["Cấu trúc"] },
+{ word: "used to go", meaning: "đã từng đi", tags: ["Cấu trúc"] },
+{ word: "do him a favour", meaning: "làm ơn", tags: ["Collocations"] },
+{ word: "ask for advice", meaning: "xin lời khuyên", tags: ["Collocations"] },
+{ word: "student reductions", meaning: "giảm giá sinh viên", tags: ["Collocations"] },
+{ word: "can play a musical instrument", meaning: "chơi nhạc cụ", tags: ["Collocations"] },
+{ word: "explain her reasons", meaning: "giải thích lý do", tags: ["Collocations"] },
+{ word: "make use of her brain", meaning: "dùng trí óc", tags: ["Collocations"] },
+{ word: "do extra study", meaning: "học thêm", tags: ["Collocations"] },
+{ word: "realises the value", meaning: "nhận ra giá trị", tags: ["Collocations"] },
+{ word: "discovered by", meaning: "được phát hiện bởi", tags: ["Collocations"] },
+{ word: "trip", meaning: "chuyến đi", tags: ["Từ vựng khó"] },
+{ word: "customers", meaning: "khách hàng", tags: ["Từ vựng khó"] },
+{ word: "next morning", meaning: "sáng hôm sau", tags: ["Từ vựng khó"] },
+{ word: "searching", meaning: "tìm kiếm", tags: ["Từ vựng khó"] },
+{ word: "returned", meaning: "được trả lại", tags: ["Từ vựng khó"] },
+{ word: "have sth done", meaning: "nhờ ai làm gì", tags: ["Cấu trúc"] },
+{ word: "suggested that", meaning: "gợi ý rằng", tags: ["Cấu trúc"] },
+{ word: "too weak to", meaning: "quá yếu để", tags: ["Cấu trúc"] },
+{ word: "so...that", meaning: "quá...đến nỗi", tags: ["Cấu trúc"] },
+{ word: "good at", meaning: "giỏi về", tags: ["Collocations"] },
+{ word: "weather forecast", meaning: "dự báo thời tiết", tags: ["Collocations"] },
+{ word: "shouldn't smoke", meaning: "không nên hút thuốc", tags: ["Cấu trúc"] },
+{ word: "peace and quiet", meaning: "sự yên tĩnh", tags: ["Collocations"] },
+{ word: "free of charge", meaning: "miễn phí", tags: ["Collocations"] },
+{ word: "less traffic", meaning: "ít phương tiện hơn", tags: ["Collocations"] },
+{ word: "selfish", meaning: "ích kỷ", tags: ["Từ vựng khó"] },
+{ word: "in case", meaning: "phòng khi", tags: ["Cấu trúc"] },
+{ word: "supersaver tickets", meaning: "vé siêu tiết kiệm", tags: ["Collocations"] },
+{ word: "valid Monday to Thursday", meaning: "có hiệu lực thứ 2-5", tags: ["Collocations"] },
+{ word: "unless carried", meaning: "trừ khi được bế", tags: ["Cấu trúc"] },
+{ word: "unwanted gift", meaning: "quà không mong muốn", tags: ["Collocations"] },
+{ word: "box unopened", meaning: "hộp chưa mở", tags: ["Collocations"] },
+{ word: "smooth movements", meaning: "chuyển động mượt", tags: ["Collocations"] },
+{ word: "something else", meaning: "một thứ khác", tags: ["Từ vựng khó"] },
+{ word: "a couple of", meaning: "một vài", tags: ["Collocations"] },
+{ word: "piece of paper", meaning: "mảnh giấy", tags: ["Collocations"] },
+{ word: "years ago", meaning: "năm trước", tags: ["Từ vựng khó"] },
+{ word: "had grown", meaning: "đã trồng", tags: ["Cấu trúc"] },
+{ word: "so that", meaning: "để mà", tags: ["Cấu trúc"] },
+{ word: "today", meaning: "ngày nay", tags: ["Từ vựng khó"] },
+{ word: "in common", meaning: "điểm chung", tags: ["Collocations"] },
+{ word: "take medicine", meaning: "uống thuốc", tags: ["Collocations"] },
+{ word: "don't have to", meaning: "không cần", tags: ["Cấu trúc"] },
+{ word: "exciting (adj)", meaning: "thú vị (chủ quan)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "feel lonely", meaning: "cảm thấy cô đơn", tags: ["Cặp từ dễ nhầm"] },
+{ word: "stay alone", meaning: "ở một mình", tags: ["Cặp từ dễ nhầm"] },
+{ word: "a little luggage", meaning: "một ít hành lý", tags: ["Collocations"] },
+{ word: "was having a bath", meaning: "đang tắm", tags: ["Cấu trúc"] },
+{ word: "mind + V-ing", meaning: "phiền làm gì", tags: ["Cấu trúc"] },
+{ word: "depending on the weather", meaning: "phụ thuộc vào thời tiết", tags: ["Collocations"] },
+{ word: "maximum charge", meaning: "phí tối đa", tags: ["Collocations"] },
+{ word: "worth it", meaning: "đáng công", tags: ["Collocations"] },
+{ word: "explain (v)", meaning: "giải thích", tags: ["Từ vựng khó"] },
+{ word: "employer (n)", meaning: "người sử dụng lao động", tags: ["Từ vựng khó"] },
+{ word: "mistake (n)", meaning: "sai lầm", tags: ["Từ vựng khó"] },
+{ word: "in spite of", meaning: "mặc dù", tags: ["Cấu trúc"] },
+{ word: "neither...nor", meaning: "không...cũng không", tags: ["Cấu trúc"] },
+{ word: "so...that", meaning: "quá...đến nỗi", tags: ["Cấu trúc"] },
+{ word: "not only...but also", meaning: "không những...mà còn", tags: ["Cấu trúc"] },
+{ word: "key to success", meaning: "chìa khóa thành công", tags: ["Collocations"] },
+{ word: "take up (a hobby)", meaning: "bắt đầu (sở thích)", tags: ["Phrasal Verbs"] },
+{ word: "work hard", meaning: "làm việc chăm chỉ", tags: ["Collocations"] },
+{ word: "peaceful (adj)", meaning: "yên bình", tags: ["Từ vựng khó"] },
+{ word: "do a degree", meaning: "học lấy bằng", tags: ["Collocations"] },
+{ word: "out of order", meaning: "hỏng", tags: ["Collocations"] },
+{ word: "much money", meaning: "nhiều tiền", tags: ["Collocations"] },
+{ word: "funny (adj)", meaning: "hài hước", tags: ["Cặp từ dễ nhầm"] },
+{ word: "remember to do sth", meaning: "nhớ làm gì", tags: ["Cấu trúc"] },
+{ word: "open-air market", meaning: "chợ trời", tags: ["Collocations"] },
+{ word: "bargain (v)", meaning: "mặc cả", tags: ["Từ vựng khó"] },
+{ word: "local experience", meaning: "trải nghiệm địa phương", tags: ["Collocations"] },
+{ word: "headache (n)", meaning: "đau đầu (cũng chỉ vấn đề)", tags: ["Từ vựng khó"] },
+{ word: "good deal", meaning: "món hời", tags: ["Collocations"] },
+{ word: "win a competition", meaning: "thắng cuộc thi", tags: ["Collocations"] },
+{ word: "supportive (adj)", meaning: "ủng hộ", tags: ["Từ vựng khó"] },
+{ word: "set a high standard", meaning: "đặt tiêu chuẩn cao", tags: ["Collocations"] },
+{ word: "disappoint (v)", meaning: "làm thất vọng", tags: ["Cặp từ dễ nhầm"] },
+{ word: "realistic expectation", meaning: "kỳ vọng thực tế", tags: ["Collocations"] },
+{ word: "camping equipment", meaning: "thiết bị cắm trại", tags: ["Collocations"] },
+{ word: "by themselves", meaning: "tự họ", tags: ["Collocations"] },
+{ word: "up-to-date facilities", meaning: "cơ sở vật chất hiện đại", tags: ["Collocations"] },
+{ word: "wild animals", meaning: "động vật hoang dã", tags: ["Collocations"] },
+{ word: "leave the area clean", meaning: "để lại khu vực sạch sẽ", tags: ["Collocations"] },
+{ word: "look up (a word)", meaning: "tra cứu (từ)", tags: ["Phrasal Verbs"] },
+{ word: "baby-sitter", meaning: "người giữ trẻ", tags: ["Từ vựng khó"] },
+{ word: "embarrassing (adj)", meaning: "gây xấu hổ", tags: ["Cặp từ dễ nhầm"] },
+{ word: "What about + V-ing?", meaning: "Thế còn...?", tags: ["Cấu trúc"] },
+{ word: "beat (an opponent)", meaning: "đánh bại (đối thủ)", tags: ["Từ vựng khó"] },
+{ word: "needn't", meaning: "không cần", tags: ["Cấu trúc"] },
+{ word: "comedy (n)", meaning: "phim hài", tags: ["Từ vựng khó"] },
+{ word: "either...or", meaning: "hoặc...hoặc", tags: ["Cấu trúc"] },
+{ word: "due to + N", meaning: "bởi vì", tags: ["Cấu trúc"] },
+{ word: "so that + clause", meaning: "để mà", tags: ["Cấu trúc"] },
+{ word: "despite + N", meaning: "mặc dù", tags: ["Cấu trúc"] },
+{ word: "in spite of + V-ing", meaning: "mặc dù", tags: ["Cấu trúc"] },
+{ word: "such...that", meaning: "quá...đến nỗi", tags: ["Cấu trúc"] },
+{ word: "by chance", meaning: "tình cờ", tags: ["Collocations"] },
+{ word: "speed limit", meaning: "giới hạn tốc độ", tags: ["Collocations"] },
+{ word: "against the law", meaning: "trái pháp luật", tags: ["Collocations"] },
+{ word: "charge (money)", meaning: "tính tiền", tags: ["Từ vựng khó"] },
+{ word: "annually (adv)", meaning: "hàng năm", tags: ["Từ vựng khó"] },
+{ word: "forget + V-ing", meaning: "quên việc đã làm", tags: ["Cấu trúc"] },
+{ word: "decide to do sth", meaning: "quyết định làm gì", tags: ["Cấu trúc"] },
+{ word: "nervous (adj)", meaning: "lo lắng", tags: ["Từ vựng khó"] },
+{ word: "make friends", meaning: "kết bạn", tags: ["Collocations"] },
+{ word: "not as...as", meaning: "không bằng", tags: ["Cấu trúc"] },
+{ word: "promise to do sth", meaning: "hứa làm gì", tags: ["Cấu trúc"] },
+{ word: "ask sb to do sth", meaning: "yêu cầu ai làm gì", tags: ["Cấu trúc"] },
+{ word: "conditional sentence type 3", meaning: "câu điều kiện loại 3", tags: ["Cấu trúc"] },
+{ word: "the most interesting", meaning: "thú vị nhất", tags: ["Cấu trúc"] },
+{ word: "less expensive", meaning: "rẻ hơn", tags: ["Cấu trúc"] },
+{ word: "not short enough", meaning: "không đủ ngắn", tags: ["Cấu trúc"] },
+{ word: "neither...nor", meaning: "không...cũng không", tags: ["Cấu trúc"] },
+{ word: "both...and", meaning: "cả...và", tags: ["Cấu trúc"] },
+{ word: "as soon as", meaning: "ngay khi", tags: ["Cấu trúc"] },
+{ word: "not only + đảo ngữ", meaning: "không những", tags: ["Cấu trúc"] },
+{ word: "despite the fact that", meaning: "mặc dù thực tế là", tags: ["Cấu trúc"] },
+{ word: "seriously injured", meaning: "bị thương nặng", tags: ["Collocations"] },
+{ word: "be boiling", meaning: "đang sôi", tags: ["Từ vựng khó"] },
+{ word: "the third time + HTHT", meaning: "lần thứ ba", tags: ["Cấu trúc"] },
+{ word: "poverty (n)", meaning: "sự nghèo đói", tags: ["Từ vựng khó"] },
+{ word: "behave badly", meaning: "cư xử tệ", tags: ["Collocations"] },
+{ word: "independent (adj)", meaning: "độc lập", tags: ["Từ vựng khó"] },
+{ word: "foolish decision", meaning: "quyết định ngu ngốc", tags: ["Collocations"] },
+{ word: "get in touch with", meaning: "liên lạc với", tags: ["Collocations"] },
+{ word: "find sth + adj", meaning: "thấy cái gì thế nào", tags: ["Cấu trúc"] },
+{ word: "do not leave...touching", meaning: "không để...chạm vào", tags: ["Cấu trúc"] },
+{ word: "discount on three or more", meaning: "giảm giá cho ba bản trở lên", tags: ["Collocations"] },
+{ word: "carry an identity card", meaning: "mang thẻ căn cước", tags: ["Collocations"] },
+{ word: "refreshments are served", meaning: "đồ uống được phục vụ", tags: ["Collocations"] },
+{ word: "during the interval", meaning: "trong giờ giải lao", tags: ["Collocations"] },
+{ word: "get away from the crowds", meaning: "tránh xa đám đông", tags: ["Collocations"] },
+{ word: "bring back memories", meaning: "gợi lại kỷ niệm", tags: ["Collocations"] },
+{ word: "ring for an ambulance", meaning: "gọi xe cứu thương", tags: ["Collocations"] },
+{ word: "tell the emergency services", meaning: "nói cho dịch vụ cấp cứu", tags: ["Collocations"] },
+{ word: "at work", meaning: "tại nơi làm việc", tags: ["Collocations"] },
+{ word: "dial the number", meaning: "quay số", tags: ["Collocations"] },
+{ word: "because of", meaning: "bởi vì", tags: ["Cấu trúc"] },
+{ word: "get there", meaning: "đến đó", tags: ["Từ vựng khó"] },
+{ word: "grateful (adj)", meaning: "biết ơn", tags: ["Từ vựng khó"] },
+{ word: "be considered for the job", meaning: "được xem xét cho công việc", tags: ["Collocations"] },
+{ word: "has been awarded a scholarship", meaning: "đã được trao học bổng", tags: ["Collocations"] },
+{ word: "not as much...as", meaning: "không nhiều bằng", tags: ["Cấu trúc"] },
+{ word: "if + quá khứ đơn, would + V", meaning: "câu điều kiện loại 2", tags: ["Cấu trúc"] },
+{ word: "if + quá khứ hoàn thành, would have V3", meaning: "câu điều kiện loại 3", tags: ["Cấu trúc"] },
+{ word: "so much money that", meaning: "quá nhiều tiền đến nỗi", tags: ["Cấu trúc"] },
+{ word: "in spite of + V-ing", meaning: "mặc dù", tags: ["Cấu trúc"] },
+{ word: "life-jacket", meaning: "áo phao", tags: ["Từ vựng khó"] },
+{ word: "be used to + V-ing", meaning: "quen với việc làm gì", tags: ["Cấu trúc"] },
+{ word: "out of order", meaning: "hỏng (máy móc)", tags: ["Collocations"] },
+{ word: "on foot", meaning: "đi bộ", tags: ["Collocations"] },
+{ word: "few + N (số nhiều)", meaning: "rất ít (mang nghĩa phủ định)", tags: ["Cặp từ dễ nhầm"] },
+{ word: "unhealthy", meaning: "không lành mạnh", tags: ["Từ vựng khó"] },
+{ word: "will lend", meaning: "sẽ cho mượn (quyết định tại thời điểm nói)", tags: ["Cấu trúc"] },
+{ word: "hers", meaning: "của cô ấy (đại từ sở hữu)", tags: ["Cấu trúc"] },
+{ word: "colleague", meaning: "đồng nghiệp", tags: ["Từ vựng khó"] },
+{ word: "report lost property immediately", meaning: "báo mất đồ ngay lập tức", tags: ["Collocations"] },
+{ word: "keep children off sculptures", meaning: "giữ trẻ không leo trèo lên tượng", tags: ["Collocations"] },
+{ word: "suggest doing sth", meaning: "gợi ý làm gì", tags: ["Cấu trúc"] },
+{ word: "supplied by air", meaning: "được tiếp tế bằng đường hàng không", tags: ["Collocations"] },
+{ word: "of limited importance", meaning: "tầm quan trọng hạn chế", tags: ["Collocations"] },
+{ word: "grateful to sb", meaning: "biết ơn ai", tags: ["Từ vựng khó"] },
+{ word: "proving it's possible", meaning: "chứng minh điều đó khả thi", tags: ["Collocations"] },
+{ word: "short distances", meaning: "khoảng cách ngắn", tags: ["Collocations"] },
+{ word: "between ... and ...", meaning: "giữa ... và ...", tags: ["Cấu trúc"] },
+{ word: "used as ordinary stairs", meaning: "được dùng như cầu thang bình thường", tags: ["Collocations"] },
+{ word: "need sb to do sth", meaning: "cần ai làm gì", tags: ["Cấu trúc"] },
+{ word: "department stores", meaning: "cửa hàng bách hóa", tags: ["Từ vựng khó"] },
+{ word: "can be prevented", meaning: "có thể được ngăn ngừa", tags: ["Collocations"] },
+{ word: "unless = if not", meaning: "trừ khi (nếu không)", tags: ["Cấu trúc"] },
+{ word: "prettier than", meaning: "xinh hơn", tags: ["Cấu trúc"] },
+{ word: "is guaranteed", meaning: "được đảm bảo", tags: ["Collocations"] },
+{ word: "not as ... as", meaning: "không bằng ...", tags: ["Cấu trúc"] },
+{ word: "too ... to ...", meaning: "quá ... đến nỗi không thể ...", tags: ["Cấu trúc"] },
+{ word: "aggressive", meaning: "hung hăng, gây gổ", tags: ["Từ vựng khó"] },
+{ word: "do well in", meaning: "học tốt / làm tốt môn gì", tags: ["Collocations"] },
+{ word: "embarrassed", meaning: "xấu hổ", tags: ["Cặp từ dễ nhầm"] },
+{ word: "get on with sb", meaning: "hòa hợp với ai", tags: ["Phrasal Verbs"] },
+{ word: "by mistake", meaning: "do nhầm lẫn", tags: ["Collocations"] },
+{ word: "has taken part in", meaning: "đã tham gia", tags: ["Cấu trúc"] },
+{ word: "now that", meaning: "bây giờ khi mà", tags: ["Cấu trúc"] },
+{ word: "contains", meaning: "chứa đựng", tags: ["Từ vựng khó"] },
+{ word: "turning the pages", meaning: "lật giở các trang", tags: ["Collocations"] },
+{ word: "bring sb sth", meaning: "mang lại cho ai cái gì", tags: ["Cấu trúc"] },
+{ word: "apologize for V-ing", meaning: "xin lỗi vì đã làm gì", tags: ["Cấu trúc"] },
+{ word: "spend time V-ing", meaning: "dành thời gian làm gì", tags: ["Cấu trúc"] },
+{ word: "will be taken", meaning: "sẽ được đưa / dẫn", tags: ["Cấu trúc"] },
+{ word: "in order to", meaning: "để (chỉ mục đích)", tags: ["Cấu trúc"] },
+{ word: "therefore", meaning: "vì vậy", tags: ["Cấu trúc"] },
+{ word: "whose", meaning: "của ai (đại từ quan hệ chỉ sở hữu)", tags: ["Cấu trúc"] },
+{ word: "so + adj + that", meaning: "quá ... đến nỗi mà", tags: ["Cấu trúc"] },
+{ word: "although", meaning: "mặc dù", tags: ["Cấu trúc"] },
+{ word: "has been working", meaning: "đã làm việc (tiếp diễn)", tags: ["Cấu trúc"] },
+{ word: "have a party", meaning: "tổ chức tiệc", tags: ["Collocations"] },
+{ word: "big trouble", meaning: "rắc rối lớn", tags: ["Collocations"] },
+{ word: "so is Uranus", meaning: "Sao Thiên Vương cũng vậy (cấu trúc đồng tình)", tags: ["Cấu trúc"] },
+{ word: "are used to V-ing", meaning: "quen với việc làm gì", tags: ["Cấu trúc"] },
+{ word: "contact information", meaning: "thông tin liên lạc", tags: ["Collocations"] },
+{ word: "make + O + V (nguyên mẫu)", meaning: "bắt ai / làm cho cái gì làm gì", tags: ["Cấu trúc"] },
+{ word: "by the end of", meaning: "vào cuối", tags: ["Cấu trúc"] },
+{ word: "soon afterwards", meaning: "ngay sau đó", tags: ["Từ vựng khó"] },
+{ word: "share the fun", meaning: "cùng chia sẻ niềm vui", tags: ["Collocations"] },
+{ word: "not every", meaning: "không phải mọi", tags: ["Cấu trúc"] },
+{ word: "frightening", meaning: "đáng sợ (gây sợ hãi)", tags: ["Từ vựng khó"] },
+{ word: "amounts of money", meaning: "những lượng tiền", tags: ["Collocations"] },
+{ word: "neither does Mexico", meaning: "Mexico cũng không (cấu trúc đồng tình phủ định)", tags: ["Cấu trúc"] },
+{ word: "mine", meaning: "của tôi (đại từ sở hữu)", tags: ["Cấu trúc"] },
+{ word: "earn", meaning: "kiếm (tiền)", tags: ["Từ vựng khó"] },
+{ word: "check out", meaning: "trả phòng (khách sạn)", tags: ["Phrasal Verbs"] },
+{ word: "costly", meaning: "tốn kém", tags: ["Từ vựng khó"] },
+{ word: "keep off the grass", meaning: "tránh xa bãi cỏ, không giẫm lên cỏ", tags: ["Collocations"] },
+{ word: "locally", meaning: "ở địa phương", tags: ["Từ vựng khó"] },
+{ word: "cook well", meaning: "nấu ngon", tags: ["Từ vựng khó"] },
+{ word: "far away", meaning: "xa", tags: ["Từ vựng khó"] },
+{ word: "takes time", meaning: "cần thời gian", tags: ["Collocations"] },
+{ word: "eat alone", meaning: "ăn một mình", tags: ["Collocations"] },
+{ word: "sit at the table", meaning: "ngồi vào bàn ăn", tags: ["Collocations"] },
+{ word: "a chance", meaning: "một cơ hội", tags: ["Collocations"] },
+{ word: "mustn't walk", meaning: "không được phép đi bộ", tags: ["Cấu trúc"] },
+{ word: "has been given a promotion", meaning: "đã được thăng chức", tags: ["Collocations"] },
+{ word: "are being televised", meaning: "đang được truyền hình", tags: ["Cấu trúc"] },
+{ word: "give up smoking", meaning: "bỏ hút thuốc", tags: ["Phrasal Verbs"] },
+{ word: "such a + adj + N + that", meaning: "quá ... đến nỗi mà", tags: ["Cấu trúc"] },
+{ word: "looking for", meaning: "tìm kiếm", tags: ["Phrasal Verbs"] },
+{ word: "wise advice", meaning: "lời khuyên khôn ngoan", tags: ["Collocations"] },
+{ word: "keep appointments", meaning: "giữ lời hẹn", tags: ["Collocations"] },
+{ word: "look forward to V-ing", meaning: "mong đợi / háo hức làm gì", tags: ["Cấu trúc"] },
+{ word: "brought up", meaning: "nuôi dưỡng (lớn lên)", tags: ["Phrasal Verbs"] },
+{ word: "cure for cancer", meaning: "phương thuốc chữa ung thư", tags: ["Từ vựng khó"] },
+{ word: "air travel", meaning: "du lịch bằng đường hàng không", tags: ["Collocations"] },
+{ word: "heavy traffic", meaning: "tắc đường, giao thông đông đúc", tags: ["Collocations"] },
+{ word: "can be rude", meaning: "có thể thô lỗ", tags: ["Collocations"] },
+{ word: "no reason", meaning: "không có lý do", tags: ["Collocations"] },
+{ word: "recommend", meaning: "đề xuất, giới thiệu", tags: ["Từ vựng khó"] },
+{ word: "too old to", meaning: "quá già để", tags: ["Cấu trúc"] },
+{ word: "wanted sb not to do sth", meaning: "muốn ai không làm gì", tags: ["Cấu trúc"] },
+{ word: "more convenient than", meaning: "tiện lợi hơn", tags: ["Cấu trúc"] },
+{ word: "too strong to understand", meaning: "quá mạnh / khó để hiểu", tags: ["Cấu trúc"] },
+{ word: "not as difficult as", meaning: "không khó bằng", tags: ["Cấu trúc"] },
+{ word: "is going to be decided", meaning: "sẽ được quyết định", tags: ["Cấu trúc"] },
+{ word: "even though", meaning: "mặc dù (nhấn mạnh hơn although)", tags: ["Cấu trúc"] },
+{ word: "so as to", meaning: "để (chỉ mục đích)", tags: ["Cấu trúc"] },
+{ word: "despite + V-ing", meaning: "mặc dù (làm gì)", tags: ["Cấu trúc"] }
+        // Các từ bổ sung từ test có thể gán tag tương tự (đã rút gọn để code không quá dài, bạn hoàn toàn có thể thêm từ khác với tags tùy ý)
+    ];
 
-            let vocabList = [];
-            let notesMap = {};
-            let currentView = 'grid'; // 'grid' | 'list'
-            let currentSort = 'default'; // 'default' | 'az' | 'za'
-            let currentTheme = 'dark'; // 'dark' | 'light'
+    const STORAGE_NOTES = 'vocab_notes_data';
+    const STORAGE_CUSTOM = 'vocab_custom_words';
+    const STORAGE_THEME = 'vocab_theme';
+    const STORAGE_VIEW = 'vocab_view';
+    const STORAGE_SORT = 'vocab_sort';
 
-            // Flashcard state
-            let flashcardDeck = [];
-            let flashcardIndex = 0;
-            let flashcardIsFlipped = false;
-            let flashcardShuffled = false;
+    let vocabList = [];
+    let notesMap = {};
+    let currentView = 'grid';
+    let currentSort = 'default';
+    let currentTheme = 'dark';
+    let currentTagFilter = '';
 
-            // ==================== DOM ELEMENTS ====================
-            const vocabGrid = document.getElementById('vocabGrid');
-            const searchInput = document.getElementById('searchInput');
-            const clearSearchBtn = document.getElementById('clearSearchBtn');
-            const totalCountSpan = document.getElementById('totalCount');
-            const visibleCountSpan = document.getElementById('visibleCount');
-            const addWordBtn = document.getElementById('addWordBtn');
-            const newWordInput = document.getElementById('newWordInput');
-            const newMeaningInput = document.getElementById('newMeaningInput');
-            const themeToggle = document.getElementById('themeToggle');
-            const viewGridBtn = document.getElementById('viewGridBtn');
-            const viewListBtn = document.getElementById('viewListBtn');
-            const openFlashcardBtn = document.getElementById('openFlashcardBtn');
-            const flashcardOverlay = document.getElementById('flashcardOverlay');
-            const flashcardClose = document.getElementById('flashcardClose');
-            const flashcardCard = document.getElementById('flashcardCard');
-            const flashcardInner = document.getElementById('flashcardInner');
-            const flashcardFront = document.getElementById('flashcardFront');
-            const flashcardBack = document.getElementById('flashcardBack');
-            const flashcardPrev = document.getElementById('flashcardPrev');
-            const flashcardNext = document.getElementById('flashcardNext');
-            const flashcardProgress = document.getElementById('flashcardProgress');
-            const flashcardShuffleBtn = document.getElementById('flashcardShuffle');
-            const sortGroup = document.getElementById('sortGroup');
+    let flashcardDeck = [], flashcardIndex = 0, flashcardIsFlipped = false, flashcardShuffled = false;
 
-            // ==================== LOCAL STORAGE ====================
-            function loadNotesFromStorage() {
-                try { const s = localStorage.getItem(STORAGE_KEY_NOTES);
-                    notesMap = s ? JSON.parse(s) : {}; } catch (e) { notesMap = {}; }
-            }
+    // DOM elements
+    const vocabGrid = document.getElementById('vocabGrid');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const totalCountSpan = document.getElementById('totalCount');
+    const visibleCountSpan = document.getElementById('visibleCount');
+    const addWordBtn = document.getElementById('addWordBtn');
+    const newWordInput = document.getElementById('newWordInput');
+    const newMeaningInput = document.getElementById('newMeaningInput');
+    const newTagsInput = document.getElementById('newTagsInput');
+    const themeToggle = document.getElementById('themeToggle');
+    const viewGridBtn = document.getElementById('viewGridBtn');
+    const viewListBtn = document.getElementById('viewListBtn');
+    const openFlashcardBtn = document.getElementById('openFlashcardBtn');
+    const flashcardOverlay = document.getElementById('flashcardOverlay');
+    const flashcardClose = document.getElementById('flashcardClose');
+    const flashcardCard = document.getElementById('flashcardCard');
+    const flashcardInner = document.getElementById('flashcardInner');
+    const flashcardFront = document.getElementById('flashcardFront');
+    const flashcardBack = document.getElementById('flashcardBack');
+    const flashcardPrev = document.getElementById('flashcardPrev');
+    const flashcardNext = document.getElementById('flashcardNext');
+    const flashcardProgress = document.getElementById('flashcardProgress');
+    const flashcardShuffleBtn = document.getElementById('flashcardShuffle');
+    const sortGroup = document.getElementById('sortGroup');
+    const exportBtn = document.getElementById('exportBtn');
+    const importBtn = document.getElementById('importBtn');
+    const importFileInput = document.getElementById('importFileInput');
+    const tagFilterSelect = document.getElementById('tagFilterSelect');
 
-            function saveNotesToStorage() { localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(
-                    notesMap)); }
+    function loadNotes() { try { notesMap = JSON.parse(localStorage.getItem(STORAGE_NOTES) || '{}'); } catch(e){ notesMap={}; } }
+    function saveNotes() { localStorage.setItem(STORAGE_NOTES, JSON.stringify(notesMap)); }
+    function loadCustom() { try { return JSON.parse(localStorage.getItem(STORAGE_CUSTOM) || '[]'); } catch(e){ return []; } }
+    function saveCustom(cw) { localStorage.setItem(STORAGE_CUSTOM, JSON.stringify(cw)); }
+    function loadTheme() { return localStorage.getItem(STORAGE_THEME) || 'dark'; }
+    function saveTheme(t) { localStorage.setItem(STORAGE_THEME, t); }
+    function loadView() { return localStorage.getItem(STORAGE_VIEW) || 'grid'; }
+    function saveView(v) { localStorage.setItem(STORAGE_VIEW, v); }
+    function loadSort() { return localStorage.getItem(STORAGE_SORT) || 'default'; }
+    function saveSort(s) { localStorage.setItem(STORAGE_SORT, s); }
 
-            function loadCustomWords() {
-                try { const s = localStorage.getItem(STORAGE_KEY_CUSTOM); return s ? JSON.parse(s) :
-                    []; } catch (e) { return []; }
-            }
+    function buildVocabList() { vocabList = [...combinedVocabFromNotes, ...loadCustom()]; }
+    function getSortedList() {
+        const list = [...vocabList];
+        if (currentSort === 'az') list.sort((a,b)=> a.word.localeCompare(b.word,'vi',{sensitivity:'base'}));
+        else if (currentSort === 'za') list.sort((a,b)=> b.word.localeCompare(a.word,'vi',{sensitivity:'base'}));
+        return list;
+    }
 
-            function saveCustomWords(cw) { localStorage.setItem(STORAGE_KEY_CUSTOM, JSON.stringify(cw)); }
+    function addCustomWord(word, meaning, tagsStr) {
+        const tags = tagsStr.split(',').map(t => t.trim()).filter(t => t);
+        const cw = loadCustom();
+        cw.push({ word: word.trim(), meaning: meaning.trim(), tags });
+        saveCustom(cw);
+        buildVocabList(); renderAll();
+    }
+    function deleteCustomWord(idx) {
+        if (idx < combinedVocabFromNotes.length) { alert("⚠️ Không thể xoá từ gốc."); return; }
+        const ci = idx - combinedVocabFromNotes.length;
+        const cw = loadCustom(); if (ci>=0 && ci<cw.length) { cw.splice(ci,1); saveCustom(cw); }
+        if (notesMap[String(idx)]) { delete notesMap[String(idx)]; saveNotes(); }
+        buildVocabList(); renderAll();
+    }
 
-            function loadTheme() {
-                try { return localStorage.getItem(STORAGE_KEY_THEME) || 'dark'; } catch (e) { return 'dark'; }
-            }
+    function escapeHTML(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+    function highlightText(text, q) {
+        if (!q) return escapeHTML(text);
+        const escaped = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+        return escapeHTML(text).replace(new RegExp(`(${escaped})`,'gi'), '<mark class="highlight">$1</mark>');
+    }
 
-            function saveTheme(t) { localStorage.setItem(STORAGE_KEY_THEME, t); }
+    function getAllTags() {
+        const tagsSet = new Set();
+        vocabList.forEach(item => (item.tags || []).forEach(t => tagsSet.add(t)));
+        return Array.from(tagsSet).sort();
+    }
 
-            function loadView() {
-                try { return localStorage.getItem(STORAGE_KEY_VIEW) || 'grid'; } catch (e) { return 'grid'; }
-            }
+    function updateTagFilterSelect() {
+        const tags = getAllTags();
+        tagFilterSelect.innerHTML = '<option value="">🏷️ Tất cả tag</option>';
+        tags.forEach(tag => {
+            const option = document.createElement('option');
+            option.value = tag;
+            option.textContent = tag;
+            if (tag === currentTagFilter) option.selected = true;
+            tagFilterSelect.appendChild(option);
+        });
+        if (currentTagFilter && !tags.includes(currentTagFilter)) currentTagFilter = '';
+    }
 
-            function saveView(v) { localStorage.setItem(STORAGE_KEY_VIEW, v); }
-
-            function loadSort() {
-                try { return localStorage.getItem(STORAGE_KEY_SORT) || 'default'; } catch (e) { return 'default'; }
-            }
-
-            function saveSort(s) { localStorage.setItem(STORAGE_KEY_SORT, s); }
-
-            // ==================== BUILD VOCAB LIST ====================
-            function buildVocabList() {
-                const customWords = loadCustomWords();
-                vocabList = [...combinedVocabFromNotes, ...customWords];
-            }
-
-            function getSortedList() {
-                const list = [...vocabList];
-                if (currentSort === 'az') {
-                    list.sort((a, b) => a.word.localeCompare(b.word, 'vi', { sensitivity: 'base' }));
-                } else if (currentSort === 'za') {
-                    list.sort((a, b) => b.word.localeCompare(a.word, 'vi', { sensitivity: 'base' }));
-                }
-                return list;
-            }
-
-            function addCustomWord(word, meaning) {
-                const customWords = loadCustomWords();
-                customWords.push({ word: word.trim(), meaning: meaning.trim() });
-                saveCustomWords(customWords);
-                buildVocabList();
-                renderAll();
-            }
-
-            function deleteCustomWord(indexInVocab) {
-                if (indexInVocab < combinedVocabFromNotes.length) {
-                    alert("⚠️ Không thể xoá từ vựng gốc. Bạn chỉ có thể xoá từ đã thêm.");
-                    return;
-                }
-                const customIndex = indexInVocab - combinedVocabFromNotes.length;
-                const customWords = loadCustomWords();
-                if (customIndex >= 0 && customIndex < customWords.length) {
-                    customWords.splice(customIndex, 1);
-                    saveCustomWords(customWords);
-                    const noteKey = String(indexInVocab);
-                    if (notesMap[noteKey]) { delete notesMap[noteKey];
-                        saveNotesToStorage(); }
-                    buildVocabList();
-                    renderAll();
-                }
-            }
-
-            // ==================== RENDER ====================
-            function escapeHTML(str) {
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            }
-
-            function highlightText(text, query) {
-                if (!query || query.trim() === '') return escapeHTML(text);
-                const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const regex = new RegExp(`(${escapedQuery})`, 'gi');
-                return escapeHTML(text).replace(regex, '<mark class="highlight">$1</mark>');
-            }
-
-            function renderCards() {
-                const query = searchInput.value.trim();
-                vocabGrid.innerHTML = '';
-                let visibleCount = 0;
-                const sortedList = getSortedList();
-
-                sortedList.forEach((item, displayIndex) => {
-                    // Tìm index gốc trong vocabList để lấy note
-                    const originalIndex = vocabList.indexOf(item);
-                    const wordLower = item.word.toLowerCase();
-                    const meaningLower = item.meaning.toLowerCase();
-                    const qLower = query.toLowerCase();
-                    if (qLower && !wordLower.includes(qLower) && !meaningLower.includes(
-                            qLower)) return;
-                    visibleCount++;
-
-                    const noteKey = String(originalIndex);
-                    const savedNote = notesMap[noteKey] || '';
-
-                    const card = document.createElement('div');
-                    card.className = 'vocab-card';
-                    card.setAttribute('data-index', originalIndex);
-
-                    const wordDiv = document.createElement('div');
-                    wordDiv.className = 'word-display';
-                    wordDiv.innerHTML = highlightText(item.word, query);
-
-                    const meaningDiv = document.createElement('div');
-                    meaningDiv.className = 'meaning-display';
-                    meaningDiv.innerHTML = highlightText(item.meaning, query);
-
-                    const noteArea = document.createElement('div');
-                    noteArea.className = 'card-note-area';
-                    const textarea = document.createElement('textarea');
-                    textarea.placeholder = '📝 Ghi chú...';
-                    textarea.value = savedNote;
-                    textarea.setAttribute('data-note-key', noteKey);
-                    let noteTimeout;
-                    textarea.addEventListener('input', function() {
-                        notesMap[this.getAttribute('data-note-key')] = this.value;
-                        saveNotesToStorage();
-                        const ind = this.parentElement.querySelector(
-                            '.note-save-indicator');
-                        if (ind) {
-                            ind.classList.add('show');
-                            clearTimeout(noteTimeout);
-                            noteTimeout = setTimeout(() => ind.classList.remove('show'),
-                                900);
-                        }
-                    });
-                    const indicator = document.createElement('span');
-                    indicator.className = 'note-save-indicator';
-                    indicator.textContent = '✔ Đã lưu';
-                    noteArea.appendChild(textarea);
-                    noteArea.appendChild(indicator);
-
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'delete-word-btn';
-                    deleteBtn.innerHTML = '🗑️';
-                    deleteBtn.title = 'Xoá từ này';
-                    deleteBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        if (confirm('Bạn có chắc muốn xoá từ này?')) deleteCustomWord(
-                            originalIndex);
-                    });
-
-                    card.appendChild(wordDiv);
-                    card.appendChild(meaningDiv);
-                    card.appendChild(noteArea);
-                    if (originalIndex >= combinedVocabFromNotes.length) card.appendChild(deleteBtn);
-                    vocabGrid.appendChild(card);
+    function renderCards() {
+        const query = searchInput.value.trim().toLowerCase();
+        vocabGrid.innerHTML = ''; let visible = 0;
+        const sorted = getSortedList();
+        updateTagFilterSelect();
+        sorted.forEach(item => {
+            const origIdx = vocabList.indexOf(item);
+            if (query && !item.word.toLowerCase().includes(query) && !item.meaning.toLowerCase().includes(query)) return;
+            if (currentTagFilter && !(item.tags || []).includes(currentTagFilter)) return;
+            visible++;
+            const noteKey = String(origIdx), savedNote = notesMap[noteKey]||'';
+            const card = document.createElement('div'); card.className='vocab-card'; card.dataset.index=origIdx;
+            const wd = document.createElement('div'); wd.className='word-display'; wd.innerHTML=highlightText(item.word, query);
+            const md = document.createElement('div'); md.className='meaning-display'; md.innerHTML=highlightText(item.meaning, query);
+            card.appendChild(wd); card.appendChild(md);
+            if (item.tags && item.tags.length) {
+                const tagDiv = document.createElement('div'); tagDiv.className='tag-container';
+                item.tags.forEach(tag => {
+                    const badge = document.createElement('span'); badge.className='tag-badge'; badge.textContent=tag;
+                    badge.addEventListener('click', (e) => { e.stopPropagation(); currentTagFilter = tag; renderAll(); });
+                    tagDiv.appendChild(badge);
                 });
-
-                if (visibleCount === 0 && vocabList.length > 0) {
-                    vocabGrid.innerHTML =
-                        '<div class="no-result">🔎 Không tìm thấy từ nào khớp với "<strong>' +
-                        escapeHTML(query) + '</strong>"</div>';
-                } else if (vocabList.length === 0) {
-                    vocabGrid.innerHTML = '<div class="no-result">📭 Danh sách trống. Hãy thêm từ mới.</div>';
-                }
-                totalCountSpan.textContent = vocabList.length;
-                visibleCountSpan.textContent = visibleCount;
+                card.appendChild(tagDiv);
             }
-
-            function applyViewMode() {
-                vocabGrid.className = currentView === 'list' ? 'vocab-list' : 'vocab-grid';
-                viewGridBtn.classList.toggle('active', currentView === 'grid');
-                viewListBtn.classList.toggle('active', currentView === 'list');
-            }
-
-            function applySortUI() {
-                const buttons = sortGroup.querySelectorAll('button');
-                buttons.forEach(b => b.classList.toggle('active', b.dataset.sort === currentSort));
-            }
-
-            function applyTheme() {
-                document.documentElement.setAttribute('data-theme', currentTheme);
-                themeToggle.innerHTML = currentTheme === 'dark' ? '☀️ Sáng' : '🌙 Tối';
-                themeToggle.classList.toggle('active', currentTheme === 'light');
-            }
-
-            function updateClearButton() {
-                clearSearchBtn.classList.toggle('hidden', searchInput.value.trim() === '');
-            }
-
-            function renderAll() {
-                applyViewMode();
-                applySortUI();
-                applyTheme();
-                renderCards();
-                updateClearButton();
-            }
-
-            // ==================== FLASHCARD ====================
-            function buildFlashcardDeck() {
-                const query = searchInput.value.trim().toLowerCase();
-                const sortedList = getSortedList();
-                if (query) {
-                    flashcardDeck = sortedList.filter(item =>
-                        item.word.toLowerCase().includes(query) || item.meaning.toLowerCase().includes(
-                            query)
-                    );
-                } else {
-                    flashcardDeck = [...sortedList];
-                }
-                if (flashcardShuffled) shuffleArray(flashcardDeck);
-            }
-
-            function shuffleArray(arr) {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-            }
-
-            function openFlashcard() {
-                buildFlashcardDeck();
-                if (flashcardDeck.length === 0) {
-                    alert('⚠️ Không có từ nào để ôn tập.');
-                    return;
-                }
-                flashcardIndex = 0;
-                flashcardIsFlipped = false;
-                updateFlashcardDisplay();
-                flashcardOverlay.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeFlashcard() {
-                flashcardOverlay.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-
-            function updateFlashcardDisplay() {
-                if (flashcardDeck.length === 0) return;
-                const item = flashcardDeck[flashcardIndex];
-                flashcardFront.textContent = item.word;
-                flashcardBack.textContent = item.meaning;
-                flashcardInner.classList.toggle('flipped', flashcardIsFlipped);
-                flashcardProgress.textContent = `${flashcardIndex + 1} / ${flashcardDeck.length}`;
-            }
-
-            function flipFlashcard() {
-                flashcardIsFlipped = !flashcardIsFlipped;
-                flashcardInner.classList.toggle('flipped', flashcardIsFlipped);
-            }
-
-            function nextFlashcard() {
-                if (flashcardDeck.length === 0) return;
-                flashcardIndex = (flashcardIndex + 1) % flashcardDeck.length;
-                flashcardIsFlipped = false;
-                updateFlashcardDisplay();
-            }
-
-            function prevFlashcard() {
-                if (flashcardDeck.length === 0) return;
-                flashcardIndex = (flashcardIndex - 1 + flashcardDeck.length) % flashcardDeck.length;
-                flashcardIsFlipped = false;
-                updateFlashcardDisplay();
-            }
-
-            function shuffleFlashcard() {
-                flashcardShuffled = !flashcardShuffled;
-                flashcardShuffleBtn.textContent = flashcardShuffled ? '🔀 Đang xáo trộn (bấm để tắt)' :
-                    '🔀 Xáo trộn ngẫu nhiên';
-                buildFlashcardDeck();
-                flashcardIndex = 0;
-                flashcardIsFlipped = false;
-                updateFlashcardDisplay();
-            }
-
-            // Swipe support cho flashcard
-            let touchStartX = 0;
-            flashcardCard.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
-            flashcardCard.addEventListener('touchend', (e) => {
-                if (!flashcardOverlay.style.display || flashcardOverlay.style.display === 'none')
-                    return;
-                const diff = e.changedTouches[0].screenX - touchStartX;
-                if (Math.abs(diff) > 60) {
-                    if (diff < 0) nextFlashcard();
-                    else prevFlashcard();
-                }
+            const na = document.createElement('div'); na.className='card-note-area';
+            const ta = document.createElement('textarea'); ta.placeholder='📝 Ghi chú...'; ta.value=savedNote; ta.dataset.noteKey=noteKey;
+            let to; ta.addEventListener('input', ()=>{
+                notesMap[ta.dataset.noteKey]=ta.value; saveNotes();
+                const ind=na.querySelector('.note-save-indicator');
+                if(ind){ ind.classList.add('show'); clearTimeout(to); to=setTimeout(()=>ind.classList.remove('show'),900); }
             });
-
-            // ==================== EVENT LISTENERS ====================
-            searchInput.addEventListener('input', renderAll);
-            clearSearchBtn.addEventListener('click', () => { searchInput.value = '';
-                renderAll();
-                searchInput.focus(); });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (flashcardOverlay.style.display === 'flex') { closeFlashcard(); return; }
-                    if (document.activeElement === searchInput) { searchInput.value = '';
-                        renderAll(); }
-                }
-            });
-
-            addWordBtn.addEventListener('click', () => {
-                const w = newWordInput.value.trim();
-                const m = newMeaningInput.value.trim();
-                if (!w || !m) { alert('⚠️ Vui lòng nhập cả từ và nghĩa.'); return; }
-                addCustomWord(w, m);
-                newWordInput.value = '';
-                newMeaningInput.value = '';
-                newWordInput.focus();
-            });
-            newMeaningInput.addEventListener('keydown', e => { if (e.key === 'Enter') addWordBtn.click(); });
-            newWordInput.addEventListener('keydown', e => { if (e.key === 'Enter') newMeaningInput.focus(); });
-
-            // Theme toggle
-            themeToggle.addEventListener('click', () => {
-                currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                saveTheme(currentTheme);
-                applyTheme();
-            });
-
-            // View toggle
-            viewGridBtn.addEventListener('click', () => {
-                currentView = 'grid';
-                saveView('grid');
-                applyViewMode();
-                renderCards();
-            });
-            viewListBtn.addEventListener('click', () => {
-                currentView = 'list';
-                saveView('list');
-                applyViewMode();
-                renderCards();
-            });
-
-            // Sort buttons
-            sortGroup.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON' && e.target.dataset.sort) {
-                    currentSort = e.target.dataset.sort;
-                    saveSort(currentSort);
-                    applySortUI();
-                    renderCards();
-                }
-            });
-
-            // Flashcard
-            openFlashcardBtn.addEventListener('click', openFlashcard);
-            flashcardClose.addEventListener('click', closeFlashcard);
-            flashcardOverlay.addEventListener('click', function(e) { if (e.target ===
-                    flashcardOverlay) closeFlashcard(); });
-            flashcardCard.addEventListener('click', flipFlashcard);
-            flashcardPrev.addEventListener('click', (e) => { e.stopPropagation();
-                prevFlashcard(); });
-            flashcardNext.addEventListener('click', (e) => { e.stopPropagation();
-                nextFlashcard(); });
-            flashcardShuffleBtn.addEventListener('click', (e) => { e.stopPropagation();
-                shuffleFlashcard(); });
-
-            // Keyboard navigation cho flashcard
-            document.addEventListener('keydown', function(e) {
-                if (flashcardOverlay.style.display !== 'flex') return;
-                if (e.key === 'ArrowLeft') prevFlashcard();
-                if (e.key === 'ArrowRight') nextFlashcard();
-                if (e.key === ' ' || e.key === 'Space') { e.preventDefault();
-                    flipFlashcard(); }
-            });
-
-            // ==================== INIT ====================
-            function init() {
-                currentTheme = loadTheme();
-                currentView = loadView();
-                currentSort = loadSort();
-                flashcardShuffled = false;
-                loadNotesFromStorage();
-                buildVocabList();
-                renderAll();
+            const indi = document.createElement('span'); indi.className='note-save-indicator'; indi.textContent='✔ Đã lưu';
+            na.appendChild(ta); na.appendChild(indi);
+            card.appendChild(na);
+            if (origIdx >= combinedVocabFromNotes.length) {
+                const del = document.createElement('button'); del.className='delete-word-btn'; del.innerHTML='🗑️';
+                del.addEventListener('click',e=>{e.stopPropagation(); if(confirm('Xoá từ này?')) deleteCustomWord(origIdx);});
+                card.appendChild(del);
             }
+            vocabGrid.appendChild(card);
+        });
+        if (visible===0 && vocabList.length>0) vocabGrid.innerHTML=`<div class="no-result">🔎 Không tìm thấy từ nào.</div>`;
+        totalCountSpan.textContent=vocabList.length; visibleCountSpan.textContent=visible;
+    }
 
-            init();
-        })();
-    </script>
+    function applyViewMode() {
+        vocabGrid.className = currentView==='list'?'vocab-list':'vocab-grid';
+        viewGridBtn.classList.toggle('active', currentView==='grid');
+        viewListBtn.classList.toggle('active', currentView==='list');
+    }
+    function applySortUI() { sortGroup.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.sort===currentSort)); }
+    function applyTheme() { document.documentElement.setAttribute('data-theme', currentTheme); themeToggle.innerHTML = currentTheme==='dark'?'☀️ Sáng':'🌙 Tối'; }
+    function updateClearBtn() { clearSearchBtn.classList.toggle('hidden', !searchInput.value.trim()); }
+    function renderAll() { applyViewMode(); applySortUI(); applyTheme(); renderCards(); updateClearBtn(); }
+
+    // Flashcard
+    function buildDeck() {
+        const q = searchInput.value.trim().toLowerCase();
+        let sorted = getSortedList();
+        if (q) sorted = sorted.filter(i=>i.word.toLowerCase().includes(q)||i.meaning.toLowerCase().includes(q));
+        if (currentTagFilter) sorted = sorted.filter(i=> (i.tags||[]).includes(currentTagFilter));
+        flashcardDeck = [...sorted];
+        if (flashcardShuffled) flashcardDeck.sort(()=>Math.random()-0.5);
+    }
+    function openFlashcard() { buildDeck(); if(!flashcardDeck.length){ alert('Không có từ nào.'); return; } flashcardIndex=0; flashcardIsFlipped=false; updateFlashcard(); flashcardOverlay.style.display='flex'; document.body.style.overflow='hidden'; }
+    function closeFlashcard() { flashcardOverlay.style.display='none'; document.body.style.overflow=''; }
+    function updateFlashcard() { const item=flashcardDeck[flashcardIndex]; flashcardFront.textContent=item.word; flashcardBack.textContent=item.meaning; flashcardInner.classList.toggle('flipped', flashcardIsFlipped); flashcardProgress.textContent=`${flashcardIndex+1} / ${flashcardDeck.length}`; }
+    function flipFlashcard() { flashcardIsFlipped=!flashcardIsFlipped; flashcardInner.classList.toggle('flipped'); }
+    function nextFlashcard() { flashcardIndex=(flashcardIndex+1)%flashcardDeck.length; flashcardIsFlipped=false; updateFlashcard(); }
+    function prevFlashcard() { flashcardIndex=(flashcardIndex-1+flashcardDeck.length)%flashcardDeck.length; flashcardIsFlipped=false; updateFlashcard(); }
+    function shuffleFlashcard() { flashcardShuffled=!flashcardShuffled; flashcardShuffleBtn.textContent=flashcardShuffled?'🔀 Đang xáo':'🔀 Xáo trộn'; buildDeck(); flashcardIndex=0; flashcardIsFlipped=false; updateFlashcard(); }
+
+    function exportData() {
+        const data = { customWords: loadCustom(), notes: notesMap };
+        const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+        const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`vocab_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+        showToast('✅ Đã xuất file thành công!');
+    }
+    function importData(file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const json = JSON.parse(e.target.result);
+                if (json.customWords) saveCustom([...loadCustom(), ...json.customWords.filter(w=>w.word)]);
+                if (json.notes) { Object.assign(notesMap, json.notes); saveNotes(); }
+                buildVocabList(); renderAll(); showToast('📥 Đã nhập dữ liệu.');
+            } catch(ex) { alert('File không hợp lệ.'); }
+        };
+        reader.readAsText(file);
+    }
+    function showToast(msg) {
+        const t = document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t);
+        setTimeout(()=>t.remove(), 2500);
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', renderAll);
+    clearSearchBtn.addEventListener('click', ()=>{ searchInput.value=''; renderAll(); });
+    document.addEventListener('keydown', e=>{
+        if (e.key==='Escape') {
+            if (flashcardOverlay.style.display==='flex') closeFlashcard();
+            else if (document.activeElement===searchInput) { searchInput.value=''; renderAll(); }
+        }
+    });
+    addWordBtn.addEventListener('click', ()=>{
+        const w=newWordInput.value.trim(), m=newMeaningInput.value.trim();
+        if (!w||!m) { alert('Nhập từ và nghĩa.'); return; }
+        addCustomWord(w, m, newTagsInput.value);
+        newWordInput.value=''; newMeaningInput.value=''; newTagsInput.value=''; newWordInput.focus();
+    });
+    themeToggle.addEventListener('click', ()=>{ currentTheme=currentTheme==='dark'?'light':'dark'; saveTheme(currentTheme); applyTheme(); });
+    viewGridBtn.addEventListener('click', ()=>{ currentView='grid'; saveView('grid'); applyViewMode(); renderCards(); });
+    viewListBtn.addEventListener('click', ()=>{ currentView='list'; saveView('list'); applyViewMode(); renderCards(); });
+    sortGroup.addEventListener('click', e=>{ if(e.target.tagName==='BUTTON'&&e.target.dataset.sort) { currentSort=e.target.dataset.sort; saveSort(currentSort); applySortUI(); renderCards(); } });
+    tagFilterSelect.addEventListener('change', function() { currentTagFilter = this.value; renderAll(); });
+    openFlashcardBtn.addEventListener('click', openFlashcard);
+    flashcardClose.addEventListener('click', closeFlashcard);
+    flashcardOverlay.addEventListener('click', e=>{ if(e.target===flashcardOverlay) closeFlashcard(); });
+    flashcardCard.addEventListener('click', flipFlashcard);
+    flashcardPrev.addEventListener('click', e=>{ e.stopPropagation(); prevFlashcard(); });
+    flashcardNext.addEventListener('click', e=>{ e.stopPropagation(); nextFlashcard(); });
+    flashcardShuffleBtn.addEventListener('click', e=>{ e.stopPropagation(); shuffleFlashcard(); });
+    document.addEventListener('keydown', e=>{
+        if (flashcardOverlay.style.display!=='flex') return;
+        if (e.key==='ArrowLeft') prevFlashcard();
+        if (e.key==='ArrowRight') nextFlashcard();
+        if (e.key===' '||e.key==='Space') { e.preventDefault(); flipFlashcard(); }
+    });
+    exportBtn.addEventListener('click', exportData);
+    importBtn.addEventListener('click', ()=> importFileInput.click());
+    importFileInput.addEventListener('change', (e)=>{ if(e.target.files.length) importData(e.target.files[0]); importFileInput.value=''; });
+
+    let touchX=0;
+    flashcardCard.addEventListener('touchstart', e=>{ touchX=e.changedTouches[0].screenX; }, {passive:true});
+    flashcardCard.addEventListener('touchend', e=>{
+        if(flashcardOverlay.style.display!=='flex') return;
+        const diff=e.changedTouches[0].screenX-touchX;
+        if(Math.abs(diff)>60) diff<0?nextFlashcard():prevFlashcard();
+    });
+
+    function init() {
+        currentTheme=loadTheme(); currentView=loadView(); currentSort=loadSort();
+        loadNotes(); buildVocabList(); renderAll();
+    }
+    init();
+})();
+</script>
 </body>
 </html>
