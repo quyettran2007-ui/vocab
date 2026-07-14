@@ -54617,6 +54617,16 @@ function nextType(){
     const typable2 = chars.filter(c => c !== ' ' && c !== '-');
     const btnCheck = document.getElementById('typeCheck');
     if(btnCheck) btnCheck.disabled = typed.length === 0;
+
+    // Luôn giữ con trỏ ở CUỐI ô input ẩn. Bài tập này chỉ cho phép gõ nối
+    // tiếp từng chữ, nên nếu con trỏ vô tình bị lệch vào giữa chuỗi (do
+    // trình duyệt/bàn phím ảo, hoặc sau khi dùng nút "Gợi ý 1 chữ"),
+    // các ký tự gõ tiếp theo sẽ bị chèn sai vị trí -> hiện tượng "nhảy lung
+    // tung". Ép lại vị trí con trỏ ở đây đảm bảo luôn gõ nối vào cuối.
+    const hlen = hidden.value.length;
+    if(hidden.selectionStart !== hlen || hidden.selectionEnd !== hlen){
+      hidden.setSelectionRange(hlen, hlen);
+    }
   });
 
   const typableAll = chars.filter(c => c !== ' ' && c !== '-');
@@ -54727,6 +54737,13 @@ function nextType(){
     const pos = typed.length;
     if(pos < typable.length){
       hidden.value += typable[pos];
+      // Ép con trỏ về CUỐI chuỗi sau khi chèn ký tự gợi ý.
+      // Nếu không làm việc này, một số trình duyệt (nhất là trên di động)
+      // sẽ giữ nguyên vị trí con trỏ cũ, khiến ký tự gõ tiếp theo bị
+      // chèn nhầm vào giữa chuỗi thay vì nối vào cuối -> chữ "nhảy lung tung".
+      const len = hidden.value.length;
+      hidden.focus();
+      hidden.setSelectionRange(len, len);
       hidden.dispatchEvent(new Event('input'));
     }
   };
