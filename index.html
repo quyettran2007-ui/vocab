@@ -209,11 +209,12 @@ header {
   position:sticky; top:0; z-index:100;
   padding:11px 26px;
   background:var(--glass);
-  backdrop-filter:blur(20px) saturate(180%);
-  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
   display:flex; align-items:center; justify-content:space-between;
   gap:14px;
+  contain:layout paint;          /* header không kéo theo layout cả trang khi cuộn */
 }
 .brand { display:flex; align-items:center; gap:12px; }
 .brand-icon {
@@ -282,10 +283,20 @@ nav.tabs {
   position:sticky; top:var(--header-h); z-index:99;
   display:flex; gap:6px; padding:10px 26px;
   background:var(--glass);
-  backdrop-filter:blur(20px) saturate(180%);
-  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
   overflow-x:auto; scrollbar-width:none;
+  contain:layout paint;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Máy cảm ứng / màn nhỏ: bỏ hẳn backdrop-blur (rất nặng khi cuộn) */
+@media (max-width:900px), (hover:none){
+  header, nav.tabs{
+    backdrop-filter:none; -webkit-backdrop-filter:none;
+    background:var(--card);
+  }
 }
 nav.tabs::-webkit-scrollbar { display:none; }
 .tab-btn {
@@ -867,7 +878,8 @@ i.lg{width:9px;height:9px;border-radius:3px;display:inline-block;}
 i.lg.learned{background:var(--green,#059669);} i.lg.doing{background:#3b82f6;} i.lg.newn{background:var(--paper-2);border:1px solid var(--line);}
 
 .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:13px;}
-.tp-card{border:1px solid var(--line);border-radius:14px;padding:13px 14px;background:var(--card-sunken);transition:.16s;}
+.tp-card{border:1px solid var(--line);border-radius:14px;padding:13px 14px;background:var(--card-sunken);
+  transition:border-color .16s, box-shadow .16s; contain:layout paint style;}
 .tp-card:hover{border-color:var(--accent);box-shadow:0 5px 18px rgba(0,0,0,.07);}
 .tp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:9px;flex-wrap:wrap;}
 .tp-macro-name{display:flex;align-items:flex-start;gap:7px;background:none;border:none;padding:0;cursor:pointer;
@@ -1152,7 +1164,7 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:12px; 
   display:inline-flex; align-items:center; gap:7px; cursor:pointer;
   font-family:var(--font-heading); font-size:13.5px; font-weight:700; color:var(--ink-soft);
   background:var(--paper); border:1px solid var(--line); border-radius:11px; padding:8px 13px;
-  transition:all .18s var(--ease-smooth);
+  transition:color .18s var(--ease-smooth), background-color .18s var(--ease-smooth), border-color .18s var(--ease-smooth), transform .18s var(--ease-smooth), box-shadow .18s var(--ease-smooth);
 }
 .dt-tab b{ font-size:11.5px; font-weight:800; color:var(--muted);
   background:var(--paper-2); border-radius:99px; padding:1px 7px; }
@@ -1165,7 +1177,7 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:12px; 
   display:inline-flex; align-items:center; gap:6px; cursor:pointer;
   font-size:12.5px; font-weight:700; color:var(--ink-soft);
   background:var(--paper); border:1px solid var(--line); border-radius:99px; padding:5px 11px;
-  transition:all .16s var(--ease-smooth);
+  transition:color .16s var(--ease-smooth), background-color .16s var(--ease-smooth), border-color .16s var(--ease-smooth), transform .16s var(--ease-smooth);
 }
 .dm-tab .dm-ic{ font-size:14px; }
 .dm-tab b{ font-size:10.5px; font-weight:800; color:var(--muted);
@@ -1182,7 +1194,7 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:12px; 
 }
 
 .dt-pane{ display:none; }
-.dt-pane.active{ display:block; animation:fadeUp .3s var(--ease-out); }
+.dt-pane.active{ display:block; animation:fadeUp .26s var(--ease-out); will-change:auto; }
 .topic-grid.one-col{ grid-template-columns:1fr; }
 .dt-empty{
   text-align:center; padding:38px 20px; color:var(--muted);
@@ -1211,7 +1223,7 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:12px; 
   display:inline-flex; align-items:center; gap:5px; cursor:pointer;
   font-size:11.5px; font-weight:600; color:var(--ink-soft);
   background:var(--paper); border:1px solid var(--line); border-radius:99px; padding:4px 9px;
-  transition:all .18s var(--ease-smooth);
+  transition:color .18s var(--ease-smooth), background-color .18s var(--ease-smooth), border-color .18s var(--ease-smooth), transform .18s var(--ease-smooth), box-shadow .18s var(--ease-smooth);
 }
 .nw-chip b{ font-family:var(--font-heading); color:var(--accent); font-size:11px; }
 .nw-chip:hover{ border-color:var(--accent); color:var(--accent); transform:translateY(-1px); }
@@ -1598,8 +1610,13 @@ body.page-fs { overflow-x:hidden; }
   border-radius:var(--radius); padding:18px 22px 18px 24px; margin-bottom:12px;
   box-shadow:var(--shadow-xs);
   transition:transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s, border-color .25s;
+  /* Thẻ nằm ngoài màn hình -> trình duyệt BỎ QUA layout/paint của nó.
+     Đây là mấu chốt giúp cuộn danh sách hàng nghìn từ vẫn mượt. */
+  content-visibility:auto;
+  contain-intrinsic-size:auto 240px;
 }
 .vocab-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--line-strong); }
+@media (hover:none){ .vocab-card:hover{ transform:none; box-shadow:var(--shadow-xs); } }
 .vc-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 .vc-head .word { font-family:var(--font-heading); font-size:23px; font-weight:700; letter-spacing:-.7px; }
 .vc-head .ipa { color:var(--muted); font-size:13px; font-weight:500; font-style:normal; }
@@ -1914,7 +1931,9 @@ html { scroll-behavior:smooth; }
   from{ opacity:0; transform:translate3d(0,14px,0); }
   to  { opacity:1; transform:translate3d(0,0,0); }
 }
-.vocab-card:nth-child(n+25){ animation:none; }
+.vocab-card:nth-child(n+17){ animation:none; }
+/* Thẻ nạp thêm khi cuộn: không animate -> không giật */
+.no-anim .vocab-card{ animation:none !important; }
 
 /* Tôn trọng cài đặt "giảm chuyển động" của hệ điều hành */
 @media (prefers-reduced-motion:reduce){
@@ -1954,7 +1973,7 @@ html { scroll-behavior:smooth; }
 /* Tabs & buttons — springy press */
 .tab-btn:active { transform:scale(.95); }
 .btn, .learn-big-btn, .scope-btn, .copy-btn, .opt, .tab-btn {
-  transition:all .22s var(--ease-smooth);
+  transition:color .22s var(--ease-smooth), background-color .22s var(--ease-smooth), border-color .22s var(--ease-smooth), transform .22s var(--ease-smooth), box-shadow .22s var(--ease-smooth);
 }
 .chip, .form-chip, .stat-mini, .lp-stat, .dash-card, .vocab-card {
   transition:transform .28s var(--ease-out), box-shadow .28s var(--ease-out), border-color .28s;
@@ -52325,6 +52344,7 @@ function calcStreak(){
 
 let _pinnedWord = null;   // khi mở 1 từ cụ thể từ ô tìm kiếm trang chủ
 let _statusFilter = 'all'; // all | mastered | learning | due | new
+let _dashStale = true;     // true -> Dashboard cần vẽ lại (tránh tính lại 3000 từ mỗi lần đổi tab)
 let _dateFilter = 'all';   // 'all' | 'new:*' | 'new:YYYY-MM-DD' -> lọc khu "Từ mới thêm"
 
 /* Hàng đợi luyện tập dùng chung cho Trắc nghiệm & Gõ từ:
@@ -52428,6 +52448,7 @@ function addGems(n, reason){
   const before = levelOf(GEMS).lv;
   GEMS += n;
   try{ localStorage.setItem(LS_GEMS, String(GEMS)); }catch(e){}
+  _dashStale = true;
   const after = levelOf(GEMS);
   refreshGemUI();
   if(after.lv > before){
@@ -53949,46 +53970,62 @@ function renderList(){
       ${ex?exListHTML(v,'vc-example'):''}
     </div>`;
   };
-  // ---- Incremental render: paint a first screenful instantly, stream the rest.
-  // Building 1700+ cards in one synchronous pass was the main source of tab-switch jank.
+  // ---- Render tăng dần + DỰNG HTML LƯỜI (lazy).
+  // Trước đây map() dựng sẵn chuỗi HTML cho CẢ 3000+ thẻ ngay lần đầu (~700ms).
+  // Giờ chỉ lưu THAM CHIẾU từ, HTML được dựng đúng lúc chèn vào DOM.
   const CHUNK = 40;
-  _listBuild = null;
+  _listCardHTML = cardHTML;
   if(sort==='newest' || sort==='oldest'){
     const groups=[], map={};
     filtered.forEach(v=>{ const key=fmtDateGroup(v.date); if(!map[key]){map[key]=[];groups.push(key);} map[key].push(v); });
-    // flatten into a render queue of [headerHTML?, cardHTML...]
     const queue=[];
     groups.forEach(g=>{
-      queue.push(`<div class="date-group-head">${g} <span class="count">${map[g].length} từ</span></div>`);
-      map[g].forEach(v=>queue.push(cardHTML(v)));
+      queue.push({h:`<div class="date-group-head">${g} <span class="count">${map[g].length} từ</span></div>`});
+      map[g].forEach(v=>queue.push(v));
     });
     _listBuild = queue;
   } else {
-    _listBuild = filtered.map(cardHTML);
+    _listBuild = filtered;                 // không copy mảng, không dựng HTML
   }
   _listPos = 0;
   c.innerHTML = '';
+  c.classList.remove('no-anim');
   listAppend(CHUNK * 2);   // first paint: enough to fill the screen
+  // các lô nạp thêm khi cuộn -> tắt animation cho mượt
+  requestAnimationFrame(()=>c.classList.add('no-anim'));
   return;
 }
 
 /* Streamed list rendering — appends chunks as the user scrolls. */
-let _listBuild = null, _listPos = 0, _listBusy = false;
+let _listBuild = null, _listPos = 0, _listBusy = false, _listCardHTML = null;
 function listAppend(n){
-  if(!_listBuild || _listPos >= _listBuild.length) return;
+  if(!_listBuild || !_listCardHTML || _listPos >= _listBuild.length) return;
   const c = document.getElementById('listContainer');
-  const slice = _listBuild.slice(_listPos, _listPos + n);
-  _listPos += slice.length;
-  c.insertAdjacentHTML('beforeend', slice.join(''));
-}
-window.addEventListener('scroll', ()=>{
-  if(!document.getElementById('panel-list').classList.contains('active')) return;
-  if(_listBusy || !_listBuild || _listPos >= _listBuild.length) return;
-  const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 900;
-  if(nearBottom){
-    _listBusy = true;
-    requestAnimationFrame(()=>{ listAppend(60); _listBusy = false; });
+  const end = Math.min(_listPos + n, _listBuild.length);
+  let html = '';
+  for(let i=_listPos; i<end; i++){
+    const it = _listBuild[i];
+    html += it.h !== undefined ? it.h : _listCardHTML(it);
   }
+  _listPos = end;
+  c.insertAdjacentHTML('beforeend', html);
+}
+let _listTick = false;
+window.addEventListener('scroll', ()=>{
+  if(_listTick) return;                       // gộp nhiều sự kiện scroll vào 1 khung hình
+  _listTick = true;
+  requestAnimationFrame(()=>{
+    _listTick = false;
+    const p = document.getElementById('panel-list');
+    if(!p || !p.classList.contains('active')) return;
+    if(_listBusy || !_listBuild || _listPos >= _listBuild.length) return;
+    // nạp sớm hơn (1400px) -> người dùng không kịp thấy chỗ trống
+    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 1400){
+      _listBusy = true;
+      listAppend(60);
+      _listBusy = false;
+    }
+  });
 }, {passive:true});
 
 /* ---------- Quiz ---------- */
@@ -54321,7 +54358,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     // in the same frame as the entrance animation).
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(mode==='learn') renderLearn();
-      else if(mode==='dashboard') renderDashboard();
+      else if(mode==='dashboard'){ if(_dashStale){ renderDashboard(); _dashStale=false; } }
       else if(mode==='need') renderNeed();
       else renderPanel(mode);
     }));
@@ -54411,6 +54448,7 @@ function loadSRS(){
 }
 function saveSRS(){
   try{ localStorage.setItem(LS_SRS, JSON.stringify(SRS)); }catch(e){}
+  _dashStale = true;                 // tiến độ đổi -> lần sau mở Dashboard mới vẽ lại
 }
 function srsGet(w){
   return SRS[w] || null;
@@ -54565,6 +54603,7 @@ function loadStarred(){
 }
 function saveStarred(){
   try{ localStorage.setItem(LS_STAR, JSON.stringify([...starred])); }catch(e){}
+  _dashStale = true;
 }
 function isStarred(w){ return starred.has(w); }
 function toggleStar(w){
@@ -54698,7 +54737,7 @@ const LS_KEY = 'vocab_learn_v1';
 
 function todayKey(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function loadLearnData(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e){ return {}; } }
-function saveLearnData(d){ try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch(e){} }
+function saveLearnData(d){ try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch(e){} _dashStale = true; }
 function getTodayStats(){
   const all = loadLearnData();
   const k = todayKey();
@@ -55211,7 +55250,7 @@ loadStarred(); loadSRS(); refreshGemUI(); refreshUserUI();
 initFilters();
 applyFilter();
 refreshStarUI();
-renderDashboard();
+renderDashboard(); _dashStale = false;
 
 // Render danh sách chủ đề cố định trong tab Thêm từ
 (function renderTopicChips(){
