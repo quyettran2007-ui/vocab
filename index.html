@@ -932,12 +932,20 @@ i.lg.learned{background:var(--green,#059669);} i.lg.doing{background:#3b82f6;} i
    ============================================================ */
 .flash-wrap {
   display:flex; flex-direction:column; align-items:center;
-  gap:12px; padding-top:0;
+  gap:12px; padding-top:0; width:100%;
 }
 /* Flashcard tab fits the viewport exactly — zero page scroll */
-body:has(#panel-flashcard.active) main { padding-bottom:12px; }
+body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:12px; }
 
-/* Card takes the space the chrome doesn't. 178px = nav row + gaps + breathing room */
+/* Thẻ chiếm trọn chiều cao còn lại của màn hình -> không thừa khoảng trắng,
+   hàng nút điều hướng luôn nằm trong tầm nhìn, không phải cuộn.
+   --fc-top do JS đo (khoảng cách từ đỉnh màn hình tới thẻ). */
+#panel-flashcard:not(.fs) .flash-wrap {
+  height:calc(100dvh - var(--fc-top, 240px) - 14px);
+}
+#panel-flashcard:not(.fs) .flashcard {
+  flex:1 1 auto; height:auto; min-height:300px; max-height:none;
+}
 .flashcard {
   width:100%; max-width:820px;
   height:clamp(400px, calc(100vh - 178px - var(--fc-chrome, 140px)), 660px);
@@ -1363,9 +1371,10 @@ body.fs-on { overflow:hidden; }
 /* ===== TOÀN MÀN HÌNH BẰNG CSS (dự phòng cho iPhone) =====
    Safari iOS không có Fullscreen API, nên ta tự ẩn header + tabs
    và cho nội dung chiếm trọn màn hình.                                */
-body.page-fs nav.tabs { display:none !important; }
+/* Giữ nguyên thanh tab (Dashboard, Danh sách, ...) — chỉ thu gọn lại,
+   nếu ẩn đi thì không thể chuyển tab khi đang toàn màn hình. */
 body.page-fs header {
-  position:fixed; top:0; left:0; right:0;
+  position:sticky; top:0;
   padding:6px 12px; min-height:0; height:auto;
   z-index:2000;
   /* chừa chỗ cho "tai thỏ" iPhone */
@@ -1374,10 +1383,13 @@ body.page-fs header {
 body.page-fs header .header-stats { display:none !important; }
 body.page-fs header .brand h1 { font-size:15px; }
 body.page-fs header .brand-icon { width:28px; height:28px; font-size:14px; }
+body.page-fs nav.tabs {
+  position:sticky; top:auto;
+  padding:6px 12px; gap:4px;
+  z-index:1999;
+}
 body.page-fs main {
-  padding-top:calc(46px + env(safe-area-inset-top, 0px)) !important;
-  padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px)) !important;
-  min-height:100vh;
+  padding:12px 16px calc(16px + env(safe-area-inset-bottom, 0px)) !important;
 }
 body.page-fs { overflow-x:hidden; }
 /* Nút toàn màn hình khi đang bật -> nổi bật để dễ thoát */
@@ -5564,7 +5576,7 @@ const VOCAB = [
   pos: "verb",
   level: "C1",
   vn: "chuyển ra nước ngoài (hoạt động kinh doanh) / ngoài khơi, ngoài biển",
-  wordforms: [{ pos: "verb", word: "offshore" }, { pos: "adj/adv", word: "offshore" }],
+  wordforms: [{ pos: "verb", word: "offshore" }, { pos: "adj", word: "offshore" }, { pos: "adv", word: "offshore" }],
   synonyms: ["relocate abroad", "move operations overseas", "marine", "coastal", "sea-based"],
   collocations: [{ en: "offshore production", vi: "chuyển sản xuất ra nước ngoài" }, { en: "offshore operations", vi: "chuyển hoạt động ra nước ngoài" }, { en: "offshore business", vi: "kinh doanh ra nước ngoài" }, { en: "offshore to reduce costs", vi: "chuyển ra nước ngoài để giảm chi phí" }, { en: "offshore drilling", vi: "khoan ngoài khơi" }, { en: "offshore wind farm", vi: "trang trại điện gió ngoài khơi" }, { en: "offshore waters", vi: "vùng biển ngoài khơi" }, { en: "offshore islands", vi: "đảo ngoài khơi" }],
   example: { en: "Offshoring manufacturing to developing countries can reduce production costs significantly, but it raises ethical concerns about working conditions and labor rights.", vi: "Chuyển sản xuất ra các nước đang phát triển có thể giảm chi phí sản xuất đáng kể, nhưng nó làm dấy lên lo ngại về đạo đức liên quan đến điều kiện làm việc và quyền lao động." },
@@ -5575,9 +5587,10 @@ const VOCAB = [
 {
   word: "onshore",
   ipa: "/ˌɒnˈʃɔːr/",
-  pos: "adj/adv",
+  pos: "adj",
   level: "B2",
   vn: "trên đất liền, gần bờ",
+  wordforms: [{ pos: "adj", word: "onshore" }, { pos: "adv", word: "onshore" }],
   synonyms: ["inland", "coastal", "terrestrial"],
   collocations: [{ en: "onshore facilities", vi: "cơ sở trên đất liền" }, { en: "onshore wind energy", vi: "năng lượng gió trên đất liền" }, { en: "onshore activities", vi: "các hoạt động trên đất liền" }, { en: "onshore operations", vi: "hoạt động trên đất liền" }],
   example: { en: "The development of onshore solar farms has been hindered by land-use conflicts and environmental concerns.", vi: "Sự phát triển của các trang trại năng lượng mặt trời trên đất liền đã bị cản trở bởi xung đột sử dụng đất và lo ngại về môi trường." },
@@ -9218,9 +9231,10 @@ const VOCAB = [
 },
 {
   word: "half-price",
-  pos: "adj/adv",
+  pos: "adj",
   level: "A2",
   vn: "giá rẻ, nửa giá",
+  wordforms: [{ pos: "adj", word: "half-price" }, { pos: "adv", word: "half-price" }],
   synonyms: ["discounted", "reduced", "cheap"],
   collocations: [{ en: "half-price sale", vi: "chương trình giảm giá" }, { en: "half-price tickets", vi: "vé nửa giá" }, { en: "half-price offer", vi: "ưu đãi nửa giá" }, { en: "half-price products", vi: "sản phẩm nửa giá" }],
   example: { en: "Many retailers offer half-price promotions during holiday seasons to attract more customers and increase sales volume.", vi: "Nhiều nhà bán lẻ cung cấp các chương trình khuyến mãi nửa giá trong các mùa lễ để thu hút nhiều khách hàng hơn và tăng khối lượng bán hàng." },
@@ -51080,6 +51094,22 @@ document.addEventListener('fullscreenchange', ()=>{
 });
 document.addEventListener('webkitfullscreenchange', syncFullBtn);
 
+/* ---------- Đo chiều cao khả dụng cho thẻ flashcard ----------
+   Thẻ sẽ giãn đúng phần trống còn lại (không thừa khoảng trắng, không phải
+   cuộn để thấy nút điều hướng). --fc-top = khoảng cách từ đỉnh viewport
+   tới đầu .flash-wrap khi trang ở đầu.                                        */
+function measureFcTop(){
+  const wrap = document.querySelector('#panel-flashcard .flash-wrap');
+  if(!wrap || !wrap.offsetParent) return;
+  const top = wrap.getBoundingClientRect().top + window.scrollY;
+  document.documentElement.style.setProperty('--fc-top', top + 'px');
+}
+window.addEventListener('resize', measureFcTop);
+window.addEventListener('orientationchange', ()=>setTimeout(measureFcTop,120));
+document.addEventListener('DOMContentLoaded', measureFcTop);
+setTimeout(measureFcTop, 60);
+setTimeout(measureFcTop, 400);
+
 /* ---------- Fullscreen mode ---------- */
 const fcPanel = document.getElementById('panel-flashcard');
 // Flashcard "focus mode": hides the page chrome and enlarges the card. It also
@@ -51533,6 +51563,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     tb.classList.toggle('compact', mode==='flashcard');
     document.getElementById('searchRow').style.display = (showToolbar && mode!=='flashcard') ? 'flex' : 'none';
     window.scrollTo({top:0, behavior:'auto'});
+    if(mode==='flashcard') requestAnimationFrame(measureFcTop);
     // Defer heavy DOM work until AFTER the panel has painted — this is what
     // removed the stutter when switching tabs (1700+ nodes were being laid out
     // in the same frame as the entrance animation).
