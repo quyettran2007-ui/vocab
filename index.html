@@ -10,82 +10,105 @@
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   VOCABLAB — PREMIUM DESIGN SYSTEM v2
+   VOCABLAB — HỆ THIẾT KẾ v3  "PHÒNG THI"
+   ------------------------------------------------------------
+   Ý tưởng: app này về bản chất là chuyện NHỚ ĐÚNG TỪNG KÝ TỰ.
+   Nên bảng màu bỏ hẳn kiểu gradient tím-xanh bóng bẩy, quay về
+   chất giấy thi + mực: nền giấy hơi ngả xanh, chữ mực đậm,
+   ĐÚNG MỘT màu nhấn (xanh mực - teal) cho hành động,
+   và ĐÚNG MỘT màu lửa (hổ phách) chỉ dành riêng cho việc
+   "MỞ CỬA / ĐÃ THUỘC" — để mắt học đúng một tín hiệu duy nhất.
+
+   Ký tự (ô gõ từ, IPA, số liệu) dùng font đơn cách — vì đây là
+   thứ duy nhất trong app cần đọc chính xác từng ký tự một.
    ============================================================ */
 
-/* ===== LIGHT THEME ===== */
+/* ===== SÁNG ===== */
 :root {
-  --ink: #0f172a;
-  --ink-soft: #45526b;
-  --paper: #eaedf6;          /* nền trang — tối hơn để thẻ trắng nổi bật */
-  --paper-2: #dfe4f0;        /* nền chìm (track, chip) */
-  --card: #ffffff;           /* nền thẻ */
+  --ink: #10201c;            /* mực — xanh đen, không phải đen thuần */
+  --ink-soft: #46605a;
+  --paper: #eef1ee;          /* giấy — xám ngả xanh */
+  --paper-2: #e2e7e3;
+  --card: #ffffff;
   --card-raised: #ffffff;
-  --card-sunken: #f4f6fb;    /* ô con bên trong thẻ */
-  --vn-color: #0f766e;       /* nghĩa tiếng Việt — xanh teal, không phải tím */
-  --ex-color: #334155;       /* câu ví dụ — xám xanh, chữ thẳng */
-  --glass: rgba(255,255,255,.78);
+  --card-sunken: #f4f7f5;
+  --vn-color: #0f766e;
+  --ex-color: #334742;
+  --glass: rgba(255,255,255,.86);
 
-  --accent: #6d28d9;
-  --accent-2: #0ea5e9;
-  --accent-hover: #5b21b6;
-  --accent-light: #a78bfa;
-  --accent-bg: #f2edff;
-  --accent-grad: linear-gradient(135deg,#7c3aed 0%,#6366f1 45%,#0ea5e9 100%);
-  --accent-grad-soft: linear-gradient(135deg,rgba(124,58,237,.10),rgba(14,165,233,.10));
+  /* MỘT màu nhấn duy nhất cho hành động */
+  --accent: #0d6e5f;
+  --accent-2: #0891b2;
+  --accent-hover: #0a5a4d;
+  --accent-light: #5eead4;
+  --accent-bg: #e2f3ef;
+  --accent-grad: linear-gradient(135deg,#0d6e5f 0%,#0f8a76 55%,#0891b2 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(13,110,95,.10),rgba(8,145,178,.08));
 
-  --green: #059669;
-  --green-bg: #d9f7ec;
+  /* LỬA — chỉ dùng cho mở cửa kỹ năng & đã thuộc. Không dùng chỗ khác. */
+  --ember: #c2410c;
+  --ember-2: #f59e0b;
+  --ember-bg: #fdeee2;
+  --ember-grad: linear-gradient(135deg,#f59e0b,#c2410c);
+
+  --green: #047857;
+  --green-bg: #d5f2e8;
   --gold: #b45309;
-  --gold-bg: #fdf0d5;
-  --coral: #dc2626;
-  --coral-bg: #fdeaea;
+  --gold-bg: #fcf0da;
+  --coral: #be123c;
+  --coral-bg: #fdeaee;
 
-  --muted: #71809a;          /* đậm hơn để đọc rõ trên nền trắng */
-  --line: #dde2ee;
-  --line-strong: #c3cadc;
+  --muted: #6b807a;
+  --line: #dbe2dd;
+  --line-strong: #c0cbc5;
 
-  --shadow-xs: 0 1px 2px rgba(16,24,40,.05);
-  --shadow-sm: 0 2px 6px rgba(16,24,40,.05), 0 1px 2px rgba(16,24,40,.04);
-  --shadow: 0 8px 24px -8px rgba(16,24,40,.14), 0 2px 6px rgba(16,24,40,.05);
-  --shadow-lg: 0 24px 60px -18px rgba(16,24,40,.24), 0 8px 20px -12px rgba(16,24,40,.14);
-  --glow: 0 10px 32px -10px rgba(109,40,217,.42);
+  --shadow-xs: 0 1px 2px rgba(12,32,28,.05);
+  --shadow-sm: 0 1px 3px rgba(12,32,28,.07);
+  --shadow: 0 6px 18px -8px rgba(12,32,28,.16), 0 1px 3px rgba(12,32,28,.05);
+  --shadow-lg: 0 20px 48px -20px rgba(12,32,28,.26), 0 4px 12px -8px rgba(12,32,28,.14);
+  --glow: 0 8px 24px -10px rgba(13,110,95,.40);
 
-  --radius-xl: 26px;
-  --radius: 18px;
-  --radius-sm: 12px;
+  --radius-xl: 20px;
+  --radius: 14px;
+  --radius-sm: 10px;
 
-  --font-heading: 'Lexend','Be Vietnam Pro','Segoe UI',sans-serif;
+  --font-heading: 'Bricolage Grotesque','Be Vietnam Pro','Segoe UI',sans-serif;
   --font-body: 'Be Vietnam Pro','Segoe UI',sans-serif;
+  --font-mono: 'JetBrains Mono','SF Mono',ui-monospace,Menlo,Consolas,monospace;
 
-  --streak-empty: #e7eaf3;
-  --code-bg: #14112b;
-  --code-fg: #ded9ff;
+  --streak-empty: #e0e6e2;
+  --code-bg: #0f1a17;
+  --code-fg: #cfe6df;
   --opt-bg: var(--card);
   --opt-text: var(--ink);
-  --header-h: 62px;
+  --header-h: 58px;
 }
 
-/* ===== DARK THEME ===== */
+/* ===== TỐI ===== */
 [data-theme="dark"] {
-  --ink: #eef2fb;
-  --ink-soft: #aeb9d0;
-  --paper: #0a0e1a;          /* nền trang */
-  --paper-2: #161d30;        /* nền chìm */
-  --card: #151c2e;           /* thẻ — sáng hơn nền rõ rệt */
-  --card-raised: #1d2639;
-  --card-sunken: #101625;
-  --vn-color: #5eead4;       /* nghĩa tiếng Việt — xanh mint trên nền tối */
-  --ex-color: #cbd5e1;       /* câu ví dụ */
-  --glass: rgba(18,24,40,.72);
+  --ink: #e8f0ec;
+  --ink-soft: #a5bab3;
+  --paper: #0a1210;
+  --paper-2: #16211e;
+  --card: #141e1b;
+  --card-raised: #1c2926;
+  --card-sunken: #0f1a17;
+  --vn-color: #5eead4;
+  --ex-color: #c3d4ce;
+  --glass: rgba(16,26,23,.82);
 
-  --accent: #a78bfa;
+  --accent: #2dd4bf;
   --accent-2: #38bdf8;
-  --accent-hover: #8b5cf6;
-  --accent-light: #c4b5fd;
-  --accent-bg: rgba(139,92,246,.14);
-  --accent-grad: linear-gradient(135deg,#8b5cf6 0%,#6366f1 45%,#22d3ee 100%);
-  --accent-grad-soft: linear-gradient(135deg,rgba(139,92,246,.16),rgba(34,211,238,.10));
+  --accent-hover: #14b8a6;
+  --accent-light: #99f6e4;
+  --accent-bg: rgba(45,212,191,.13);
+  --accent-grad: linear-gradient(135deg,#14b8a6 0%,#2dd4bf 55%,#38bdf8 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(45,212,191,.14),rgba(56,189,248,.08));
+
+  --ember: #fb923c;
+  --ember-2: #fbbf24;
+  --ember-bg: rgba(251,146,60,.14);
+  --ember-grad: linear-gradient(135deg,#fbbf24,#fb923c);
 
   --green: #34d399;
   --green-bg: rgba(16,185,129,.16);
@@ -94,22 +117,28 @@
   --coral: #fb7185;
   --coral-bg: rgba(244,63,94,.15);
 
-  --muted: #8593b0;          /* sáng hơn để đọc được trên nền tối */
-  --line: rgba(255,255,255,.10);
-  --line-strong: rgba(255,255,255,.20);
+  --muted: #7d948d;
+  --line: rgba(255,255,255,.09);
+  --line-strong: rgba(255,255,255,.19);
 
   --shadow-xs: 0 1px 2px rgba(0,0,0,.4);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,.4);
-  --shadow: 0 10px 30px -10px rgba(0,0,0,.7);
-  --shadow-lg: 0 30px 70px -20px rgba(0,0,0,.85);
-  --glow: 0 10px 34px -10px rgba(139,92,246,.5);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.4);
+  --shadow: 0 8px 24px -10px rgba(0,0,0,.7);
+  --shadow-lg: 0 24px 60px -22px rgba(0,0,0,.85);
+  --glow: 0 8px 28px -10px rgba(45,212,191,.42);
 
   --streak-empty: rgba(255,255,255,.05);
-  --code-bg: #05070f;
-  --code-fg: #c9d3ff;
-  --opt-bg: #182035;
-  --opt-text: #e6ecfa;
+  --code-bg: #050b09;
+  --code-fg: #bfded5;
+  --opt-bg: #182421;
+  --opt-text: #e6efeb;
 }
+
+/* ============================================================
+   VOCABLAB — PREMIUM DESIGN SYSTEM v2
+   ============================================================ */
+
+/* ===== LIGHT THEME ===== */
 [data-theme="dark"] .lvl-A1,[data-theme="dark"] .lvl-A2 { background:rgba(52,211,153,.18); color:#6ee7b7; border-color:rgba(52,211,153,.3); }
 [data-theme="dark"] .lvl-B1,[data-theme="dark"] .lvl-B2 { background:rgba(56,189,248,.18); color:#7dd3fc; border-color:rgba(56,189,248,.3); }
 [data-theme="dark"] .lvl-C1,[data-theme="dark"] .lvl-C2 { background:rgba(167,139,250,.18); color:#c4b5fd; border-color:rgba(167,139,250,.32); }
@@ -2539,8 +2568,362 @@ html { scroll-behavior:smooth; }
 .qm-btn:hover{ border-color:var(--accent); color:var(--accent); }
 .qm-btn.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
 @media(max-width:640px){ .qm-btn{ padding:6px 10px; font-size:11.5px; } }
+/* ============================================================
+   ⬇ LỚP GIAO DIỆN MỚI v3 — ghi đè lên phần CSS cũ ở trên
+   ============================================================ */
+
+/* ---------- 1. NỀN & CHỮ ---------- */
+body::before{
+  /* nền cũ có 3 lớp radial-gradient chồng nhau -> tốn GPU khi cuộn.
+     Giữ 1 lớp nhẹ, đủ chiều sâu, mượt hơn hẳn trên máy yếu. */
+  background:
+    radial-gradient(1100px 560px at 15% -10%, rgba(13,110,95,.07), transparent 60%),
+    radial-gradient(800px 500px at 95% 0%, rgba(8,145,178,.05), transparent 62%);
+}
+[data-theme="dark"] body::before{ opacity:.7; }
+body{ line-height:1.6; letter-spacing:0; }
+
+h1,h2,h3,.strip-title,.fn-title{ font-family:var(--font-heading); letter-spacing:-.015em; }
+
+/* Số liệu, IPA, ký tự -> font đơn cách. Đây là thứ duy nhất cần đọc
+   chính xác từng ký tự, nên nó xứng đáng có mặt chữ riêng. */
+.ipa,.tpr-ipa,.stat-val,.hs-num,.pf-stat b,.lp-stat .num,
+.week-val,.fn-step b,.tp-score b,.quiz-score b,.progress{
+  font-family:var(--font-mono); font-feature-settings:"tnum" 1;
+}
+
+/* ---------- 2. HEADER + THANH TAB ---------- */
+header{
+  height:var(--header-h);
+  backdrop-filter:saturate(1.2) blur(10px);
+  border-bottom:1px solid var(--line);
+  box-shadow:none;
+}
+nav.tabs{
+  position:sticky; top:var(--header-h); z-index:40;
+  background:var(--glass);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  padding:6px 10px;
+  gap:2px;
+}
+.tab-btn{
+  border-radius:9px; padding:7px 12px; font-weight:600; font-size:13.5px;
+  border:1px solid transparent; background:transparent; box-shadow:none;
+  transition:background .14s, color .14s;
+}
+.tab-btn:hover{ background:var(--paper-2); }
+.tab-btn.active{
+  background:var(--accent); color:#fff; border-color:transparent; box-shadow:var(--shadow-sm);
+}
+[data-theme="dark"] .tab-btn.active{ color:#04120f; }
+.tab-btn.active .tab-icon{ filter:none; }
+/* Vạch phân nhóm giữa các cụm tab: HỌC | TRA CỨU | KHÁC */
+.tab-div{
+  width:1px; align-self:center; height:20px; margin:0 7px;
+  background:var(--line-strong); flex:none; border-radius:1px;
+}
+.tab-btn.is-primary{
+  background:var(--accent); color:#fff; box-shadow:var(--glow);
+}
+.tab-btn.is-primary:hover{ background:var(--accent-hover); }
+.tab-btn.is-primary.active{ box-shadow:var(--glow); }
+[data-theme="dark"] .tab-btn.is-primary{ color:#04120f; }
+
+/* ---------- 3. ⭐ CHỮ KÝ CỦA APP: THANH 3 CỬA ---------- */
+/* Đây là thứ nhắc người học: "chưa gõ được thì chưa thuộc". */
+.gates{ display:inline-flex; gap:3px; vertical-align:middle; }
+.gate{
+  width:19px; height:19px; line-height:19px; text-align:center; font-style:normal;
+  font-size:10.5px; border-radius:5px; background:var(--paper-2);
+  border:1px solid var(--line); filter:grayscale(1); opacity:.45;
+  transition:.2s;
+}
+.gate.on{
+  filter:none; opacity:1; background:var(--ember-bg);
+  border-color:var(--ember); box-shadow:0 0 0 1px var(--ember-bg);
+}
+.gates.sm .gate{ width:15px; height:15px; line-height:15px; font-size:8.5px; border-radius:4px; }
+
+/* ---------- 4. LỘ TRÌNH (dashboard) ---------- */
+.funnel-card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius-xl);
+  padding:16px 18px; margin-bottom:14px; box-shadow:var(--shadow-sm);
+}
+.fn-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px; }
+.fn-title{ font-size:16px; font-weight:800; }
+.fn-sub{ font-size:12.5px; color:var(--muted); margin-top:2px; }
+.fn-sub b{ color:var(--ember); }
+.fn-cta{
+  flex:none; border:none; cursor:pointer; border-radius:10px; padding:9px 16px;
+  background:var(--accent); color:#fff; font-weight:700; font-size:13px;
+  font-family:inherit; box-shadow:var(--glow); transition:.15s;
+}
+.fn-cta:hover{ background:var(--accent-hover); transform:translateY(-1px); }
+[data-theme="dark"] .fn-cta{ color:#04120f; }
+
+.fn-track{ display:flex; align-items:stretch; gap:2px; }
+.fn-sep{ align-self:center; color:var(--line-strong); font-size:15px; flex:none; }
+.fn-step{
+  flex:1; min-width:0; cursor:pointer; text-align:center;
+  background:var(--card-sunken); border:1px solid var(--line);
+  border-radius:12px; padding:10px 6px 8px; font-family:inherit;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  transition:.15s;
+}
+.fn-step:hover{ border-color:var(--accent); transform:translateY(-2px); box-shadow:var(--shadow-sm); }
+.fn-step i{ font-style:normal; font-size:16px; line-height:1; }
+.fn-step b{ font-size:17px; font-weight:800; }
+.fn-step em{
+  font-style:normal; font-size:10.5px; color:var(--muted); font-weight:600;
+  line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;
+}
+.fn-step small{ font-size:9.5px; color:var(--muted); font-family:var(--font-mono); }
+.fn-bar{ display:block; width:100%; height:3px; border-radius:2px; background:var(--paper-2); overflow:hidden; margin-top:3px; }
+.fn-bar span{ display:block; height:100%; border-radius:2px; background:var(--accent); }
+/* bậc cuối = đã thuộc -> tô màu lửa, đúng với tín hiệu "mở khoá" */
+.fn-step.s5{ background:var(--ember-bg); border-color:var(--ember); }
+.fn-step.s5 b{ color:var(--ember); }
+.fn-step.s5 .fn-bar span{ background:var(--ember-grad); }
+.fn-step.s0{ opacity:.72; }
+
+/* ---------- 5. THANH BƯỚC TRONG PHIÊN HỌC ---------- */
+.step-bar{
+  display:flex; align-items:center; justify-content:center; gap:4px; flex-wrap:wrap;
+  margin:14px 0 6px;
+}
+.step{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  padding:7px 12px; border-radius:11px; border:1px solid var(--line);
+  background:var(--card-sunken); min-width:78px;
+}
+.step i{ font-style:normal; font-size:15px; filter:grayscale(1); opacity:.5; }
+.step em{ font-style:normal; font-size:10.5px; color:var(--muted); font-weight:600; }
+.step.ok{ background:var(--ember-bg); border-color:var(--ember); }
+.step.ok i{ filter:none; opacity:1; }
+.step.ok em{ color:var(--ember); }
+.step.cur{
+  border-color:var(--accent); background:var(--accent-bg);
+  box-shadow:0 0 0 3px var(--accent-bg);
+}
+.step.cur i{ filter:none; opacity:1; }
+.step.cur em{ color:var(--accent); font-weight:700; }
+.step-arrow{ color:var(--line-strong); font-size:13px; }
+.step-hint{
+  text-align:center; font-size:13px; color:var(--muted);
+  margin-bottom:14px; padding:0 8px;
+}
+.step-hint b{ color:var(--ink); }
+
+/* ---------- 6. GÕ TỪ: Ô CHỮ + INPUT THẬT ---------- */
+/* Input phủ đúng lên hàng ô, chữ trong suốt. Trình duyệt lo hết
+   việc gõ/xoá/bôi đen/bàn phím ảo -> hết lỗi "gõ đầy rồi không xoá được". */
+.type-field{ position:relative; margin-top:22px; }
+.type-input{
+  position:absolute; inset:0; width:100%; height:100%;
+  opacity:1; background:transparent; border:none; outline:none;
+  color:transparent; caret-color:transparent;
+  font-size:16px;                 /* >=16px: iOS không tự phóng to trang */
+  text-align:center; letter-spacing:1em;
+  cursor:text; z-index:2; padding:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.type-input::selection{ background:transparent; }
+.letter-boxes{ gap:8px; margin-top:0; position:relative; z-index:1; }
+.letter-box{
+  font-family:var(--font-mono); font-weight:700;
+  border-radius:10px; border:2px solid var(--line-strong);
+  background:var(--card); transition:border-color .12s, background .12s, color .12s;
+}
+.letter-box.filled{ border-color:var(--accent); color:var(--accent); background:var(--accent-bg); }
+.letter-box.cursor{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-bg);
+  animation:caretPulse 1.1s ease-in-out infinite;
+}
+@keyframes caretPulse{ 0%,100%{ box-shadow:0 0 0 3px var(--accent-bg); } 50%{ box-shadow:0 0 0 5px var(--accent-bg); } }
+.letter-box.correct{ border-color:transparent; color:#fff; background:var(--green); transform:none; }
+.letter-box.wrong{ border-color:transparent; color:#fff; background:var(--coral); }
+[data-theme="dark"] .letter-box.correct,[data-theme="dark"] .letter-box.wrong{ color:#08120f; }
+
+.tp-head{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  flex-wrap:wrap; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--line);
+}
+.tp-gate{ display:flex; align-items:center; gap:8px; }
+.tp-gate-txt{ font-size:12px; color:var(--muted); }
+.tp-gate-txt b{ color:var(--ember); }
+.tp-score{ font-size:12.5px; color:var(--muted); }
+.type-tip{
+  margin-top:12px; text-align:center; font-size:11.5px; color:var(--muted);
+}
+.type-actions{ margin-top:16px; }
+.fb-ipa{ color:var(--muted); font-weight:400; font-family:var(--font-mono); }
+
+/* ---------- 7. THẺ "5 GIÂY XEM LẠI" (yêu cầu của người dùng) ---------- */
+.tp-review{
+  text-align:center; animation:rvIn .3s cubic-bezier(.2,.9,.3,1);
+}
+@keyframes rvIn{ from{ opacity:0; transform:translateY(10px) scale(.98); } to{ opacity:1; transform:none; } }
+.tpr-flag{
+  display:inline-block; font-size:12.5px; font-weight:700; color:var(--green);
+  background:var(--green-bg); border-radius:99px; padding:5px 14px; margin-bottom:14px;
+}
+.tp-review.is-master .tpr-flag{ color:var(--ember); background:var(--ember-bg); }
+.tpr-word{
+  font-family:var(--font-heading); font-size:clamp(30px,6vw,44px); font-weight:800;
+  letter-spacing:-.02em; line-height:1.1;
+  display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+}
+.tp-review.is-master .tpr-word{
+  background:var(--ember-grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.tpr-line{ display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:6px; }
+.tpr-ipa{ color:var(--muted); font-size:14px; }
+.tpr-pos{
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+  color:var(--accent); background:var(--accent-bg); border-radius:5px; padding:2px 7px;
+}
+.tpr-vn{ margin-top:12px; font-size:19px; font-weight:600; color:var(--vn-color); line-height:1.45; }
+.tpr-ex{
+  margin:16px auto 0; max-width:640px; text-align:left;
+  background:var(--card-sunken); border:1px solid var(--line);
+  border-left:3px solid var(--accent); border-radius:10px; padding:11px 14px;
+}
+.tpr-ex-en{ font-size:14.5px; color:var(--ex-color); line-height:1.6; }
+.tpr-ex-vi{ font-size:13px; color:var(--muted); margin-top:5px; line-height:1.55; }
+.tpr-chips{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:12px; }
+.tpr-chip{
+  font-size:12px; font-weight:600; padding:4px 10px; border-radius:99px;
+  background:var(--accent-bg); color:var(--accent); border:1px solid transparent; cursor:help;
+}
+.tpr-syn{ margin-top:8px; font-size:12.5px; color:var(--muted); }
+.tpr-gate{
+  display:flex; align-items:center; justify-content:center; gap:9px; flex-wrap:wrap;
+  margin-top:16px; padding-top:14px; border-top:1px dashed var(--line);
+  font-size:13px; color:var(--muted);
+}
+.tpr-gate b{ color:var(--ember); }
+.tpr-foot{ display:flex; gap:10px; justify-content:center; margin-top:18px; flex-wrap:wrap; }
+.btn.ghost{ background:transparent; border:1px dashed var(--line-strong); color:var(--muted); }
+.btn.ghost:hover{ border-color:var(--accent); color:var(--accent); }
+.btn.ghost:disabled{ opacity:.55; cursor:default; }
+
+/* nút "Tiếp" có vòng đếm ngược 5 giây chạy quanh */
+.tpr-next{ position:relative; display:inline-flex; align-items:center; gap:9px; padding-left:12px; }
+.tpr-ring{ width:22px; height:22px; flex:none; transform:rotate(-90deg); }
+.tpr-ring-bg{ fill:none; stroke:rgba(255,255,255,.28); stroke-width:4; }
+.tpr-ring-fg{
+  fill:none; stroke:#fff; stroke-width:4; stroke-linecap:round;
+  transition:stroke-dashoffset .08s linear;
+}
+[data-theme="dark"] .tpr-ring-bg{ stroke:rgba(4,18,15,.28); }
+[data-theme="dark"] .tpr-ring-fg{ stroke:#04120f; }
+.tpr-next b{ font-family:var(--font-mono); opacity:.85; min-width:9px; }
+
+/* ---------- 8. BƯỚC FLASHCARD TRONG PHIÊN HỌC ---------- */
+.lf-card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius-xl);
+  padding:26px 22px; box-shadow:var(--shadow-sm); text-align:center;
+}
+.lf-front.flipped{ padding-bottom:18px; border-bottom:1px dashed var(--line); margin-bottom:18px; }
+.lf-word{
+  font-family:var(--font-heading); font-size:clamp(28px,5.5vw,40px); font-weight:800;
+  letter-spacing:-.02em; line-height:1.15;
+}
+.lf-ipa{ font-family:var(--font-mono); color:var(--muted); font-size:14px; margin-top:5px; }
+.lf-pos{
+  display:inline-block; margin-top:8px; font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.04em; color:var(--accent); background:var(--accent-bg); border-radius:5px; padding:2px 8px;
+}
+.lf-spk{ display:block; margin:12px auto 0; }
+.lf-flip{ margin-top:16px; }
+.lf-vn{ font-size:20px; font-weight:600; color:var(--vn-color); line-height:1.5; }
+.lf-ex{
+  margin:14px auto 0; max-width:620px; text-align:left;
+  background:var(--card-sunken); border:1px solid var(--line);
+  border-left:3px solid var(--accent); border-radius:10px; padding:11px 14px;
+}
+.lf-ex-en{ font-size:14.5px; color:var(--ex-color); line-height:1.6; }
+.lf-ex-vi{ font-size:13px; color:var(--muted); margin-top:5px; }
+.lf-cols{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:12px; }
+.lf-rate{ margin-top:20px; padding-top:16px; border-top:1px dashed var(--line); }
+.lfr-hint{ display:block; font-size:13px; color:var(--muted); margin-bottom:10px; }
+.lfr-btns{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.lfr-note{ margin-top:10px; font-size:11.5px; color:var(--muted); }
+.lfr-note b{ color:var(--ember); }
+.lf-rate .fcr{ min-width:88px; }
+.lf-rate .fcr.disabled{ opacity:.4; pointer-events:none; }
+
+/* ---------- 9. TIẾN ĐỘ PHIÊN HỌC ---------- */
+.learn-progress{ padding:14px 16px; }
+.lp-bar{ height:6px; border-radius:3px; }
+.lp-fill{ background:var(--accent-grad); }
+.lp-stat.mastered .num{ color:var(--ember); }
+
+/* ---------- 10. HIỆU NĂNG — chỗ này quyết định "mượt" ---------- */
+/* Danh sách 3000 thẻ: chỉ dựng thẻ nào đang lọt vào màn hình.
+   Đây là thay đổi có tác động lớn nhất tới độ mượt khi cuộn. */
+.vocab-card{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 220px;
+}
+.vocab-card[data-color]{ transition:border-color .14s, box-shadow .14s; }
+.vocab-card[data-color]:hover{ transform:none; box-shadow:var(--shadow); }
+
+/* Chỉ dùng blur ở header/nav (2 phần tử). Bỏ blur ở thẻ nội dung —
+   backdrop-filter trên nhiều thẻ là nguyên nhân giật khi cuộn. */
+.panel, .quiz-box, .type-box, .profile-card, .dash-hero, .strip-card{ backdrop-filter:none; }
+
+/* Máy cảm ứng: bỏ hiệu ứng hover nhấc thẻ (gây nháy khi chạm) */
+@media (hover:none){
+  .fn-step:hover, .topic-card:hover, .opt:hover{ transform:none; }
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important; animation-iteration-count:1 !important;
+    transition-duration:.01ms !important; scroll-behavior:auto !important;
+  }
+}
+
+/* ---------- 11. HIỂN THỊ CỬA TRONG DANH SÁCH / CẦN HỌC ---------- */
+.vocab-card .gates{ margin-left:auto; }
+.card-head{ align-items:center; }
+
+/* ---------- 12. LỌC THEO BẬC ---------- */
+#stageFilter{ min-width:150px; }
+
+/* ---------- 13. TINH CHỈNH CHUNG ---------- */
+.btn{ border-radius:10px; font-weight:600; }
+.btn.primary{ background:var(--accent); box-shadow:var(--shadow-sm); }
+.btn.primary:hover{ background:var(--accent-hover); }
+[data-theme="dark"] .btn.primary{ color:#04120f; }
+.opt{ border-radius:11px; }
+.opt.correct{ background:var(--green); border-color:var(--green); }
+.opt.wrong{ background:var(--coral); border-color:var(--coral); }
+.hero-cta{ background:var(--accent); box-shadow:var(--glow); }
+[data-theme="dark"] .hero-cta{ color:#04120f; }
+.hero-ring{ --ring-c:var(--accent); }
+.lvl{ font-family:var(--font-mono); font-size:10px; }
+
+/* Cụm nút trong toolbar xuống dòng gọn hơn trên máy hẹp */
+.toolbar{ gap:7px; }
+.toolbar select{ border-radius:9px; }
+
+@media (max-width:760px){
+  .fn-track{ flex-wrap:wrap; gap:6px; }
+  .fn-sep{ display:none; }
+  .fn-step{ flex:1 1 30%; min-width:92px; }
+  .fn-head{ flex-direction:column; }
+  .fn-cta{ width:100%; }
+  .step{ min-width:64px; padding:6px 8px; }
+  .step em{ font-size:9.5px; }
+  .tab-div{ display:none; }
+  .letter-boxes{ gap:6px; }
+  .type-input{ letter-spacing:.85em; }
+}
+
 </style>
-</head>
 <body>
 <header>
   <div class="brand">
@@ -2596,16 +2979,22 @@ html { scroll-behavior:smooth; }
   </div>
 </header>
 
+<!-- Tab được xếp lại theo ĐÚNG thứ tự dùng hằng ngày:
+     mở app -> Học ngay (app tự dẫn qua 3 cửa) -> nếu muốn luyện lẻ 1 kỹ năng
+     thì có 3 tab cửa riêng -> tra cứu -> tiện ích. -->
 <nav class="tabs">
-  <button class="tab-btn active" data-mode="dashboard"><span class="tab-icon">📊</span> <span class="tab-label">Dashboard</span></button>
-  <button class="tab-btn" data-mode="flashcard"><span class="tab-icon">🃏</span> <span class="tab-label">Flashcard</span></button>
-  <button class="tab-btn" data-mode="list"><span class="tab-icon">📖</span> <span class="tab-label">Danh sách</span></button>
-  <button class="tab-btn" data-mode="quiz"><span class="tab-icon">❓</span> <span class="tab-label">Trắc nghiệm</span></button>
-  <button class="tab-btn" data-mode="typing"><span class="tab-icon">⌨️</span> <span class="tab-label">Gõ từ</span></button>
+  <button class="tab-btn is-primary" data-mode="learn"><span class="tab-icon">🚀</span> <span class="tab-label">Học ngay</span></button>
+  <span class="tab-div"></span>
+  <button class="tab-btn" data-mode="flashcard"><span class="tab-icon">🃏</span> <span class="tab-label">① Flashcard</span></button>
+  <button class="tab-btn" data-mode="quiz"><span class="tab-icon">❓</span> <span class="tab-label">② Trắc nghiệm</span></button>
+  <button class="tab-btn" data-mode="typing"><span class="tab-icon">⌨️</span> <span class="tab-label">③ Gõ từ</span></button>
+  <span class="tab-div"></span>
   <button class="tab-btn" data-mode="need"><span class="tab-icon">⭐</span> <span class="tab-label">Cần học</span><span class="need-badge" id="needBadge" style="display:none">0</span></button>
-  <button class="tab-btn" data-mode="learn"><span class="tab-icon">🎯</span> <span class="tab-label">Học thuộc</span></button>
+  <button class="tab-btn" data-mode="list"><span class="tab-icon">📖</span> <span class="tab-label">Danh sách</span></button>
   <button class="tab-btn" data-mode="reading"><span class="tab-icon">📕</span> <span class="tab-label">Reading</span></button>
-  <button class="tab-btn" data-mode="guide"><span class="tab-icon">➕</span> <span class="tab-label">Thêm từ</span></button>
+  <span class="tab-div"></span>
+  <button class="tab-btn active" data-mode="dashboard"><span class="tab-icon">📊</span> <span class="tab-label">Tổng quan</span></button>
+  <button class="tab-btn" data-mode="guide"><span class="tab-icon">⚙️</span> <span class="tab-label">Thêm từ &amp; Sao lưu</span></button>
 </nav>
 
 <main>
@@ -2626,6 +3015,15 @@ html { scroll-behavior:smooth; }
       <option value="learning">📗 Đang học</option>
       <option value="due">🔔 Đến hạn ôn</option>
       <option value="mastered">✅ Đã thuộc</option>
+    </select>
+    <select id="stageFilter" title="Bậc trong lộ trình 3 cửa">
+      <option value="all">Mọi bậc lộ trình</option>
+      <option value="0">⬜ Chưa gặp</option>
+      <option value="1">🃏 Qua cửa Flashcard</option>
+      <option value="2">❓ Qua cửa Trắc nghiệm</option>
+      <option value="3">⌨️ Qua cửa Gõ từ</option>
+      <option value="4">🔁 Đang ôn ngắt quãng</option>
+      <option value="5">✅ Đã thuộc</option>
     </select>
     <select id="starFilter" title="Cần học">
       <option value="all">Tất cả từ</option>
@@ -2955,10 +3353,6 @@ VÍ DỤ 2 — TÍNH TỪ (topic = chủ đề lớn, VIẾT HOA):
 </main>
 
 <script>
-
-/* ============================================================
-   ⬇⬇⬇  DỮ LIỆU TỪ VỰNG — THÊM TỪ MỚI VÀO ĐÂY  ⬇⬇⬇
-   ============================================================ */
 const VOCAB = [
 {
   word: "resilient",
@@ -53150,6 +53544,9 @@ function initFilters(){
 }
 
 function applyFilter(){
+  /* bộ lọc theo bậc lộ trình (đặt ở đầu để không đụng logic cũ) */
+  const _stageSel = document.getElementById('stageFilter');
+  if(_stageSel) _stageFilter = _stageSel.value === 'all' ? 'all' : +_stageSel.value;
   const topic = document.getElementById('topicFilter').value;
   const pos = document.getElementById('posFilter').value;
   const level = document.getElementById('levelFilter').value;
@@ -53173,6 +53570,7 @@ function applyFilter(){
     }
     const okS = !starOnly || starred.has(v.word);
     const okPin = !_pinnedWord || v.word === _pinnedWord;   // khoá đúng 1 từ khi mở từ trang chủ
+    const okStg = _stageFilter === 'all' || stageOf(v.word) === _stageFilter;   // bậc lộ trình
     let okSt = true;                                        // lọc theo trạng thái học
     if(_statusFilter !== 'all'){
       const st = srsState(v.word);
@@ -53181,7 +53579,7 @@ function applyFilter(){
       else if(_statusFilter==='new')      okSt = st==='new';
       else if(_statusFilter==='due')      okSt = srsIsDue(v.word);
     }
-    return okT && okP && okL && okQ && okD && okS && okPin && okSt;
+    return okT && okP && okL && okQ && okD && okS && okPin && okSt && okStg;
   });
 
   if(sort==='newest') arr.sort((a,b)=>parseDate(b.date)-parseDate(a.date));
@@ -53278,7 +53676,24 @@ function goTopic(value, mode){
 }
 /* Bấm ô "Đã học thuộc"/"Đang học dở"/"Chưa học"/"Cần ôn" ở trang chủ
    -> mở Danh sách đã lọc đúng nhóm từ đó */
+/* Bấm 1 bậc trong Lộ trình -> mở Danh sách lọc đúng bậc đó */
+let _stageFilter = 'all';
+function goStage(n){
+  _stageFilter = n;
+  _statusFilter = 'all';
+  _pinnedWord = null; _dateFilter = 'all';
+  const sf = document.getElementById('statusFilter'); if(sf) sf.value = 'all';
+  const stf = document.getElementById('stageFilter'); if(stf) stf.value = String(n);
+  applyFilter();
+  document.querySelector('.tab-btn[data-mode="list"]')?.click();
+  toast(`${STAGES[n].ic} ${STAGES[n].name} — ${filtered.length} từ`);
+}
+function resetStageFilter(){
+  _stageFilter = 'all';
+  const s = document.getElementById('stageFilter'); if(s) s.value = 'all';
+}
 function goStatus(st, mode){
+  resetStageFilter();
   _pinnedWord = null;
   _statusFilter = st;
   _dateFilter = 'all';
@@ -53341,7 +53756,7 @@ function goDate(d, mode){
   applyFilter();
   document.querySelector(`.tab-btn[data-mode="${mode||'flashcard'}"]`).click();
 }
-function goSRS(){ goLearnScope('srs'); }
+function goSRS(){ goLearnScope('path'); }   // nút chính -> Lộ trình
 function goLearnScope(scope){
   learnState = null;                       // vào từ nút ngoài -> luôn mở phiên MỚI đúng phạm vi
   document.querySelector('.tab-btn[data-mode="learn"]').click();
@@ -53658,6 +54073,31 @@ function renderDashboard(){
         <button class="hero-cta" onclick="goSRS()">
           ${S.due ? `🔔 Ôn ${S.due} từ đến hạn` : '🎯 Học từ mới'}
         </button>
+      </div>
+    </div>
+
+    <!-- LỘ TRÌNH THUỘC TỪ -->
+    <div class="funnel-card">
+      <div class="fn-head">
+        <div>
+          <div class="fn-title">🚀 Lộ trình thuộc từ</div>
+          <div class="fn-sub">1 từ phải vượt <b>đủ 3 cửa</b> rồi ôn ngắt quãng mới được tính là <b>đã thuộc</b></div>
+        </div>
+        <button class="fn-cta" onclick="goLearnScope('path')">Học tiếp →</button>
+      </div>
+      <div class="fn-track">
+        ${(()=>{ const F = funnelStats(), T = Math.max(1, S.total);
+          return STAGES.map(st=>{
+            const n = F[st.n], pct = Math.round(n/T*100);
+            return `<button class="fn-step s${st.n}" onclick="goStage(${st.n})" title="${n} từ — ${st.name}">
+              <i>${st.ic}</i>
+              <b>${n}</b>
+              <em>${st.name}</em>
+              <span class="fn-bar"><span style="width:${pct}%"></span></span>
+              <small>${pct}%</small>
+            </button>`;
+          }).join('<span class="fn-sep">›</span>');
+        })()}
       </div>
     </div>
 
@@ -54126,7 +54566,7 @@ function renderNeed(){
         <button class="star-btn ${isStarred(v.word)?'on':''}" data-w="${esc(v.word)}" onclick="onStarClick(event,this)" title="Cần học">${isStarred(v.word)?'★':'☆'}</button>
         ${v.ipa?`<span class="ipa">${esc(v.ipa)}</span>`:''}
         ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
-        <span class="vc-meta">${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}</span>
+        <span class="vc-meta">${gateChips(v.word, true)} ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}</span>
       </div>
       ${srsBadge(v.word)}
       <button class="vc-topic" onclick="goTopic('${(v._topic||'').replace(/'/g,"\\'")}','list')">
@@ -54351,6 +54791,7 @@ function renderList(){
         ${v.ipa?`<span class="ipa">${esc(v.ipa)}</span>`:''}
         ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
         <span class="vc-meta">
+          ${gateChips(v.word, true)}
           ${(v.altTopics&&v.altTopics.length)?`<span class="alt-topic" title="Từ này còn thuộc: ${esc(v.altTopics.join(', '))}">+${v.altTopics.length} chủ đề</span>`:''}
           ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}
           ${v.date?`<span class="vc-date">${fmtDateShort(v.date)}</span>`:''}
@@ -54519,236 +54960,302 @@ function blankOut(sentence, word){
   return hit ? out : esc(sentence);
 }
 
-let typeI=0, typePool=[], typeScore=0, typeTotal=0, _typeLocked=false, _typeHinted=false, _typeShown=false, _typeListens=0;
-function renderTyping(){ typePool = practicePool(filtered); typeI=0; typeScore=0; typeTotal=0; _typeLocked=false; nextType(); }
+/* ============================================================
+   GÕ TỪ  —  VIẾT LẠI HOÀN TOÀN
+   ------------------------------------------------------------
+   LỖI CŨ: dùng 1 <input> ẩn (opacity:0; width:1px; pointer-events:none)
+   để "hứng" phím rồi vẽ chữ vào các ô. Khi gõ đầy ô, bàn phím ảo trên
+   điện thoại (và cả một số IME trên desktop) mất tiêu điểm vào ô ẩn đó
+   -> phím Backspace không tới được input -> KHÔNG XOÁ ĐƯỢC ĐỂ GÕ LẠI.
+   Code cũ còn ép setSelectionRange() ở mỗi lần input, càng làm con trỏ
+   bị giật và chặn thao tác xoá/sửa giữa chuỗi.
+
+   CÁCH SỬA: dùng 1 <input> THẬT, phủ đúng lên hàng ô chữ, chữ trong
+   suốt (color:transparent, caret ẩn). Trình duyệt xử lý gõ / xoá /
+   bôi đen / dán / bàn phím ảo hoàn toàn tự nhiên; ta chỉ VẼ LẠI các ô
+   theo input.value. Không ép con trỏ, không chặn Backspace nữa.
+   ============================================================ */
+const TYPE_REVIEW_MS = 5000;   // gõ đúng -> dừng 5 giây xem lại từ
+
+let typeI=0, typePool=[], typeScore=0, typeTotal=0,
+    _typeLocked=false, _typeHinted=false, _typeShown=false, _typeListens=0,
+    _typeRvT=null, _typeRvRaf=null;
+
+function clearTypeTimers(){
+  if(_typeRvT){ clearTimeout(_typeRvT); _typeRvT=null; }
+  if(_typeRvRaf){ cancelAnimationFrame(_typeRvRaf); _typeRvRaf=null; }
+}
+function renderTyping(){
+  clearTypeTimers();
+  typePool = practicePool(filtered);
+  typeI=0; typeScore=0; typeTotal=0; _typeLocked=false;
+  nextType();
+}
+
 function nextType(){
-  _typeLocked = false;
-  _typeHinted = false;
-  _typeShown = false;
-  _typeListens = 0;
+  clearTypeTimers();
+  _typeLocked=false; _typeHinted=false; _typeShown=false; _typeListens=0;
+
   const box = document.getElementById('typeBox');
-  if(!filtered.length){ box.innerHTML='<div class="empty">Không có từ nào.</div>'; return; }
+  if(!filtered.length){ box.innerHTML='<div class="empty">Không có từ nào trong bộ lọc hiện tại.</div>'; return; }
   if(typeI>=typePool.length){ typePool=practicePool(filtered); typeI=0; }
-  const v = typePool[typeI];
+
+  const v    = typePool[typeI];
   const word = v.word.toLowerCase();
   const chars = word.split('');
-  // Build letter boxes - spaces become thin separators
-  const boxesHTML = chars.map((ch, i) => {
-    if(ch === ' ' || ch === '-') return `<div class="letter-box space" data-i="${i}">${ch === '-' ? '-' : ''}</div>`;
-    return `<div class="letter-box" data-i="${i}" data-ch="${ch}"></div>`;
-  }).join('');
+  const typable = chars.filter(c => c!==' ' && c!=='-');   // ô người dùng thật sự gõ
+  const MAX = typable.length;
 
   const ex = normExample(v.example);
+  const g  = gateOf(v.word);
+
   box.innerHTML = `
+    <div class="tp-head">
+      <div class="tp-gate">${gateChips(v.word)} <span class="tp-gate-txt">${
+        g.tp ? 'Ôn lại cửa ③ để nhớ bền' : 'Vượt cửa ③ — gõ đúng là <b>thuộc</b>'
+      }</span></div>
+      <span class="tp-score">Đúng <b>${typeScore}</b>/${typeTotal}</span>
+    </div>
+
     <div class="quiz-q">
       <div class="prompt-label">Gõ từ tiếng Anh cho nghĩa</div>
       <div class="prompt-word small">${esc(v.vn)}</div>
       ${v.pos?`<div class="tq-pos">${esc(v.pos)}</div>`:''}
       <div class="type-listen">
-        <button class="tl-btn" id="typeSpeak" title="Nghe phát âm để đoán từ">
-          <span class="tl-ic">🔊</span>
-          <span class="tl-txt">Nghe phát âm</span>
-        </button>
-        <button class="tl-btn slow" id="typeSpeakSlow" title="Nghe chậm lại">
-          <span class="tl-ic">🐢</span>
-          <span class="tl-txt">Chậm</span>
-        </button>
+        <button class="tl-btn" id="typeSpeak"><span class="tl-ic">🔊</span><span class="tl-txt">Nghe</span></button>
+        <button class="tl-btn slow" id="typeSpeakSlow"><span class="tl-ic">🐢</span><span class="tl-txt">Chậm</span></button>
         <span class="tl-count" id="typeListenCount"></span>
       </div>
-      ${ex ? `
-      <div class="type-ex">
+      ${ex ? `<div class="type-ex">
         <div class="tex-en">${blankOut(ex.en, v.word)}</div>
         ${ex.vi?`<div class="tex-vi">${esc(ex.vi)}</div>`:''}
       </div>` : ''}
     </div>
-    <div class="letter-boxes" id="letterBoxes">${boxesHTML}</div>
-    <input class="type-hidden-input" id="typeHidden" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-    <div class="type-feedback" id="typeFeedback" style="margin-top:14px"></div>
+
+    <!-- ô chữ + input THẬT phủ lên trên -->
+    <div class="type-field" id="typeField">
+      <div class="letter-boxes" id="letterBoxes">
+        ${chars.map((ch,i)=> (ch===' '||ch==='-')
+          ? `<div class="letter-box space" data-i="${i}">${ch==='-'?'-':''}</div>`
+          : `<div class="letter-box" data-i="${i}" data-ch="${ch}"></div>`).join('')}
+      </div>
+      <input class="type-input" id="typeHidden" maxlength="${MAX}"
+             autocomplete="off" autocapitalize="off" autocorrect="off"
+             spellcheck="false" inputmode="text" aria-label="Gõ từ">
+    </div>
+
+    <div class="type-feedback" id="typeFeedback"></div>
+
     <div class="type-actions">
-      <button class="btn primary" id="typeCheck">✓ Kiểm tra đáp án</button>
+      <button class="btn primary" id="typeCheck" disabled>✓ Kiểm tra</button>
+      <button class="btn" id="typeClear">⌫ Xoá hết</button>
       <button class="btn" id="typeReveal">💡 Gợi ý 1 chữ</button>
       <button class="btn" id="typeShow">👁 Hiện đáp án</button>
       <button class="btn" id="typeSkip">Bỏ qua →</button>
     </div>
-    <div class="quiz-foot" style="justify-content:center;margin-top:12px">
-      <span class="quiz-score">Đúng: <b>${typeScore}</b> / ${typeTotal}</span>
-    </div>`;
+    <div class="type-tip">Enter = kiểm tra · Backspace = xoá · Ctrl/⌘+Enter = nghe lại</div>`;
 
-  const hidden = document.getElementById('typeHidden');
-  const fb = document.getElementById('typeFeedback');
-  const allBoxes = box.querySelectorAll('.letter-box:not(.space)');
-  let typed = [];
+  const inp   = document.getElementById('typeHidden');
+  const fb    = document.getElementById('typeFeedback');
+  const cells = [...box.querySelectorAll('.letter-box:not(.space)')];
+  const btnCheck = document.getElementById('typeCheck');
 
-  // Focus hidden input
-  hidden.focus();
-  if(allBoxes[0]) allBoxes[0].classList.add('cursor');
-
-  // Click boxes to focus
-  document.getElementById('letterBoxes').onclick = ()=> hidden.focus();
-
-  hidden.addEventListener('input', ()=>{
-    if(_typeLocked) return;
-    const val = hidden.value.toLowerCase();
-    typed = val.split('');
-
-    // Fill boxes
-    let ti = 0;
-    chars.forEach((ch, i) => {
-      const bx = box.querySelector(`.letter-box[data-i="${i}"]`);
-      if(!bx || ch === ' ' || ch === '-') return;
-      bx.classList.remove('filled','cursor','correct','wrong');
-      if(ti < typed.length){
-        bx.textContent = typed[ti];
-        bx.classList.add('filled');
-      } else {
-        bx.textContent = '';
-      }
-      ti++;
+  /* ---------- vẽ ô theo giá trị input (nguồn sự thật duy nhất) ---------- */
+  function paint(){
+    const val = inp.value.toLowerCase().slice(0, MAX);
+    cells.forEach((bx,i)=>{
+      bx.classList.remove('filled','cursor','correct','wrong','revealed');
+      bx.textContent = val[i] || '';
+      if(val[i]) bx.classList.add('filled');
     });
-
-    // Update cursor
-    allBoxes.forEach(b => b.classList.remove('cursor'));
-    const typable = chars.filter(c => c !== ' ' && c !== '-');
-    if(typed.length < typable.length && allBoxes[typed.length]){
-      allBoxes[typed.length].classList.add('cursor');
-    }
-
-    // KHÔNG tự chấm nữa — người dùng bấm "Kiểm tra đáp án" (hoặc Enter)
-    const typable2 = chars.filter(c => c !== ' ' && c !== '-');
-    const btnCheck = document.getElementById('typeCheck');
-    if(btnCheck) btnCheck.disabled = typed.length === 0;
-
-    // Luôn giữ con trỏ ở CUỐI ô input ẩn. Bài tập này chỉ cho phép gõ nối
-    // tiếp từng chữ, nên nếu con trỏ vô tình bị lệch vào giữa chuỗi (do
-    // trình duyệt/bàn phím ảo, hoặc sau khi dùng nút "Gợi ý 1 chữ"),
-    // các ký tự gõ tiếp theo sẽ bị chèn sai vị trí -> hiện tượng "nhảy lung
-    // tung". Ép lại vị trí con trỏ ở đây đảm bảo luôn gõ nối vào cuối.
-    const hlen = hidden.value.length;
-    if(hidden.selectionStart !== hlen || hidden.selectionEnd !== hlen){
-      hidden.setSelectionRange(hlen, hlen);
-    }
+    const pos = Math.min(val.length, MAX-1);
+    if(val.length < MAX && cells[val.length]) cells[val.length].classList.add('cursor');
+    else if(cells[MAX-1]) cells[MAX-1].classList.add('cursor');   // đầy ô -> vẫn báo vị trí để biết còn sửa được
+    btnCheck.disabled = val.length === 0;
+  }
+  inp.addEventListener('input', ()=>{ if(!_typeLocked) paint(); });
+  document.getElementById('typeField').addEventListener('pointerdown', e=>{
+    if(_typeLocked) return;
+    e.preventDefault(); inp.focus();
   });
+  setTimeout(()=>inp.focus(), 30);
+  paint();
 
-  const typableAll = chars.filter(c => c !== ' ' && c !== '-');
-
-  /* Chấm bài. Nếu SAI -> KHÔNG hiện đáp án, chỉ tô đỏ chữ sai để gõ lại. */
+  /* ---------- chấm bài ---------- */
   function checkTyping(){
     if(_typeLocked) return;
-    const val = hidden.value.toLowerCase();
-    const arr = val.split('');
-    if(!arr.length){ fb.textContent='Hãy gõ từ trước khi kiểm tra.'; fb.className='type-feedback'; return; }
+    const val = inp.value.toLowerCase();
+    if(!val.length){ fb.textContent='Hãy gõ từ trước khi kiểm tra.'; fb.className='type-feedback'; return; }
 
-    let allCorrect = arr.length === typableAll.length;
-    let ti = 0;
-    chars.forEach((ch, i) => {
-      const bx = box.querySelector(`.letter-box[data-i="${i}"]`);
-      if(!bx || ch === ' ' || ch === '-') return;
+    let allCorrect = val.length === MAX;
+    cells.forEach((bx,i)=>{
       bx.classList.remove('correct','wrong');
-      if(ti < arr.length){
-        if(arr[ti] === ch) bx.classList.add('correct');
+      if(i < val.length){
+        if(val[i] === typable[i]) bx.classList.add('correct');
         else { bx.classList.add('wrong'); allCorrect = false; }
       } else allCorrect = false;
-      ti++;
     });
 
-    if(allCorrect){
-      _typeLocked = true;
-      typeTotal++; typeScore++;
-      srsReview(v.word, _typeHinted ? 2 : 3, 'typing');
-      recordAnswer(true, null, v.word);
-      sfx.correct();
-      if(!_typeShown){
-        // Nghe phát âm là KỸ NĂNG, không phải ăn gian -> vẫn thưởng đủ.
-        // Chỉ "gợi ý chữ" mới bị trừ, vì nó lộ trực tiếp mặt chữ.
-        if(!_typeHinted) rewardCorrect('typing');
-        else { addGems(1); flyGem(1); }
-      }
-      fb.textContent = _typeShown ? '✓ Đúng (đã xem đáp án)'
-                     : _typeHinted ? '✓ Chính xác (có gợi ý)'
-                     : _typeListens ? `✓ Chính xác! (nghe ${_typeListens} lần)`
-                     : '✓ Chính xác!';
-      fb.className = 'type-feedback ok';
-      speak(v.word);
-      box.querySelector('.quiz-score').innerHTML = `Đúng: <b>${typeScore}</b> / ${typeTotal}`;
-      setTimeout(()=>{ typeI++; nextType(); }, 1100);
-    } else {
-      // SAI -> vẫn KHÔNG lộ đáp án, cho gõ lại
+    if(!allCorrect){
       sfx.wrong();
-      fb.innerHTML = '✗ Chưa đúng — sửa lại các chữ tô đỏ rồi kiểm tra lại';
+      fb.innerHTML = '✗ Chưa đúng — sửa lại chữ tô đỏ rồi kiểm tra lại (đáp án vẫn được giấu)';
       fb.className = 'type-feedback no';
       box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+      inp.focus();
+      return;
     }
+
+    /* ĐÚNG */
+    _typeLocked = true;
+    typeTotal++; typeScore++;
+    /* Chỉ gõ đúng KHÔNG gợi ý mới được vượt cửa ③ (quality 3).
+       Có gợi ý -> quality 1 ("khó"): vẫn ghi nhận, nhưng cửa ③ chưa mở. */
+    srsReview(v.word, _typeHinted ? 1 : 3, 'typing');
+    recordAnswer(true, null, v.word);
+    sfx.correct();
+    if(!_typeHinted) rewardCorrect('typing'); else { addGems(1); flyGem(1); }
+    speak(v.word);
+    showReview(v);
   }
 
-  /* Hiện đáp án -> tính là sai, ghi vào SRS, không được thưởng */
+  /* ---------- 5 GIÂY XEM LẠI TỪ (yêu cầu của người dùng) ---------- */
+  function showReview(v){
+    clearTypeTimers();
+    const cols = (v.collocations||[]).slice(0,3).map(normColloc);
+    const syn  = (v.synonyms||[]).slice(0,4);
+    const just = gateDone(v.word) && stageOf(v.word) === 5;
+
+    box.innerHTML = `
+      <div class="tp-review ${just?'is-master':''}">
+        <div class="tpr-flag">✓ Chính xác${_typeHinted?' (có dùng gợi ý)':''}${_typeListens?` · đã nghe ${_typeListens} lần`:''}</div>
+
+        <div class="tpr-word">
+          ${esc(v.word)}
+          <button class="speak-btn" id="tprSpeak" title="Nghe lại">🔊</button>
+        </div>
+        <div class="tpr-line">
+          ${v.ipa?`<span class="tpr-ipa">${esc(v.ipa)}</span>`:''}
+          ${v.pos?`<span class="tpr-pos">${esc(v.pos)}</span>`:''}
+          ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}
+        </div>
+        <div class="tpr-vn">${esc(v.vn)}</div>
+
+        ${normExample(v.example) ? `<div class="tpr-ex">
+          <div class="tpr-ex-en">${exHL(normExample(v.example).en, v.word)}</div>
+          ${normExample(v.example).vi?`<div class="tpr-ex-vi">${esc(normExample(v.example).vi)}</div>`:''}
+        </div>` : ''}
+
+        ${cols.length?`<div class="tpr-chips">${cols.map(c=>
+          `<span class="tpr-chip" title="${esc(c.vi)}">${esc(c.en)}</span>`).join('')}</div>`:''}
+        ${syn.length?`<div class="tpr-syn">≈ ${syn.map(esc).join(' · ')}</div>`:''}
+
+        <div class="tpr-gate">${gateChips(v.word)}
+          <span>${just
+            ? '🏆 Đủ 3 cửa + ôn đủ lâu — <b>ĐÃ THUỘC</b>!'
+            : (nextGate(v.word)
+                ? `Còn cửa ${nextGate(v.word).ic} <b>${nextGate(v.word).name}</b> nữa là thuộc`
+                : `Đủ 3 cửa ✓ — ${fmtDue(v.word)}`)}</span>
+        </div>
+
+        <div class="tpr-foot">
+          <button class="btn ghost" id="tprStay">⏸ Ở lại xem thêm</button>
+          <button class="btn primary tpr-next" id="tprNext">
+            <svg class="tpr-ring" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="16" class="tpr-ring-bg"/>
+              <circle cx="18" cy="18" r="16" class="tpr-ring-fg" id="tprRing"
+                      stroke-dasharray="100.5" stroke-dashoffset="0"/>
+            </svg>
+            <span>Từ tiếp theo</span><b id="tprSec">5</b>
+          </button>
+        </div>
+      </div>`;
+
+    document.getElementById('tprSpeak').onclick = ()=> speak(v.word);
+    document.getElementById('tprNext').onclick  = ()=>{ typeI++; nextType(); };
+
+    const ring = document.getElementById('tprRing');
+    const secEl= document.getElementById('tprSec');
+    const t0   = performance.now();
+    let paused = false;
+
+    document.getElementById('tprStay').onclick = (e)=>{
+      paused = true;
+      clearTypeTimers();
+      e.target.textContent = '▶ Đã dừng — bấm "Từ tiếp theo" khi xong';
+      e.target.disabled = true;
+      if(ring) ring.style.strokeDashoffset = '100.5';
+      if(secEl) secEl.textContent = '';
+    };
+
+    const tick = (now)=>{
+      if(paused) return;
+      const el = now - t0;
+      const left = Math.max(0, TYPE_REVIEW_MS - el);
+      if(secEl) secEl.textContent = Math.ceil(left/1000);
+      if(ring)  ring.style.strokeDashoffset = String((el/TYPE_REVIEW_MS*100.5).toFixed(1));
+      if(left > 0) _typeRvRaf = requestAnimationFrame(tick);
+    };
+    _typeRvRaf = requestAnimationFrame(tick);
+    _typeRvT = setTimeout(()=>{ if(!paused){ typeI++; nextType(); } }, TYPE_REVIEW_MS);
+  }
+
+  /* ---------- hiện đáp án = tính là quên ---------- */
   function showAnswer(){
     if(_typeLocked) return;
     _typeLocked = true; _typeShown = true;
     typeTotal++;
-    srsReview(v.word, 0, 'typing');
+    srsReview(v.word, 0, 'typing');          // quên -> cửa ③ bị khoá lại
     recordAnswer(false, null, v.word);
-    chars.forEach((ch, i) => {
-      const bx = box.querySelector(`.letter-box[data-i="${i}"]`);
-      if(!bx || ch === ' ' || ch === '-') return;
-      bx.textContent = ch;
-      bx.classList.remove('wrong','cursor');
+    inp.blur();
+    cells.forEach((bx,i)=>{
+      bx.textContent = typable[i];
+      bx.classList.remove('wrong','cursor','filled');
       bx.classList.add('correct','revealed');
     });
-    fb.innerHTML = `👁 Đáp án: <b>${esc(v.word)}</b>${v.ipa?` <span style="color:var(--muted);font-weight:400">${esc(v.ipa)}</span>`:''}`;
+    fb.innerHTML = `👁 Đáp án: <b>${esc(v.word)}</b>${v.ipa?` <span class="fb-ipa">${esc(v.ipa)}</span>`:''} — cửa ⌨️ chưa mở, sẽ gặp lại từ này`;
     fb.className = 'type-feedback no';
     speak(v.word);
-    box.querySelector('.quiz-score').innerHTML = `Đúng: <b>${typeScore}</b> / ${typeTotal}`;
-    setTimeout(()=>{ typeI++; nextType(); }, 2200);
+    box.querySelector('.tp-score').innerHTML = `Đúng <b>${typeScore}</b>/${typeTotal}`;
+    _typeRvT = setTimeout(()=>{ typeI++; nextType(); }, 2600);
   }
 
-  document.getElementById('typeCheck').onclick = checkTyping;
-  document.getElementById('typeShow').onclick  = showAnswer;
-  document.getElementById('typeCheck').disabled = true;
-
-  /* Nghe phát âm để đoán từ — biến bài tập thành luyện NGHE + CHÍNH TẢ,
-     đúng kỹ năng cần cho IELTS Listening.                              */
-  const lcEl = document.getElementById('typeListenCount');
+  /* ---------- nghe phát âm ---------- */
+  const lc = document.getElementById('typeListenCount');
   function doListen(rate){
     _typeListens++;
     speak(v.word, rate);
-    if(lcEl) lcEl.textContent = _typeListens===1 ? 'đã nghe 1 lần' : `đã nghe ${_typeListens} lần`;
+    if(lc) lc.textContent = `đã nghe ${_typeListens} lần`;
   }
   document.getElementById('typeSpeak').onclick     = ()=> doListen(0.9);
   document.getElementById('typeSpeakSlow').onclick = ()=> doListen(0.55);
 
-  // Phím tắt: Ctrl/Cmd + Enter = nghe lại
-  hidden.addEventListener('keydown', e=>{
-    if((e.ctrlKey||e.metaKey) && e.key === 'Enter'){ e.preventDefault(); doListen(0.9); }
-  });
-
-  hidden.addEventListener('keydown', e=>{
-    if(_typeLocked){ e.preventDefault(); return; }
-    if(e.key === 'Enter'){ e.preventDefault(); checkTyping(); return; }
-    if(e.key === 'Backspace' && hidden.value.length === 0){
-      e.preventDefault();
-    }
-  });
-
-  // Reveal hint: show first unrevealed letter
+  /* ---------- nút ---------- */
+  btnCheck.onclick = checkTyping;
+  document.getElementById('typeShow').onclick = showAnswer;
+  document.getElementById('typeSkip').onclick = ()=>{ clearTypeTimers(); typeI++; nextType(); };
+  document.getElementById('typeClear').onclick = ()=>{
+    if(_typeLocked) return;
+    inp.value=''; paint(); fb.textContent=''; fb.className='type-feedback'; inp.focus();
+  };
   document.getElementById('typeReveal').onclick = ()=>{
     if(_typeLocked) return;
-    _typeHinted = true;                 // dùng gợi ý -> không tính là "nhớ sâu"
-    const typable = chars.filter(c => c !== ' ' && c !== '-');
-    const pos = typed.length;
-    if(pos < typable.length){
-      hidden.value += typable[pos];
-      // Ép con trỏ về CUỐI chuỗi sau khi chèn ký tự gợi ý.
-      // Nếu không làm việc này, một số trình duyệt (nhất là trên di động)
-      // sẽ giữ nguyên vị trí con trỏ cũ, khiến ký tự gõ tiếp theo bị
-      // chèn nhầm vào giữa chuỗi thay vì nối vào cuối -> chữ "nhảy lung tung".
-      const len = hidden.value.length;
-      hidden.focus();
-      hidden.setSelectionRange(len, len);
-      hidden.dispatchEvent(new Event('input'));
+    _typeHinted = true;                       // dùng gợi ý -> không mở được cửa ③
+    const val = inp.value.toLowerCase();
+    if(val.length < MAX){
+      inp.value = val + typable[val.length];  // nối đúng 1 chữ vào cuối
+      paint();
     }
+    inp.focus();
   };
-  document.getElementById('typeSkip').onclick = ()=>{ typeI++; nextType(); };
+
+  /* Phím tắt. KHÔNG chặn Backspace nữa — để trình duyệt xoá tự nhiên. */
+  inp.addEventListener('keydown', e=>{
+    if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); doListen(0.9); return; }
+    if(e.key === 'Enter'){ e.preventDefault(); checkTyping(); return; }
+    if(_typeLocked && e.key !== 'Tab') e.preventDefault();
+  });
 }
+
 
 /* ---------- Mode switching ---------- */
 document.querySelectorAll('.tab-btn').forEach(btn=>{
@@ -54816,11 +55323,7 @@ document.getElementById('voicePicker').onchange = (e)=>{
 /* ============================================================
    HỌC THUỘC (Learn to Mastery)
    ============================================================ */
-const MASTERY_TARGET = 2;
-const SCOPE_LABEL = {
-  srs:'🔁 Ôn theo lịch', random:'🎲 Ôn ngẫu nhiên', weak:'🔥 Từ hay quên',
-  star:'⭐ Cần học', filtered:'🗂️ Theo bộ lọc', today:'📅 Từ hôm nay'
-};
+const MASTERY_TARGET = 2;   // (giữ cho tương thích ngược)
 /* ============================================================
    "CẦN HỌC" — starred words
    Persisted forever, but a word is auto-removed the moment it
@@ -54859,6 +55362,7 @@ const MODE_WEIGHT = {
 };
 
 let SRS = {};
+
 function loadSRS(){
   try{ SRS = JSON.parse(localStorage.getItem(LS_SRS)) || {}; }catch(e){ SRS = {}; }
 }
@@ -54866,20 +55370,88 @@ function saveSRS(){
   try{ localStorage.setItem(LS_SRS, JSON.stringify(SRS)); }catch(e){}
   _dashStale = true;                 // tiến độ đổi -> lần sau mở Dashboard mới vẽ lại
 }
+/* ============================================================
+   LỘ TRÌNH THUỘC TỪ (Mastery Pipeline) — 3 CỬA KỸ NĂNG
+   ------------------------------------------------------------
+   Một từ CHỈ được tính "ĐÃ THUỘC" khi vượt đủ CẢ 3 CỬA:
+
+     ① 🃏 Flashcard   — nhìn mặt chữ, tự đánh giá "Nhớ / Dễ"
+     ② ❓ Trắc nghiệm — chọn đúng nghĩa (nhận biết thụ động)
+     ③ ⌨️ Gõ từ       — viết đúng chính tả, KHÔNG dùng gợi ý  (chủ động)
+
+   ...VÀ box SRS đạt mức tối đa (đã ôn ngắt quãng đủ lâu để nhớ bền).
+
+   Vì sao thứ tự này?  Nhận diện → Nhận biết → Tái tạo là thang
+   độ khó tăng dần trong nghiên cứu ghi nhớ từ vựng. Gõ đúng được
+   từ mà không gợi ý là bằng chứng mạnh nhất cho việc đã thuộc.
+
+   Nếu quên (trả lời sai) ở cửa nào → cửa đó bị KHOÁ LẠI, phải
+   vượt lại. Box cũng bị chặn ở mức 4/5 cho tới khi đủ 3 cửa, nên
+   từ chưa gõ được sẽ không bao giờ "trốn" khỏi hàng đợi ôn tập.
+   ============================================================ */
+const GATES = [
+  { k:'fc', mode:'flashcard', ic:'🃏', name:'Flashcard',   tab:'flashcard', desc:'Nhận diện mặt chữ' },
+  { k:'qz', mode:'quiz',      ic:'❓', name:'Trắc nghiệm', tab:'quiz',      desc:'Nhớ đúng nghĩa'    },
+  { k:'tp', mode:'typing',    ic:'⌨️', name:'Gõ từ',       tab:'typing',    desc:'Viết đúng chính tả'}
+];
+const MODE2GATE = { flashcard:'fc', quiz:'qz', typing:'tp' };
+
+function gateOf(w){
+  const g = (SRS[w] && SRS[w].gate) || {};
+  return { fc:g.fc|0, qz:g.qz|0, tp:g.tp|0 };
+}
+function gateDone(w){ const g = gateOf(w); return g.fc>0 && g.qz>0 && g.tp>0; }
+function gateCount(w){ const g = gateOf(w); return (g.fc>0?1:0)+(g.qz>0?1:0)+(g.tp>0?1:0); }
+/* Cửa kỹ năng KẾ TIẾP mà từ này còn nợ (null = đã đủ 3 cửa) */
+function nextGate(w){ const g = gateOf(w); return GATES.find(x=>!g[x.k]) || null; }
+
+/* Giai đoạn 0..5 — dùng để hiển thị lộ trình */
+const STAGES = [
+  { n:0, ic:'⬜', name:'Chưa gặp',    sh:'Mới'   },
+  { n:1, ic:'🃏', name:'Vừa nhận diện', sh:'Cửa 1' },
+  { n:2, ic:'❓', name:'Nhớ được nghĩa', sh:'Cửa 2' },
+  { n:3, ic:'⌨️', name:'Gõ lại được',  sh:'Cửa 3' },
+  { n:4, ic:'🔁', name:'Đang ôn ngắt quãng', sh:'Ôn' },
+  { n:5, ic:'✅', name:'Đã thuộc',     sh:'Thuộc' }
+];
+function stageOf(w){
+  const r = SRS[w];
+  if(!r) return 0;
+  if(!gateDone(w)) return 1 + gateCount(w);          // 1 / 2 / 3 = đang qua các cửa
+  if(r.box >= SRS_MASTER_BOX) return 5;              // đủ 3 cửa + box đầy = THUỘC
+  return 4;                                          // đủ 3 cửa, còn ôn cho bền
+}
+
+/* Chip hiển thị 3 cửa của 1 từ (dùng trong danh sách, Cần học, flashcard) */
+function gateChips(w, small){
+  const g = gateOf(w);
+  return `<span class="gates ${small?'sm':''}">` + GATES.map(x =>
+    `<i class="gate ${g[x.k] ? 'on' : ''}" title="${x.ic} ${x.name} — ${g[x.k] ? 'đã vượt' : 'chưa vượt'} (${x.desc})">${x.ic}</i>`
+  ).join('') + `</span>`;
+}
+
+/* Thống kê phễu lộ trình toàn bộ kho từ */
+function funnelStats(){
+  const f = [0,0,0,0,0,0];
+  VOCAB.forEach(v => f[stageOf(v.word)]++);
+  return f;
+}
+
 function srsGet(w){
   return SRS[w] || null;
 }
 function srsState(w){
   const r = SRS[w];
   if(!r) return 'new';
-  if(r.box >= SRS_MASTER_BOX) return 'mastered';
+  /* THUỘC = box đầy VÀ đã vượt đủ 3 cửa kỹ năng (flashcard + quiz + gõ từ) */
+  if(r.box >= SRS_MASTER_BOX && gateDone(w)) return 'mastered';
   if(r.box === 0) return 'learning';
   return 'review';
 }
 function srsIsDue(w, now){
   const r = SRS[w];
   if(!r) return false;
-  if(r.box >= SRS_MASTER_BOX) return false;
+  if(r.box >= SRS_MASTER_BOX && gateDone(w)) return false;   // thuộc hẳn -> thôi ôn
   return r.due <= (now || Date.now());
 }
 /* Ghi nhận 1 lần trả lời.
@@ -54899,6 +55471,18 @@ function srsReview(w, quality, mode){
   if(!r.hist[m]) r.hist[m] = { ok:0, no:0 };
   quality === 0 ? r.hist[m].no++ : r.hist[m].ok++;
 
+  /* ---- CỬA KỸ NĂNG ----
+     Chỉ trả lời ĐÚNG SẠCH (quality >= 2) mới được tính là VƯỢT CỬA.
+     Trả lời sai / hiện đáp án (quality 0) -> KHOÁ LẠI cửa đó, phải vượt lại.
+     Gõ có dùng gợi ý -> quality 1 -> không mở cửa, nhưng cũng không khoá. */
+  if(!r.gate) r.gate = { fc:0, qz:0, tp:0 };
+  const _gk = MODE2GATE[m];
+  if(_gk){
+    if(quality >= 2)      r.gate[_gk] = (r.gate[_gk]||0) + 1;
+    else if(quality === 0) r.gate[_gk] = 0;
+  }
+  SRS[w] = r;   // ghi sớm để gateDone(w) bên dưới đọc được trạng thái mới
+
   if(quality === 0){                       // Quên -> về box 0
     r.lapses++;
     r.box = 0;
@@ -54911,7 +55495,10 @@ function srsReview(w, quality, mode){
     r.due = now + Math.max(1, Math.round(base * 0.5 * wgt)) * DAY;
   } else {                                 // Đúng / Dễ -> lên box
     if(quality === 3) r.ease = Math.min(3.0, r.ease + 0.15);
-    r.box = Math.min(SRS_MASTER_BOX, r.box + 1);
+    /* CHẶN TRẦN: chưa đủ 3 cửa thì box tối đa chỉ 4/5 -> từ chưa gõ được
+       sẽ KHÔNG BAO GIỜ tự thoát khỏi hàng đợi ôn tập. */
+    const _cap = gateDone(w) ? SRS_MASTER_BOX : (SRS_MASTER_BOX - 1);
+    r.box = Math.min(_cap, r.box + 1);
     const base = SRS_STEPS[Math.min(r.box, SRS_STEPS.length-1)] || 1;
     const mult = (quality === 3 ? 1.3 : 1) * wgt;   // gõ đúng -> giãn cách dài hơn
     r.due = now + Math.max(1, Math.round(base * (r.ease/2.5) * mult)) * DAY;
@@ -54920,7 +55507,7 @@ function srsReview(w, quality, mode){
   saveSRS();
   recordStudied(w);                        // tính vào "đã học hôm nay"
 
-  if(r.box >= SRS_MASTER_BOX){
+  if(r.box >= SRS_MASTER_BOX && gateDone(w)){
     if(prevBox < SRS_MASTER_BOX) addGems(GEM_REWARD.mastered);   // vừa thuộc hẳn -> +10💎
     unstarOnMastery(w);
   }
@@ -55162,19 +55749,52 @@ function getTodayStats(){
   return { all, k, stat: all[k] };
 }
 
+/* ============================================================
+   HỌC NGAY — ĐỘNG CƠ LỘ TRÌNH (thay cho "Học thuộc" cũ)
+   ------------------------------------------------------------
+   Trước đây: mọi từ đều chỉ làm TRẮC NGHIỆM, đúng 2 lần liên tiếp
+   là coi như "thuộc" -> đoán mò 25% vẫn qua, và từ chưa bao giờ
+   viết ra được vẫn được đánh dấu thuộc.
+
+   Bây giờ: mỗi từ được ĐƯA ĐÚNG BÀI TẬP nó đang cần, theo cửa còn nợ:
+     chưa qua 🃏 -> bước Flashcard (nhìn - lật - tự đánh giá)
+     chưa qua ❓ -> bước Trắc nghiệm
+     chưa qua ⌨️ -> bước Gõ từ   (có 5 giây xem lại khi đúng)
+     đã đủ 3 cửa -> bước Ôn (trắc nghiệm / gõ ngẫu nhiên) để đẩy box
+   Học xong 1 từ trong phiên = từ đó vừa vượt thêm ít nhất 1 cửa
+   và không còn nợ cửa nào, hoặc đã ôn đúng 1 lượt.
+   ============================================================ */
+const SCOPE_LABEL = {
+  path:'🚀 Lộ trình (khuyên dùng)', srs:'🔁 Ôn theo lịch', random:'🎲 Ôn ngẫu nhiên',
+  weak:'🔥 Từ hay quên', star:'⭐ Cần học', filtered:'🗂️ Theo bộ lọc', today:'📅 Từ hôm nay'
+};
+
 let learnState = null;
 
 function buildLearnWords(scope){
   const n = sessionSize();
-  if(scope==='srs')    return srsQueue();                    // đến hạn -> đang học -> mới
-  if(scope==='random') return randomQueue();                 // ngẫu nhiên trong từ đã học
-  if(scope==='weak')   return weakQueue();                   // từ hay quên / box thấp
-  if(scope==='star'){
-    const a = VOCAB.filter(v=>starred.has(v.word));
-    return (n>0) ? a.slice(0,n) : a;
+  const cut = a => (n>0 ? a.slice(0,n) : a);
+
+  if(scope==='path'){
+    /* Lộ trình: ưu tiên (1) từ đến hạn ôn, (2) từ đang dở giữa chừng
+       các cửa — vì bỏ dở là quên nhanh nhất, (3) từ mới. */
+    const now = Date.now();
+    const due=[], mid=[], fresh=[];
+    VOCAB.forEach(v=>{
+      const st = srsState(v.word);
+      if(st==='mastered') return;
+      if(srsIsDue(v.word, now)) due.push(v);
+      else if(SRS[v.word]) mid.push(v);
+      else fresh.push(v);
+    });
+    mid.sort((a,b)=> gateCount(b.word)-gateCount(a.word));   // gần xong trước
+    return cut([...due, ...mid, ...shuffle(fresh)]);
   }
-  const a = filtered.slice();
-  return (n>0) ? a.slice(0,n) : a;
+  if(scope==='srs')    return srsQueue();
+  if(scope==='random') return randomQueue();
+  if(scope==='weak')   return weakQueue();
+  if(scope==='star')   return cut(VOCAB.filter(v=>starred.has(v.word)));
+  return cut(filtered.slice());
 }
 
 function startLearn(scope){
@@ -55182,107 +55802,420 @@ function startLearn(scope){
   if(words.length < 1){ renderLearnStart(scope, true); return; }
   learnState = {
     scope,
-    words: words.map(v=>({ v, streak:0, mastered:false, seen:0, correct:0, wrong:0 })),
-    current: null, sessionCorrect: 0, sessionWrong: 0
+    words: words.map(v=>({ v, done:false, seen:0, correct:0, wrong:0, gained:0 })),
+    current:null, sessionCorrect:0, sessionWrong:0, gatesPassed:0
   };
   nextLearnCard();
 }
 
 function nextLearnCard(){
-  const pending = learnState.words.filter(w=>!w.mastered);
+  clearTypeTimers();
+  const pending = learnState.words.filter(w=>!w.done);
   if(pending.length === 0){ renderLearnDone(); return; }
   let pool = pending;
   if(learnState.current && pending.length>1)
     pool = pending.filter(w=>w.v.word !== learnState.current.v.word);
   const pick = pool[Math.floor(Math.random()*pool.length)];
   learnState.current = pick;
-  renderLearnQuestion(pick);
+  renderLearnStep(pick);
 }
 
-function renderLearnQuestion(item){
+/* Khung chung (thanh tiến độ + topbar) cho mọi bước */
+function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
   const v = item.v;
-  const root = document.getElementById('learnRoot');
-  const distractPool = VOCAB.filter(x=>x.word!==v.word);
-  const wrongs = shuffle(distractPool).slice(0,3);
-  const opts = shuffle([v, ...wrongs]);
-  const askVN = Math.random()>0.5;
   const total = learnState.words.length;
-  const done = learnState.words.filter(w=>w.mastered).length;
-  const pct = Math.round(done/total*100);
-  const acc = (learnState.sessionCorrect+learnState.sessionWrong)>0
-    ? Math.round(learnState.sessionCorrect/(learnState.sessionCorrect+learnState.sessionWrong)*100) : 0;
+  const done  = learnState.words.filter(w=>w.done).length;
+  const pct   = Math.round(done/total*100);
+  const tries = learnState.sessionCorrect + learnState.sessionWrong;
+  const acc   = tries>0 ? Math.round(learnState.sessionCorrect/tries*100) : 0;
 
-  root.innerHTML = `
+  return `
   <div class="learn-scroll"><div class="learn-wrap">
     <div class="learn-topbar">
-      <button class="learn-exit-btn" id="learnSwitch" title="Chọn phiên khác — phiên này vẫn giữ để học tiếp">⇄ Đổi phiên</button>
-      <span class="lt-scope">${SCOPE_LABEL[learnState.scope]||'Học thuộc'}</span>
-      <span class="lt-frac"><b>${done}</b>/${total} thuộc</span>
-      <button class="learn-exit-btn danger" id="learnExit" title="Kết thúc và xem kết quả">✕ Kết thúc</button>
+      <button class="learn-exit-btn" id="learnSwitch">⇄ Đổi phiên</button>
+      <span class="lt-scope">${SCOPE_LABEL[learnState.scope]||'Học ngay'}</span>
+      <span class="lt-frac"><b>${done}</b>/${total} xong</span>
+      <button class="learn-exit-btn danger" id="learnExit">✕ Kết thúc</button>
     </div>
+
     <div class="learn-progress">
-      <div class="lp-head">
-        <span class="lp-title">🎯 Học thuộc</span>
-        <span class="lp-frac">${fmtCountdown(v.word).txt}</span>
-      </div>
       <div class="lp-bar"><div class="lp-fill" style="width:${pct}%"></div></div>
       <div class="lp-stats">
-        <div class="lp-stat mastered"><span class="num">${done}</span><span class="lbl">Đã thuộc</span></div>
-        <div class="lp-stat learning"><span class="num">${total-done}</span><span class="lbl">Đang học</span></div>
+        <div class="lp-stat mastered"><span class="num">${done}</span><span class="lbl">Xong lượt</span></div>
+        <div class="lp-stat learning"><span class="num">${learnState.gatesPassed}</span><span class="lbl">Cửa đã vượt</span></div>
         <div class="lp-stat acc"><span class="num">${acc}%</span><span class="lbl">Chính xác</span></div>
       </div>
     </div>
+
+    <div class="step-bar">
+      ${GATES.map(x=>{
+        const g = gateOf(v.word);
+        const cur = stepIc === x.ic;
+        return `<span class="step ${g[x.k]?'ok':''} ${cur?'cur':''}">
+          <i>${x.ic}</i><em>${x.name}</em></span>`;
+      }).join('<span class="step-arrow">→</span>')}
+      <span class="step-arrow">→</span>
+      <span class="step ${stageOf(v.word)===5?'ok cur':''}"><i>✅</i><em>Thuộc</em></span>
+    </div>
+    <div class="step-hint"><b>${stepIc} ${stepName}</b> — ${stepHint}</div>
+
+    ${bodyHTML}
+  </div></div>`;
+}
+
+function bindLearnShell(root){
+  root.querySelector('#learnSwitch').onclick = ()=> renderLearnStart(learnState.scope);
+  root.querySelector('#learnExit').onclick = ()=>{
+    clearTypeTimers();
+    if(learnState.sessionCorrect + learnState.sessionWrong > 0) renderLearnDone();
+    else { learnState = null; renderLearnStart('path'); }
+  };
+}
+
+/* Ghi nhận 1 lượt trả lời trong phiên + kiểm tra từ đã xong lượt chưa */
+function learnScore(item, ok, quality, mode){
+  const v = item.v;
+  const before = gateCount(v.word);
+  item.seen++;
+  if(ok){ item.correct++; learnState.sessionCorrect++; }
+  else  { item.wrong++;   learnState.sessionWrong++;   }
+  srsReview(v.word, quality, mode);
+  recordAnswer(ok, stageOf(v.word)===5 ? v.word : null, v.word);
+  const after = gateCount(v.word);
+  if(after > before){ learnState.gatesPassed += (after-before); item.gained += (after-before); }
+
+  /* Xong lượt khi: không còn nợ cửa nào VÀ vừa trả lời đúng */
+  if(ok && !nextGate(v.word)) item.done = true;
+  ok ? sfx.correct() : sfx.wrong();
+}
+
+function renderLearnStep(item){
+  const v  = item.v;
+  const ng = nextGate(v.word);
+  if(!ng)                  return learnStepReview(item);
+  if(ng.k === 'fc')        return learnStepFlash(item);
+  if(ng.k === 'qz')        return learnStepQuiz(item);
+  return learnStepType(item);
+}
+
+/* ---------- BƯỚC ① FLASHCARD ---------- */
+function learnStepFlash(item){
+  const v = item.v;
+  const root = document.getElementById('learnRoot');
+  const ex = normExample(v.example);
+  const cols = (v.collocations||[]).slice(0,3).map(normColloc);
+
+  root.innerHTML = learnShell(item, '🃏', 'Flashcard', 'Đọc kỹ, thử nhớ, rồi tự đánh giá thật lòng.', `
+    <div class="lf-card" id="lfCard">
+      <div class="lf-front" id="lfFront">
+        <div class="lf-word">${esc(v.word)}</div>
+        ${v.ipa?`<div class="lf-ipa">${esc(v.ipa)}</div>`:''}
+        ${v.pos?`<div class="lf-pos">${esc(v.pos)}</div>`:''}
+        <button class="speak-btn lf-spk" id="lfSpeak">🔊</button>
+        <button class="btn primary lf-flip" id="lfFlip">Xem nghĩa ↻</button>
+      </div>
+      <div class="lf-back" id="lfBack" hidden>
+        <div class="lf-vn">${esc(v.vn)}</div>
+        ${ex?`<div class="lf-ex"><div class="lf-ex-en">${exHL(ex.en, v.word)}</div>${ex.vi?`<div class="lf-ex-vi">${esc(ex.vi)}</div>`:''}</div>`:''}
+        ${cols.length?`<div class="lf-cols">${cols.map(c=>`<span class="tpr-chip" title="${esc(c.vi)}">${esc(c.en)}</span>`).join('')}</div>`:''}
+        <div class="lf-rate">
+          <span class="lfr-hint">Bạn có nhớ từ này trước khi lật không?</span>
+          <div class="lfr-btns">
+            <button class="fcr no"   data-q="0">😵 Quên</button>
+            <button class="fcr hard" data-q="1">😕 Mơ hồ</button>
+            <button class="fcr ok"   data-q="2">🙂 Nhớ</button>
+            <button class="fcr easy" data-q="3">😎 Dễ</button>
+          </div>
+          <div class="lfr-note">Chọn <b>🙂 Nhớ</b> trở lên mới mở được cửa 🃏</div>
+        </div>
+      </div>
+    </div>`);
+
+  bindLearnShell(root);
+  root.querySelector('#lfSpeak').onclick = ()=> speak(v.word);
+  root.querySelector('#lfFlip').onclick = ()=>{
+    root.querySelector('#lfFront').classList.add('flipped');
+    root.querySelector('#lfBack').hidden = false;
+    speak(v.word);
+  };
+  root.querySelectorAll('.lf-rate .fcr').forEach(b=>{
+    b.onclick = ()=>{
+      const q = +b.dataset.q;
+      root.querySelectorAll('.lf-rate .fcr').forEach(x=>x.classList.add('disabled'));
+      learnScore(item, q>=2, q, 'flashcard');
+      if(q>=2) rewardCorrect('flashcard');
+      setTimeout(nextLearnCard, q>=2 ? 620 : 900);
+    };
+  });
+}
+
+/* ---------- BƯỚC ② TRẮC NGHIỆM ---------- */
+function learnStepQuiz(item){
+  const v = item.v;
+  const root = document.getElementById('learnRoot');
+  const wrongs = shuffle(VOCAB.filter(x=>x.word!==v.word)).slice(0,3);
+  const opts = shuffle([v, ...wrongs]);
+  const askVN = Math.random() > 0.5;   // hỏi 2 chiều
+
+  root.innerHTML = learnShell(item, '❓', 'Trắc nghiệm', 'Chọn đúng để mở cửa ❓. Đoán sai sẽ phải học lại từ đầu cửa này.', `
     <div class="quiz-q learn-q">
       <div class="prompt-label">${askVN?'Nghĩa của từ này là gì?':'Từ tiếng Anh của nghĩa này?'}</div>
       <div class="prompt-word ${askVN?'':'small'}">${askVN?esc(v.word):esc(v.vn)}</div>
-      <div class="streak-dots">
-        ${Array.from({length:MASTERY_TARGET},(_,i)=>`<span class="dot-s ${i<item.streak?'on':''}"></span>`).join('')}
-      </div>
+      ${askVN&&v.ipa?`<div class="tq-pos">${esc(v.ipa)}</div>`:''}
     </div>
     <div class="options" id="learnOpts">
       ${opts.map(o=>`<button class="opt" data-word="${esc(o.word)}">${askVN?esc(o.vn):esc(o.word)}</button>`).join('')}
-    </div>
-    <div class="learn-meta">
-      <span>Đúng <b style="color:var(--accent)">${MASTERY_TARGET}</b> lần liên tiếp là thuộc phiên này
-        · bậc hiện tại <b style="color:var(--accent)">${(SRS[v.word]?.box)||0}</b>/${SRS_MASTER_BOX}</span>
-    </div>
-  </div></div>`;
+    </div>`);
 
-  // ⇄ Đổi phiên: về màn chọn phiên NHƯNG vẫn giữ phiên dở để "Tiếp tục"
-  root.querySelector('#learnSwitch').onclick = ()=> renderLearnStart(learnState.scope);
-  // ✕ Kết thúc: xem kết quả rồi bỏ phiên
-  root.querySelector('#learnExit').onclick = ()=>{
-    if(learnState.sessionCorrect + learnState.sessionWrong > 0){ renderLearnDone(); }
-    else { learnState = null; renderLearnStart('srs'); }
+  bindLearnShell(root);
+  root.querySelectorAll('.opt').forEach(btn=>{
+    btn.onclick = ()=>{
+      const all = root.querySelectorAll('.opt');
+      all.forEach(b=>b.classList.add('disabled'));
+      const ok = btn.dataset.word === v.word;
+      if(ok){ btn.classList.add('correct'); rewardCorrect('quiz'); speak(v.word); }
+      else {
+        btn.classList.add('wrong');
+        all.forEach(b=>{ if(b.dataset.word===v.word) b.classList.add('correct'); });
+      }
+      learnScore(item, ok, ok?2:0, 'quiz');
+      setTimeout(nextLearnCard, ok?780:1500);
+    };
+  });
+}
+
+/* ---------- BƯỚC ③ GÕ TỪ (dùng lại đúng UI + 5 giây xem lại) ---------- */
+function learnStepType(item){
+  const v = item.v;
+  const root = document.getElementById('learnRoot');
+  root.innerHTML = learnShell(item, '⌨️', 'Gõ từ', 'Viết đúng chính tả, KHÔNG dùng gợi ý — đây là cửa cuối để được tính là thuộc.', `
+    <div class="center-wrap"><div class="type-box" id="typeBox"></div></div>`);
+  bindLearnShell(root);
+  learnTypeCard(item);
+}
+
+/* Bản gõ-từ nhúng trong phiên học: giống tab Gõ từ nhưng kết thúc thì
+   quay lại hàng đợi phiên thay vì lấy từ mới. */
+function learnTypeCard(item){
+  clearTypeTimers();
+  const v = item.v;
+  const box = document.getElementById('typeBox');
+  const word = v.word.toLowerCase();
+  const chars = word.split('');
+  const typable = chars.filter(c=>c!==' ' && c!=='-');
+  const MAX = typable.length;
+  const ex = normExample(v.example);
+  let locked=false, hinted=false, listens=0;
+
+  box.innerHTML = `
+    <div class="quiz-q">
+      <div class="prompt-label">Gõ từ tiếng Anh cho nghĩa</div>
+      <div class="prompt-word small">${esc(v.vn)}</div>
+      ${v.pos?`<div class="tq-pos">${esc(v.pos)}</div>`:''}
+      <div class="type-listen">
+        <button class="tl-btn" id="ltSpeak"><span class="tl-ic">🔊</span><span class="tl-txt">Nghe</span></button>
+        <button class="tl-btn slow" id="ltSlow"><span class="tl-ic">🐢</span><span class="tl-txt">Chậm</span></button>
+        <span class="tl-count" id="ltCount"></span>
+      </div>
+      ${ex?`<div class="type-ex"><div class="tex-en">${blankOut(ex.en, v.word)}</div>${ex.vi?`<div class="tex-vi">${esc(ex.vi)}</div>`:''}</div>`:''}
+    </div>
+    <div class="type-field" id="ltField">
+      <div class="letter-boxes">
+        ${chars.map((ch,i)=> (ch===' '||ch==='-')
+          ? `<div class="letter-box space" data-i="${i}">${ch==='-'?'-':''}</div>`
+          : `<div class="letter-box" data-i="${i}"></div>`).join('')}
+      </div>
+      <input class="type-input" id="ltInp" maxlength="${MAX}" autocomplete="off"
+             autocapitalize="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="type-feedback" id="ltFb"></div>
+    <div class="type-actions">
+      <button class="btn primary" id="ltCheck" disabled>✓ Kiểm tra</button>
+      <button class="btn" id="ltClear">⌫ Xoá hết</button>
+      <button class="btn" id="ltHint">💡 Gợi ý 1 chữ</button>
+      <button class="btn" id="ltShow">👁 Hiện đáp án</button>
+    </div>
+    <div class="type-tip">Enter = kiểm tra · Backspace = xoá tự do</div>`;
+
+  const inp = box.querySelector('#ltInp');
+  const fb  = box.querySelector('#ltFb');
+  const cells = [...box.querySelectorAll('.letter-box:not(.space)')];
+  const chk = box.querySelector('#ltCheck');
+
+  const paint = ()=>{
+    const val = inp.value.toLowerCase().slice(0,MAX);
+    cells.forEach((bx,i)=>{
+      bx.classList.remove('filled','cursor','correct','wrong','revealed');
+      bx.textContent = val[i]||'';
+      if(val[i]) bx.classList.add('filled');
+    });
+    if(val.length<MAX && cells[val.length]) cells[val.length].classList.add('cursor');
+    chk.disabled = !val.length;
   };
+  inp.addEventListener('input', ()=>{ if(!locked) paint(); });
+  box.querySelector('#ltField').addEventListener('pointerdown', e=>{ if(!locked){ e.preventDefault(); inp.focus(); } });
+  setTimeout(()=>inp.focus(),30);
+
+  const listen = r=>{ listens++; speak(v.word,r); box.querySelector('#ltCount').textContent = `đã nghe ${listens} lần`; };
+  box.querySelector('#ltSpeak').onclick = ()=>listen(0.9);
+  box.querySelector('#ltSlow').onclick  = ()=>listen(0.55);
+
+  function check(){
+    if(locked) return;
+    const val = inp.value.toLowerCase();
+    if(!val.length) return;
+    let ok = val.length===MAX;
+    cells.forEach((bx,i)=>{
+      bx.classList.remove('correct','wrong');
+      if(i<val.length){ if(val[i]===typable[i]) bx.classList.add('correct'); else { bx.classList.add('wrong'); ok=false; } }
+      else ok=false;
+    });
+    if(!ok){
+      sfx.wrong();
+      fb.innerHTML='✗ Chưa đúng — sửa chữ đỏ rồi kiểm tra lại';
+      fb.className='type-feedback no';
+      box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+      inp.focus(); return;
+    }
+    locked = true;
+    learnScore(item, true, hinted?1:3, 'typing');
+    if(!hinted) rewardCorrect('typing'); else { addGems(1); flyGem(1); }
+    speak(v.word);
+    typeReviewPanel(box, v, { hinted, listens, onNext: nextLearnCard });
+  }
+
+  chk.onclick = check;
+  box.querySelector('#ltClear').onclick = ()=>{ if(locked) return; inp.value=''; paint(); fb.textContent=''; inp.focus(); };
+  box.querySelector('#ltHint').onclick = ()=>{
+    if(locked) return;
+    hinted = true;
+    const val = inp.value.toLowerCase();
+    if(val.length<MAX){ inp.value = val + typable[val.length]; paint(); }
+    inp.focus();
+  };
+  box.querySelector('#ltShow').onclick = ()=>{
+    if(locked) return;
+    locked = true; inp.blur();
+    learnScore(item, false, 0, 'typing');
+    cells.forEach((bx,i)=>{ bx.textContent=typable[i]; bx.className='letter-box correct revealed'; });
+    fb.innerHTML = `👁 Đáp án: <b>${esc(v.word)}</b> — cửa ⌨️ chưa mở, bạn sẽ gặp lại từ này`;
+    fb.className='type-feedback no';
+    speak(v.word);
+    _typeRvT = setTimeout(nextLearnCard, 2600);
+  };
+  inp.addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); check(); return; }
+    if(locked && e.key!=='Tab') e.preventDefault();
+  });
+  paint();
+}
+
+/* ---------- BƯỚC ④ ÔN (đã đủ 3 cửa) ---------- */
+function learnStepReview(item){
+  const v = item.v;
+  /* 50/50 giữa trắc nghiệm & gõ để ôn cả nhận biết lẫn tái tạo */
+  if(Math.random() > 0.5){
+    const root = document.getElementById('learnRoot');
+    root.innerHTML = learnShell(item, '🔁', 'Ôn tập', `Đã đủ 3 cửa — ôn lại để nhớ bền (${fmtDue(v.word)}).`, `
+      <div class="center-wrap"><div class="type-box" id="typeBox"></div></div>`);
+    bindLearnShell(root);
+    learnTypeCard(item);
+    return;
+  }
+  const root = document.getElementById('learnRoot');
+  const wrongs = shuffle(VOCAB.filter(x=>x.word!==v.word)).slice(0,3);
+  const opts = shuffle([v, ...wrongs]);
+  const askVN = Math.random()>0.5;
+  root.innerHTML = learnShell(item, '🔁', 'Ôn tập', `Đã đủ 3 cửa — ôn lại để nhớ bền (${fmtDue(v.word)}).`, `
+    <div class="quiz-q learn-q">
+      <div class="prompt-label">${askVN?'Nghĩa của từ này là gì?':'Từ tiếng Anh của nghĩa này?'}</div>
+      <div class="prompt-word ${askVN?'':'small'}">${askVN?esc(v.word):esc(v.vn)}</div>
+    </div>
+    <div class="options">
+      ${opts.map(o=>`<button class="opt" data-word="${esc(o.word)}">${askVN?esc(o.vn):esc(o.word)}</button>`).join('')}
+    </div>`);
+  bindLearnShell(root);
   root.querySelectorAll('.opt').forEach(btn=>{
     btn.onclick = ()=>{
       const all = root.querySelectorAll('.opt');
       all.forEach(b=>b.classList.add('disabled'));
       const ok = btn.dataset.word===v.word;
-      item.seen++;
-      if(ok){
-        btn.classList.add('correct');
-        item.streak++; item.correct++;
-        learnState.sessionCorrect++;
-        recordAnswer(true, item.streak>=MASTERY_TARGET ? v.word : null, v.word);
-        srsReview(v.word, item.wrong>0 ? 1 : 2, 'learn');   // sai trước đó -> "khó"
-        sfx.correct(); rewardCorrect('learn');
-        if(item.streak>=MASTERY_TARGET){ item.mastered=true; unstarOnMastery(v.word); }
-        speak(v.word);
-      } else {
-        btn.classList.add('wrong');
-        all.forEach(b=>{ if(b.dataset.word===v.word) b.classList.add('correct'); });
-        item.streak=0; item.wrong++;
-        learnState.sessionWrong++;
-        recordAnswer(false, null, v.word);
-        srsReview(v.word, 0, 'learn');   // quên -> reset về box 0, tự vào Cần học
-        sfx.wrong();
-      }
-      setTimeout(nextLearnCard, ok?750:1400);
+      if(ok){ btn.classList.add('correct'); rewardCorrect('quiz'); speak(v.word); }
+      else { btn.classList.add('wrong'); all.forEach(b=>{ if(b.dataset.word===v.word) b.classList.add('correct'); }); }
+      learnScore(item, ok, ok?2:0, 'quiz');
+      setTimeout(nextLearnCard, ok?780:1500);
     };
   });
 }
+
+/* ============================================================
+   PANEL "5 GIÂY XEM LẠI" — dùng chung cho tab Gõ từ & phiên học
+   ============================================================ */
+function typeReviewPanel(box, v, opt){
+  clearTypeTimers();
+  const cols = (v.collocations||[]).slice(0,3).map(normColloc);
+  const syn  = (v.synonyms||[]).slice(0,4);
+  const ex   = normExample(v.example);
+  const just = stageOf(v.word) === 5;
+  const ng   = nextGate(v.word);
+
+  box.innerHTML = `
+    <div class="tp-review ${just?'is-master':''}">
+      <div class="tpr-flag">✓ Chính xác${opt.hinted?' (có gợi ý — cửa ⌨️ chưa mở)':''}${opt.listens?` · nghe ${opt.listens} lần`:''}</div>
+      <div class="tpr-word">${esc(v.word)}
+        <button class="speak-btn" id="tprSpeak" title="Nghe lại">🔊</button></div>
+      <div class="tpr-line">
+        ${v.ipa?`<span class="tpr-ipa">${esc(v.ipa)}</span>`:''}
+        ${v.pos?`<span class="tpr-pos">${esc(v.pos)}</span>`:''}
+        ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}
+      </div>
+      <div class="tpr-vn">${esc(v.vn)}</div>
+      ${ex?`<div class="tpr-ex"><div class="tpr-ex-en">${exHL(ex.en, v.word)}</div>${ex.vi?`<div class="tpr-ex-vi">${esc(ex.vi)}</div>`:''}</div>`:''}
+      ${cols.length?`<div class="tpr-chips">${cols.map(c=>`<span class="tpr-chip" title="${esc(c.vi)}">${esc(c.en)}</span>`).join('')}</div>`:''}
+      ${syn.length?`<div class="tpr-syn">≈ ${syn.map(esc).join(' · ')}</div>`:''}
+      <div class="tpr-gate">${gateChips(v.word)}
+        <span>${just ? '🏆 <b>ĐÃ THUỘC</b> — đủ 3 cửa & ôn đủ lâu!'
+                     : ng ? `Còn cửa ${ng.ic} <b>${ng.name}</b>`
+                          : `Đủ 3 cửa ✓ — ${fmtDue(v.word)}`}</span>
+      </div>
+      <div class="tpr-foot">
+        <button class="btn ghost" id="tprStay">⏸ Ở lại xem thêm</button>
+        <button class="btn primary tpr-next" id="tprNext">
+          <svg class="tpr-ring" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="16" class="tpr-ring-bg"/>
+            <circle cx="18" cy="18" r="16" class="tpr-ring-fg" id="tprRing" stroke-dasharray="100.5" stroke-dashoffset="0"/>
+          </svg>
+          <span>Tiếp tục</span><b id="tprSec">5</b>
+        </button>
+      </div>
+    </div>`;
+
+  box.querySelector('#tprSpeak').onclick = ()=> speak(v.word);
+  box.querySelector('#tprNext').onclick  = ()=>{ clearTypeTimers(); opt.onNext(); };
+
+  const ring = box.querySelector('#tprRing');
+  const sec  = box.querySelector('#tprSec');
+  const t0   = performance.now();
+  let paused = false;
+
+  box.querySelector('#tprStay').onclick = e=>{
+    paused = true; clearTypeTimers();
+    e.target.textContent='▶ Đã dừng — bấm "Tiếp tục" khi xong';
+    e.target.disabled = true;
+    if(ring) ring.style.strokeDashoffset='100.5';
+    if(sec) sec.textContent='';
+  };
+  const tick = now=>{
+    if(paused) return;
+    const el = now-t0, left = Math.max(0, TYPE_REVIEW_MS-el);
+    if(sec) sec.textContent = Math.ceil(left/1000);
+    if(ring) ring.style.strokeDashoffset = String((el/TYPE_REVIEW_MS*100.5).toFixed(1));
+    if(left>0) _typeRvRaf = requestAnimationFrame(tick);
+  };
+  _typeRvRaf = requestAnimationFrame(tick);
+  _typeRvT = setTimeout(()=>{ if(!paused) opt.onNext(); }, TYPE_REVIEW_MS);
+}
+
 
 function recordAnswer(correct, masteredWord, studiedWord){
   const {all,k,stat} = getTodayStats();
@@ -55304,52 +56237,56 @@ function studiedCount(dayKey){
 function renderLearnDone(){
   const root = document.getElementById('learnRoot');
   const total = learnState.words.length;
-  const done  = learnState.words.filter(w=>w.mastered).length;
+  const done  = learnState.words.filter(w=>w.done).length;
   const tries = learnState.sessionCorrect + learnState.sessionWrong;
   const acc = tries>0 ? Math.round(learnState.sessionCorrect/tries*100) : 0;
   const full = done === total;
   const scope = learnState.scope;
+  const justMastered = learnState.words.filter(w=>stageOf(w.v.word)===5).length;
   root.innerHTML = `
   <div class="learn-scroll"><div class="learn-wrap">
     <div class="learn-card">
       <div class="celebrate">${full?'🎉':'👍'}</div>
-      <h2>${full?'Hoàn thành!':'Đã dừng phiên'}</h2>
-      <p>Học thuộc <b>${done}</b>/${total} từ trong phiên này.</p>
+      <h2>${full?'Hoàn thành phiên!':'Đã dừng phiên'}</h2>
+      <p>Xong <b>${done}</b>/${total} từ trong phiên này · vượt <b>${learnState.gatesPassed}</b> lượt cửa.</p>
+      ${justMastered ? `<p style="color:var(--ember)">🏆 <b>${justMastered}</b> từ vừa đủ 3 cửa + ôn đủ lâu — chính thức <b>ĐÃ THUỘC</b>!</p>` : ''}
       <p>Tổng lượt trả lời: ${tries} · Chính xác ${acc}%</p>
-      <button class="learn-big-btn" id="learnAgain">${full?'Học lại từ đầu':'Học tiếp phiên này'}</button>
+      <button class="learn-big-btn" id="learnAgain">${full?'Học phiên mới':'Học tiếp phiên này'}</button>
       <br><button class="learn-ghost-btn" id="learnBack">Chọn phiên khác</button>
     </div>
   </div></div>`;
   root.querySelector('#learnAgain').onclick = ()=>{
-    if(full){ startLearn(scope); }
-    else { nextLearnCard(); }                 // học tiếp những từ chưa thuộc
+    if(full){ learnState=null; startLearn(scope); }
+    else { nextLearnCard(); }
   };
   root.querySelector('#learnBack').onclick = ()=>{ learnState = null; renderLearnStart(scope); };
 }
 
-function renderLearnStart(scope='srs', empty=false){
+function renderLearnStart(scope='path', empty=false){
   const root = document.getElementById('learnRoot');
   const {stat} = getTodayStats();
   const S = srsStats();
+  const F = funnelStats();
   const size = sessionSize();
-  const nSrs = srsQueue(0).length;
-  const nRnd = randomQueue(0).length;
+  const nPath = buildLearnWords('path').length;
+  const nSrs  = srsQueue(0).length;
+  const nRnd  = randomQueue(0).length;
   const nWeak = weakQueue(0).length;
   const starCnt = starCount();
   const acc = stat.answered>0 ? Math.round(stat.correct/(stat.correct+stat.wrong||1)*100) : 0;
   const pct = Math.round(S.learned/Math.max(1,S.total)*100);
 
   const SCOPES = [
-    {k:'srs',    ic:'🔁', t:'Ôn theo lịch',   n:nSrs,    d:'Từ đến hạn ôn → đang học dở → từ mới'},
-    {k:'weak',   ic:'🔥', t:'Từ hay quên',    n:nWeak,   d:'Ưu tiên từ bạn sai nhiều, nhớ kém'},
-    {k:'random', ic:'🎲', t:'Ôn ngẫu nhiên',  n:nRnd,    d:'Trộn đều từ đã học, chống quên'},
-    {k:'star',   ic:'⭐', t:'Cần học',        n:starCnt, d:'Các từ bạn đánh dấu sao'},
-    {k:'filtered',ic:'🗂️',t:'Theo bộ lọc',   n:filtered.length, d:'Dùng bộ lọc chủ đề/trình độ hiện tại'}
+    {k:'path',   ic:'🚀', t:'Lộ trình (khuyên dùng)', n:nPath, d:'App tự dẫn qua đúng 3 cửa còn thiếu của từng từ'},
+    {k:'srs',    ic:'🔁', t:'Chỉ ôn theo lịch',  n:nSrs,    d:'Riêng từ đã đủ 3 cửa, đến hạn ôn lại'},
+    {k:'weak',   ic:'🔥', t:'Từ hay quên',       n:nWeak,   d:'Ưu tiên từ bạn hay sai, hay quên'},
+    {k:'random', ic:'🎲', t:'Ôn ngẫu nhiên',     n:nRnd,    d:'Trộn đều từ đã học, chống quên'},
+    {k:'star',   ic:'⭐', t:'Cần học',           n:starCnt, d:'Các từ bạn đánh dấu sao'},
+    {k:'filtered',ic:'🗂️',t:'Theo bộ lọc',      n:filtered.length, d:'Dùng bộ lọc chủ đề/trình độ hiện tại'}
   ];
 
-  // Phiên đang dở -> cho tiếp tục ngay, không bắt phải "Kết thúc" mới đổi được
-  const resume = learnState && learnState.words.some(w=>!w.mastered);
-  const rDone  = resume ? learnState.words.filter(w=>w.mastered).length : 0;
+  const resume = learnState && learnState.words.some(w=>!w.done);
+  const rDone  = resume ? learnState.words.filter(w=>w.done).length : 0;
   const rTotal = resume ? learnState.words.length : 0;
 
   root.innerHTML = `
@@ -55359,7 +56296,7 @@ function renderLearnStart(scope='srs', empty=false){
     <div class="resume-bar">
       <div class="rb-info">
         <b>▶ Phiên đang dở — ${SCOPE_LABEL[learnState.scope]||''}</b>
-        <span>${rDone}/${rTotal} từ đã thuộc · còn ${rTotal-rDone} từ</span>
+        <span>${rDone}/${rTotal} từ xong · còn ${rTotal-rDone} từ</span>
       </div>
       <div class="rb-acts">
         <button class="btn primary" id="rbGo">Học tiếp</button>
@@ -55367,16 +56304,22 @@ function renderLearnStart(scope='srs', empty=false){
       </div>
     </div>` : ''}
 
+    <!-- Thanh lộ trình rút gọn để luôn thấy bức tranh tổng ngay tại đây -->
+    <div class="step-bar" style="margin-top:2px">
+      ${STAGES.map(st=>`<span class="step ${st.n>0&&F[st.n]>0?'ok':''}" title="${F[st.n]} từ">
+        <i>${st.ic}</i><em>${st.sh}</em></span>`).join('<span class="step-arrow">→</span>')}
+    </div>
+
     <div class="learn-progress">
       <div class="lp-head">
-        <span class="lp-title">🔁 Lặp lại ngắt quãng</span>
-        <span class="lp-frac">${pct}% hoàn thành</span>
+        <span class="lp-title">🚀 Lộ trình thuộc từ — 3 cửa kỹ năng</span>
+        <span class="lp-frac">${pct}% đã thuộc thật sự</span>
       </div>
       <div class="lp-stats">
         <div class="lp-stat mastered"><span class="num">${S.learned}</span><span class="lbl">Đã thuộc</span></div>
         <div class="lp-stat learning"><span class="num">${S.inProgress}</span><span class="lbl">Đang học dở</span></div>
         <div class="lp-stat acc"><span class="num">${S.due}</span><span class="lbl">Đến hạn ôn</span></div>
-        <div class="lp-stat remain"><span class="num">${S.new}</span><span class="lbl">Chưa học</span></div>
+        <div class="lp-stat remain"><span class="num">${S.new}</span><span class="lbl">Chưa gặp</span></div>
       </div>
       <div class="lp-head" style="margin-top:12px;margin-bottom:0">
         <span class="lp-frac">Hôm nay: ${studiedCount(todayKey())} từ · ${stat.answered} lượt · chính xác <b>${acc}%</b></span>
@@ -55406,27 +56349,24 @@ function renderLearnStart(scope='srs', empty=false){
       <div class="sess-note" id="sessNote"></div>
 
       ${empty?`<p style="color:var(--coral)">Không có từ nào trong phạm vi này.</p>`:''}
-      ${scope==='srs'&&!nSrs?`<p style="color:var(--green)">🎉 Bạn đã ôn hết từ đến hạn hôm nay! Thử <b>Ôn ngẫu nhiên</b> để củng cố.</p>`:''}
+      ${scope==='path'&&!nPath?`<p style="color:var(--green)">🎉 Mọi từ trong kho đều đã thuộc! Thử <b>Ôn ngẫu nhiên</b> để củng cố.</p>`:''}
+      ${scope==='srs'&&!nSrs?`<p style="color:var(--green)">🎉 Bạn đã ôn hết từ đến hạn hôm nay!</p>`:''}
 
       <button class="learn-big-btn" id="learnStartBtn">Bắt đầu học</button>
 
       <div class="srs-explain">
-        <div class="se-title">Cơ chế lặp lại ngắt quãng hoạt động thế nào?</div>
-        <div class="se-steps">
-          ${SRS_STEPS.map((d,i)=>`
-            <div class="se-step">
-              <div class="se-box">${i}</div>
-              <div class="se-d">${i===0?'ngay':'+'+d+'n'}</div>
-            </div>${i<SRS_STEPS.length-1?'<div class="se-arrow">→</div>':''}`).join('')}
-          <div class="se-arrow">→</div>
-          <div class="se-step done"><div class="se-box">✓</div><div class="se-d">thuộc</div></div>
+        <div class="se-title">Vì sao phải qua đủ 3 cửa mới tính là thuộc?</div>
+        <div class="step-bar" style="margin:10px 0">
+          ${GATES.map(x=>`<span class="step"><i>${x.ic}</i><em>${x.name}</em></span>`).join('<span class="step-arrow">→</span>')}
+          <span class="step-arrow">→</span><span class="step"><i>🔁</i><em>Ôn ngắt quãng</em></span>
+          <span class="step-arrow">→</span><span class="step ok"><i>✅</i><em>Thuộc</em></span>
         </div>
         <ul class="se-list">
-          <li><b>Trả lời đúng</b> → lên 1 bậc, lần ôn kế tiếp giãn ra xa hơn.</li>
-          <li><b>Trả lời sai</b> → về bậc 0, ôn lại ngay trong phiên và tự vào <b>Cần học</b>.</li>
-          <li>Mọi chế độ đều tính vào tiến độ: <b>Gõ từ</b> (×1.3, khó nhất) ·
-              <b>Học thuộc</b> (×1.0) · <b>Trắc nghiệm</b> (×0.9) · <b>Flashcard</b> tự chấm (×0.85).</li>
-          <li>Đạt <b>bậc ${SRS_MASTER_BOX}</b> là <b>đã thuộc</b>, tự gỡ khỏi Cần học.</li>
+          <li><b>🃏 Flashcard</b> — nhận diện mặt chữ, tự đánh giá thật lòng "nhớ hay không".</li>
+          <li><b>❓ Trắc nghiệm</b> — chọn đúng nghĩa; khó bị đoán mò hơn vì phải qua cả 3 cửa.</li>
+          <li><b>⌨️ Gõ từ</b> — viết đúng chính tả không gợi ý; đây là bằng chứng mạnh nhất.</li>
+          <li>Trả lời <b>sai</b> ở cửa nào → cửa đó <b>khoá lại</b>, phải vượt lại từ đầu.</li>
+          <li>Đủ 3 cửa rồi vẫn phải qua đủ <b>${SRS_MASTER_BOX} lượt ôn ngắt quãng</b> (giãn cách dần) mới chốt là <b>đã thuộc</b>.</li>
         </ul>
         <button class="learn-ghost-btn" onclick="resetSRS()" style="font-size:11px;margin-top:6px">Reset tiến độ SRS</button>
       </div>
@@ -55441,9 +56381,6 @@ function renderLearnStart(scope='srs', empty=false){
     b.onclick = ()=>{ setSessionSize(parseInt(b.dataset.size,10)); renderLearnStart(chosen); };
   });
 
-  /* Cho biết TRƯỚC KHI bắt đầu là phiên sẽ có đúng bao nhiêu từ.
-     Phiên KHÔNG BAO GIỜ lấy thêm từ ngoài phạm vi đã chọn:
-     nếu "Cần học" chỉ có 3 từ thì phiên đúng 3 từ, dù cỡ phiên đặt 10. */
   function updateNote(){
     const avail = (SCOPES.find(x=>x.k===chosen)||{}).n || 0;
     const size  = sessionSize();
@@ -55476,15 +56413,15 @@ function renderLearnStart(scope='srs', empty=false){
 }
 
 function renderLearn(){
-  if(learnState && learnState.words.some(w=>!w.mastered) && learnState.current){
-    renderLearnQuestion(learnState.current);
-  } else {
-    renderLearnStart('today');
-  }
+  if(learnState) { renderLearnStep(learnState.current || learnState.words.find(w=>!w.done)); return; }
+  renderLearnStart(_pendingScope || 'path');
+  _pendingScope = null;
 }
+let _pendingScope = null;
+
 
 /* ---------- Init ---------- */
-['topicFilter','posFilter','levelFilter','statusFilter','starFilter','sortOrder'].forEach(id=>
+['topicFilter','posFilter','levelFilter','statusFilter','stageFilter','starFilter','sortOrder'].forEach(id=>
   document.getElementById(id).onchange = ()=>{
     _pinnedWord = null;
     _dateFilter = 'all';          // người dùng tự lọc -> bỏ giới hạn "đợt từ mới"
