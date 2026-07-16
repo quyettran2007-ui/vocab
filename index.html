@@ -1393,6 +1393,102 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .st-ex-en{ font-size:13.5px; color:var(--ex-color); line-height:1.55; }
 .st-ex-vi{ font-size:12.5px; color:var(--muted); margin-top:4px; line-height:1.5; }
 
+/* ---- Chọn chủ đề luyện dịch (nâng cấp) ---- */
+/* ---- Nâng cấp luyện dịch v3: hiện đáp án + chấm theo từ + thống kê ---- */
+.st-tr-head-row{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+.st-tr-head-row h2{ margin:0; }
+.st-stats-btn{ font-family:inherit; font-size:12px; font-weight:700; color:var(--accent);
+  background:var(--accent-bg); border:1px solid transparent; border-radius:9px; padding:7px 13px;
+  cursor:pointer; white-space:nowrap; transition:.15s; }
+.st-stats-btn:hover{ border-color:var(--accent); }
+.st-tag-good{ color:var(--green); font-weight:700; }
+.st-tag-bad{ color:var(--coral); font-weight:700; }
+
+/* khung gợi ý: 2 vai trò — chế độ gợi ý (trước kiểm tra) và chế độ chấm (sau kiểm tra) */
+.st-hint-row.st-hint-graded{ border-style:solid; }
+/* ---- Kiểm tra kín (không lộ đáp án cho từ sai) ---- */
+.st-hint-word.wrong.blind{ background:var(--coral-bg); color:var(--coral); text-decoration:none;
+  letter-spacing:1px; font-family:var(--font-mono); }
+.st-xxx-inline{ font-family:var(--font-mono); font-weight:700; color:var(--coral);
+  background:var(--coral-bg); border-radius:4px; padding:0 5px; }
+#stTrCheckBlind{ border-color:var(--accent); color:var(--accent); }
+#stTrCheckBlind:hover{ background:var(--accent-bg); }
+.st-hint-word.correct{ color:#fff; background:var(--green); border-radius:5px; padding:1px 7px;
+  letter-spacing:normal; font-weight:700; }
+.st-hint-word.wrong{ color:#fff; background:var(--coral); border-radius:5px; padding:1px 7px;
+  letter-spacing:normal; font-weight:700; text-decoration:line-through; text-decoration-thickness:1.5px; }
+.st-hint-word.neutral{ color:var(--muted); letter-spacing:normal; font-weight:500; }
+[data-theme="dark"] .st-hint-word.correct,[data-theme="dark"] .st-hint-word.wrong{ color:#08120f; }
+
+.st-tr-result.revealed{ background:var(--gold-bg); border-color:var(--gold); }
+.st-tr-result.revealed .st-tr-pct{ color:var(--gold); }
+
+/* tóm tắt cuối phiên */
+.st-tr-summary-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:16px; }
+.st-sum-stat{ background:var(--card-sunken); border:1px solid var(--line); border-radius:12px;
+  padding:12px 6px; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.st-sum-stat .num{ font-family:var(--font-mono); font-size:19px; font-weight:800; }
+.st-sum-stat .lbl{ font-size:10.5px; color:var(--muted); font-weight:600; text-align:center; }
+.st-sum-stat.good .num{ color:var(--green); }
+.st-sum-stat.mid .num{ color:var(--gold); }
+.st-sum-stat.off .num{ color:var(--muted); }
+
+/* màn thống kê tổng */
+.st-stats-h3{ font-family:var(--font-heading); font-size:14.5px; margin:0 0 14px; }
+.st-day-chart{ display:flex; align-items:flex-end; gap:4px; height:96px; padding-top:8px; }
+.st-day-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:5px; height:100%; }
+.st-day-bar{ width:100%; max-width:16px; background:var(--accent-grad); border-radius:4px 4px 2px 2px; min-height:2px; }
+.st-day-col span{ font-size:8.5px; color:var(--muted); font-family:var(--font-mono); white-space:nowrap; }
+
+.st-topic-stats{ display:flex; flex-direction:column; gap:12px; }
+.st-topic-stat-row{ display:grid; grid-template-columns:1fr; gap:5px; }
+.st-topic-stat-name{ font-size:12.5px; font-weight:700; color:var(--ink-soft); }
+.st-topic-stat-bar{ display:block; height:7px; border-radius:4px; background:var(--paper-2); overflow:hidden; }
+.st-topic-stat-bar span{ display:block; height:100%; background:var(--accent-grad); border-radius:4px; }
+.st-topic-stat-n{ font-size:11px; color:var(--muted); font-family:var(--font-mono); }
+
+.st-recent-list{ display:flex; flex-direction:column; gap:8px; }
+.st-recent-row{ background:var(--card-sunken); border:1px solid var(--line); border-left:3px solid var(--line-strong);
+  border-radius:9px; padding:9px 12px; }
+.st-recent-row.correct{ border-left-color:var(--green); }
+.st-recent-row.revealed{ border-left-color:var(--gold); }
+.st-recent-row.skipped{ border-left-color:var(--muted); opacity:.75; }
+.st-recent-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:11px; margin-bottom:4px; }
+.st-recent-outcome{ font-weight:700; }
+.st-recent-row.correct .st-recent-outcome{ color:var(--green); }
+.st-recent-row.revealed .st-recent-outcome{ color:var(--gold); }
+.st-recent-row.skipped .st-recent-outcome{ color:var(--muted); }
+.st-recent-pct{ font-family:var(--font-mono); font-weight:700; color:var(--ink-soft); }
+.st-recent-time{ margin-left:auto; color:var(--muted); font-family:var(--font-mono); font-size:10.5px; }
+.st-recent-en{ font-size:12.5px; color:var(--ex-color); line-height:1.5; }
+.st-topic-pick-head{ display:flex; justify-content:space-between; align-items:center;
+  margin:4px 0 10px; font-size:13px; font-weight:700; color:var(--ink-soft); }
+.st-topic-pick-acts{ display:flex; gap:8px; }
+.st-pick-mini{ font-family:inherit; font-size:11.5px; font-weight:600; color:var(--accent);
+  background:none; border:none; cursor:pointer; padding:2px 4px; }
+.st-pick-mini:hover{ text-decoration:underline; }
+.st-topic-pick{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.st-pick-chip{ display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none;
+  border:1px solid var(--line); background:var(--card-sunken); border-radius:10px;
+  padding:7px 12px; font-size:12.5px; color:var(--ink-soft); transition:.15s; }
+.st-pick-chip input{ accent-color:var(--accent); width:14px; height:14px; margin:0; cursor:pointer; }
+.st-pick-chip b{ font-family:var(--font-mono); font-weight:700; color:var(--muted); font-size:11px; }
+.st-pick-chip.on{ border-color:var(--accent); background:var(--accent-bg); color:var(--ink); }
+.st-pick-chip.on b{ color:var(--accent); }
+
+/* ---- Gợi ý từng từ ---- */
+.st-hint-row{ display:none; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center;
+  margin:14px 0; padding:12px 14px; background:var(--card-sunken); border:1px dashed var(--line);
+  border-radius:12px; }
+.st-hint-word{ font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--line-strong);
+  letter-spacing:1px; }
+.st-hint-word.on{ color:var(--accent); background:var(--accent-bg); border-radius:5px; padding:1px 6px;
+  letter-spacing:normal; }
+.st-hint-punct{ font-family:var(--font-mono); font-size:13px; color:var(--muted); }
+
+.st-tr-nudge{ font-size:13px; color:var(--muted); padding:10px 14px; background:var(--card-sunken);
+  border-radius:10px; border:1px solid var(--line); }
+.st-tr-nudge.low{ color:var(--coral); background:var(--coral-bg); border-color:var(--coral); }
 .st-vi-prompt{ color:var(--vn-color) !important; font-weight:600; }
 .st-tr-field{ margin-top:18px; }
 .st-tr-field textarea{
@@ -53006,7 +53102,7 @@ const VOCAB = [
   topic: "Đời sống Đô thị và Nông thôn",
   date: "2026-07-14"
 },
-  {
+ {
     "word": "birth order",
     "ipa": "/bɜːθ ˈɔː.dər/",
     "pos": "noun phrase",
@@ -55583,14 +55679,33 @@ const VOCAB = [
     "topic": "Cam17-Test1",
     "date": "2026-07-16"
   }
-  
 ];
-/* Khởi tạo sẵn trường v.listening = ["Cam15-Test1"] cho mọi từ (nếu chưa có) —
+/* Khởi tạo sẵn trường v.listening = [] cho mọi từ (nếu chưa có) —
    để chip 3 cửa và bộ lọc theo Cam-Test hoạt động an toàn kể cả
    khi chưa gán dữ liệu Listening nào. Gán dữ liệu thật bằng cách
    thêm listening: ["Cam17-Test2", ...] trực tiếp vào từng entry ở
    trên, hoặc set động: VOCAB.find(v=>v.word==="...").listening.push("Cam17-Test2"); */
-VOCAB.forEach(v => { if (!Array.isArray(v.listening)) v.listening = ["Cam15-Test1", "Cam17-Test1" ]; });
+VOCAB.forEach(v => { if (!Array.isArray(v.listening)) v.listening = ["Cam1-Test1", "Cam1-Test2", "Cam1-Test3", "Cam1-Test4",
+"Cam2-Test1", "Cam2-Test2", "Cam2-Test3", "Cam2-Test4",
+"Cam3-Test1", "Cam3-Test2", "Cam3-Test3", "Cam3-Test4",
+"Cam4-Test1", "Cam4-Test2", "Cam4-Test3", "Cam4-Test4",
+"Cam5-Test1", "Cam5-Test2", "Cam5-Test3", "Cam5-Test4",
+"Cam6-Test1", "Cam6-Test2", "Cam6-Test3", "Cam6-Test4",
+"Cam7-Test1", "Cam7-Test2", "Cam7-Test3", "Cam7-Test4",
+"Cam8-Test1", "Cam8-Test2", "Cam8-Test3", "Cam8-Test4",
+"Cam9-Test1", "Cam9-Test2", "Cam9-Test3", "Cam9-Test4",
+"Cam10-Test1", "Cam10-Test2", "Cam10-Test3", "Cam10-Test4",
+"Cam11-Test1", "Cam11-Test2", "Cam11-Test3", "Cam11-Test4",
+"Cam12-Test1", "Cam12-Test2", "Cam12-Test3", "Cam12-Test4",
+"Cam13-Test1", "Cam13-Test2", "Cam13-Test3", "Cam13-Test4",
+"Cam14-Test1", "Cam14-Test2", "Cam14-Test3", "Cam14-Test4",
+"Cam15-Test1", "Cam15-Test2", "Cam15-Test3", "Cam15-Test4",
+"Cam16-Test1", "Cam16-Test2", "Cam16-Test3", "Cam16-Test4",
+"Cam17-Test1", "Cam17-Test2", "Cam17-Test3", "Cam17-Test4",
+"Cam18-Test1", "Cam18-Test2", "Cam18-Test3", "Cam18-Test4",
+"Cam19-Test1", "Cam19-Test2", "Cam19-Test3", "Cam19-Test4",
+"Cam20-Test1", "Cam20-Test2", "Cam20-Test3", "Cam20-Test4",
+"Cam21-Test1", "Cam21-Test2", "Cam21-Test3", "Cam21-Test4"]; });
 
 /* ============================================================
    CẤU TRÚC CÂU HAY — WRITING & SPEAKING
@@ -65311,8 +65426,14 @@ function lsWordCount(book, test){
   return n;
 }
 function lsBookTotal(book){
+  /* Đếm SỐ TỪ DUY NHẤT của quyển — không cộng dồn 4 Test, vì 1 từ có thể
+     xuất hiện ở nhiều Test trong cùng 1 quyển (vd vừa Test1 vừa Test3),
+     cộng dồn sẽ đếm trùng và hiện sai tổng ở đầu thẻ Cambridge X. */
+  const keys = LISTENING_TESTS.map(t => lsKey(book, t));
   let n = 0;
-  LISTENING_TESTS.forEach(t => n += lsWordCount(book, t));
+  for(const v of VOCAB){
+    if(v.listening && v.listening.some(k => keys.includes(k))) n++;
+  }
   return n;
 }
 
@@ -65372,6 +65493,16 @@ function openListeningSet(book, test){
   }
   _lsSetFilter = key;
   _pinnedWord = null; _stageFilter = 'all'; _statusFilter = 'all'; _dateFilter = 'all';
+  /* Xoá SẠCH mọi bộ lọc khác còn sót lại (chủ đề/loại từ/trình độ/tìm kiếm/sao),
+     nếu không chúng sẽ bị AND ngầm với bộ Listening -> ra danh sách rỗng hoặc
+     sai dù đã bấm đúng đề có từ. Đây là nguyên nhân của lỗi "bấm vào không đúng". */
+  const topicSel = document.getElementById('topicFilter');   if(topicSel) topicSel.value = 'all';
+  const posSel    = document.getElementById('posFilter');     if(posSel) posSel.value = 'all';
+  const levelSel  = document.getElementById('levelFilter');   if(levelSel) levelSel.value = 'all';
+  const searchBox = document.getElementById('searchBox');     if(searchBox) searchBox.value = '';
+  const starSel   = document.getElementById('starFilter');    if(starSel) starSel.value = 'all';
+  const statusSel = document.getElementById('statusFilter');  if(statusSel) statusSel.value = 'all';
+  const stageSel  = document.getElementById('stageFilter');   if(stageSel) stageSel.value = 'all';
   applyFilter();
   document.querySelector('.tab-btn[data-mode="list"]').click();
   toast(`🎧 ${key} — ${n} từ`);
@@ -65582,97 +65713,488 @@ function stTokenize(s){
   return (s.toLowerCase().match(/[a-zà-ỹ']+/gi) || []).filter(w => !ST_STOPWORDS.has(w));
 }
 
+/* ============================================================
+   🌐 LUYỆN DỊCH VIỆT → ANH  (bản nâng cấp)
+   ------------------------------------------------------------
+   Thêm so với bản cũ:
+   ① Màn hình chọn CHỦ ĐỀ trước khi luyện — chọn 1 hoặc nhiều
+      chủ đề trong STRUCT_TOPICS, chỉ luyện câu thuộc các chủ đề
+      đã chọn.
+   ② GỢI Ý TỪNG TỪ — bấm "💡 Gợi ý" sẽ mở thêm đúng 1 từ tiếng Anh
+      còn thiếu trong câu (theo đúng thứ tự xuất hiện). Không còn
+      khoá bài sau 1 lần bấm Kiểm tra sai nữa — được sửa và bấm
+      Kiểm tra lại NHIỀU LẦN cho đến khi đúng thì thôi, đúng như
+      yêu cầu "gợi ý đến khi nào đúng thì thôi".
+   ============================================================ */
+/* ============================================================
+   🌐 LUYỆN DỊCH VIỆT → ANH  (bản nâng cấp v3)
+   ------------------------------------------------------------
+   Thêm so với bản trước:
+   ① Nút "👁 Hiện đáp án" — hiện câu gốc ngay, tính là CHƯA thuộc
+      (giống logic gõ từ: xem đáp án = chưa nhớ được).
+   ② Sau khi bấm Kiểm tra, khung gợi ý đổi vai trò: không còn là
+      nơi mở dần từng từ nữa mà thành BẢNG CHẤM — mỗi từ trong câu
+      gốc được tô XANH nếu câu người dùng gõ có chứa đúng từ đó,
+      tô ĐỎ nếu thiếu/sai. Vẫn giữ nút Gợi ý để mở dần từng từ
+      TRƯỚC khi kiểm tra như cũ.
+   ③ Lưu lịch sử mỗi lượt luyện vào localStorage (ST_TR_HISTORY_KEY):
+      ngày giờ, câu, chủ đề, % khớp, số gợi ý dùng, có xem đáp án
+      hay không. Có tóm tắt cuối phiên + màn "📊 Thống kê" riêng
+      xem toàn bộ lịch sử (theo ngày / theo chủ đề / độ chính xác).
+   ============================================================ */
+let _stTrTopics = new Set(STRUCT_TOPICS);   // mặc định chọn tất cả chủ đề
+let _stTrHintsUsed = 0;
+let _stTrSessionLog = [];   // log của phiên hiện tại, dùng cho tóm tắt cuối phiên
+
+const ST_TR_HISTORY_KEY = 'vocab_st_translate_history';
+
+function stTrLoadHistory(){
+  try{ return JSON.parse(localStorage.getItem(ST_TR_HISTORY_KEY)) || []; }
+  catch(e){ return []; }
+}
+function stTrSaveEntry(entry){
+  const hist = stTrLoadHistory();
+  hist.push(entry);
+  // giới hạn 2000 lượt gần nhất để không phình localStorage vô hạn
+  if(hist.length > 2000) hist.splice(0, hist.length - 2000);
+  localStorage.setItem(ST_TR_HISTORY_KEY, JSON.stringify(hist));
+}
+
+function stExamplesByTopics(topics){
+  const out = [];
+  STRUCTURES.forEach(s=>{
+    if(!topics.has(s.topic)) return;
+    s.examples.forEach(ex => out.push({
+      structId: s.id, structure: s.structure, meaning: s.meaning, topic: s.topic,
+      en: ex.en, vi: ex.vi
+    }));
+  });
+  return out;
+}
+
+/* ---------- ① Màn hình chọn chủ đề ---------- */
 function stRenderTranslateStart(root){
+  const counts = {};
+  STRUCT_TOPICS.forEach(t => counts[t] = STRUCTURES.filter(s=>s.topic===t)
+    .reduce((a,s)=>a+s.examples.length, 0));
+  const selectedN = stExamplesByTopics(_stTrTopics).length;
+  const hist = stTrLoadHistory();
+
   root.innerHTML = `
     ${stModeBar('translate')}
     <div class="learn-card" style="margin-top:14px">
-      <h2>🌐 Luyện dịch Việt → Anh</h2>
-      <p style="color:var(--muted);font-size:13.5px;margin:6px 0 12px">
-        Đọc câu tiếng Việt, gõ lại đúng câu tiếng Anh gốc (lấy từ chính các ví dụ trong
-        thư viện cấu trúc). Chấm theo % từ khóa khớp — không cần khớp 100% từng dấu câu,
-        miễn diễn đạt đúng cấu trúc và các từ quan trọng.</p>
-      <button class="learn-big-btn" onclick="stStartTranslate()">Bắt đầu (${stAllExamples().length} câu)</button>
+      <div class="st-tr-head-row">
+        <h2>🌐 Luyện dịch Việt → Anh</h2>
+        <button class="st-stats-btn" id="stStatsBtn">📊 Thống kê (${hist.length} lượt)</button>
+      </div>
+      <p style="color:var(--muted);font-size:13.5px;margin:6px 0 16px">
+        Đọc câu tiếng Việt, gõ lại đúng câu tiếng Anh gốc. Bí quá thì bấm <b>💡 Gợi ý</b> để mở dần
+        từng từ, hoặc <b>👁 Hiện đáp án</b> nếu muốn xem luôn (sẽ tính là câu chưa thuộc). Sau khi
+        bấm Kiểm tra, khung bên dưới sẽ chấm từng từ: <span class="st-tag-good">xanh = đúng</span>,
+        <span class="st-tag-bad">đỏ = sai/thiếu</span>.</p>
+
+      <div class="st-topic-pick-head">
+        <span>Chọn chủ đề muốn luyện</span>
+        <div class="st-topic-pick-acts">
+          <button class="st-pick-mini" id="stPickAll">Chọn tất cả</button>
+          <button class="st-pick-mini" id="stPickNone">Bỏ chọn hết</button>
+        </div>
+      </div>
+      <div class="st-topic-pick" id="stTopicPick">
+        ${STRUCT_TOPICS.map(t=>`
+          <label class="st-pick-chip ${_stTrTopics.has(t)?'on':''}">
+            <input type="checkbox" data-topic="${esc(t)}" ${_stTrTopics.has(t)?'checked':''}>
+            <span>${esc(t)}</span><b>${counts[t]}</b>
+          </label>`).join('')}
+      </div>
+
+      <button class="learn-big-btn" id="stTrGo" ${selectedN?'':'disabled'}>
+        ${selectedN ? `Bắt đầu (${selectedN} câu)` : 'Hãy chọn ít nhất 1 chủ đề'}
+      </button>
     </div>`;
+
+  const updateGo = ()=>{
+    const n = stExamplesByTopics(_stTrTopics).length;
+    const btn = document.getElementById('stTrGo');
+    btn.disabled = !n;
+    btn.textContent = n ? `Bắt đầu (${n} câu)` : 'Hãy chọn ít nhất 1 chủ đề';
+  };
+
+  root.querySelectorAll('#stTopicPick input[type=checkbox]').forEach(cb=>{
+    cb.onchange = ()=>{
+      const t = cb.dataset.topic;
+      if(cb.checked) _stTrTopics.add(t); else _stTrTopics.delete(t);
+      cb.closest('.st-pick-chip').classList.toggle('on', cb.checked);
+      updateGo();
+    };
+  });
+  document.getElementById('stPickAll').onclick = ()=>{
+    _stTrTopics = new Set(STRUCT_TOPICS);
+    root.querySelectorAll('#stTopicPick input[type=checkbox]').forEach(cb=>{ cb.checked=true; cb.closest('.st-pick-chip').classList.add('on'); });
+    updateGo();
+  };
+  document.getElementById('stPickNone').onclick = ()=>{
+    _stTrTopics.clear();
+    root.querySelectorAll('#stTopicPick input[type=checkbox]').forEach(cb=>{ cb.checked=false; cb.closest('.st-pick-chip').classList.remove('on'); });
+    updateGo();
+  };
+  document.getElementById('stTrGo').onclick = ()=> stStartTranslate();
+  document.getElementById('stStatsBtn').onclick = ()=> stRenderTrStats(root);
 }
 
 function stStartTranslate(){
-  _stTrPool = shuffle(stAllExamples());
+  _stTrPool = shuffle(stExamplesByTopics(_stTrTopics));
   _stTrI = 0; _stTrScore = 0; _stTrTotal = 0;
+  _stTrSessionLog = [];
   stNextTranslate();
 }
 
+/* ---------- ② Màn hình luyện dịch + gợi ý + chấm theo từ ---------- */
 function stNextTranslate(){
   const root = document.getElementById('stRoot');
-  if(_stTrI >= _stTrPool.length){
-    const avg = _stTrTotal ? Math.round(_stTrScore/_stTrTotal) : 0;
-    root.innerHTML = `
-      ${stModeBar('translate')}
-      <div class="learn-card" style="margin-top:14px;text-align:center">
-        <div class="celebrate">🎉</div>
-        <h2>Hoàn thành!</h2>
-        <p>Độ khớp trung bình: <b>${avg}%</b> qua ${_stTrPool.length} câu.</p>
-        <button class="learn-big-btn" onclick="stStartTranslate()">Làm lại</button>
-      </div>`;
-    return;
-  }
+  if(!_stTrPool.length){ stRenderTranslateStart(root); return; }
+  if(_stTrI >= _stTrPool.length){ stRenderTrSessionSummary(root); return; }
+
   const cur = _stTrPool[_stTrI];
+  const targetTokens = cur.en.match(/[A-Za-zÀ-ỹ']+|[^\sA-Za-zÀ-ỹ']+/g) || [];   // giữ cả dấu câu để hiện gợi ý tự nhiên
+  const wordIdxs = targetTokens.map((t,i)=> /[A-Za-zÀ-ỹ]/.test(t) ? i : -1).filter(i=>i>=0);
+  _stTrHintsUsed = 0;
+
   root.innerHTML = `
     ${stModeBar('translate')}
     <div class="tp-head" style="margin-top:14px">
-      <span class="st-topic-tag">${esc(cur.structure)}</span>
+      <span class="st-topic-tag">${esc(cur.topic)} · ${esc(cur.structure)}</span>
       <span class="tp-score">Câu <b>${_stTrI+1}</b>/${_stTrPool.length}</span>
     </div>
     <div class="quiz-q">
       <div class="prompt-label">Dịch câu sau sang tiếng Anh</div>
       <div class="prompt-word small st-vi-prompt">${esc(cur.vi)}</div>
     </div>
+    <div class="st-hint-row" id="stHintRow"></div>
     <div class="st-tr-field">
       <textarea id="stTrInput" rows="3" placeholder="Gõ câu tiếng Anh của bạn ở đây…" autocomplete="off" spellcheck="false"></textarea>
     </div>
     <div class="st-tr-feedback" id="stTrFeedback"></div>
     <div class="type-actions">
       <button class="btn primary" id="stTrCheck">✓ Kiểm tra</button>
+      <button class="btn" id="stTrCheckBlind">🔒 Kiểm tra kín</button>
+      <button class="btn" id="stTrHint">💡 Gợi ý 1 từ</button>
+      <button class="btn" id="stTrShow">👁 Hiện đáp án</button>
       <button class="btn" id="stTrSkip">Bỏ qua →</button>
-    </div>`;
+    </div>
+    <div class="type-tip">🔒 Kiểm tra kín: từ sai chỉ hiện <span class="st-xxx-inline">xxx</span> không lộ đáp án · ✓ Kiểm tra: hiện rõ từ đúng để đối chiếu</div>`;
 
   const inp = document.getElementById('stTrInput');
   const fb = document.getElementById('stTrFeedback');
-  let locked = false;
+  const hintRow = document.getElementById('stHintRow');
+  const hintBtn = document.getElementById('stTrHint');
+  let solved = false, revealed = false;
   setTimeout(()=>inp.focus(), 30);
 
-  function check(){
-    if(locked) return;
-    const val = inp.value.trim();
-    if(!val){ fb.textContent = 'Hãy gõ câu dịch trước khi kiểm tra.'; return; }
-    locked = true;
+  /* Chế độ GỢI Ý (trước khi kiểm tra): mở dần từng từ theo thứ tự, ẩn phần còn lại */
+  function renderHintMode(){
+    if(!_stTrHintsUsed){ hintRow.innerHTML=''; hintRow.style.display='none'; return; }
+    hintRow.style.display = 'flex';
+    hintRow.classList.remove('st-hint-graded');
+    hintRow.innerHTML = targetTokens.map((t,i)=>{
+      const wPos = wordIdxs.indexOf(i);
+      if(wPos === -1) return `<span class="st-hint-punct">${esc(t)}</span>`;
+      const shown = wPos < _stTrHintsUsed;
+      return shown ? `<span class="st-hint-word on">${esc(t)}</span>`
+                   : `<span class="st-hint-word">•••</span>`;
+    }).join(' ');
+    hintBtn.textContent = _stTrHintsUsed >= wordIdxs.length ? '💡 Đã hiện hết từ' : `💡 Gợi ý 1 từ (${_stTrHintsUsed}/${wordIdxs.length})`;
+    hintBtn.disabled = _stTrHintsUsed >= wordIdxs.length;
+  }
+
+  /* Chế độ CHẤM (sau khi bấm Kiểm tra): hiện TOÀN BỘ câu gốc, tô theo đúng/sai
+     dựa trên việc câu người dùng gõ có chứa đúng từ đó hay không (so khớp
+     không phân biệt hoa-thường, bỏ qua dấu câu — giống cách tính điểm %). */
+  function renderGradedHints(userVal, blind){
+    const userWords = new Set(stTokenize(userVal));
+    hintRow.style.display = 'flex';
+    hintRow.classList.add('st-hint-graded');
+    if(blind) hintRow.classList.add('st-hint-blind'); else hintRow.classList.remove('st-hint-blind');
+    hintRow.innerHTML = targetTokens.map(t=>{
+      if(!/[A-Za-zÀ-ỹ]/.test(t)) return `<span class="st-hint-punct">${esc(t)}</span>`;
+      const norm = t.toLowerCase();
+      const isStop = ST_STOPWORDS.has(norm);
+      const ok = userWords.has(norm);
+      if(isStop) return `<span class="st-hint-word neutral">${esc(t)}</span>`;
+      if(ok) return `<span class="st-hint-word correct">${esc(t)}</span>`;
+      /* Kiểm tra kín: KHÔNG lộ chữ gốc cho từ sai/thiếu — chỉ hiện xxx theo
+         đúng độ dài từ, để người học tự đoán lại thay vì đọc được đáp án. */
+      return blind
+        ? `<span class="st-hint-word wrong blind">${'x'.repeat(Math.max(2, Math.min(t.length,6)))}</span>`
+        : `<span class="st-hint-word wrong">${esc(t)}</span>`;
+    }).join(' ');
+  }
+
+  function score(val){
     const targetWords = new Set(stTokenize(cur.en));
     const userWords = new Set(stTokenize(val));
     let matched = 0;
     targetWords.forEach(w => { if(userWords.has(w)) matched++; });
-    const pct = targetWords.size ? Math.round(matched/targetWords.size*100) : 100;
-    _stTrTotal += pct; _stTrScore++;   // _stTrScore dùng làm bộ đếm số câu đã làm
+    return targetWords.size ? Math.round(matched/targetWords.size*100) : 100;
+  }
 
-    const cls = pct>=80 ? 'good' : pct>=50 ? 'mid' : 'low';
+  function logAttempt(pct, outcome){
+    const entry = {
+      ts: Date.now(), topic: cur.topic, structure: cur.structure,
+      vi: cur.vi, en: cur.en, pct, hints: _stTrHintsUsed, outcome  // outcome: 'correct' | 'revealed' | 'skipped'
+    };
+    _stTrSessionLog.push(entry);
+    stTrSaveEntry(entry);
+  }
+
+  function finishCorrect(pct){
+    solved = true;
+    _stTrTotal += pct; _stTrScore++;
+    sfx.correct();
+    if(_stTrHintsUsed === 0) rewardCorrect('typing'); else { addGems(1); flyGem(1); }
     fb.innerHTML = `
-      <div class="st-tr-result ${cls}">
-        <div class="st-tr-pct">${pct}% khớp từ khóa</div>
+      <div class="st-tr-result good">
+        <div class="st-tr-pct">✓ Chính xác — ${pct}% khớp${_stTrHintsUsed?` (đã dùng ${_stTrHintsUsed} gợi ý)`:''}</div>
         <div class="st-tr-answer"><b>Câu gốc:</b> ${esc(cur.en)}</div>
       </div>`;
-    if(pct>=80){ sfx.correct(); rewardCorrect('typing'); } else { sfx.wrong(); }
-    document.getElementById('stTrCheck').style.display='none';
-
+    document.getElementById('stTrCheck').style.display = 'none';
+    document.getElementById('stTrCheckBlind').style.display = 'none';
+    document.getElementById('stTrShow').style.display = 'none';
+    hintBtn.style.display = 'none';
+    inp.disabled = true;
     const nextBtn = document.createElement('button');
     nextBtn.className = 'btn primary';
     nextBtn.textContent = 'Câu tiếp theo →';
     nextBtn.onclick = ()=>{ _stTrI++; stNextTranslate(); };
     fb.appendChild(nextBtn);
+    logAttempt(pct, 'correct');
   }
-  document.getElementById('stTrCheck').onclick = check;
-  document.getElementById('stTrSkip').onclick = ()=>{ _stTrI++; stNextTranslate(); };
+
+  function check(blind){
+    if(revealed) return;
+    const val = inp.value.trim();
+    if(!val){ fb.innerHTML = '<div class="st-tr-nudge">Hãy gõ câu dịch trước khi kiểm tra.</div>'; return; }
+    const pct = score(val);
+    renderGradedHints(val, blind);   // luôn chấm điểm theo từ trong khung gợi ý, dù đúng hay sai
+
+    if(pct >= 90){
+      finishCorrect(pct);
+    } else {
+      /* SAI -> KHÔNG khoá bài. Cho sửa và kiểm tra lại thoải mái. */
+      sfx.wrong();
+      fb.innerHTML = blind
+        ? `<div class="st-tr-nudge low">✗ Chưa đúng hẳn — hiện khớp ${pct}%. Từ sai/thiếu chỉ hiện <span class="st-xxx-inline">xxx</span> — tự đoán lại rồi kiểm tra tiếp, hoặc bấm ✓ Kiểm tra thường để xem rõ chữ.</div>`
+        : `<div class="st-tr-nudge low">✗ Chưa đúng hẳn — hiện khớp ${pct}%. Xem từ tô đỏ trong khung trên để biết chỗ cần sửa.</div>`;
+      inp.focus();
+    }
+  }
+
+  document.getElementById('stTrCheck').onclick = ()=> check(false);
+  document.getElementById('stTrCheckBlind').onclick = ()=> check(true);
+  document.getElementById('stTrSkip').onclick = ()=>{
+    logAttempt(0, 'skipped');
+    _stTrI++; stNextTranslate();
+  };
+  document.getElementById('stTrShow').onclick = ()=>{
+    if(revealed || solved) return;
+    revealed = true;
+    const val = inp.value.trim();
+    const pct = val ? score(val) : 0;
+    renderGradedHints(val);
+    sfx.wrong();
+    fb.innerHTML = `
+      <div class="st-tr-result revealed">
+        <div class="st-tr-pct">👁 Đã xem đáp án — tính là câu chưa thuộc</div>
+        <div class="st-tr-answer"><b>Câu gốc:</b> ${esc(cur.en)}</div>
+      </div>`;
+    document.getElementById('stTrCheck').style.display = 'none';
+    document.getElementById('stTrCheckBlind').style.display = 'none';
+    document.getElementById('stTrShow').style.display = 'none';
+    hintBtn.style.display = 'none';
+    inp.disabled = true;
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'btn primary';
+    nextBtn.textContent = 'Câu tiếp theo →';
+    nextBtn.onclick = ()=>{ _stTrI++; stNextTranslate(); };
+    fb.appendChild(nextBtn);
+    logAttempt(pct, 'revealed');
+  };
+  hintBtn.onclick = ()=>{
+    if(solved || revealed || _stTrHintsUsed >= wordIdxs.length) return;
+    _stTrHintsUsed++;
+    renderHintMode();
+    inp.focus();
+  };
   inp.addEventListener('keydown', e=>{
-    if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); check(); }
+    if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); check(false); }
   });
+  renderHintMode();
 }
+
+/* ---------- Tóm tắt cuối phiên ---------- */
+function stRenderTrSessionSummary(root){
+  const n = _stTrSessionLog.length;
+  const correct = _stTrSessionLog.filter(e=>e.outcome==='correct').length;
+  const revealed = _stTrSessionLog.filter(e=>e.outcome==='revealed').length;
+  const skipped = _stTrSessionLog.filter(e=>e.outcome==='skipped').length;
+  const avgPct = n ? Math.round(_stTrSessionLog.reduce((a,e)=>a+e.pct,0)/n) : 0;
+  const totalHints = _stTrSessionLog.reduce((a,e)=>a+e.hints,0);
+  const noHintCorrect = _stTrSessionLog.filter(e=>e.outcome==='correct' && e.hints===0).length;
+
+  root.innerHTML = `
+    ${stModeBar('translate')}
+    <div class="learn-card" style="margin-top:14px;text-align:center">
+      <div class="celebrate">${correct===n && n>0 ? '🎉' : '👍'}</div>
+      <h2>Hoàn thành phiên!</h2>
+      <div class="st-tr-summary-grid">
+        <div class="st-sum-stat good"><span class="num">${correct}</span><span class="lbl">Đúng</span></div>
+        <div class="st-sum-stat mid"><span class="num">${revealed}</span><span class="lbl">Xem đáp án</span></div>
+        <div class="st-sum-stat off"><span class="num">${skipped}</span><span class="lbl">Bỏ qua</span></div>
+        <div class="st-sum-stat"><span class="num">${avgPct}%</span><span class="lbl">Khớp TB</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:14px">
+        ${noHintCorrect}/${n} câu đúng <b>không cần gợi ý</b> · dùng tổng ${totalHints} lượt gợi ý.</p>
+      <button class="learn-big-btn" onclick="stStartTranslate()">Luyện lại các chủ đề này</button>
+      <br><button class="learn-ghost-btn" id="stSumBack">Chọn chủ đề khác</button>
+      <br><button class="learn-ghost-btn" id="stSumStats">📊 Xem thống kê đầy đủ</button>
+    </div>`;
+  document.getElementById('stSumBack').onclick = ()=> stRenderTranslateStart(root);
+  document.getElementById('stSumStats').onclick = ()=> stRenderTrStats(root);
+}
+
+/* ---------- ③ Màn hình Thống kê tổng (toàn bộ lịch sử) ---------- */
+function stTrDateKey(ts){
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function stTrOutcomeLabel(o){
+  return o==='correct' ? '✓ Đúng' : o==='revealed' ? '👁 Xem đáp án' : '⏭ Bỏ qua';
+}
+
+function stRenderTrStats(root){
+  const hist = stTrLoadHistory();
+
+  if(!hist.length){
+    root.innerHTML = `
+      ${stModeBar('translate')}
+      <div class="learn-card" style="margin-top:14px;text-align:center">
+        <h2>📊 Thống kê luyện dịch</h2>
+        <p style="color:var(--muted);margin:10px 0 18px">Chưa có lượt luyện nào. Hãy bắt đầu một phiên dịch trước.</p>
+        <button class="learn-big-btn" onclick="stRenderTranslateStart(document.getElementById('stRoot'))">Bắt đầu luyện</button>
+      </div>`;
+    return;
+  }
+
+  const total = hist.length;
+  const correct = hist.filter(e=>e.outcome==='correct').length;
+  const revealed = hist.filter(e=>e.outcome==='revealed').length;
+  const skipped = hist.filter(e=>e.outcome==='skipped').length;
+  const avgPct = Math.round(hist.reduce((a,e)=>a+e.pct,0)/total);
+  const noHintCorrect = hist.filter(e=>e.outcome==='correct' && e.hints===0).length;
+  const accRate = Math.round(correct/total*100);
+
+  // theo chủ đề
+  const byTopic = {};
+  hist.forEach(e=>{
+    if(!byTopic[e.topic]) byTopic[e.topic] = {n:0, correct:0, pctSum:0};
+    byTopic[e.topic].n++;
+    byTopic[e.topic].pctSum += e.pct;
+    if(e.outcome==='correct') byTopic[e.topic].correct++;
+  });
+  const topicRows = Object.entries(byTopic).sort((a,b)=>b[1].n-a[1].n);
+
+  // theo ngày, 14 ngày gần nhất
+  const byDay = {};
+  hist.forEach(e=>{
+    const k = stTrDateKey(e.ts);
+    if(!byDay[k]) byDay[k] = {n:0, correct:0};
+    byDay[k].n++;
+    if(e.outcome==='correct') byDay[k].correct++;
+  });
+  const today = new Date();
+  const days = Array.from({length:14}, (_,i)=>{
+    const d = new Date(today); d.setDate(d.getDate() - (13-i));
+    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    return { k, label: `${d.getDate()}/${d.getMonth()+1}`, ...( byDay[k] || {n:0,correct:0} ) };
+  });
+  const maxDay = Math.max(1, ...days.map(d=>d.n));
+
+  // 15 lượt gần nhất
+  const recent = hist.slice(-15).reverse();
+
+  root.innerHTML = `
+    ${stModeBar('translate')}
+    <div class="st-tr-head-row" style="margin-top:14px">
+      <h2>📊 Thống kê luyện dịch Việt → Anh</h2>
+      <button class="st-pick-mini" id="stStatsBack">← Quay lại luyện tập</button>
+    </div>
+
+    <div class="st-tr-summary-grid" style="margin:14px 0">
+      <div class="st-sum-stat"><span class="num">${total}</span><span class="lbl">Tổng lượt</span></div>
+      <div class="st-sum-stat good"><span class="num">${accRate}%</span><span class="lbl">Tỉ lệ đúng</span></div>
+      <div class="st-sum-stat"><span class="num">${avgPct}%</span><span class="lbl">Khớp TB</span></div>
+      <div class="st-sum-stat mid"><span class="num">${revealed}</span><span class="lbl">Đã xem đáp án</span></div>
+    </div>
+    <p style="font-size:12.5px;color:var(--muted);text-align:center;margin-bottom:20px">
+      ${correct} đúng · ${revealed} xem đáp án · ${skipped} bỏ qua ·
+      ${noHintCorrect} câu đúng không cần gợi ý</p>
+
+    <div class="learn-card">
+      <h3 class="st-stats-h3">14 ngày gần đây</h3>
+      <div class="st-day-chart">
+        ${days.map(d=>{
+          const h = Math.round(d.n / maxDay * 64);
+          const rate = d.n ? Math.round(d.correct/d.n*100) : 0;
+          return `<div class="st-day-col" title="${d.label}: ${d.n} lượt, ${rate}% đúng">
+            <div class="st-day-bar" style="height:${Math.max(2,h)}px"></div>
+            <span>${d.label}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="learn-card">
+      <h3 class="st-stats-h3">Theo chủ đề</h3>
+      <div class="st-topic-stats">
+        ${topicRows.map(([t,d])=>{
+          const rate = Math.round(d.correct/d.n*100);
+          const avgP = Math.round(d.pctSum/d.n);
+          return `<div class="st-topic-stat-row">
+            <span class="st-topic-stat-name">${esc(t)}</span>
+            <span class="st-topic-stat-bar"><span style="width:${rate}%"></span></span>
+            <span class="st-topic-stat-n">${d.n} lượt · ${rate}% đúng · ${avgP}% khớp TB</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="learn-card">
+      <h3 class="st-stats-h3">15 lượt gần nhất</h3>
+      <div class="st-recent-list">
+        ${recent.map(e=>`
+          <div class="st-recent-row ${e.outcome}">
+            <div class="st-recent-top">
+              <span class="st-recent-outcome">${stTrOutcomeLabel(e.outcome)}</span>
+              <span class="st-recent-pct">${e.pct}%</span>
+              <span class="st-recent-time">${new Date(e.ts).toLocaleDateString('vi-VN')} ${new Date(e.ts).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}</span>
+            </div>
+            <div class="st-recent-en">${esc(e.en)}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <button class="learn-ghost-btn" id="stClearHist" style="margin-top:16px">🗑 Xoá toàn bộ lịch sử luyện dịch</button>
+  `;
+
+  document.getElementById('stStatsBack').onclick = ()=> stRenderTranslateStart(root);
+  document.getElementById('stClearHist').onclick = ()=>{
+    if(!confirm('Xoá toàn bộ lịch sử luyện dịch Việt → Anh? Không thể hoàn tác.')) return;
+    localStorage.removeItem(ST_TR_HISTORY_KEY);
+    stRenderTrStats(root);
+  };
+}
+
+
 
 
 /* ---------- Thư viện ---------- */
