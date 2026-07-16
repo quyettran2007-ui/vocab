@@ -1388,6 +1388,16 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .st-equiv b{ color:var(--ink-soft); font-weight:700; margin-right:2px; }
 .st-equiv-chip{ font-family:var(--font-mono); font-size:11.5px; background:var(--card-sunken);
   border:1px solid var(--line); border-radius:6px; padding:2px 8px; color:var(--ink-soft); }
+.st-tr-meaning-toggle-row{ display:flex; justify-content:center; margin:2px 0 14px; }
+.st-tr-meaning-toggle{ font-family:inherit; font-size:12.5px; font-weight:600; color:var(--accent);
+  background:none; border:1px dashed var(--line-strong); border-radius:20px; padding:6px 14px;
+  cursor:pointer; transition:.15s; }
+.st-tr-meaning-toggle:hover{ border-color:var(--accent); background:var(--accent-bg); }
+.st-tr-meaning-panel{ margin:-4px 0 14px; padding:12px 14px; border-radius:12px;
+  background:var(--card-sunken); border:1px solid var(--line); animation:rise .25s var(--ease-out); }
+.st-tr-meaning-label{ font-size:10.5px; text-transform:uppercase; letter-spacing:1.6px;
+  font-weight:800; color:var(--muted); margin-bottom:4px; }
+.st-tr-meaning-text{ font-size:13.5px; color:var(--ink-soft); line-height:1.55; }
 .st-examples{ display:flex; flex-direction:column; gap:10px; padding-top:10px; border-top:1px dashed var(--line); }
 .st-ex{ background:var(--card-sunken); border-left:3px solid var(--accent); border-radius:8px; padding:9px 12px; }
 .st-ex-en{ font-size:13.5px; color:var(--ex-color); line-height:1.55; }
@@ -55691,7 +55701,461 @@ const VOCAB = [
     },
     "topic": "Cam17-Test1",
     "date": "2026-07-16"
+  },
+    {
+    "word": "get too involved in",
+    "ipa": "/ɡet tuː ɪnˈvɒlvd ɪn/",
+    "pos": "verb phrase",
+    "level": "B2",
+    "vn": "quá cuốn theo, quá tập trung vào",
+    "wordforms": [{ "pos": "phrasal verb", "word": "get involved in" }],
+    "synonyms": ["become engrossed in", "get carried away by"],
+    "collocations": [
+      { "en": "get too involved in the play", "vi": "quá cuốn theo vở kịch" },
+      { "en": "get emotionally involved", "vi": "bị cuốn theo cảm xúc" }
+    ],
+    "example": {
+      "en": "I kept getting too involved in the play.",
+      "vi": "Tôi cứ bị cuốn theo vở kịch quá mức."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "end up -ing",
+    "ipa": "/end ʌp/",
+    "pos": "phrasal verb",
+    "level": "B2",
+    "vn": "cuối cùng thì (làm gì đó)",
+    "wordforms": [{ "pos": "phrasal verb", "word": "end up" }],
+    "synonyms": ["finish by", "finally do"],
+    "collocations": [
+      { "en": "end up not taking notes", "vi": "cuối cùng không ghi chú" },
+      { "en": "end up doing something else", "vi": "cuối cùng làm việc khác" }
+    ],
+    "example": {
+      "en": "I ended up not taking notes.",
+      "vi": "Cuối cùng tôi đã không ghi chú."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "talk things through",
+    "ipa": "/tɔːk θɪŋz θruː/",
+    "pos": "phrasal verb phrase",
+    "level": "B2",
+    "vn": "thảo luận kỹ càng, bàn bạc chi tiết",
+    "wordforms": [{ "pos": "phrasal verb", "word": "talk through" }],
+    "synonyms": ["discuss in detail", "go over together"],
+    "collocations": [
+      { "en": "talk things through with someone", "vi": "thảo luận kỹ với ai" },
+      { "en": "talk through the issues", "vi": "bàn bạc kỹ về các vấn đề" }
+    ],
+    "example": {
+      "en": "It's good to talk things through.",
+      "vi": "Thật tốt khi thảo luận kỹ càng mọi thứ."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "emotional impact",
+    "ipa": "/ɪˈməʊ.ʃə.nəl ˈɪm.pækt/",
+    "pos": "noun phrase",
+    "level": "B2",
+    "vn": "tác động về mặt cảm xúc",
+    "wordforms": [
+      { "pos": "adjective", "word": "emotional" },
+      { "pos": "noun", "word": "impact" }
+    ],
+    "synonyms": ["emotional effect", "psychological influence"],
+    "collocations": [
+      { "en": "emotional impact of the performance", "vi": "tác động cảm xúc của buổi biểu diễn" },
+      { "en": "have an emotional impact", "vi": "có tác động về cảm xúc" }
+    ],
+    "example": {
+      "en": "We should talk about the emotional impact the performance had on us.",
+      "vi": "Chúng ta nên nói về tác động cảm xúc mà buổi biểu diễn đã tạo ra cho chúng ta."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "visually stunning",
+    "ipa": "/ˈvɪʒ.u.ə.li ˈstʌn.ɪŋ/",
+    "pos": "adjective phrase",
+    "level": "B2",
+    "vn": "đẹp mắt, ấn tượng về mặt thị giác",
+    "wordforms": [
+      { "pos": "adverb", "word": "visually" },
+      { "pos": "adjective", "word": "stunning" }
+    ],
+    "synonyms": ["eye-catching", "breathtaking", "visually impressive"],
+    "collocations": [
+      { "en": "visually stunning production", "vi": "vở diễn đẹp mắt" },
+      { "en": "visually amazing", "vi": "ấn tượng về mặt hình ảnh" }
+    ],
+    "example": {
+      "en": "The set was visually really stunning.",
+      "vi": "Bối cảnh trông thực sự đẹp mắt."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "set design",
+    "ipa": "/set dɪˈzaɪn/",
+    "pos": "noun phrase",
+    "level": "B2",
+    "vn": "thiết kế bối cảnh sân khấu",
+    "wordforms": [
+      { "pos": "noun", "word": "set" },
+      { "pos": "noun", "word": "design" }
+    ],
+    "synonyms": ["stage design", "scenic design"],
+    "collocations": [
+      { "en": "set design was amazing", "vi": "thiết kế bối cảnh thật tuyệt vời" },
+      { "en": "responsible for set design", "vi": "chịu trách nhiệm thiết kế bối cảnh" }
+    ],
+    "example": {
+      "en": "The set design was really amazing.",
+      "vi": "Thiết kế bối cảnh thực sự tuyệt vời."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "dimly lit",
+    "ipa": "/ˈdɪm.li lɪt/",
+    "pos": "adjective phrase",
+    "level": "B2",
+    "vn": "ánh sáng mờ, tối",
+    "wordforms": [
+      { "pos": "adverb", "word": "dimly" },
+      { "pos": "verb (past)", "word": "lit" }
+    ],
+    "synonyms": ["poorly illuminated", "faintly lit"],
+    "collocations": [
+      { "en": "dimly lit scenes", "vi": "các cảnh tối mờ" },
+      { "en": "dimly lit room", "vi": "căn phòng tối mờ" }
+    ],
+    "example": {
+      "en": "Some scenes were so dimly lit it was quite hard to see.",
+      "vi": "Một số cảnh được chiếu sáng mờ đến mức khó nhìn."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "contemporary dress",
+    "ipa": "/kənˈtem.pə.rər.i dres/",
+    "pos": "noun phrase",
+    "level": "B2",
+    "vn": "trang phục hiện đại (không phải cổ trang)",
+    "wordforms": [
+      { "pos": "adjective", "word": "contemporary" },
+      { "pos": "noun", "word": "dress" }
+    ],
+    "synonyms": ["modern costumes", "current attire"],
+    "collocations": [
+      { "en": "contemporary dress in the production", "vi": "trang phục hiện đại trong vở diễn" },
+      { "en": "dressed in contemporary clothes", "vi": "mặc quần áo hiện đại" }
+    ],
+    "example": {
+      "en": "I was a bit surprised by the contemporary dress.",
+      "vi": "Tôi hơi ngạc nhiên bởi trang phục hiện đại."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "conventional",
+    "ipa": "/kənˈven.ʃə.nəl/",
+    "pos": "adjective",
+    "level": "B2",
+    "vn": "theo lối truyền thống, thông thường",
+    "wordforms": [
+      { "pos": "adjective", "word": "conventional" },
+      { "pos": "adverb", "word": "conventionally" }
+    ],
+    "synonyms": ["traditional", "standard", "orthodox"],
+    "collocations": [
+      { "en": "more conventional costumes", "vi": "trang phục truyền thống hơn" },
+      { "en": "conventional approach", "vi": "cách tiếp cận truyền thống" }
+    ],
+    "example": {
+      "en": "I had assumed it would be more conventional.",
+      "vi": "Tôi đã cho rằng nó sẽ truyền thống hơn."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "didn't have much impact",
+    "ipa": "/ˈdɪd.nt hæv mʌtʃ ˈɪm.pækt/",
+    "pos": "verb phrase",
+    "level": "B2",
+    "vn": "không có nhiều tác động, không gây ấn tượng mạnh",
+    "wordforms": [
+      { "pos": "verb", "word": "have" },
+      { "pos": "noun", "word": "impact" }
+    ],
+    "synonyms": ["had little effect", "was not very influential"],
+    "collocations": [
+      { "en": "didn't have much impact on the audience", "vi": "không có nhiều tác động đến khán giả" },
+      { "en": "have a great impact", "vi": "có tác động lớn" }
+    ],
+    "example": {
+      "en": "The music didn't have much impact in Acts 2 and 3.",
+      "vi": "Âm nhạc không có nhiều tác động trong Hồi 2 và 3."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "deliver the lines",
+    "ipa": "/dɪˈlɪv.ər ðə laɪnz/",
+    "pos": "verb phrase",
+    "level": "B2",
+    "vn": "diễn đạt / nói các câu thoại",
+    "wordforms": [
+      { "pos": "verb", "word": "deliver" },
+      { "pos": "noun", "word": "line" }
+    ],
+    "synonyms": ["speak the lines", "recite the dialogue"],
+    "collocations": [
+      { "en": "deliver the lines well", "vi": "diễn đạt câu thoại tốt" },
+      { "en": "deliver the dialogue", "vi": "thể hiện lời thoại" }
+    ],
+    "example": {
+      "en": "The actors didn't deliver the lines that well.",
+      "vi": "Các diễn viên không diễn đạt câu thoại tốt lắm."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "key points",
+    "ipa": "/kiː pɔɪnts/",
+    "pos": "noun phrase",
+    "level": "B2",
+    "vn": "những điểm quan trọng / then chốt",
+    "wordforms": [
+      { "pos": "adjective", "word": "key" },
+      { "pos": "noun", "word": "point" }
+    ],
+    "synonyms": ["crucial moments", "important parts"],
+    "collocations": [
+      { "en": "at key points in the play", "vi": "tại những điểm quan trọng trong vở kịch" },
+      { "en": "key points of the argument", "vi": "những điểm then chốt của lập luận" }
+    ],
+    "example": {
+      "en": "It was because they weren't speaking loudly enough, especially at key points.",
+      "vi": "Đó là vì họ không nói đủ to, đặc biệt là ở những điểm quan trọng."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "can relate to",
+    "ipa": "/kən rɪˈleɪt tuː/",
+    "pos": "phrasal verb",
+    "level": "B2",
+    "vn": "có thể đồng cảm với, liên hệ đến (trải nghiệm của bản thân)",
+    "wordforms": [
+      { "pos": "phrasal verb", "word": "relate to" },
+      { "pos": "noun", "word": "relatability" }
+    ],
+    "synonyms": ["identify with", "feel connected to"],
+    "collocations": [
+      { "en": "can relate to the characters", "vi": "có thể đồng cảm với các nhân vật" },
+      { "en": "relate to the experience", "vi": "liên hệ đến trải nghiệm đó" }
+    ],
+    "example": {
+      "en": "That's something all young people can relate to.",
+      "vi": "Đó là điều tất cả các bạn trẻ đều có thể đồng cảm."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "in translation",
+    "ipa": "/ɪn trænzˈleɪ.ʃən/",
+    "pos": "prepositional phrase",
+    "level": "B2",
+    "vn": "(xem) bản dịch, được dịch ra",
+    "wordforms": [
+      { "pos": "noun", "word": "translation" },
+      { "pos": "verb", "word": "translate" }
+    ],
+    "synonyms": ["in a different language", "rendered into another tongue"],
+    "collocations": [
+      { "en": "watch in translation", "vi": "xem bản dịch" },
+      { "en": "translated into many languages", "vi": "được dịch ra nhiều ngôn ngữ" }
+    ],
+    "example": {
+      "en": "How did you find watching it in translation?",
+      "vi": "Bạn thấy thế nào khi xem nó qua bản dịch?"
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "intensified the emotion",
+    "ipa": "/ɪnˈten.sɪ.faɪd ði ɪˈməʊ.ʃən/",
+    "pos": "verb phrase",
+    "level": "C1",
+    "vn": "làm tăng cường cảm xúc, cường độ cảm xúc",
+    "wordforms": [
+      { "pos": "verb", "word": "intensify" },
+      { "pos": "noun", "word": "emotion" }
+    ],
+    "synonyms": ["heightened the feeling", "amplified the emotion"],
+    "collocations": [
+      { "en": "intensified the emotion for me", "vi": "làm tăng cường cảm xúc cho tôi" },
+      { "en": "intensify the drama", "vi": "làm tăng thêm kịch tính" }
+    ],
+    "example": {
+      "en": "That somehow intensified the emotion for me.",
+      "vi": "Điều đó bằng cách nào đó đã làm tăng cường cảm xúc cho tôi."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "international appeal",
+    "ipa": "/ˌɪn.təˈnæʃ.ə.nəl əˈpiːl/",
+    "pos": "noun phrase",
+    "level": "C1",
+    "vn": "sức hút quốc tế, sự hấp dẫn toàn cầu",
+    "wordforms": [
+      { "pos": "adjective", "word": "international" },
+      { "pos": "noun", "word": "appeal" }
+    ],
+    "synonyms": ["global popularity", "worldwide attraction"],
+    "collocations": [
+      { "en": "international appeal", "vi": "sức hút quốc tế" },
+      { "en": "reason for his international appeal", "vi": "lý do cho sức hút quốc tế của ông" }
+    ],
+    "example": {
+      "en": "What's the reason for his international appeal, do you think?",
+      "vi": "Bạn nghĩ lý do cho sức hút quốc tế của ông ấy là gì?"
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "basic themes",
+    "ipa": "/ˈbeɪ.sɪk θiːmz/",
+    "pos": "noun phrase",
+    "level": "B2",
+    "vn": "những chủ đề cơ bản, phổ quát",
+    "wordforms": [
+      { "pos": "adjective", "word": "basic" },
+      { "pos": "noun", "word": "theme" }
+    ],
+    "synonyms": ["universal topics", "common human experiences"],
+    "collocations": [
+      { "en": "basic themes that people are familiar with", "vi": "chủ đề cơ bản mà mọi người quen thuộc" },
+      { "en": "basic human themes", "vi": "chủ đề cơ bản của con người" }
+    ],
+    "example": {
+      "en": "His plays are about basic themes that people everywhere are familiar with.",
+      "vi": "Các vở kịch của ông nói về những chủ đề cơ bản mà mọi người ở khắp nơi đều quen thuộc."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "understood on different levels",
+    "ipa": "/ˌʌn.dəˈstʊd ɒn ˈdɪf.rənt ˈlev.əlz/",
+    "pos": "verb phrase (passive)",
+    "level": "B2",
+    "vn": "được hiểu ở nhiều cấp độ khác nhau",
+    "wordforms": [
+      { "pos": "verb", "word": "understand" },
+      { "pos": "noun", "word": "level" }
+    ],
+    "synonyms": ["interpreted in various ways", "have layered meanings"],
+    "collocations": [
+      { "en": "understood on different levels", "vi": "được hiểu ở nhiều cấp độ khác nhau" },
+      { "en": "on a deeper level", "vi": "ở một cấp độ sâu hơn" }
+    ],
+    "example": {
+      "en": "They can also be understood on different levels.",
+      "vi": "Chúng cũng có thể được hiểu ở nhiều cấp độ khác nhau."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "find new angles",
+    "ipa": "/faɪnd njuː ˈæŋ.ɡəlz/",
+    "pos": "verb phrase",
+    "level": "C1",
+    "vn": "tìm ra những góc nhìn mới (để tiếp cận vở kịch)",
+    "wordforms": [
+      { "pos": "verb", "word": "find" },
+      { "pos": "noun", "word": "angle" }
+    ],
+    "synonyms": ["discover fresh perspectives", "uncover novel approaches"],
+    "collocations": [
+      { "en": "find new angles for the play", "vi": "tìm ra góc nhìn mới cho vở kịch" },
+      { "en": "approach from a different angle", "vi": "tiếp cận từ một góc độ khác" }
+    ],
+    "example": {
+      "en": "The characters have depth, which allows directors to experiment and find new angles.",
+      "vi": "Các nhân vật có chiều sâu, điều này cho phép các đạo diễn thử nghiệm và tìm ra những góc nhìn mới."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "disagreements and tension",
+    "ipa": "/ˌdɪs.əˈɡriː.mənts ænd ˈten.ʃən/",
+    "pos": "noun phrase",
+    "level": "B2",
+    "vn": "sự bất đồng và căng thẳng",
+    "wordforms": [
+      { "pos": "noun", "word": "disagreement" },
+      { "pos": "noun", "word": "tension" }
+    ],
+    "synonyms": ["conflicts and friction", "clashes and strain"],
+    "collocations": [
+      { "en": "disagreements and tension between teenagers and parents", "vi": "sự bất đồng và căng thẳng giữa thanh thiếu niên và cha mẹ" },
+      { "en": "cause tension", "vi": "gây ra căng thẳng" }
+    ],
+    "example": {
+      "en": "There are always disagreements and tension between teenagers and their parents.",
+      "vi": "Luôn có sự bất đồng và căng thẳng giữa thanh thiếu niên và cha mẹ của họ."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
+  },
+  {
+    "word": "extreme emotions",
+    "ipa": "/ɪkˈstriːm ɪˈməʊ.ʃənz/",
+    "pos": "noun phrase",
+    "level": "B2",
+    "vn": "cảm xúc cực đoan",
+    "wordforms": [
+      { "pos": "adjective", "word": "extreme" },
+      { "pos": "noun", "word": "emotion" }
+    ],
+    "synonyms": ["intense feelings", "strong passions"],
+    "collocations": [
+      { "en": "extreme emotions in the play", "vi": "cảm xúc cực đoan trong vở kịch" },
+      { "en": "express extreme emotions", "vi": "thể hiện cảm xúc cực đoan" }
+    ],
+    "example": {
+      "en": "More than the violence and the extreme emotions in the play.",
+      "vi": "Hơn cả bạo lực và những cảm xúc cực đoan trong vở kịch."
+    },
+    "topic": "Cam17-Test2",
+    "date": "2026-07-16"
   }
+  
 ];
 /* Khởi tạo sẵn trường v.listening = [] cho mọi từ (nếu chưa có) —
    để chip 3 cửa và bộ lọc theo Cam-Test hoạt động an toàn kể cả
@@ -61708,7 +62172,261 @@ const STRUCTURES = [
       "ielts_topic": "Education & E-learning"
     }
   ]
+},
+{
+  "id": "st287a",
+  "topic": "Tổng hợp",
+  "structure": "To involve + noun / V-ing",
+  "meaning": "bao gồm, đòi hỏi, liên quan đến (một hoạt động hoặc yếu tố nào đó)",
+  "equivalents": [
+    "require",
+    "entail",
+    "include"
+  ],
+  "examples": [
+    {
+      "en": "Many jobs in the technology sector involve solving complex problems and working in collaborative teams.",
+      "vi": "Nhiều công việc trong lĩnh vực công nghệ đòi hỏi giải quyết các vấn đề phức tạp và làm việc theo nhóm hợp tác.",
+      "ielts_topic": "Work & Technology"
+    },
+    {
+      "en": "Reducing carbon emissions involves transitioning to renewable energy sources and implementing stricter environmental regulations.",
+      "vi": "Giảm phát thải carbon bao gồm việc chuyển đổi sang các nguồn năng lượng tái tạo và thực thi các quy định môi trường chặt chẽ hơn.",
+      "ielts_topic": "Environment & Policy"
+    },
+    {
+      "en": "Learning a new language involves not only memorizing vocabulary but also understanding cultural nuances.",
+      "vi": "Học một ngôn ngữ mới không chỉ bao gồm ghi nhớ từ vựng mà còn phải hiểu các sắc thái văn hóa.",
+      "ielts_topic": "Education & Culture"
+    }
+  ]
+},
+{
+  "id": "st288",
+  "topic": "Tổng hợp",
+  "structure": "It is believed to come from",
+  "meaning": "được cho là bắt nguồn từ, được tin là xuất phát từ (một nguồn gốc, nguyên nhân hoặc thời điểm nào đó)",
+  "equivalents": [
+    "is thought to originate from",
+    "is said to derive from",
+    "is considered to stem from",
+    "is reputed to come from"
+  ],
+  "examples": [
+    {
+      "en": "The tradition of celebrating Lunar New Year is believed to come from ancient agricultural rituals that marked the end of winter and the beginning of spring.",
+      "vi": "Truyền thống đón Tết Nguyên Đán được cho là bắt nguồn từ các nghi lễ nông nghiệp cổ xưa đánh dấu sự kết thúc của mùa đông và bắt đầu của mùa xuân.",
+      "ielts_topic": "Culture & Traditions"
+    },
+    {
+      "en": "Many common English words, such as \"restaurant\" and \"ballet\", are believed to come from French, reflecting the historical influence of the Norman conquest.",
+      "vi": "Nhiều từ tiếng Anh phổ biến, như \"restaurant\" và \"ballet\", được cho là bắt nguồn từ tiếng Pháp, phản ánh ảnh hưởng lịch sử của cuộc chinh phạt Norman.",
+      "ielts_topic": "Language & History"
+    },
+    {
+      "en": "The recent economic recession is believed to come from a combination of factors, including subprime mortgage crises and excessive risk-taking by financial institutions.",
+      "vi": "Cuộc suy thoái kinh tế gần đây được cho là bắt nguồn từ sự kết hợp của nhiều yếu tố, bao gồm khủng hoảng thế chấp dưới chuẩn và việc các tổ chức tài chính chấp nhận rủi ro quá mức.",
+      "ielts_topic": "Economics & Finance"
+    },
+    {
+      "en": "The concept of mindfulness, which is now widely practiced in Western countries, is believed to come from ancient Buddhist meditation techniques.",
+      "vi": "Khái niệm chánh niệm, hiện đang được thực hành rộng rãi ở các nước phương Tây, được cho là bắt nguồn từ các kỹ thuật thiền Phật giáo cổ đại.",
+      "ielts_topic": "Health & Wellness"
+    },
+    {
+      "en": "The custom of giving red envelopes during special occasions is believed to come from the ancient practice of using coins to ward off evil spirits.",
+      "vi": "Tục lệ tặng phong bao đỏ trong các dịp đặc biệt được cho là bắt nguồn từ tập tục cổ xưa dùng tiền xu để xua đuổi tà ma.",
+      "ielts_topic": "Culture & Festivals"
+    },
+    {
+      "en": "The rise in global temperatures is believed to come primarily from human activities, particularly the burning of fossil fuels and deforestation.",
+      "vi": "Sự gia tăng nhiệt độ toàn cầu được cho là bắt nguồn chủ yếu từ các hoạt động của con người, đặc biệt là đốt nhiên liệu hóa thạch và phá rừng.",
+      "ielts_topic": "Environment & Climate Change"
+    }
+  ]
+},
+{
+  "id": "st289",
+  "topic": "Tổng hợp",
+  "structure": "To refer to A as B",
+  "meaning": "gọi A là B, coi A như B, đề cập đến A với danh nghĩa B",
+  "equivalents": [
+    "call A B",
+    "describe A as B",
+    "label A as B",
+    "designate A as B"
+  ],
+  "examples": [
+    {
+      "en": "Many environmentalists refer to plastic waste as 'the new global crisis' because of its devastating impact on marine ecosystems.",
+      "vi": "Nhiều nhà môi trường học gọi rác thải nhựa là 'cuộc khủng hoảng toàn cầu mới' vì tác động tàn phá của nó đối với hệ sinh thái biển.",
+      "ielts_topic": "Environment & Pollution"
+    },
+    {
+      "en": "Economists often refer to countries with rapidly growing economies, such as China and India, as 'emerging markets'.",
+      "vi": "Các nhà kinh tế học thường gọi các quốc gia có nền kinh tế phát triển nhanh, như Trung Quốc và Ấn Độ, là 'thị trường mới nổi'.",
+      "ielts_topic": "Economics & Development"
+    },
+    {
+      "en": "In many Asian cultures, people refer to their elders as 'uncle' or 'auntie' as a sign of respect, even if they are not blood relatives.",
+      "vi": "Trong nhiều nền văn hóa châu Á, người ta gọi người lớn tuổi là 'chú' hoặc 'cô' như một dấu hiệu của sự tôn trọng, ngay cả khi họ không phải là người thân.",
+      "ielts_topic": "Culture & Social Norms"
+    },
+    {
+      "en": "Psychologists refer to the ability to understand and manage one's own emotions as 'emotional intelligence', which is now considered crucial for career success.",
+      "vi": "Các nhà tâm lý học gọi khả năng hiểu và quản lý cảm xúc của bản thân là 'trí tuệ cảm xúc', hiện được coi là yếu tố quan trọng để thành công trong sự nghiệp.",
+      "ielts_topic": "Psychology & Work"
+    },
+    {
+      "en": "Teachers often refer to students who demonstrate exceptional academic performance as 'gifted learners' and provide them with specialized programs.",
+      "vi": "Giáo viên thường gọi những học sinh thể hiện thành tích học tập xuất sắc là 'người học có năng khiếu' và cung cấp cho họ các chương trình chuyên biệt.",
+      "ielts_topic": "Education & Special Needs"
+    },
+    {
+      "en": "Urban planners refer to the phenomenon of people moving from city centers to suburban areas as 'suburbanization', which has significantly changed the demographic landscape.",
+      "vi": "Các nhà quy hoạch đô thị gọi hiện tượng người dân di chuyển từ trung tâm thành phố ra các khu vực ngoại ô là 'quá trình ngoại ô hóa', điều này đã thay đổi đáng kể bức tranh nhân khẩu học.",
+      "ielts_topic": "Urbanization & Demographics"
+    },
+    {
+      "en": "In modern education, many experts refer to the traditional teacher-centered approach as 'outdated' and advocate for more student-centered learning methods.",
+      "vi": "Trong giáo dục hiện đại, nhiều chuyên gia coi phương pháp lấy giáo viên làm trung tâm truyền thống là 'lỗi thời' và ủng hộ các phương pháp học tập lấy học sinh làm trung tâm hơn.",
+      "ielts_topic": "Education Reform"
+    }
+  ]
+},
+{
+  "id": "st290",
+  "topic": "Tổng hợp",
+  "structure": "To get involved in",
+  "meaning": "tham gia vào, dấn thân vào (một hoạt động, sự kiện hoặc vấn đề nào đó một cách chủ động)",
+  "equivalents": [
+    "participate in",
+    "take part in",
+    "become engaged in",
+    "join in"
+  ],
+  "examples": [
+    {
+      "en": "Young people who get involved in community service projects not only help others but also develop valuable leadership and teamwork skills.",
+      "vi": "Những bạn trẻ tham gia vào các dự án phục vụ cộng đồng không chỉ giúp đỡ người khác mà còn phát triển các kỹ năng lãnh đạo và làm việc nhóm quý giá.",
+      "ielts_topic": "Volunteering & Community"
+    },
+    {
+      "en": "Parents are encouraged to get involved in their children's education by attending school meetings and helping with homework assignments.",
+      "vi": "Các bậc phụ huynh được khuyến khích tham gia vào việc học của con em mình bằng cách tham dự các buổi họp phụ huynh và giúp đỡ bài tập về nhà.",
+      "ielts_topic": "Education & Parenting"
+    },
+    {
+      "en": "Many employees are hesitant to get involved in workplace politics because they fear it might damage their professional relationships.",
+      "vi": "Nhiều nhân viên ngần ngại tham gia vào các vấn đề chính trị nội bộ công ty vì họ sợ rằng điều đó có thể làm hỏng các mối quan hệ chuyên môn của họ.",
+      "ielts_topic": "Work & Office Dynamics"
+    },
+    {
+      "en": "To tackle climate change effectively, governments must encourage citizens to get involved in sustainable practices such as recycling and energy conservation.",
+      "vi": "Để giải quyết biến đổi khí hậu một cách hiệu quả, các chính phủ phải khuyến khích người dân tham gia vào các thực hành bền vững như tái chế và tiết kiệm năng lượng.",
+      "ielts_topic": "Environment & Sustainability"
+    },
+    {
+      "en": "Students who get involved in extracurricular activities such as sports, music, or debate clubs often demonstrate better time management and interpersonal skills.",
+      "vi": "Học sinh tham gia vào các hoạt động ngoại khóa như thể thao, âm nhạc hoặc câu lạc bộ tranh biện thường thể hiện kỹ năng quản lý thời gian và giao tiếp tốt hơn.",
+      "ielts_topic": "Education & Student Development"
+    },
+    {
+      "en": "Many entrepreneurs advise young people to get involved in start-up ecosystems early to gain practical experience and build professional networks.",
+      "vi": "Nhiều doanh nhân khuyên các bạn trẻ nên tham gia vào các hệ sinh thái khởi nghiệp sớm để có được kinh nghiệm thực tế và xây dựng mạng lưới chuyên nghiệp.",
+      "ielts_topic": "Business & Entrepreneurship"
+    },
+    {
+      "en": "Some people worry that when celebrities get involved in political campaigns, they may influence public opinion in ways that are not necessarily well-informed.",
+      "vi": "Một số người lo lắng rằng khi người nổi tiếng tham gia vào các chiến dịch chính trị, họ có thể ảnh hưởng đến dư luận theo những cách không nhất thiết phải được hiểu biết đầy đủ.",
+      "ielts_topic": "Media & Politics"
+    }
+  ]
+},
+{
+  "id": "st291",
+  "topic": "Tổng hợp",
+  "structure": "To be/get caught up in",
+  "meaning": "bị cuốn vào, bị vướng vào (một tình huống, sự kiện thường ngoài ý muốn hoặc tiêu cực)",
+  "equivalents": [
+    "become entangled in",
+    "be swept up in",
+    "be drawn into"
+  ],
+  "examples": [
+    {
+      "en": "Many young people get caught up in the fast-paced lifestyle of big cities and forget to take care of their mental health.",
+      "vi": "Nhiều bạn trẻ bị cuốn vào nhịp sống hối hả của các thành phố lớn và quên chăm sóc sức khỏe tinh thần của mình.",
+      "ielts_topic": "Urban Life & Health"
+    },
+    {
+      "en": "During the financial crisis, thousands of innocent investors were caught up in the collapse of major banking institutions.",
+      "vi": "Trong cuộc khủng hoảng tài chính, hàng ngàn nhà đầu tư vô tội đã bị cuốn vào sự sụp đổ của các tổ chức ngân hàng lớn.",
+      "ielts_topic": "Economics & Finance"
+    },
+    {
+      "en": "Children who spend too much time online may get caught up in cyberbullying situations without fully understanding the consequences.",
+      "vi": "Trẻ em dành quá nhiều thời gian trực tuyến có thể bị cuốn vào các tình huống bắt nạt trên mạng mà không hiểu hết hậu quả.",
+      "ielts_topic": "Technology & Children"
+    }
+  ]
+},{
+  "id": "st292",
+  "topic": "Tổng hợp",
+  "structure": "To be swept up in",
+  "meaning": "bị cuốn theo, bị lôi cuốn vào (bởi cảm xúc, xu hướng hoặc sự kiện lớn, thường mang tính tập thể)",
+  "equivalents": [
+    "be carried away by",
+    "be engulfed by",
+    "be immersed in"
+  ],
+  "examples": [
+    {
+      "en": "Many people were swept up in the enthusiasm of the technological revolution without fully considering its potential drawbacks.",
+      "vi": "Nhiều người đã bị cuốn theo sự nhiệt tình của cuộc cách mạng công nghệ mà không cân nhắc đầy đủ những tác động tiêu cực tiềm ẩn của nó.",
+      "ielts_topic": "Technology & Society"
+    },
+    {
+      "en": "During election campaigns, voters can easily be swept up in emotional rhetoric rather than making rational decisions.",
+      "vi": "Trong các chiến dịch bầu cử, cử tri có thể dễ dàng bị cuốn theo các bài diễn thuyết giàu cảm xúc thay vì đưa ra quyết định lý trí.",
+      "ielts_topic": "Politics & Media"
+    },
+    {
+      "en": "Tourists visiting crowded festivals often get swept up in the celebratory atmosphere and lose track of time.",
+      "vi": "Du khách tham quan các lễ hội đông đúc thường bị cuốn theo không khí ăn mừng và không để ý đến thời gian.",
+      "ielts_topic": "Tourism & Culture"
+    }
+  ]
+},
+{
+  "id": "st293",
+  "topic": "Tổng hợp",
+  "structure": "To be drawn into",
+  "meaning": "bị lôi kéo, bị hút vào (một tình huống, thường là do sức hút hoặc áp lực từ bên ngoài)",
+  "equivalents": [
+    "be pulled into",
+    "be enticed into",
+    "be lured into"
+  ],
+  "examples": [
+    {
+      "en": "Without proper guidance, teenagers can easily be drawn into criminal activities by peer pressure.",
+      "vi": "Nếu không có sự hướng dẫn đúng đắn, thanh thiếu niên có thể dễ dàng bị lôi kéo vào các hoạt động tội phạm do áp lực từ bạn bè.",
+      "ielts_topic": "Youth Crime & Society"
+    },
+    {
+      "en": "Many consumers are drawn into unnecessary spending by clever marketing campaigns that create artificial needs.",
+      "vi": "Nhiều người tiêu dùng bị lôi kéo vào việc chi tiêu không cần thiết bởi các chiến dịch tiếp thị khéo léo tạo ra những nhu cầu giả tạo.",
+      "ielts_topic": "Consumerism & Advertising"
+    },
+    {
+      "en": "International conflicts often draw neighboring countries into disputes that they would prefer to avoid.",
+      "vi": "Các cuộc xung đột quốc tế thường kéo theo các nước láng giềng vào những cuộc tranh chấp mà họ muốn tránh.",
+      "ielts_topic": "Global Politics & Peace"
+    }
+  ]
 }
+
 ];
 
 const STRUCT_TOPICS = [...new Set(STRUCTURES.map(s=>s.topic))];
@@ -66093,6 +66811,8 @@ function stNextTranslate(){
   if(_stTrI >= _stTrPool.length){ stRenderTrSessionSummary(root); return; }
 
   const cur = _stTrPool[_stTrI];
+  const structDef = STRUCTURES.find(s => s.id === cur.structId);
+  const equivalents = (structDef && structDef.equivalents) || [];
   const targetTokens = cur.en.match(/[A-Za-zÀ-ỹ']+|[^\sA-Za-zÀ-ỹ']+/g) || [];   // giữ cả dấu câu để hiện gợi ý tự nhiên
   const wordIdxs = targetTokens.map((t,i)=> /[A-Za-zÀ-ỹ]/.test(t) ? i : -1).filter(i=>i>=0);
   _stTrHintsUsed = 0;
@@ -66106,6 +66826,16 @@ function stNextTranslate(){
     <div class="quiz-q">
       <div class="prompt-label">Dịch câu sau sang tiếng Anh</div>
       <div class="prompt-word small st-vi-prompt">${esc(cur.vi)}</div>
+    </div>
+    <div class="st-tr-meaning-toggle-row">
+      <button class="st-tr-meaning-toggle" id="stTrMeaningToggle">👁️ Hiện nghĩa &amp; cấu trúc tương đương</button>
+    </div>
+    <div class="st-tr-meaning-panel" id="stTrMeaningPanel" style="display:none">
+      <div class="st-tr-meaning-label">Nghĩa cấu trúc</div>
+      <div class="st-tr-meaning-text">${esc(cur.meaning)}</div>
+      ${equivalents.length ? `
+      <div class="st-tr-meaning-label" style="margin-top:10px">Cấu trúc tương đương</div>
+      <div class="st-equiv">${equivalents.map(e=>`<span class="st-equiv-chip">${esc(e)}</span>`).join('')}</div>` : ''}
     </div>
     <div class="st-hint-row" id="stHintRow"></div>
     <div class="st-tr-field">
@@ -66125,8 +66855,18 @@ function stNextTranslate(){
   const fb = document.getElementById('stTrFeedback');
   const hintRow = document.getElementById('stHintRow');
   const hintBtn = document.getElementById('stTrHint');
+  const meaningToggle = document.getElementById('stTrMeaningToggle');
+  const meaningPanel = document.getElementById('stTrMeaningPanel');
   let solved = false, revealed = false;
   setTimeout(()=>inp.focus(), 30);
+
+  meaningToggle.onclick = ()=>{
+    const showing = meaningPanel.style.display !== 'none';
+    meaningPanel.style.display = showing ? 'none' : 'block';
+    meaningToggle.textContent = showing
+      ? '👁️ Hiện nghĩa & cấu trúc tương đương'
+      : '🙈 Ẩn nghĩa & cấu trúc tương đương';
+  };
 
   /* Chế độ GỢI Ý (trước khi kiểm tra): mở dần từng từ theo thứ tự, ẩn phần còn lại */
   function renderHintMode(){
