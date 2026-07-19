@@ -460,7 +460,7 @@ select:focus, .search-box:focus {
 .sug-word { font-family:var(--font-heading); font-weight:600; font-size:14px; color:var(--ink); letter-spacing:-.2px; }
 .sug-pos { font-size:9.5px; color:var(--accent); text-transform:uppercase; letter-spacing:1.2px; font-weight:800; }
 .sug-vn { font-size:12px; color:var(--muted); margin-left:auto; max-width:52%; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:500; }
-.sug-highlight { background:var(--accent-bg); color:var(--accent); border-radius:4px; padding:0 2px; font-weight:800; }
+.sug-highlight { background:#fde047; color:#422006; border-radius:4px; padding:0 2px; font-weight:800; }
 
 /* ===== CEFR BADGES ===== */
 .lvl {
@@ -776,7 +776,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 [data-theme="dark"] .need-sec-head.hot{ background:rgba(245,158,11,.18); color:#fcd34d; }
 [data-theme="dark"] .need-sec-head.doing{ background:rgba(59,130,246,.20); color:#93c5fd; }
 [data-theme="dark"] .ds-item mark,[data-theme="dark"] .ds-grid mark{
-  background:rgba(167,139,250,.25); color:#ddd6fe;
+  background:#ca8a04; color:#fffbeb;
 }
 [data-theme="dark"] .search-clear,[data-theme="dark"] .ds-clear{
   background:var(--card-sunken); color:var(--ink-soft);
@@ -811,7 +811,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .ds-state.doing{background:#dbeafe;color:#1e40af;}
 .ds-state.newn{background:var(--paper-2);color:var(--muted);}
 .ds-vn{font-size:14px;color:var(--ink-soft);margin-bottom:7px;line-height:1.5;}
-.ds-item mark,.ds-grid mark{background:var(--accent-bg);color:var(--accent);font-weight:700;
+.ds-item mark,.ds-grid mark{background:#fde047;color:#422006;font-weight:700;
   padding:0 2px;border-radius:3px;}
 .week-bar.is-today{outline:2px solid var(--accent);outline-offset:1px;}
 .strip-sum{color:var(--accent);font-family:var(--font-heading);float:right;text-transform:none;letter-spacing:0;}
@@ -3394,11 +3394,50 @@ nav.tabs{ padding:10px 26px; }
   .fn-track{ flex-wrap:wrap; }
   .fn-step{ flex:1 1 45%; border-left:none !important; border-top:3px solid var(--line-strong); }
 }
-/* ---- highlight từ khoá tìm kiếm trong Thư viện cấu trúc & Collocation ---- */
+/* ---- highlight từ khoá tìm kiếm trong Thư viện cấu trúc & Collocation: màu vàng dạ quang ---- */
 .st-card mark, .cl-card mark{
-  background:var(--accent-bg); color:var(--accent); font-weight:700;
+  background:#fde047; color:#422006; font-weight:700;
   padding:0 2px; border-radius:3px;
 }
+[data-theme="dark"] .st-card mark, [data-theme="dark"] .cl-card mark{
+  background:#ca8a04; color:#fffbeb;
+}
+
+/* ---- từ/cụm đồng nghĩa: màu nổi bật hẳn so với nền xám cũ ---- */
+.st-equiv-chip{
+  font-family:var(--font-mono); font-size:11.5px; font-weight:700;
+  background:#ede9fe; color:#6d28d9; border:1px solid #ddd6fe;
+  border-radius:7px; padding:3px 9px;
+}
+[data-theme="dark"] .st-equiv-chip{ background:rgba(167,139,250,.22); color:#ddd6fe; border-color:rgba(167,139,250,.4); }
+
+/* ---- ô tìm kiếm Writing/Listening/Reading: rộng hơn, không còn bị ngắn ---- */
+.rd-search{ min-width:340px; flex:1 1 380px; max-width:560px; padding:9px 16px; }
+.st-head .rd-search{ flex:1 1 320px; }
+
+/* ---- huy hiệu "đã luyện" + nút đánh dấu câu trong Luyện dịch ---- */
+.tp-head{ flex-wrap:wrap; row-gap:8px; }
+.st-done-badge{
+  font-size:11px; font-weight:700; color:#047857; background:#d1fae5;
+  border-radius:99px; padding:3px 10px;
+}
+[data-theme="dark"] .st-done-badge{ background:rgba(16,185,129,.2); color:#6ee7b7; }
+.st-bm-toggle{
+  font-family:inherit; font-size:15px; line-height:1; border:1px solid var(--line);
+  background:var(--card); border-radius:8px; padding:5px 8px; cursor:pointer; transition:.15s;
+}
+.st-bm-toggle.on{ background:#fef9c3; border-color:#fde047; }
+[data-theme="dark"] .st-bm-toggle.on{ background:rgba(250,204,21,.18); border-color:rgba(250,204,21,.5); }
+.st-tr-head-btns{ display:flex; gap:8px; flex-wrap:wrap; }
+.st-bm-remove{
+  font-family:inherit; font-size:11px; font-weight:700; color:var(--muted);
+  background:var(--card-sunken); border:1px solid var(--line); border-radius:7px;
+  padding:3px 9px; cursor:pointer;
+}
+.st-bm-remove:hover{ color:#be123c; border-color:#fda4af; }
+.st-recent-vi{ font-size:13px; color:var(--vn-color); margin:6px 0 3px; font-weight:600; }
+.st-recent-mine{ font-size:12.5px; color:var(--ink-soft); margin-bottom:3px; }
+.st-recent-mine b{ color:var(--muted); font-weight:700; }
 /* ============================================================
    v8 — GLASS MORPHISM + THẺ MÀU CHO DASHBOARD
    Chỉ dùng rgba()/hex tĩnh (KHÔNG dùng color-mix) để tránh lặp lại
@@ -3486,6 +3525,95 @@ body{
 
 @media(max-width:640px){
   .strip-card.progress-card{ padding:18px 16px; }
+}
+/* ============================================================
+   v9 — TOÀN BỘ CÂU + THỐNG KÊ ĐẦY ĐỦ + FLASHCARD COLLOCATION
+   ============================================================ */
+
+/* ---- tô màu collocation trong câu ---- */
+.colloc-hl{ border-radius:4px; padding:0 3px; font-weight:700; cursor:help; }
+
+/* ---- tab "Toàn bộ câu" ---- */
+.st-all-list{ display:flex; flex-direction:column; gap:10px; }
+.st-all-row{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:14px 16px; transition:.15s;
+}
+.st-all-row.done{ border-left:4px solid #059669; }
+.st-all-row:not(.done){ border-left:4px solid var(--line-strong); }
+.st-all-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+.st-all-status{ font-size:11px; font-weight:800; border-radius:99px; padding:3px 10px; }
+.st-all-status.done{ background:#d1fae5; color:#047857; }
+.st-all-status.undone{ background:var(--card-sunken); color:var(--muted); }
+[data-theme="dark"] .st-all-status.done{ background:rgba(16,185,129,.2); color:#6ee7b7; }
+.st-all-struct{ font-size:11.5px; color:var(--muted); font-style:italic; }
+.st-all-vi{ font-size:14px; font-weight:600; color:var(--vn-color); margin-bottom:6px; line-height:1.55; }
+.st-all-en{ font-size:14.5px; color:var(--ink); line-height:1.55; }
+
+/* ---- thống kê: chọn ngày để lọc ---- */
+.st-stats-list-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+.st-day-select{
+  font-family:inherit; font-size:12.5px; font-weight:600; color:var(--ink);
+  background:var(--card-sunken); border:1px solid var(--line); border-radius:9px;
+  padding:8px 12px; cursor:pointer;
+}
+
+/* ---- nút Thống kê / Đã đánh dấu / Học Flashcard: to & đẹp hơn ---- */
+.st-tr-head-btns{ display:flex; gap:10px; flex-wrap:wrap; }
+.st-stats-btn{
+  font-size:14px !important; font-weight:700 !important; padding:12px 20px !important;
+  border-radius:12px !important; background:var(--accent-bg) !important; color:var(--accent) !important;
+  border:1px solid transparent !important; box-shadow:var(--shadow-xs); transition:.15s;
+}
+.st-stats-btn:hover{ box-shadow:var(--shadow-sm); transform:translateY(-1px); background:var(--accent) !important; color:#fff !important; }
+
+/* ---- công cụ trên thẻ collocation (danh sách): phát âm + đánh dấu ---- */
+.cl-card-tools{ display:flex; gap:6px; margin-left:auto; }
+.cl-card-speak, .cl-card-bm{
+  font-family:inherit; font-size:14px; border:1px solid var(--line); background:var(--card);
+  border-radius:8px; width:32px; height:32px; cursor:pointer; transition:.15s;
+}
+.cl-card-speak:hover{ background:var(--accent-bg); }
+.cl-card-bm.on{ background:#fef9c3; border-color:#fde047; }
+[data-theme="dark"] .cl-card-bm.on{ background:rgba(250,204,21,.18); border-color:rgba(250,204,21,.5); }
+.st-card-top{ display:flex; align-items:center; }
+
+/* ---- Flashcard collocation ---- */
+.cl-fc-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:14px 0; flex-wrap:wrap; }
+.cl-fc-progress{ font-size:13px; font-weight:700; color:var(--muted); }
+.cl-fc-shuffle{
+  font-family:inherit; font-size:12.5px; font-weight:700; color:var(--ink);
+  background:var(--card); border:1px solid var(--line); border-radius:9px; padding:8px 14px; cursor:pointer;
+}
+.cl-fc-stage{ display:flex; flex-direction:column; align-items:center; gap:18px; }
+.cl-fc-card{
+  width:100%; max-width:520px; min-height:220px; perspective:1200px; cursor:pointer;
+  position:relative;
+}
+.cl-fc-face{
+  border-radius:20px; border:1px solid var(--line); background:var(--card); box-shadow:var(--shadow-sm);
+  padding:32px 28px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px; text-align:center; min-height:220px; transition:.2s;
+}
+.cl-fc-face.cl-fc-back{ display:none; }
+.cl-fc-card.flipped .cl-fc-face.cl-fc-front{ display:none; }
+.cl-fc-card.flipped .cl-fc-face.cl-fc-back{ display:flex; }
+.cl-fc-phrase{ font-family:var(--font-heading); font-size:24px; font-weight:800; color:var(--ink); }
+.cl-fc-hint{ font-size:12px; color:var(--muted); }
+.cl-fc-meaning{ font-family:var(--font-heading); font-size:20px; font-weight:700; color:var(--accent); }
+.cl-fc-actions{ display:flex; gap:10px; }
+.cl-fc-act{
+  font-family:inherit; font-size:13px; font-weight:700; color:var(--ink);
+  background:var(--card); border:1px solid var(--line); border-radius:11px;
+  padding:10px 16px; cursor:pointer; transition:.15s;
+}
+.cl-fc-act:hover{ box-shadow:var(--shadow-xs); }
+.cl-fc-act.on{ background:#fef9c3; border-color:#fde047; color:#854d0e; }
+[data-theme="dark"] .cl-fc-act.on{ background:rgba(250,204,21,.18); border-color:rgba(250,204,21,.5); color:#fde047; }
+.cl-fc-nav{ display:flex; justify-content:center; gap:12px; margin-top:20px; }
+@media(max-width:640px){
+  .cl-fc-face{ padding:24px 18px; min-height:180px; }
+  .cl-fc-phrase{ font-size:20px; }
 }
 </style>
 <body>
@@ -14580,7 +14708,7 @@ const STRUCT_TOPICS = [...new Set(STRUCTURES.map(s=>s.topic))];
    trúc object này (nhớ có "meaning" tiếng Việt và "synonyms").
    ============================================================ */
 const COLLOCATIONS = [
-   {
+ {
     id: "cl001",
     phrase: "gain the right to vote",
     meaning: "giành quyền bầu cử",
@@ -27271,6 +27399,9 @@ let _stTopic = 'all';
 let _stQuery = '';
 let _clTopic = 'all';
 let _clQuery = '';
+let _allQuery = '';
+let _allStatus = 'all';
+let _allTopic = 'all';
 
 function stAllExamples(){
   // trả về danh sách phẳng {structId, structure, meaning, en, vi}
@@ -27289,6 +27420,7 @@ function renderStructuresTab(){
   if(_stMode === 'quiz') return stRenderQuizStart(root);
   if(_stMode === 'translate') return stRenderTranslateEntry(root);
   if(_stMode === 'colloc') return stRenderColloc(root);
+  if(_stMode === 'all') return stRenderAllSentences(root);
 }
 
 function stSwitchMode(mode){
@@ -27303,6 +27435,7 @@ function stModeBar(active){
     <button class="st-mode-btn ${active==='quiz'?'active':''}" onclick="stSwitchMode('quiz')">❓ Trắc nghiệm</button>
     <button class="st-mode-btn ${active==='translate'?'active':''}" onclick="stSwitchMode('translate')">🌐 Dịch Việt → Anh</button>
     <button class="st-mode-btn ${active==='colloc'?'active':''}" onclick="stSwitchMode('colloc')">🧩 Collocation</button>
+    <button class="st-mode-btn ${active==='all'?'active':''}" onclick="stSwitchMode('all')">📜 Toàn bộ câu</button>
   </div>`;
 }
 
@@ -27353,6 +27486,57 @@ function stRenderLib(root){
 
 function stFilterTopic(t){ _stTopic = t; renderStructuresTab(); }
 
+/* ============================================================
+   TÔ MÀU COLLOCATION TRONG CÂU (dùng ở tab "Toàn bộ câu" và khi
+   luyện dịch) — mỗi collocation được gán 1 màu cố định (theo id)
+   để cùng 1 cụm luôn ra cùng 1 màu ở mọi nơi, dễ nhận diện.
+   Chỉ dùng màu hex tĩnh + rgba tính sẵn trong JS (không color-mix)
+   để tránh lặp lại lỗi tương thích trình duyệt đã gặp trước đây.
+   ============================================================ */
+const COLLOC_COLORS = ['#d97706','#2563eb','#db2777','#059669','#7c3aed','#dc2626','#0891b2','#65a30d','#ea580c','#9333ea'];
+function collocColorFor(id){
+  let h = 0;
+  for(let i=0;i<id.length;i++) h = (h*31 + id.charCodeAt(i)) >>> 0;
+  return COLLOC_COLORS[h % COLLOC_COLORS.length];
+}
+function hexToRgba(hex, a){
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function findCollocMatches(text, isEn){
+  const matches = [];
+  COLLOCATIONS.forEach(c=>{
+    const needle = isEn ? c.phrase : c.meaning;
+    if(!needle) return;
+    let re;
+    try{ re = new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'ig'); }catch(e){ return; }
+    let m;
+    while((m = re.exec(text))){
+      matches.push({ start:m.index, end:m.index+m[0].length, id:c.id, meaning:c.meaning, phrase:c.phrase });
+      if(m[0].length===0) re.lastIndex++;
+    }
+  });
+  matches.sort((a,b)=> a.start-b.start || (b.end-b.start)-(a.end-a.start));
+  const out = []; let lastEnd = -1;
+  matches.forEach(m=>{ if(m.start >= lastEnd){ out.push(m); lastEnd = m.end; } });
+  return out;
+}
+function highlightCollocations(text, isEn){
+  text = text || '';
+  const matches = findCollocMatches(text, isEn);
+  if(!matches.length) return esc(text);
+  let html = '', pos = 0;
+  matches.forEach(m=>{
+    html += esc(text.slice(pos, m.start));
+    const color = collocColorFor(m.id);
+    html += `<span class="colloc-hl" style="background:${hexToRgba(color,.16)};color:${color};border-bottom:2px solid ${hexToRgba(color,.6)}" title="Collocation: ${esc(m.phrase)} — ${esc(m.meaning)}">${esc(text.slice(m.start,m.end))}</span>`;
+    pos = m.end;
+  });
+  html += esc(text.slice(pos));
+  return html;
+}
+
 /* Tô đậm từ khoá đang tìm trong kết quả — dùng chung cho thư viện cấu trúc
    và collocation, giống cách dashboard đã tô đậm (mark) từ tìm được. */
 function stHl(text, q){
@@ -27396,12 +27580,15 @@ function stCardHTML(s){
    ============================================================ */
 function stRenderColloc(root){
   const q = _clQuery.trim().toLowerCase();
+  const bm = clLoadBookmarks();
   const hits = COLLOCATIONS.filter(c=>{
-    if(_clTopic !== 'all' && c.topic !== _clTopic) return false;
+    if(_clTopic === 'bookmarked' && !bm[c.id]) return false;
+    else if(_clTopic !== 'all' && _clTopic !== 'bookmarked' && c.topic !== _clTopic) return false;
     if(!q) return true;
     return c.phrase.toLowerCase().includes(q) || c.meaning.toLowerCase().includes(q)
         || (c.synonyms||[]).some(s=>s.toLowerCase().includes(q));
   });
+  const bmCount = Object.keys(bm).length;
 
   root.innerHTML = `
     ${stModeBar('colloc')}
@@ -27410,6 +27597,11 @@ function stRenderColloc(root){
         <h2>🧩 Collocation cho Writing</h2>
         <p>${COLLOCATIONS.length} collocation · kèm nghĩa và từ/cụm đồng nghĩa để thay thế khi viết</p>
       </div>
+      <div class="st-tr-head-btns">
+        <button class="st-stats-btn" id="clFlashcardBtn">🎴 Học Flashcard</button>
+      </div>
+    </div>
+    <div class="st-head" style="margin-top:8px">
       <div class="rd-search">
         <span>🔍</span>
         <input id="clSearch" type="text" placeholder="Tìm collocation, nghĩa, từ đồng nghĩa…" autocomplete="off">
@@ -27417,6 +27609,7 @@ function stRenderColloc(root){
     </div>
     <div class="rd-filters" id="clTopicChips">
       <button class="rd-chip ${_clTopic==='all'?'active':''}" onclick="clFilterTopic('all')">Tất cả<b>${COLLOCATIONS.length}</b></button>
+      <button class="rd-chip ${_clTopic==='bookmarked'?'active':''}" onclick="clFilterTopic('bookmarked')">⭐ Đã đánh dấu<b>${bmCount}</b></button>
       ${COLLOC_TOPICS.map(t=>{
         const n = COLLOCATIONS.filter(c=>c.topic===t).length;
         return `<button class="rd-chip ${_clTopic===t?'active':''}" onclick="clFilterTopic('${esc(t)}')">${esc(t)}<b>${n}</b></button>`;
@@ -27434,16 +27627,34 @@ function stRenderColloc(root){
     if(el){ el.focus(); try{ el.setSelectionRange(pos,pos); }catch(_){} }
   };
   document.getElementById('clSearch').value = _clQuery;
+  document.getElementById('clFlashcardBtn').onclick = ()=> clStartFlashcards(hits.length ? hits : COLLOCATIONS);
+
+  root.querySelectorAll('.cl-card-speak').forEach(btn=>{
+    btn.onclick = ()=> speak(btn.dataset.phrase);
+  });
+  root.querySelectorAll('.cl-card-bm').forEach(btn=>{
+    btn.onclick = ()=>{
+      const c = COLLOCATIONS.find(x=>x.id===btn.dataset.id);
+      const on = clToggleBookmark(c);
+      btn.textContent = on ? '⭐' : '☆';
+      btn.classList.toggle('on', on);
+    };
+  });
 }
 
 function clFilterTopic(t){ _clTopic = t; stRenderColloc(document.getElementById('stRoot')); }
 
 function clCardHTML(c){
   const q = _clQuery.trim();
+  const isBm = clIsBookmarked(c);
   return `
   <div class="st-card cl-card">
     <div class="st-card-top">
       <span class="st-topic-tag">${esc(c.topic)}</span>
+      <div class="cl-card-tools">
+        <button class="cl-card-speak" data-phrase="${esc(c.phrase)}" title="Phát âm">🔊</button>
+        <button class="cl-card-bm ${isBm?'on':''}" data-id="${esc(c.id)}" title="Đánh dấu">${isBm?'⭐':'☆'}</button>
+      </div>
     </div>
     <div class="st-structure">${stHl(c.phrase, q)}</div>
     <div class="st-meaning">${stHl(c.meaning, q)}</div>
@@ -27451,6 +27662,170 @@ function clCardHTML(c){
       <div class="st-equiv">
         <b>Đồng nghĩa:</b> ${c.synonyms.map(s=>`<span class="st-equiv-chip">${stHl(s, q)}</span>`).join('')}
       </div>` : ''}
+  </div>`;
+}
+
+/* ============================================================
+   ĐÁNH DẤU COLLOCATION (riêng với bookmark của luyện dịch)
+   ============================================================ */
+const CL_BOOKMARK_KEY = 'vocab_colloc_bookmarks';
+function clLoadBookmarks(){
+  try{ return JSON.parse(localStorage.getItem(CL_BOOKMARK_KEY)) || {}; }catch(e){ return {}; }
+}
+function clIsBookmarked(c){ return !!clLoadBookmarks()[c.id]; }
+function clToggleBookmark(c){
+  const bm = clLoadBookmarks();
+  if(bm[c.id]) delete bm[c.id];
+  else bm[c.id] = { ts: Date.now() };
+  try{ localStorage.setItem(CL_BOOKMARK_KEY, JSON.stringify(bm)); }catch(e){}
+  return !!bm[c.id];
+}
+
+/* ============================================================
+   HỌC COLLOCATION KIỂU FLASHCARD — lật thẻ, phát âm, đánh dấu
+   ============================================================ */
+let _clDeck = [];
+let _clCardIdx = 0;
+let _clFlipped = false;
+
+function clStartFlashcards(pool){
+  _clDeck = shuffle((pool && pool.length ? pool : COLLOCATIONS).slice());
+  _clCardIdx = 0;
+  _clFlipped = false;
+  stRenderCollocFlashcard(document.getElementById('stRoot'));
+}
+function clFlashcardBack(){ stRenderColloc(document.getElementById('stRoot')); }
+function clFlipCard(){ _clFlipped = !_clFlipped; stRenderCollocFlashcard(document.getElementById('stRoot')); }
+function clNextCard(){ _clCardIdx = (_clCardIdx+1) % _clDeck.length; _clFlipped = false; stRenderCollocFlashcard(document.getElementById('stRoot')); }
+function clPrevCard(){ _clCardIdx = (_clCardIdx-1+_clDeck.length) % _clDeck.length; _clFlipped = false; stRenderCollocFlashcard(document.getElementById('stRoot')); }
+function clShuffleDeck(){ _clDeck = shuffle(_clDeck.slice()); _clCardIdx = 0; _clFlipped = false; stRenderCollocFlashcard(document.getElementById('stRoot')); }
+
+function stRenderCollocFlashcard(root){
+  const c = _clDeck[_clCardIdx];
+  const isBm = clIsBookmarked(c);
+  root.innerHTML = `
+    ${stModeBar('colloc')}
+    <div class="cl-fc-head">
+      <button class="st-pick-mini" id="clFcBack">← Quay lại danh sách</button>
+      <span class="cl-fc-progress">Thẻ ${_clCardIdx+1}/${_clDeck.length}</span>
+      <button class="cl-fc-shuffle" id="clFcShuffle" title="Xáo trộn bộ thẻ">🔀 Xáo trộn</button>
+    </div>
+    <div class="cl-fc-stage">
+      <div class="cl-fc-card ${_clFlipped?'flipped':''}" id="clFcCard">
+        <div class="cl-fc-face cl-fc-front">
+          <span class="st-topic-tag">${esc(c.topic)}</span>
+          <div class="cl-fc-phrase">${esc(c.phrase)}</div>
+          <div class="cl-fc-hint">👆 Bấm vào thẻ để xem nghĩa</div>
+        </div>
+        <div class="cl-fc-face cl-fc-back">
+          <span class="st-topic-tag">${esc(c.topic)}</span>
+          <div class="cl-fc-meaning">${esc(c.meaning)}</div>
+          ${(c.synonyms&&c.synonyms.length) ? `
+            <div class="st-equiv" style="justify-content:center">
+              <b>Đồng nghĩa:</b> ${c.synonyms.map(s=>`<span class="st-equiv-chip">${esc(s)}</span>`).join('')}
+            </div>` : ''}
+        </div>
+      </div>
+      <div class="cl-fc-actions">
+        <button class="cl-fc-act" id="clFcSpeak" title="Phát âm cụm từ">🔊 Phát âm</button>
+        <button class="cl-fc-act ${isBm?'on':''}" id="clFcBookmark" title="Đánh dấu để ôn lại">${isBm?'⭐ Đã đánh dấu':'☆ Đánh dấu'}</button>
+      </div>
+    </div>
+    <div class="cl-fc-nav">
+      <button class="btn" id="clFcPrev">◀ Trước</button>
+      <button class="btn primary" id="clFcFlip">${_clFlipped?'↩ Xem mặt trước':'🔄 Lật thẻ'}</button>
+      <button class="btn" id="clFcNext">Tiếp ▶</button>
+    </div>`;
+
+  document.getElementById('clFcBack').onclick = clFlashcardBack;
+  document.getElementById('clFcShuffle').onclick = clShuffleDeck;
+  document.getElementById('clFcCard').onclick = clFlipCard;
+  document.getElementById('clFcFlip').onclick = (e)=>{ e.stopPropagation(); clFlipCard(); };
+  document.getElementById('clFcPrev').onclick = (e)=>{ e.stopPropagation(); clPrevCard(); };
+  document.getElementById('clFcNext').onclick = (e)=>{ e.stopPropagation(); clNextCard(); };
+  document.getElementById('clFcSpeak').onclick = (e)=>{ e.stopPropagation(); speak(c.phrase); };
+  document.getElementById('clFcBookmark').onclick = (e)=>{
+    e.stopPropagation();
+    const on = clToggleBookmark(c);
+    e.currentTarget.innerHTML = on ? '⭐ Đã đánh dấu' : '☆ Đánh dấu';
+    e.currentTarget.classList.toggle('on', on);
+  };
+}
+
+/* ============================================================
+   ⑤ TOÀN BỘ CÂU — xem hết mọi câu ví dụ trong thư viện cấu trúc,
+   biết câu nào đã luyện, và cụm collocation trong câu được tô màu
+   (mỗi collocation 1 màu cố định, áp dụng cho cả tiếng Anh & Việt).
+   ============================================================ */
+function stAllSentences(){
+  const out = [];
+  STRUCTURES.forEach(s=>{
+    s.examples.forEach(ex=> out.push({ structId:s.id, structure:s.structure, topic:s.topic, en:ex.en, vi:ex.vi }));
+  });
+  return out;
+}
+function stAllSetStatus(v){ _allStatus = v; stRenderAllSentences(document.getElementById('stRoot')); }
+function stAllSetTopic(t){ _allTopic = t; stRenderAllSentences(document.getElementById('stRoot')); }
+
+function stRenderAllSentences(root){
+  const done = stTrLoadDone();
+  const all = stAllSentences();
+  const totalCount = all.length;
+  const doneCount = all.filter(ex=>done[stTrKey(ex)]).length;
+
+  const q = _allQuery.trim().toLowerCase();
+  let items = all.map(ex=>({ ...ex, info: done[stTrKey(ex)] || null }));
+  if(_allTopic !== 'all') items = items.filter(it=>it.topic===_allTopic);
+  if(_allStatus === 'done') items = items.filter(it=>it.info);
+  if(_allStatus === 'undone') items = items.filter(it=>!it.info);
+  if(q) items = items.filter(it=> it.en.toLowerCase().includes(q) || it.vi.toLowerCase().includes(q) || it.topic.toLowerCase().includes(q));
+
+  root.innerHTML = `
+    ${stModeBar('all')}
+    <div class="st-head">
+      <div>
+        <h2>📜 Toàn bộ câu</h2>
+        <p>${totalCount} câu · đã làm ${doneCount}/${totalCount} (${totalCount?Math.round(doneCount/totalCount*100):0}%) · cụm <span class="colloc-hl" style="background:${hexToRgba(COLLOC_COLORS[1],.16)};color:${COLLOC_COLORS[1]};border-bottom:2px solid ${hexToRgba(COLLOC_COLORS[1],.6)}">tô màu</span> là collocation hay dùng</p>
+      </div>
+      <div class="rd-search">
+        <span>🔍</span>
+        <input id="allSearch" type="text" placeholder="Tìm câu, chủ đề…" autocomplete="off">
+      </div>
+    </div>
+    <div class="rd-filters">
+      <button class="rd-chip ${_allStatus==='all'?'active':''}" onclick="stAllSetStatus('all')">Tất cả<b>${totalCount}</b></button>
+      <button class="rd-chip ${_allStatus==='done'?'active':''}" onclick="stAllSetStatus('done')">✓ Đã làm<b>${doneCount}</b></button>
+      <button class="rd-chip ${_allStatus==='undone'?'active':''}" onclick="stAllSetStatus('undone')">Chưa làm<b>${totalCount-doneCount}</b></button>
+    </div>
+    <div class="rd-filters">
+      <button class="rd-chip ${_allTopic==='all'?'active':''}" onclick="stAllSetTopic('all')">Mọi chủ đề</button>
+      ${STRUCT_TOPICS.map(t=>`<button class="rd-chip ${_allTopic===t?'active':''}" onclick="stAllSetTopic('${esc(t)}')">${esc(t)}</button>`).join('')}
+    </div>
+    <div class="st-all-list">
+      ${items.length ? items.map(stAllRowHTML).join('') : `<div class="rd-empty">Không có câu nào khớp bộ lọc hiện tại.</div>`}
+    </div>`;
+
+  const el = document.getElementById('allSearch');
+  el.oninput = e=>{
+    _allQuery = e.target.value;
+    const pos = e.target.selectionStart;
+    stRenderAllSentences(root);
+    const el2 = document.getElementById('allSearch');
+    if(el2){ el2.focus(); try{ el2.setSelectionRange(pos,pos); }catch(_){} }
+  };
+  el.value = _allQuery;
+}
+
+function stAllRowHTML(it){
+  return `
+  <div class="st-all-row ${it.info?'done':''}">
+    <div class="st-all-top">
+      <span class="st-all-status ${it.info?'done':'undone'}">${it.info?`✓ Đã làm ${it.info.count}x`:'○ Chưa làm'}</span>
+      <span class="st-topic-tag">${esc(it.topic)}</span>
+      <span class="st-all-struct">${esc(it.structure)}</span>
+    </div>
+    <div class="st-all-vi">${highlightCollocations(it.vi, false)}</div>
+    <div class="st-all-en">${highlightCollocations(it.en, true)}</div>
   </div>`;
 }
 
@@ -27652,7 +28027,38 @@ let _stTrTopics = new Set(STRUCT_TOPICS);   // mặc định chọn tất cả c
 let _stTrHintsUsed = 0;
 let _stTrSessionLog = [];   // log của phiên hiện tại, dùng cho tóm tắt cuối phiên
 
+let _statsDayFilter = 'all';
 const ST_TR_HISTORY_KEY = 'vocab_st_translate_history';
+const ST_TR_DONE_KEY = 'vocab_st_translate_done';
+const ST_TR_BOOKMARK_KEY = 'vocab_st_translate_bookmarks';
+
+function stTrKey(ex){ return ex.structId + '::' + ex.en; }
+
+/* Nhớ câu nào đã từng luyện — để hiện huy hiệu "đã luyện" ngay trên màn hình luyện tập */
+function stTrLoadDone(){
+  try{ return JSON.parse(localStorage.getItem(ST_TR_DONE_KEY)) || {}; }catch(e){ return {}; }
+}
+function stTrMarkDone(ex, pct, outcome){
+  const done = stTrLoadDone();
+  const k = stTrKey(ex);
+  const prev = done[k] || { count: 0 };
+  done[k] = { count: prev.count + 1, lastOutcome: outcome, lastPct: pct, lastTs: Date.now() };
+  try{ localStorage.setItem(ST_TR_DONE_KEY, JSON.stringify(done)); }catch(e){}
+}
+
+/* Đánh dấu câu để luyện lại / xem lại sau này */
+function stTrLoadBookmarks(){
+  try{ return JSON.parse(localStorage.getItem(ST_TR_BOOKMARK_KEY)) || {}; }catch(e){ return {}; }
+}
+function stTrIsBookmarked(ex){ return !!stTrLoadBookmarks()[stTrKey(ex)]; }
+function stTrToggleBookmark(ex){
+  const bm = stTrLoadBookmarks();
+  const k = stTrKey(ex);
+  if(bm[k]) delete bm[k];
+  else bm[k] = { structId: ex.structId, topic: ex.topic, en: ex.en, vi: ex.vi, ts: Date.now() };
+  try{ localStorage.setItem(ST_TR_BOOKMARK_KEY, JSON.stringify(bm)); }catch(e){}
+  return !!bm[k];
+}
 
 function stTrLoadHistory(){
   try{ return JSON.parse(localStorage.getItem(ST_TR_HISTORY_KEY)) || []; }
@@ -27685,13 +28091,17 @@ function stRenderTranslateStart(root){
     .reduce((a,s)=>a+s.examples.length, 0));
   const selectedN = stExamplesByTopics(_stTrTopics).length;
   const hist = stTrLoadHistory();
+  const bmCount = Object.keys(stTrLoadBookmarks()).length;
 
   root.innerHTML = `
     ${stModeBar('translate')}
     <div class="learn-card" style="margin-top:14px">
       <div class="st-tr-head-row">
         <h2>🌐 Luyện dịch Việt → Anh</h2>
-        <button class="st-stats-btn" id="stStatsBtn">📊 Thống kê (${hist.length} lượt)</button>
+        <div class="st-tr-head-btns">
+          <button class="st-stats-btn" id="stBookmarkBtn">🔖 Đã đánh dấu (${bmCount})</button>
+          <button class="st-stats-btn" id="stStatsBtn">📊 Thống kê (${hist.length} lượt)</button>
+        </div>
       </div>
       <p style="color:var(--muted);font-size:13.5px;margin:6px 0 16px">
         Đọc câu tiếng Việt, gõ lại đúng câu tiếng Anh gốc. Bí quá thì bấm <b>💡 Gợi ý</b> để mở dần
@@ -27779,6 +28189,62 @@ function stRenderTranslateStart(root){
     stStartTranslate(n);
   };
   document.getElementById('stStatsBtn').onclick = ()=> stRenderTrStats(root);
+  document.getElementById('stBookmarkBtn').onclick = ()=> stRenderTrBookmarks(root);
+}
+
+/* ---------- Danh sách câu đã đánh dấu ---------- */
+function stRenderTrBookmarks(root){
+  const bm = stTrLoadBookmarks();
+  const items = Object.values(bm).sort((a,b)=>b.ts-a.ts);
+
+  if(!items.length){
+    root.innerHTML = `
+      ${stModeBar('translate')}
+      <div class="learn-card" style="margin-top:14px;text-align:center">
+        <h2>🔖 Câu đã đánh dấu</h2>
+        <p style="color:var(--muted);margin:10px 0 18px">Chưa có câu nào được đánh dấu. Trong lúc luyện, bấm biểu tượng 🔖 cạnh câu để lưu lại đây.</p>
+        <button class="learn-big-btn" onclick="stRenderTranslateStart(document.getElementById('stRoot'))">← Quay lại luyện tập</button>
+      </div>`;
+    return;
+  }
+
+  root.innerHTML = `
+    ${stModeBar('translate')}
+    <div class="st-tr-head-row" style="margin-top:14px">
+      <h2>🔖 Câu đã đánh dấu (${items.length})</h2>
+      <button class="st-pick-mini" id="stBmBack">← Quay lại luyện tập</button>
+    </div>
+    <button class="learn-big-btn" id="stBmPracticeAll" style="margin-bottom:16px">🔁 Luyện lại ${items.length} câu đã đánh dấu</button>
+    <div class="st-list">
+      ${items.map(it=>`
+        <div class="st-card">
+          <div class="st-card-top">
+            <span class="st-topic-tag">${esc(it.topic)}</span>
+            <button class="st-bm-remove" data-key="${esc(it.structId+'::'+it.en)}" title="Bỏ đánh dấu">🔖 Bỏ đánh dấu</button>
+          </div>
+          <div class="st-meaning">${esc(it.vi)}</div>
+          <div class="st-structure" style="font-size:15px">${esc(it.en)}</div>
+        </div>`).join('')}
+    </div>`;
+
+  document.getElementById('stBmBack').onclick = ()=> stRenderTranslateStart(root);
+  document.getElementById('stBmPracticeAll').onclick = ()=>{
+    const pool = items.map(it=>{
+      const sd = STRUCTURES.find(s=>s.id===it.structId);
+      return { structId: it.structId, structure: sd?sd.structure:'', meaning: sd?sd.meaning:'', topic: it.topic, en: it.en, vi: it.vi };
+    });
+    _stTrPool = shuffle(pool); _stTrI = 0; _stTrScore = 0; _stTrTotal = 0; _stTrSessionLog = []; _stTrDraft = '';
+    stTrPersistActive();
+    stNextTranslate();
+  };
+  root.querySelectorAll('.st-bm-remove').forEach(btn=>{
+    btn.onclick = ()=>{
+      const bmAll = stTrLoadBookmarks();
+      delete bmAll[btn.dataset.key];
+      try{ localStorage.setItem(ST_TR_BOOKMARK_KEY, JSON.stringify(bmAll)); }catch(e){}
+      stRenderTrBookmarks(root);
+    };
+  });
 }
 
 function stStartTranslate(count){
@@ -27805,10 +28271,15 @@ function stNextTranslate(){
   const wordIdxs = targetTokens.map((t,i)=> /[A-Za-zÀ-ỹ]/.test(t) ? i : -1).filter(i=>i>=0);
   _stTrHintsUsed = 0;
 
+  const doneInfo = stTrLoadDone()[stTrKey(cur)];
+  const isBm = stTrIsBookmarked(cur);
+
   root.innerHTML = `
     ${stModeBar('translate')}
     <div class="tp-head" style="margin-top:14px">
       <span class="st-topic-tag">${esc(cur.topic)} · ${esc(cur.structure)}</span>
+      ${doneInfo ? `<span class="st-done-badge" title="Lần gần nhất: ${stTrOutcomeLabel(doneInfo.lastOutcome)}, khớp ${doneInfo.lastPct}%">✓ Đã luyện ${doneInfo.count}x</span>` : ''}
+      <button class="st-bm-toggle ${isBm?'on':''}" id="stBmToggle" title="Đánh dấu câu này để luyện lại/xem sau">${isBm?'🔖':'📑'}</button>
       <span class="tp-score">Câu <b>${_stTrI+1}</b>/${_stTrPool.length}</span>
     </div>
     <div class="quiz-q">
@@ -27820,10 +28291,10 @@ function stNextTranslate(){
     </div>
     <div class="st-tr-meaning-panel" id="stTrMeaningPanel" style="display:none">
       <div class="st-tr-meaning-label">Nghĩa cấu trúc</div>
-      <div class="st-tr-meaning-text">${esc(cur.meaning)}</div>
+      <div class="st-tr-meaning-text">${highlightCollocations(cur.meaning, false)}</div>
       ${equivalents.length ? `
       <div class="st-tr-meaning-label" style="margin-top:10px">Cấu trúc tương đương</div>
-      <div class="st-equiv">${equivalents.map(e=>`<span class="st-equiv-chip">${esc(e)}</span>`).join('')}</div>` : ''}
+      <div class="st-equiv">${equivalents.map(e=>`<span class="st-equiv-chip">${highlightCollocations(e, true)}</span>`).join('')}</div>` : ''}
     </div>
     <div class="st-hint-row" id="stHintRow"></div>
     <div class="st-tr-field">
@@ -27853,6 +28324,11 @@ function stNextTranslate(){
   setTimeout(()=>inp.focus(), 30);
 
   inp.addEventListener('input', ()=>{ _stTrDraft = inp.value; stTrPersistActiveSoon(); });
+  document.getElementById('stBmToggle').onclick = (e)=>{
+    const on = stTrToggleBookmark(cur);
+    e.target.textContent = on ? '🔖' : '📑';
+    e.target.classList.toggle('on', on);
+  };
   document.getElementById('stTrEndSession').onclick = ()=>{
     if(confirm('Kết thúc phiên luyện tại đây? Các câu chưa làm sẽ không tính vào tóm tắt.')){
       stEndTranslateSessionEarly();
@@ -27920,16 +28396,18 @@ function stNextTranslate(){
     return targetWords.size ? Math.round(matched/targetWords.size*100) : 100;
   }
 
-  function logAttempt(pct, outcome){
+  function logAttempt(pct, outcome, userAnswer){
     const entry = {
       ts: Date.now(), topic: cur.topic, structure: cur.structure,
-      vi: cur.vi, en: cur.en, pct, hints: _stTrHintsUsed, outcome  // outcome: 'correct' | 'revealed' | 'skipped'
+      vi: cur.vi, en: cur.en, pct, hints: _stTrHintsUsed, outcome,  // outcome: 'correct' | 'revealed' | 'skipped'
+      userAnswer: userAnswer || ''
     };
     _stTrSessionLog.push(entry);
     stTrSaveEntry(entry);
+    stTrMarkDone(cur, pct, outcome);
   }
 
-  function finishCorrect(pct){
+  function finishCorrect(pct, userAnswer){
     solved = true;
     _stTrTotal += pct; _stTrScore++;
     sfx.correct();
@@ -27949,7 +28427,7 @@ function stNextTranslate(){
     nextBtn.textContent = 'Câu tiếp theo →';
     nextBtn.onclick = ()=>{ _stTrI++; _stTrDraft=''; stTrPersistActive(); stNextTranslate(); };
     fb.appendChild(nextBtn);
-    logAttempt(pct, 'correct');
+    logAttempt(pct, 'correct', userAnswer);
   }
 
   function check(blind){
@@ -27960,7 +28438,7 @@ function stNextTranslate(){
     renderGradedHints(val, blind);   // luôn chấm điểm theo từ trong khung gợi ý, dù đúng hay sai
 
     if(pct >= 90){
-      finishCorrect(pct);
+      finishCorrect(pct, val);
     } else {
       /* SAI -> KHÔNG khoá bài. Cho sửa và kiểm tra lại thoải mái. */
       sfx.wrong();
@@ -28000,7 +28478,7 @@ function stNextTranslate(){
     nextBtn.textContent = 'Câu tiếp theo →';
     nextBtn.onclick = ()=>{ _stTrI++; _stTrDraft=''; stTrPersistActive(); stNextTranslate(); };
     fb.appendChild(nextBtn);
-    logAttempt(pct, 'revealed');
+    logAttempt(pct, 'revealed', val);
   };
   hintBtn.onclick = ()=>{
     if(solved || revealed || _stTrHintsUsed >= wordIdxs.length) return;
@@ -28103,8 +28581,10 @@ function stRenderTrStats(root){
   });
   const maxDay = Math.max(1, ...days.map(d=>d.n));
 
-  // 15 lượt gần nhất
-  const recent = hist.slice(-15).reverse();
+  // toàn bộ lịch sử, có thể lọc theo ngày cụ thể
+  const dayKeysAll = [...new Set(hist.map(e=>stTrDateKey(e.ts)))].sort().reverse();
+  if(_statsDayFilter !== 'all' && !dayKeysAll.includes(_statsDayFilter)) _statsDayFilter = 'all';
+  const filteredHist = _statsDayFilter === 'all' ? hist.slice().reverse() : hist.filter(e=>stTrDateKey(e.ts)===_statsDayFilter).reverse();
 
   root.innerHTML = `
     ${stModeBar('translate')}
@@ -28153,16 +28633,28 @@ function stRenderTrStats(root){
     </div>
 
     <div class="learn-card">
-      <h3 class="st-stats-h3">15 lượt gần nhất</h3>
+      <div class="st-stats-list-head">
+        <h3 class="st-stats-h3">Xem lại các câu đã luyện (${filteredHist.length} câu)</h3>
+        <select id="statsDaySel" class="st-day-select">
+          <option value="all" ${_statsDayFilter==='all'?'selected':''}>Tất cả các ngày (${hist.length})</option>
+          ${dayKeysAll.map(k=>{
+            const n = hist.filter(e=>stTrDateKey(e.ts)===k).length;
+            const [y,m,d] = k.split('-');
+            return `<option value="${k}" ${_statsDayFilter===k?'selected':''}>${d}/${m}/${y} (${n} câu)</option>`;
+          }).join('')}
+        </select>
+      </div>
       <div class="st-recent-list">
-        ${recent.map(e=>`
+        ${filteredHist.map(e=>`
           <div class="st-recent-row ${e.outcome}">
             <div class="st-recent-top">
               <span class="st-recent-outcome">${stTrOutcomeLabel(e.outcome)}</span>
               <span class="st-recent-pct">${e.pct}%</span>
               <span class="st-recent-time">${new Date(e.ts).toLocaleDateString('vi-VN')} ${new Date(e.ts).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}</span>
             </div>
-            <div class="st-recent-en">${esc(e.en)}</div>
+            <div class="st-recent-vi">${esc(e.vi||'')}</div>
+            ${e.userAnswer ? `<div class="st-recent-mine"><b>Bạn viết:</b> ${esc(e.userAnswer)}</div>` : ''}
+            <div class="st-recent-en"><b>Câu gốc:</b> ${esc(e.en)}</div>
           </div>`).join('')}
       </div>
     </div>
@@ -28171,6 +28663,7 @@ function stRenderTrStats(root){
   `;
 
   document.getElementById('stStatsBack').onclick = ()=> stRenderTranslateStart(root);
+  document.getElementById('statsDaySel').onchange = e=>{ _statsDayFilter = e.target.value; stRenderTrStats(root); };
   document.getElementById('stClearHist').onclick = ()=>{
     if(!confirm('Xoá toàn bộ lịch sử luyện dịch Việt → Anh? Không thể hoàn tác.')) return;
     localStorage.removeItem(ST_TR_HISTORY_KEY);
