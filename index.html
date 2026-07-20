@@ -2370,6 +2370,98 @@ body.page-fs { overflow-x:hidden; }
 .prog-stat b{ display:block; font-family:var(--font-heading); font-size:18px; color:var(--accent); }
 .prog-stat span{ font-size:10.5px; color:var(--muted); font-weight:600; }
 
+/* ---- Kho từ / trình độ / phân tích thêm (bên trong progress-card) ---- */
+.wb-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+  margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);
+}
+.wb-block{ background:var(--card-sunken); border:1px solid var(--line); border-radius:var(--radius,14px); padding:12px 14px; }
+.wb-block-head{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  font-size:12.5px; font-weight:800; color:var(--ink-soft); margin-bottom:10px;
+}
+.wb-badge{
+  font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px;
+  background:var(--accent-bg); color:var(--accent); white-space:nowrap;
+}
+.dt-empty-mini{ font-size:11.5px; color:var(--muted); padding:6px 2px; }
+
+/* thanh trạng thái xếp chồng */
+.status-bar{
+  display:flex; width:100%; height:12px; border-radius:99px; overflow:hidden;
+  background:var(--paper-2); margin-bottom:10px;
+}
+.status-seg{ display:block; height:100%; transition:width .3s; }
+.status-seg.seg-learned{ background:var(--green,#047857); }
+.status-seg.seg-review{ background:var(--ember-2,#f59e0b); }
+.status-seg.seg-learning{ background:#2563eb; }
+.status-seg.seg-new{ background:var(--line-strong); }
+.status-legend{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.status-leg-item{
+  display:flex; align-items:center; gap:6px; font-family:inherit; font-size:11.5px;
+  font-weight:600; color:var(--ink-soft); background:none; border:none; cursor:pointer;
+  padding:4px 4px; border-radius:8px; text-align:left;
+}
+.status-leg-item:hover{ background:var(--card); }
+.status-leg-item b{ margin-left:auto; font-family:var(--font-heading); color:var(--ink); }
+.status-dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+.status-dot.seg-learned{ background:var(--green,#047857); }
+.status-dot.seg-review{ background:var(--ember-2,#f59e0b); }
+.status-dot.seg-learning{ background:#2563eb; }
+.status-dot.seg-new{ background:var(--line-strong); }
+
+/* trình độ CEFR — thanh ngang theo mức */
+.lvl-bars{ display:flex; flex-direction:column; gap:7px; }
+.lvl-bar-row{
+  display:flex; align-items:center; gap:8px; width:100%; font-family:inherit;
+  background:none; border:none; cursor:pointer; padding:2px 0; text-align:left;
+}
+.lvl-bar-tag{
+  font-family:var(--font-mono); font-size:10.5px; font-weight:800; width:24px; flex:none;
+  padding:2px 0; text-align:center; border-radius:6px;
+}
+.lvl-bar-track{ flex:1; height:9px; border-radius:99px; background:var(--paper-2); overflow:hidden; }
+.lvl-bar-fill{ display:block; height:100%; border-radius:99px; background:var(--accent); }
+.lvl-bar-n{ font-family:var(--font-mono); font-size:11px; color:var(--muted); flex:none; min-width:44px; text-align:right; }
+.lvl-bar-n i{ font-style:normal; }
+.lvl-bar-row.lv-A1 .lvl-bar-tag,.lvl-bar-row.lv-A2 .lvl-bar-tag{ background:var(--green-bg); color:var(--green); }
+.lvl-bar-row.lv-A1 .lvl-bar-fill,.lvl-bar-row.lv-A2 .lvl-bar-fill{ background:var(--green,#047857); }
+.lvl-bar-row.lv-B1 .lvl-bar-tag,.lvl-bar-row.lv-B2 .lvl-bar-tag{ background:rgba(14,165,233,.12); color:#0284c7; }
+.lvl-bar-row.lv-B1 .lvl-bar-fill,.lvl-bar-row.lv-B2 .lvl-bar-fill{ background:#0284c7; }
+.lvl-bar-row.lv-C1 .lvl-bar-tag,.lvl-bar-row.lv-C2 .lvl-bar-tag{ background:var(--accent-bg); color:var(--accent); }
+.lvl-bar-row.lv-C1 .lvl-bar-fill,.lvl-bar-row.lv-C2 .lvl-bar-fill{ background:var(--accent); }
+.lvl-bar-row.lv-unk .lvl-bar-tag{ background:var(--paper-2); color:var(--muted); }
+.lvl-bar-row.lv-unk .lvl-bar-fill{ background:var(--line-strong); }
+.lvl-bar-row:hover .lvl-bar-tag{ transform:scale(1.05); }
+
+/* loại từ (POS) */
+.pos-bars{ display:flex; flex-direction:column; gap:7px; }
+.pos-bar-row{ display:flex; align-items:center; gap:8px; }
+.pos-bar-tag{
+  font-size:11px; font-weight:700; color:var(--ink-soft); width:74px; flex:none;
+  text-transform:lowercase; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.pos-bar-track{ flex:1; height:9px; border-radius:99px; background:var(--paper-2); overflow:hidden; }
+.pos-bar-fill{ display:block; height:100%; border-radius:99px; background:var(--accent-2,#0891b2); }
+.pos-bar-n{ font-family:var(--font-mono); font-size:11px; color:var(--muted); flex:none; min-width:22px; text-align:right; }
+
+/* từ hay quên nhất */
+.hard-words{ display:flex; flex-wrap:wrap; gap:7px; }
+.hard-chip{
+  display:inline-flex; align-items:center; gap:6px; font-family:inherit; font-size:12px;
+  font-weight:700; color:var(--ink); background:var(--card); border:1px solid var(--line);
+  border-radius:99px; padding:5px 10px; cursor:pointer;
+}
+.hard-chip:hover{ border-color:var(--coral,#be123c); transform:translateY(-1px); }
+.hard-chip .hard-w{ font-family:var(--font-word); }
+.hard-chip .hard-lvl{ font-size:9px; padding:1px 6px; }
+.hard-chip .hard-n{ color:var(--coral,#be123c); font-family:var(--font-mono); font-size:11px; }
+
+@media (max-width:720px){
+  .wb-grid{ grid-template-columns:1fr; }
+  .status-legend{ grid-template-columns:1fr; }
+}
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
@@ -46275,8 +46367,10 @@ function renderProgressCard(){
   const synTotalAllTime = synLoadStats().total;
   const writingDoneMap = stTrLoadDone();
   const writingSentDone = Object.keys(writingDoneMap).length;
+  const S = srsStats();
+  const WB = wordBankStats();
 
-  const W = 1000, H = 260, PAD_L = 8, PAD_R = 8, PAD_T = 16, PAD_B = 30;
+  const W = 1000, H = 220, PAD_L = 8, PAD_R = 8, PAD_T = 16, PAD_B = 30;
   const n = P.series.length;
   const maxV = Math.max(1, ...P.series.map(s=>s.studied));
   const xAt = i => n<=1 ? (W/2) : PAD_L + (i/(n-1))*(W-PAD_L-PAD_R);
@@ -46300,13 +46394,63 @@ function renderProgressCard(){
       <title>${p.s.d.getDate()}/${p.s.d.getMonth()+1}: ${p.s.studied} từ đã học</title>
     </circle>`).join('');
 
-  const gridN = 4;
+  const gridN = 3;
   const gridLines = Array.from({length:gridN+1}, (_,i)=>{
     const y = (PAD_T + (i/gridN)*(H-PAD_T-PAD_B)).toFixed(1);
     return `<line x1="${PAD_L}" y1="${y}" x2="${W-PAD_R}" y2="${y}" class="prog-grid"/>`;
   }).join('');
 
   const bestLbl = P.bestDay.studied ? ` (${P.bestDay.d.getDate()}/${P.bestDay.d.getMonth()+1})` : '';
+
+  /* ---- Cụm 1: kho từ theo trạng thái (thanh xếp chồng) ---- */
+  const statusSegs = [
+    { k:'learned',  n:S.learned,    lbl:'Đã thuộc',      ic:'✅' },
+    { k:'review',   n:S.review,     lbl:'Đang ôn',        ic:'🔁' },
+    { k:'learning', n:S.learning,   lbl:'Đang học',       ic:'📗' },
+    { k:'new',      n:S.new,        lbl:'Chưa học',       ic:'⬜' },
+  ];
+  const statusTotal = Math.max(1, S.total);
+  const statusBar = statusSegs.map(s=>{
+    const pct = (s.n/statusTotal*100);
+    return pct>0 ? `<span class="status-seg seg-${s.k}" style="width:${pct}%" title="${s.lbl}: ${s.n} từ (${Math.round(pct)}%)"></span>` : '';
+  }).join('');
+  const statusLegend = statusSegs.map(s=>`
+    <button class="status-leg-item" onclick="goStatus('${s.k==='learned'?'mastered':s.k==='review'?'learning':s.k}','list')" title="Xem ${s.n} từ">
+      <i class="status-dot seg-${s.k}"></i><span>${s.ic} ${s.lbl}</span><b>${s.n}</b>
+    </button>`).join('');
+
+  /* ---- Cụm 2: trình độ từ (CEFR) ---- */
+  const lvlBars = WB.levels.map(l=>{
+    const pct = l.total ? Math.round(l.mastered/l.total*100) : 0;
+    const known = LEVEL_ORDER.includes(l.level);
+    const cls = known ? 'lv-'+l.level : 'lv-unk';
+    const tag = `<span class="lvl-bar-tag">${l.level}</span>
+      <span class="lvl-bar-track"><span class="lvl-bar-fill" style="width:${pct}%"></span></span>
+      <span class="lvl-bar-n">${l.mastered}<i>/${l.total}</i></span>`;
+    return known
+      ? `<button class="lvl-bar-row ${cls}" onclick="goLevel('${l.level}')" title="${l.level}: ${l.total} từ — ${l.mastered} đã thuộc (${pct}%)">${tag}</button>`
+      : `<div class="lvl-bar-row ${cls}" title="Chưa gán trình độ: ${l.total} từ — ${l.mastered} đã thuộc (${pct}%)">${tag}</div>`;
+  }).join('');
+
+  /* ---- Cụm 3: loại từ (POS) ---- */
+  const posMax = Math.max(1, ...WB.posList.map(p=>p.n));
+  const posBars = WB.posList.map(p=>{
+    const pct = Math.round(p.n/posMax*100);
+    return `
+    <div class="pos-bar-row" title="${p.pos}: ${p.n} từ">
+      <span class="pos-bar-tag">${esc(p.pos)}</span>
+      <span class="pos-bar-track"><span class="pos-bar-fill" style="width:${pct}%"></span></span>
+      <span class="pos-bar-n">${p.n}</span>
+    </div>`;
+  }).join('') || `<div class="dt-empty-mini">Chưa có dữ liệu loại từ</div>`;
+
+  /* ---- Cụm 4: từ khó nhớ nhất ---- */
+  const hardChips = WB.hardest.length ? WB.hardest.map(h=>`
+    <button class="hard-chip" onclick="openWord('${esc(h.word).replace(/'/g,"\\'")}')" title="Quên ${h.lapses} lần">
+      <span class="hard-w">${esc(h.word)}</span>
+      ${h.level?`<span class="lvl ${lvlClass(h.level)} hard-lvl">${esc(h.level)}</span>`:''}
+      <span class="hard-n">😵 ${h.lapses}</span>
+    </button>`).join('') : `<div class="dt-empty-mini">Chưa có từ nào bị quên nhiều lần — tuyệt vời! 🎉</div>`;
 
   el.innerHTML = `
     <div class="strip-title">
@@ -46340,6 +46484,32 @@ function renderProgressCard(){
       <div class="prog-stat" data-c="8"><b>${P.totalWrong}</b><span>câu sai</span></div>
       <div class="prog-stat" data-c="9"><b>${writingSentDone}</b><span>✍️ câu Writing đã làm</span></div>
       <div class="prog-stat" data-c="10"><b>${synTotalAllTime}</b><span>🔤 lượt trắc nghiệm Đồng nghĩa</span></div>
+    </div>
+
+    <div class="wb-grid">
+      <div class="wb-block">
+        <div class="wb-block-head">
+          <span>📚 Số lượng từ trong kho — <b>${WB.total}</b> từ</span>
+          ${WB.addedRecent ? `<span class="wb-badge">+${WB.addedRecent} mới trong 7 ngày</span>` : ''}
+        </div>
+        <div class="status-bar">${statusBar}</div>
+        <div class="status-legend">${statusLegend}</div>
+      </div>
+
+      <div class="wb-block">
+        <div class="wb-block-head"><span>🎓 Trình độ từ (CEFR)</span></div>
+        <div class="lvl-bars">${lvlBars || `<div class="dt-empty-mini">Chưa gán trình độ cho từ nào</div>`}</div>
+      </div>
+
+      <div class="wb-block">
+        <div class="wb-block-head"><span>🏷️ Loại từ phổ biến</span></div>
+        <div class="pos-bars">${posBars}</div>
+      </div>
+
+      <div class="wb-block">
+        <div class="wb-block-head"><span>😵 Từ hay quên nhất</span></div>
+        <div class="hard-words">${hardChips}</div>
+      </div>
     </div>`;
 }
 function setDashRange(n){ _dashRange = n; renderProgressCard(); }
@@ -48444,6 +48614,48 @@ function funnelStats(){
   return f;
 }
 
+/* Thống kê "kho từ" cho báo cáo tiến trình: theo trình độ CEFR, loại từ,
+   và danh sách từ khó nhớ nhất (nhiều lần quên nhất, chưa thuộc hẳn). */
+function wordBankStats(){
+  const byLevel = {};
+  const byPos = {};
+  LEVEL_ORDER.forEach(l => byLevel[l] = { total:0, mastered:0, learning:0 });
+  let unkLevel = { total:0, mastered:0, learning:0 };
+
+  VOCAB.forEach(v=>{
+    const lvl = (v.level||'').toUpperCase();
+    const st = srsState(v.word);
+    const bucket = LEVEL_ORDER.includes(lvl) ? byLevel[lvl] : unkLevel;
+    bucket.total++;
+    if(st==='mastered') bucket.mastered++;
+    else if(st==='learning' || st==='review') bucket.learning++;
+
+    const pos = (v.pos||'khác').toLowerCase();
+    byPos[pos] = (byPos[pos]||0) + 1;
+  });
+
+  const levels = LEVEL_ORDER.map(l=>({ level:l, ...byLevel[l] })).filter(x=>x.total>0);
+  if(unkLevel.total>0) levels.push({ level:'?', ...unkLevel });
+
+  const posList = Object.entries(byPos).sort((a,b)=>b[1]-a[1]).slice(0,6)
+    .map(([pos,n])=>({ pos, n }));
+
+  // Từ khó nhớ nhất: có lapses > 0, chưa thuộc hẳn, sắp theo lapses giảm dần
+  const hardest = VOCAB
+    .filter(v => SRS[v.word] && SRS[v.word].lapses>0 && srsState(v.word)!=='mastered')
+    .sort((a,b)=> (SRS[b.word].lapses||0) - (SRS[a.word].lapses||0))
+    .slice(0,6)
+    .map(v=>({ word:v.word, level:v.level, lapses:SRS[v.word].lapses }));
+
+  // Từ mới thêm trong 7 ngày gần nhất (dựa trên field date của VOCAB nếu có)
+  let addedRecent = 0;
+  {
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-7); cutoff.setHours(0,0,0,0);
+    VOCAB.forEach(v=>{ if(v.date){ const d = new Date(v.date); if(!isNaN(d) && d>=cutoff) addedRecent++; } });
+  }
+
+  return { levels, posList, hardest, addedRecent, total:VOCAB.length };
+}
 function srsGet(w){
   return SRS[w] || null;
 }
