@@ -1553,6 +1553,14 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .rd-search{ display:flex; align-items:center; gap:8px; background:var(--card);
   border:1px solid var(--line); border-radius:12px; padding:8px 14px; min-width:280px; }
 .rd-search input{ flex:1; border:none; outline:none; background:none; font:inherit; font-size:14px; color:var(--ink); }
+.rd-search .rd-clear{
+  display:none; flex:0 0 auto; width:24px; height:24px; border-radius:50%; border:none;
+  background:var(--paper-2); color:var(--muted); cursor:pointer; font-size:11px;
+  place-items:center; line-height:1; transition:.15s;
+}
+.rd-search .rd-clear:hover{ background:var(--accent); color:#fff; }
+.rd-search input:not(:placeholder-shown) ~ .rd-clear{ display:grid; }
+[data-theme="dark"] .rd-search .rd-clear{ background:var(--paper-2); }
 
 .rd-filters{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;
   padding-bottom:14px; border-bottom:1px solid var(--paper-2); }
@@ -4342,6 +4350,7 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
       <div class="rd-search">
         <span>🔍</span>
         <input id="rdSearch" type="text" placeholder="Tìm theo tên bài, từ khoá…" autocomplete="off">
+        <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
       </div>
     </div>
     <div class="rd-filters" id="rdFilters"></div>
@@ -4481,7 +4490,7 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
 YÊU CẦU TỪNG TRƯỜNG:
 - word: từ tiếng Anh
 - ipa: phiên âm IPA, đặt trong /.../
-- pos: loại từ (noun / verb / adj / adv / phrase / noun phrase...)
+- pos: loại từ — CHỈ được chọn đúng 1 trong 7 loại sau (không tự tạo loại mới): noun, verb, adj, adv, phrase, phrasal verb, idiom
 - level: trình độ CEFR (A1, A2, B1, B2, C1, C2)
 - vn: nghĩa tiếng Việt
 - wordforms: các dạng của từ, mỗi dạng gồm pos và word
@@ -4618,6 +4627,51 @@ VÍ DỤ 2 — TÍNH TỪ (topic = chủ đề lớn, VIẾT HOA):
         <li><code>topic</code> — chủ đề (<b>chỉ dùng 14 chủ đề cố định ở trên</b>)</li>
         <li><code>date</code> — ngày thêm "YYYY-MM-DD"</li>
       </ul>
+
+      <hr style="margin:26px 0;border:none;border-top:1px solid var(--line)">
+
+      <h3>Cách thêm từ vựng vào mục Từ vựng Listening</h3>
+      <p>Mục "Từ vựng Listening" (trong tab Reading → Từ vựng Listening, gộp theo 21 quyển Cambridge IELTS × 4 Test) không phải một mảng dữ liệu riêng — nó chỉ lọc lại các từ trong <code>VOCAB</code> có thêm trường <code>listening</code>. Muốn gán 1 từ vào đúng đề Cam-Test nào, chỉ cần object của từ đó có trường <code>listening: ["CamX-TestY"]</code> (X: số quyển 1–21, Y: số đề 1–4).</p>
+
+      <p style="margin-top:14px;font-weight:600;color:var(--accent)">Prompt mẫu để đưa cho AI:</p>
+      <pre id="promptTextListening">Tạo dữ liệu từ vựng theo đúng format JavaScript object sau (chỉ trả về object, KHÔNG giải thích, KHÔNG bọc trong dấu ngoặc vuông), dùng cho từ vựng xuất hiện trong bài Listening IELTS Cambridge Book [ĐIỀN SỐ QUYỂN, VD 17] - Test [ĐIỀN SỐ TEST, VD 2]. Từ cần tạo: [ĐIỀN TỪ VÀO ĐÂY].
+
+YÊU CẦU: các trường giống hệt object từ vựng thông thường (word, ipa, pos, level, vn, wordforms, synonyms, collocations, example, topic, date — theo đúng quy tắc chọn topic và 7 loại pos đã nêu ở mục "Cách thêm từ vựng mới" phía trên), CỘNG THÊM đúng 1 trường:
+- listening: mảng chỉ chứa đúng 1 chuỗi theo định dạng "CamX-TestY", với X và Y là số quyển/số đề đã điền ở trên.
+
+VÍ DỤ (từ xuất hiện trong Cambridge IELTS 17 - Test 2):
+{
+  word: "drought",
+  ipa: "/draʊt/",
+  pos: "noun",
+  level: "B2",
+  vn: "hạn hán",
+  wordforms: [
+    { pos: "noun", word: "drought" }
+  ],
+  synonyms: ["dry spell", "water shortage", "aridity"],
+  collocations: [
+    { en: "severe drought", vi: "hạn hán nghiêm trọng" },
+    { en: "prolonged drought", vi: "hạn hán kéo dài" },
+    { en: "drought-resistant crops", vi: "cây trồng chịu hạn" }
+  ],
+  example: {
+    en: "The prolonged drought has devastated crops across the region.",
+    vi: "Đợt hạn hán kéo dài đã tàn phá mùa màng khắp khu vực."
+  },
+  topic: "Thời tiết & Khí hậu",
+  listening: ["Cam17-Test2"],
+  date: "2026-07-22"
+}</pre>
+      <button class="copy-btn" onclick="copyPrompt(event,'promptTextListening')">📋 Sao chép prompt</button>
+
+      <p style="margin-top:18px"><b>Các bước thêm từ vào Từ vựng Listening:</b></p>
+      <ol style="margin-top:8px">
+        <li>Copy prompt trên, điền đúng số quyển/số Test và từ cần thêm.</li>
+        <li>Gửi cho AI, dán object trả về vào <b>cuối</b> mảng <code>VOCAB</code> giống như thêm từ vựng bình thường.</li>
+        <li>Nếu từ đó <b>đã có sẵn</b> trong <code>VOCAB</code>, không cần tạo object mới — chỉ cần thêm trường <code>listening: ["CamX-TestY"]</code> vào object đã có (hoặc nối thêm vào mảng <code>listening</code> nếu từ đó đã thuộc đề khác rồi).</li>
+        <li>Lưu file, mở lại — từ mới xuất hiện ngay trong Reading → Từ vựng Listening → đúng quyển/Test tương ứng.</li>
+      </ol>
 
       <hr style="margin:26px 0;border:none;border-top:1px solid var(--line)">
 
@@ -26791,6 +26845,7 @@ function renderListCategories(){
             <div class="rd-search ls-search">
               <span>🔍</span>
               <input id="lsSearch" type="text" placeholder="Gõ số sách để nhảy tới, vd: 17…" autocomplete="off" oninput="_lsQuery=this.value; renderListeningLib();">
+              <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
             </div>
           </div>
           <div class="topic-grid" id="lsGrid"></div>
@@ -26861,8 +26916,6 @@ function runDashSearch(q){
     (v._topic||'').toLowerCase().includes(q) ||
     (v._macro||'').toLowerCase().includes(q)
   ).slice(0, 60);
-
-  if(sec) sec.style.display = 'none';   // ẩn lưới chủ đề khi đang tìm
 
   if(!hits.length){
     box.innerHTML = `<div class="ds-empty">Không tìm thấy từ nào khớp "<b>${esc(q)}</b>"</div>`;
@@ -30131,7 +30184,20 @@ function rdToEntry(v, r){
     date: new Date().toISOString().slice(0,10)
   };
 }
-const inDeck = w => VOCAB.some(v => (v.word||'').toLowerCase() === String(w||'').toLowerCase());
+/* inDeck được gọi RẤT nhiều lần (mỗi từ của mỗi bài đọc, mỗi lần mở/lọc
+   thư viện Reading) — dùng VOCAB.some() quét tuyến tính toàn bộ mảng VOCAB
+   cho từng lần gọi khiến tab Reading load rất chậm khi VOCAB có nhiều từ.
+   Thay bằng 1 Set (lowercase) cache sẵn để tra cứu O(1); Set chỉ được
+   dựng lại (rẻ) khi VOCAB thực sự thay đổi, nhờ cờ _deckSetStale. */
+let _deckSet = null, _deckSetStale = true;
+function deckSet(){
+  if(_deckSetStale || !_deckSet){
+    _deckSet = new Set(VOCAB.map(v => (v.word||'').toLowerCase()));
+    _deckSetStale = false;
+  }
+  return _deckSet;
+}
+const inDeck = w => deckSet().has(String(w||'').toLowerCase());
 
 /* Thêm 1 hoặc nhiều từ của bài vào BỘ HỌC (VOCAB + localStorage) */
 function rdAddWords(words, r){
@@ -30142,6 +30208,7 @@ function rdAddWords(words, r){
     VOCAB.push(e); RVOCAB.push(e); added.push(e.word);
   });
   if(!added.length) return 0;
+  _deckSetStale = true;
   saveRVocab();
   initFilters();                             // dựng lại bộ lọc (có chủ đề mới)
   _dashStale = true; _listCatsStale = true;
@@ -30158,6 +30225,7 @@ function rdRemoveWords(r){
     const v = VOCAB[i];
     if(v._fromReading && v._rid === r.id) VOCAB.splice(i,1);
   }
+  _deckSetStale = true;
   saveRVocab(); initFilters(); _dashStale = true; _listCatsStale = true; applyFilter(); rdRefreshUI();
   return ids.size;
 }
@@ -30451,6 +30519,7 @@ function stRenderLib(root){
       <div class="rd-search">
         <span>🔍</span>
         <input id="stSearch" type="text" placeholder="Tìm cấu trúc, nghĩa, ví dụ…" autocomplete="off">
+        <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
       </div>
     </div>
     <div class="rd-filters" id="stTopicChips">
@@ -30771,6 +30840,7 @@ function stRenderColloc(root){
       <div class="rd-search">
         <span>🔍</span>
         <input id="clSearch" type="text" placeholder="Tìm collocation, nghĩa, từ đồng nghĩa…" autocomplete="off">
+        <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
       </div>
     </div>
     <div class="rd-filters" id="clTopicChips">
@@ -31016,6 +31086,7 @@ function stRenderAllSentences(root){
       <div class="rd-search">
         <span>🔍</span>
         <input id="allSearch" type="text" placeholder="Tìm câu, chủ đề…" autocomplete="off">
+        <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
       </div>
       <button class="btn" id="stAllResetBtn" title="Đặt lại số câu đã làm về 0">↺ Reset tiến độ</button>
     </div>
@@ -32345,6 +32416,21 @@ function rdPractice(id){
   $('rdVSearch').oninput= ()=>rdRenderVocab();
   document.querySelectorAll('.rd-tab').forEach(b=> b.onclick = ()=>rdTab(b.dataset.rd));
 })();
+
+/* Nút xoá (✕) dùng chung cho mọi thanh tìm kiếm kiểu .rd-search (rdSearch,
+   lsSearch, stSearch, clSearch, allSearch...). Dùng event delegation trên
+   document nên vẫn hoạt động kể cả khi các panel này bị render lại (đổi
+   innerHTML) mỗi lần gõ, không cần gắn lại sự kiện thủ công ở từng nơi. */
+document.addEventListener('click', e=>{
+  const clr = e.target.closest('.rd-search .rd-clear');
+  if(!clr) return;
+  const inp = clr.previousElementSibling;
+  if(inp && inp.tagName === 'INPUT'){
+    inp.value = '';
+    inp.dispatchEvent(new Event('input', {bubbles:true}));
+    inp.focus();
+  }
+});
 
 renderDashboard(); _dashStale = false;
 
