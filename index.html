@@ -4374,15 +4374,15 @@ html[data-bg="mono"] body::before{
       </div>
 
       <div class="backup-box" id="backupBox">
-        <h3 style="margin-top:0">💾 Sao lưu &amp; Khôi phục tiến độ</h3>
-        <p>Khi bạn <b>thêm từ mới thủ công</b> vào file HTML (hoặc dùng bản cập nhật mới), toàn bộ tiến độ đang nằm trong trình duyệt của file cũ sẽ không tự chuyển sang. Hãy làm theo 3 bước:</p>
+        <h3 style="margin-top:0">💾 Sao lưu &amp; Khôi phục toàn bộ dữ liệu</h3>
+        <p>Khi bạn <b>thêm từ mới thủ công</b> vào file HTML (hoặc dùng bản cập nhật mới), toàn bộ dữ liệu đang nằm trong trình duyệt của file cũ sẽ không tự chuyển sang. Hãy làm theo 3 bước:</p>
         <ol class="backup-steps">
           <li><b>Xuất dữ liệu</b> ở file đang dùng → được 1 file <code>.json</code>.</li>
           <li>Thêm từ mới vào file HTML rồi mở file mới.</li>
-          <li><b>Nhập dữ liệu</b> từ file <code>.json</code> vừa lưu → tiến độ trở lại nguyên vẹn.</li>
+          <li><b>Nhập dữ liệu</b> từ file <code>.json</code> vừa lưu → dữ liệu trở lại nguyên vẹn.</li>
         </ol>
         <div class="backup-what">
-          Dữ liệu được sao lưu: tiến độ SRS (bậc/lịch ôn từng từ) · lịch sử học &amp; streak · từ "Cần học" · <b>từ vựng thêm từ bài Reading</b> · kim cương &amp; cấp độ · tên &amp; ảnh đại diện · cỡ phiên học · giọng đọc · giao diện sáng/tối.
+          Dữ liệu được sao lưu (toàn bộ, tự động — kể cả mục thêm mới sau này): tiến độ SRS (bậc/lịch ôn từng từ) · lịch sử học &amp; streak · từ "Cần học" · <b>từ vựng thêm từ bài Reading</b> · <b>toàn bộ lịch sử &amp; đánh dấu luyện dịch Anh–Việt (Writing)</b> · <b>dữ liệu &amp; thống kê luyện đồng nghĩa (Synonym)</b> · thống kê Quiz · <b>các mục đánh dấu (bookmark) ở Collocation</b> · kim cương &amp; cấp độ · tên &amp; ảnh đại diện · cỡ phiên học · giọng đọc · giao diện sáng/tối/màu nhấn/nền/độ trong suốt.
         </div>
         <div class="backup-actions">
           <button class="btn primary" onclick="exportProgress()">⬇️ Xuất dữ liệu (.json)</button>
@@ -29748,7 +29748,24 @@ const BACKUP_KEYS = [
   'vocab_swipe_seen',
   'vocab_reading_added'   // từ vựng lấy từ bài đọc đã thêm vào bộ học
 ];
-const BACKUP_VERSION = 1;
+/* Các key nội bộ (cờ điều khiển) — không phải dữ liệu người dùng nên
+   KHÔNG đưa vào bản sao lưu. Khi nhập lại, các cờ này sẽ tự được set
+   lại đúng bởi importProgress() ở dưới. */
+const BACKUP_SKIP_KEYS = /^vocab_reset_|^vocab_imported$/;
+/* Quét TOÀN BỘ key "vocab_*" đang có trong localStorage tại thời điểm
+   xuất dữ liệu (thay vì chỉ theo danh sách BACKUP_KEYS cố định ở trên).
+   Nhờ vậy mọi dữ liệu hiện có và sau này thêm mới (writing/luyện dịch,
+   đồng nghĩa, các mục đánh dấu, thống kê quiz...) đều được sao lưu đầy đủ,
+   kể cả khi code được cập nhật thêm tính năng mới. */
+function getAllVocabKeys(){
+  const keys = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k && k.indexOf('vocab_') === 0 && !BACKUP_SKIP_KEYS.test(k)) keys.push(k);
+  }
+  return keys;
+}
+const BACKUP_VERSION = 2;
 
 function backupMsg(text, ok){
   const el = document.getElementById('backupMsg');
@@ -29771,12 +29788,16 @@ function exportProgress(){
   try{ sfx.add(); }catch(e){}
   try{
     const data = {};
-    BACKUP_KEYS.forEach(k=>{
+    getAllVocabKeys().forEach(k=>{
       const v = localStorage.getItem(k);
       if(v !== null) data[k] = v;
     });
     let srsCount = 0;
     try{ srsCount = Object.keys(JSON.parse(data['vocab_srs_v1']||'{}')).length; }catch(e){}
+    let writingCount = 0;
+    try{ writingCount = (JSON.parse(data['vocab_st_translate_history']||'[]')||[]).length; }catch(e){}
+    let synCount = 0;
+    try{ synCount = (JSON.parse(data['vocab_syn_stats_v1']||'{}')||{}).total || 0; }catch(e){}
 
     const payload = {
       app: 'IELTS VOCAB by Cris',
@@ -29784,6 +29805,8 @@ function exportProgress(){
       exportedAt: new Date().toISOString(),
       totalWordsInApp: VOCAB.length,
       wordsWithProgress: srsCount,
+      writingHistoryCount: writingCount,
+      synonymAttemptCount: synCount,
       data
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
@@ -29795,7 +29818,7 @@ function exportProgress(){
     a.download = `vocab-tiendo-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(url), 2000);
-    backupMsg(`✅ Đã xuất tiến độ của ${srsCount} từ. Giữ file .json này để nhập lại sau khi thêm từ mới.`, true);
+    backupMsg(`✅ Đã xuất toàn bộ dữ liệu (${srsCount} từ có tiến độ, ${writingCount} lượt luyện dịch, ${Object.keys(data).length} mục dữ liệu). Giữ file .json này để nhập lại sau khi thêm từ mới.`, true);
   }catch(e){
     backupMsg('❌ Không xuất được dữ liệu: ' + e.message, false);
   }
@@ -29817,17 +29840,24 @@ function importProgress(input){
     }
     let srsCount = 0;
     try{ srsCount = Object.keys(JSON.parse(data['vocab_srs_v1']||'{}')).length; }catch(e){}
+    let writingCount = 0;
+    try{ writingCount = (JSON.parse(data['vocab_st_translate_history']||'[]')||[]).length; }catch(e){}
     const when = payload.exportedAt ? new Date(payload.exportedAt).toLocaleString('vi-VN') : 'không rõ';
     if(!confirm(
-      `Nhập tiến độ từ bản sao lưu?\n\n`+
+      `Nhập dữ liệu từ bản sao lưu?\n\n`+
       `• Thời điểm sao lưu: ${when}\n`+
-      `• Số từ có tiến độ: ${srsCount}\n\n`+
-      `Tiến độ hiện tại trên trình duyệt sẽ bị GHI ĐÈ.\n`+
+      `• Số từ có tiến độ: ${srsCount}\n`+
+      `• Số lượt luyện dịch (writing): ${writingCount}\n`+
+      `• Tổng số mục dữ liệu: ${Object.keys(data).length}\n\n`+
+      `Toàn bộ dữ liệu hiện tại trên trình duyệt (tiến độ, writing, đồng nghĩa, đánh dấu...) sẽ bị GHI ĐÈ.\n`+
       `Từ vựng trong file hiện tại (${VOCAB.length} từ) được giữ nguyên — kể cả từ bạn mới thêm.`)) return;
 
     try{
-      BACKUP_KEYS.forEach(k=>{
-        if(Object.prototype.hasOwnProperty.call(data, k)) localStorage.setItem(k, String(data[k]));
+      // Phục hồi TẤT CẢ các key vocab_* có trong file sao lưu, không chỉ
+      // theo danh sách cố định -> không bỏ sót writing/synonym/bookmark
+      // hay bất kỳ dữ liệu nào được thêm mới trong các bản sao lưu cũ/mới.
+      Object.keys(data).forEach(k=>{
+        if(k.indexOf('vocab_') === 0) localStorage.setItem(k, String(data[k]));
       });
       // File mới có thể có cờ reset khác -> đặt sẵn để không bị xoá lại lần tải sau
       Object.keys(localStorage).forEach(k=>{ if(/^vocab_reset_/.test(k)) localStorage.setItem(k,'1'); });
