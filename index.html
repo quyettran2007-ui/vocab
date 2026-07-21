@@ -32012,6 +32012,14 @@ function rdMarkQ(text, q){
 }
 
 /* ---------- Popup tra nghĩa khi chạm vào từ ---------- */
+/* Chuyển #rdPop ra làm con trực tiếp của <body>: vì .panel.active có
+   will-change:transform (để chạy animation mượt), theo chuẩn CSS điều
+   này khiến mọi phần tử con dùng position:fixed bên trong nó bị định vị
+   theo khung của .panel thay vì theo màn hình -> popup hiện sai vị trí
+   (đặc biệt khi đã cuộn trang), thậm chí bật ra ngoài vùng nhìn thấy
+   trông như "không hiện". Đưa #rdPop ra ngoài .panel để nó luôn định vị
+   đúng theo viewport, không ảnh hưởng gì tới animation khác. */
+(function(){ const p = document.getElementById('rdPop'); if(p) document.body.appendChild(p); })();
 function rdHidePop(){ const p=document.getElementById('rdPop'); if(p) p.classList.remove('on'); }
 /* Cuộn trang / đổi kích thước / nhấn Esc -> đóng popup (nếu không nó sẽ "treo" giữa màn hình) */
 window.addEventListener('scroll', ()=>{ const p=document.getElementById('rdPop');
