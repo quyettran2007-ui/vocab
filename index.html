@@ -1890,6 +1890,26 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .rd-tools{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
 .rd-tools label{ display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600;
   color:var(--ink-soft); cursor:pointer; }
+.rd-edit-btn{ font-size:12.5px; padding:7px 13px; font-weight:700; }
+.rd-edit-btn.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
+.rd-notes-btn{ font-size:12.5px; padding:7px 13px; font-weight:700; }
+.rd-notes-btn.on{ background:var(--accent-2, var(--accent)); color:#fff; border-color:var(--accent-2, var(--accent)); }
+.rd-edit-hint{ font-size:12px; color:var(--accent); font-weight:600; }
+.rd-article.rd-edit-mode{ outline:2px dashed var(--accent); outline-offset:6px; cursor:text; }
+.rd-article.rd-edit-mode .rd-w{ cursor:text; }
+
+/* Đánh dấu đoạn đã ghi chú + bong bóng comment có mũi tên chỉ vào bên trong bài */
+.rd-note-mark{ background:rgba(250,204,21,.32); border-bottom:2px dashed #eab308;
+  padding:1px 2px; border-radius:3px; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+.rd-note-bubble{ display:block; max-width:100%; margin:8px 0 16px; }
+.rd-note-arrow{ display:block; width:0; height:0; margin-left:16px;
+  border-left:9px solid transparent; border-right:9px solid transparent; border-bottom:9px solid var(--accent); }
+.rd-note-text{ display:flex; align-items:flex-start; gap:8px; background:var(--card); border:1.5px solid var(--accent);
+  border-radius:0 14px 14px 14px; padding:10px 12px; font-size:13.5px; font-weight:500;
+  color:var(--ink-soft); line-height:1.6; box-shadow:var(--shadow-xs); }
+.rd-note-text .rd-note-del{ margin-left:auto; flex-shrink:0; background:none; border:none; cursor:pointer;
+  color:var(--muted); font-size:13px; padding:0 2px; }
+.rd-note-text .rd-note-del:hover{ color:#ef4444; }
 .rd-vsearch{ flex:1; min-width:200px; background:var(--card); border:1px solid var(--line);
   border-radius:10px; padding:9px 13px; font:inherit; font-size:13.5px; color:var(--ink); outline:none; }
 .rd-vcount{ font-size:12.5px; font-weight:700; color:var(--muted); }
@@ -1993,6 +2013,55 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .rd-pop .pb button:hover{ border-color:var(--accent); color:var(--accent); }
 .rd-empty{ text-align:center; padding:44px 20px; color:var(--muted);
   border:1.5px dashed var(--line); border-radius:16px; background:var(--paper); }
+
+/* Thanh công cụ hiện khi bôi chọn văn bản (chế độ Edit) */
+.rd-seltip{ max-width:300px; }
+.rd-seltip .pb{ margin-top:0; display:flex; gap:6px; }
+.rd-seltip .pb button{ flex:1; font-size:11.5px; font-weight:700; cursor:pointer; white-space:nowrap;
+  background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:7px 8px; color:var(--ink-soft); }
+.rd-seltip .pb button:hover{ border-color:var(--accent); color:var(--accent); }
+.rd-selnote-quote{ font-size:12.5px; color:var(--muted); font-style:italic; margin-bottom:8px;
+  padding:6px 9px; background:var(--paper); border-left:3px solid var(--accent); border-radius:0 8px 8px 0;
+  max-height:70px; overflow:auto; }
+.rd-selnote-input{ width:100%; box-sizing:border-box; font:inherit; font-size:13px; padding:8px 10px;
+  border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); resize:vertical;
+  margin-bottom:8px; }
+
+/* Sổ ghi chú (tab Setting) */
+.nb-day{ margin-bottom:16px; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--paper); }
+.nb-day-head{ display:flex; justify-content:space-between; align-items:center; padding:10px 14px;
+  background:var(--card); border-bottom:1px solid var(--line); font-size:13.5px; gap:10px; }
+.nb-day-head span{ font-size:12px; color:var(--muted); font-weight:600; }
+.nb-day-head .nb-day-acts{ display:flex; align-items:center; gap:10px; margin-left:auto; }
+.nb-copyall{ font-size:11.5px; font-weight:700; cursor:pointer; white-space:nowrap;
+  background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:5px 10px; color:var(--ink-soft); }
+.nb-copyall:hover{ border-color:var(--accent); color:var(--accent); }
+.nb-lines{ padding:12px 14px; display:flex; flex-direction:column; gap:10px; }
+.nb-line{ display:flex; gap:10px; align-items:flex-start; padding-bottom:10px; border-bottom:1px dashed var(--line); }
+.nb-line:last-child{ border-bottom:none; padding-bottom:0; }
+.nb-line-main{ flex:1; min-width:0; }
+.nb-quote{ font-size:13.5px; font-style:italic; color:var(--ink); line-height:1.6; }
+.nb-note{ margin-top:5px; font-size:13px; color:var(--ink-soft); background:var(--card);
+  border-left:3px solid var(--accent); padding:6px 9px; border-radius:0 8px 8px 0; line-height:1.55; }
+.nb-meta{ margin-top:5px; font-size:11.5px; color:var(--muted); }
+.nb-line-acts{ display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+.nb-copy1, .nb-del{ background:none; border:none; cursor:pointer; color:var(--muted); font-size:14px; padding:2px 4px; }
+.nb-copy1:hover{ color:var(--accent); }
+.nb-del:hover{ color:#ef4444; }
+
+.settings-nav{
+  display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px;
+  position:sticky; top:0; z-index:5; padding:10px 0; background:var(--bg);
+}
+.settings-nav-btn{
+  font-size:13.5px; font-weight:700; cursor:pointer; white-space:nowrap;
+  background:var(--card); border:1px solid var(--line); border-radius:12px;
+  padding:9px 14px; color:var(--ink-soft); box-shadow:var(--shadow-sm);
+}
+.settings-nav-btn:hover{ border-color:var(--accent); color:var(--accent); }
+.settings-nav-btn.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.settings-group{ animation:fadeIn .15s ease; }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
 
 .backup-box{
   background:var(--card); border:1px solid var(--line); border-radius:16px;
@@ -4565,6 +4634,9 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
       <div class="rd-tools">
         <label><input type="checkbox" id="rdHL" checked> Gạch chân từ khoá</label>
         <label><input type="checkbox" id="rdTR"> Hiện bản dịch</label>
+        <button type="button" class="btn rd-edit-btn" id="rdEditBtn" title="Bật để bôi chọn văn bản tự do trong bài (tắt tạm tính năng chạm từ để tra nghĩa)">✎ Edit</button>
+        <button type="button" class="btn rd-notes-btn" id="rdShowNotesBtn" title="Hiện các ghi chú đã lưu ngay trong bài, kèm mũi tên chỉ đúng vị trí">🗨️ Hiện ghi chú</button>
+        <span class="rd-edit-hint" id="rdEditHint" style="display:none">✏️ Đang bật Edit — bôi chọn văn bản để Sao chép / Ghi chú / Thêm vào sổ</span>
         <button class="btn" onclick="rdSpeakAll()">🔊 Đọc bài</button>
         <button class="btn" onclick="rdStopSpeak()">⏹ Dừng</button>
       </div>
@@ -4596,6 +4668,15 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
 <section class="panel" id="panel-guide">
     <div class="guide-scroll">
     <div class="guide">
+      <div class="settings-nav" id="settingsNav">
+        <button class="settings-nav-btn active" data-sg="ui" onclick="showSettingsGroup('ui')">🎨 Giao diện</button>
+        <button class="settings-nav-btn" data-sg="backup" onclick="showSettingsGroup('backup')">💾 Sao lưu &amp; Khôi phục</button>
+        <button class="settings-nav-btn" data-sg="notebook" onclick="showSettingsGroup('notebook')">📒 Sổ ghi chú</button>
+        <button class="settings-nav-btn" data-sg="export" onclick="showSettingsGroup('export')">📤 Xuất danh sách học liệu</button>
+        <button class="settings-nav-btn" data-sg="prompt" onclick="showSettingsGroup('prompt')">🧩 Prompt thêm dữ liệu</button>
+      </div>
+
+      <div class="settings-group" id="settingsGroup-ui">
       <div class="backup-box" id="themeBox">
         <h3 style="margin-top:0">🎨 Chủ đề màu giao diện</h3>
         <p>Chọn màu nhấn (accent) yêu thích cho toàn bộ ứng dụng — áp dụng cho cả chế độ sáng lẫn tối.</p>
@@ -4647,6 +4728,9 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
         <div class="pref-swatch-grid" id="densitySwatchGrid"></div>
       </div>
 
+      </div><!-- /settingsGroup-ui -->
+
+      <div class="settings-group" id="settingsGroup-backup" style="display:none">
       <div class="backup-box" id="backupBox">
         <h3 style="margin-top:0">💾 Sao lưu &amp; Khôi phục toàn bộ dữ liệu</h3>
         <p>Khi bạn <b>thêm từ mới thủ công</b> vào file HTML (hoặc dùng bản cập nhật mới), toàn bộ dữ liệu đang nằm trong trình duyệt của file cũ sẽ không tự chuyển sang. Hãy làm theo 3 bước:</p>
@@ -4656,7 +4740,7 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
           <li><b>Nhập dữ liệu</b> từ file <code>.json</code> vừa lưu → dữ liệu trở lại nguyên vẹn.</li>
         </ol>
         <div class="backup-what">
-          Dữ liệu được sao lưu (toàn bộ, tự động — kể cả mục thêm mới sau này): tiến độ SRS (bậc/lịch ôn từng từ) · lịch sử học &amp; streak · từ "Cần học" · <b>từ vựng thêm từ bài Reading</b> · <b>toàn bộ lịch sử &amp; đánh dấu luyện dịch Anh–Việt (Writing)</b> · <b>dữ liệu &amp; thống kê luyện đồng nghĩa (Synonym)</b> · thống kê Quiz · <b>các mục đánh dấu (bookmark) ở Collocation</b> · <b>tiến độ &amp; thống kê Gõ từ Collocation (bậc nhớ từng cụm, số lượt đúng/sai, số cụm đã học theo ngày)</b> · kim cương &amp; cấp độ · tên &amp; ảnh đại diện · cỡ phiên học · giọng đọc · giao diện sáng/tối/màu nhấn/nền/độ trong suốt/cỡ chữ/kiểu chữ/độ bo góc/mật độ bố cục.
+          Dữ liệu được sao lưu (toàn bộ, tự động — kể cả mục thêm mới sau này): tiến độ SRS (bậc/lịch ôn từng từ) · lịch sử học &amp; streak · từ "Cần học" · <b>từ vựng thêm từ bài Reading</b> · <b>toàn bộ lịch sử &amp; đánh dấu luyện dịch Anh–Việt (Writing)</b> · <b>dữ liệu &amp; thống kê luyện đồng nghĩa (Synonym)</b> · thống kê Quiz · <b>các mục đánh dấu (bookmark) ở Collocation</b> · <b>tiến độ &amp; thống kê Gõ từ Collocation (bậc nhớ từng cụm, số lượt đúng/sai, số cụm đã học theo ngày)</b> · <b>Sổ ghi chú (đoạn trích &amp; ghi chú lưu từ bài đọc, theo ngày)</b> · kim cương &amp; cấp độ · tên &amp; ảnh đại diện · cỡ phiên học · giọng đọc · giao diện sáng/tối/màu nhấn/nền/độ trong suốt/cỡ chữ/kiểu chữ/độ bo góc/mật độ bố cục.
         </div>
         <div class="backup-actions">
           <button class="btn primary" onclick="exportProgress()">⬇️ Xuất dữ liệu (.json)</button>
@@ -4667,6 +4751,24 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
         <div class="backup-msg" id="backupMsg"></div>
       </div>
 
+      </div><!-- /settingsGroup-backup -->
+
+      <div class="settings-group" id="settingsGroup-notebook" style="display:none">
+      <div class="backup-box" id="notebookBox">
+        <h3 style="margin-top:0">📒 Sổ ghi chú</h3>
+        <p>Khi bạn bật <b>Edit</b> ở bài đọc (tab Reading) và bôi chọn một đoạn văn bản, các mục bạn <b>Ghi chú</b> hoặc <b>Thêm vào sổ</b> sẽ được lưu tại đây, nhóm theo từng ngày. Dữ liệu tự lưu vào máy và nằm trong bản <b>Sao lưu &amp; Khôi phục</b> ở mục bên cạnh.</p>
+        <div class="backup-actions" style="margin-bottom:16px">
+          <button class="btn danger-btn" onclick="notebookClearAll()">🗑️ Xoá toàn bộ sổ ghi chú</button>
+        </div>
+        <div id="notebookList"></div>
+      </div>
+      </div><!-- /settingsGroup-notebook -->
+
+      <div class="settings-group" id="settingsGroup-export" style="display:none">
+      <div class="backup-box" id="exportListBox"></div>
+      </div><!-- /settingsGroup-export -->
+
+      <div class="settings-group" id="settingsGroup-prompt" style="display:none">
       <h3>Cách thêm từ vựng mới</h3>
       <p>Đưa từ vựng cho AI kèm prompt bên dưới. AI trả về một object JavaScript. Dán object đó vào mảng <code>VOCAB</code> (tìm dòng <code>const VOCAB = [</code>).</p>
 
@@ -4933,6 +5035,7 @@ VÍ DỤ:
       </ol>
 
       <p style="margin-top:18px;color:var(--muted);font-size:13px">💡 Riêng <b>bài đọc (Reading)</b> được thêm bằng script <code>extract_reading.py</code> chạy trên thư mục chứa các bài đọc gốc, tạo ra file <code>readings_data.js</code> để dán vào thẻ <code>&lt;script id="readingsData"&gt;</code> ở cuối trang — không thêm thủ công từng object như 3 mục trên.</p>
+      </div><!-- /settingsGroup-prompt -->
     </div>
     </div>
   </section>
@@ -25497,8 +25600,10 @@ const COLLOC_TOPICS = [...new Set(COLLOCATIONS.map(c=>c.topic))];
 let _RD = null;
 function RD(){
   if(_RD) return _RD;
-  try{ _RD = JSON.parse(document.getElementById('readingsData').textContent); }
-  catch(e){ _RD = []; }
+  const el = document.getElementById('readingsData');
+  if(!el) return [];                                // chưa parse tới thẻ này -> thử lại lần sau, KHÔNG cache
+  try{ _RD = JSON.parse(el.textContent); }
+  catch(e){ return []; }                              // lỗi tạm thời -> cũng không cache
   return _RD;
 }
 
@@ -30202,9 +30307,315 @@ function backupMsg(text, ok){
   backupMsg._t = setTimeout(()=>{ el.textContent=''; el.className='backup-msg'; }, 6000);
 }
 
+/* ============================================================
+   📤 XUẤT DANH SÁCH HỌC LIỆU — Từ vựng / Collocation / Câu
+   ------------------------------------------------------------
+   Xuất ra file (CSV, TSV kiểu Quizlet, TXT, JSON), lọc theo chủ
+   đề, và tuỳ chọn hiện thêm các đặc tính (IPA, từ loại, cấp độ,
+   đồng nghĩa, collocation, câu ví dụ, chủ đề, cấu trúc…).
+   ============================================================ */
+const EX_FIELD_DEFS = {
+  vocab: [
+    {key:'ipa', label:'Phiên âm (IPA)'},
+    {key:'pos', label:'Từ loại'},
+    {key:'level', label:'Cấp độ (CEFR)'},
+    {key:'synonyms', label:'Từ đồng nghĩa'},
+    {key:'collocations', label:'Collocation đi kèm'},
+    {key:'example', label:'Câu ví dụ (Anh–Việt)'},
+    {key:'topic', label:'Chủ đề'}
+  ],
+  colloc: [
+    {key:'synonyms', label:'Từ đồng nghĩa'},
+    {key:'topic', label:'Chủ đề'}
+  ],
+  sentence: [
+    {key:'structure', label:'Cấu trúc ngữ pháp'},
+    {key:'structMeaning', label:'Nghĩa cấu trúc'},
+    {key:'topic', label:'Chủ đề'}
+  ],
+  reading: [
+    {key:'meta', label:'Nguồn (Cambridge/Test/Bài)'},
+    {key:'en', label:'Nội dung tiếng Anh'},
+    {key:'vi', label:'Bản dịch tiếng Việt'},
+    {key:'vocabList', label:'Danh sách từ vựng của bài'},
+    {key:'topic', label:'Theo quyển Cambridge'}
+  ]
+};
+const EX_FORMATS = [
+  ['csv', 'CSV (Excel/Sheets)'],
+  ['tsv', 'TSV — Quizlet (thuật ngữ ⇥ định nghĩa)'],
+  ['txt', 'TXT (mỗi mục 1 đoạn)'],
+  ['json', 'JSON'],
+  ['pdf', 'PDF (in / lưu file)']
+];
+let _exSource = 'vocab';                       // 'vocab' | 'colloc' | 'sentence' | 'reading'
+let _exTopics = { vocab:[], colloc:[], sentence:[], reading:[] }; // rỗng = tất cả chủ đề
+let _exFields = {
+  vocab: new Set(['ipa','pos','example','topic']),
+  colloc: new Set(['topic']),
+  sentence: new Set(['topic']),
+  reading: new Set(['meta','en','vi'])
+};
+let _exFormat = 'csv';
+
+function exSentenceRows(){
+  const out = [];
+  STRUCTURES.forEach(s=> s.examples.forEach(ex=> out.push({
+    structId:s.id, structure:s.structure, meaning:s.meaning, topic:s.topic, en:ex.en, vi:ex.vi
+  })));
+  return out;
+}
+function exStripBraces(s){
+  return String(s||'').replace(/\{([^{}]+)\}/g, '$1');
+}
+function exReadingRows(){
+  return RD().map(r=>({
+    id: r.id,
+    title: r.title||'',
+    meta: `Cambridge ${r.book||'?'} - Test ${r.test||'?'} - Bài ${r.psg||'?'}`,
+    en: (r.P||[]).map(exStripBraces).join('\n\n'),
+    vi: (r.T||[]).join('\n\n'),
+    vocabList: (r.V||[]).map(row=> `${row[0]} — ${row[3]||''}`).join('; '),
+    topic: `Cambridge ${r.book||'?'}`
+  }));
+}
+function exSourceCount(src){
+  if(src==='vocab') return VOCAB.length;
+  if(src==='colloc') return COLLOCATIONS.length;
+  if(src==='reading') return RD().length;
+  return exSentenceRows().length;
+}
+function exTopicsFor(src){
+  let list;
+  if(src==='vocab') list = [...new Set(VOCAB.map(v=>v.topic).filter(Boolean))];
+  else if(src==='colloc') list = COLLOC_TOPICS.slice();
+  else if(src==='reading') return [...new Set(exReadingRows().map(r=>r.topic).filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b, undefined, {numeric:true}));
+  else list = STRUCT_TOPICS.slice();
+  return list.sort((a,b)=>a.localeCompare(b));
+}
+function exRowsFor(src){
+  const selTopics = _exTopics[src];
+  if(src==='vocab') return VOCAB.filter(v=> !selTopics.length || selTopics.includes(v.topic));
+  if(src==='colloc') return COLLOCATIONS.filter(c=> !selTopics.length || selTopics.includes(c.topic));
+  if(src==='reading') return exReadingRows().filter(r=> !selTopics.length || selTopics.includes(r.topic));
+  return exSentenceRows().filter(s=> !selTopics.length || selTopics.includes(s.topic));
+}
+function exRecordFor(src, item){
+  const fields = _exFields[src];
+  if(src==='vocab'){
+    const rec = { term:item.word, meaning:item.vn||'' };
+    if(fields.has('ipa')) rec.ipa = item.ipa||'';
+    if(fields.has('pos')) rec.pos = item.pos||'';
+    if(fields.has('level')) rec.level = item.level||'';
+    if(fields.has('synonyms')) rec.synonyms = (item.synonyms||[]).join('; ');
+    if(fields.has('collocations')) rec.collocations = (item.collocations||[]).map(c=>c.en).join('; ');
+    if(fields.has('example')){ rec.example_en = item.example ? (item.example.en||'') : ''; rec.example_vi = item.example ? (item.example.vi||'') : ''; }
+    if(fields.has('topic')) rec.topic = item.topic||'';
+    return rec;
+  }
+  if(src==='colloc'){
+    const rec = { term:item.phrase, meaning:item.meaning||'' };
+    if(fields.has('synonyms')) rec.synonyms = (item.synonyms||[]).join('; ');
+    if(fields.has('topic')) rec.topic = item.topic||'';
+    return rec;
+  }
+  if(src==='reading'){
+    const rec = { term:item.title, meaning:'' };
+    if(fields.has('meta')) rec.meta = item.meta||'';
+    if(fields.has('en')) rec.en = item.en||'';
+    if(fields.has('vi')) rec.vi = item.vi||'';
+    if(fields.has('vocabList')) rec.vocab = item.vocabList||'';
+    if(fields.has('topic')) rec.topic = item.topic||'';
+    return rec;
+  }
+  const rec = { term:item.en, meaning:item.vi||'' };
+  if(fields.has('structure')) rec.structure = item.structure||'';
+  if(fields.has('structMeaning')) rec.structure_meaning = item.meaning||'';
+  if(fields.has('topic')) rec.topic = item.topic||'';
+  return rec;
+}
+function exCsvEscape(v, delim){
+  const s = String(v==null?'':v).replace(/\r?\n/g,' ');
+  const re = new RegExp('["'+delim+']');
+  if(re.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+  return s;
+}
+function exToDelimited(records, delim){
+  if(!records.length) return '';
+  const headers = Object.keys(records[0]);
+  const lines = [headers.join(delim)];
+  records.forEach(r=> lines.push(headers.map(h=>exCsvEscape(r[h], delim)).join(delim)));
+  return lines.join('\r\n');
+}
+function exToQuizletTSV(records){
+  return records.map(r=>{
+    const term = (r.term||'').replace(/\t|\n/g,' ');
+    const extras = Object.keys(r).filter(k=>k!=='term' && k!=='meaning' && r[k]).map(k=>`${k}: ${r[k]}`).join(' | ');
+    let def = (r.meaning||'').replace(/\t|\n/g,' ');
+    if(extras) def += (def?' — ':'') + extras;
+    return `${term}\t${def}`;
+  }).join('\n');
+}
+function exToTXT(records){
+  return records.map(r=>{
+    const lines = [`${r.term}${r.meaning?' — '+r.meaning:''}`];
+    Object.keys(r).forEach(k=>{
+      if(k==='term'||k==='meaning' || !r[k]) return;
+      lines.push(`   ${k}: ${r[k]}`);
+    });
+    return lines.join('\n');
+  }).join('\n\n');
+}
+function exToPDFHTML(records, srcLabel){
+  const cols = records.length ? Object.keys(records[0]) : ['term','meaning'];
+  const rows = records.map(r=> `<tr>${cols.map(c=>`<td>${esc(String(r[c]==null?'':r[c]))}</td>`).join('')}</tr>`).join('');
+  const head = cols.map(c=>`<th>${esc(c)}</th>`).join('');
+  return `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8">
+<title>Xuất ${esc(srcLabel)}</title>
+<style>
+  body{ font-family:Arial, "Segoe UI", sans-serif; margin:24px; color:#1f2430; }
+  h1{ font-size:18px; margin-bottom:4px; }
+  p.meta{ font-size:12px; color:#666; margin-top:0; margin-bottom:18px; }
+  table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  th, td{ border:1px solid #ccc; padding:6px 8px; text-align:left; vertical-align:top; }
+  th{ background:#f0f0f0; }
+  tr:nth-child(even){ background:#fafafa; }
+  @media print{ body{ margin:10mm; } }
+</style></head>
+<body>
+  <h1>Xuất danh sách học liệu — ${esc(srcLabel)}</h1>
+  <p class="meta">${records.length} mục · xuất ngày ${new Date().toLocaleDateString('vi-VN')}</p>
+  <table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>
+  <script>window.onload = function(){ window.print(); };<\/script>
+</body></html>`;
+}
+function doExportPDF(records, srcLabel){
+  const html = exToPDFHTML(records, srcLabel);
+  const win = window.open('', '_blank');
+  if(!win){ exportListMsg('❌ Trình duyệt đã chặn cửa sổ mới — hãy cho phép popup rồi thử lại.', false); return; }
+  win.document.open(); win.document.write(html); win.document.close();
+  exportListMsg(`✅ Đã mở ${records.length} mục — chọn "Lưu dưới dạng PDF" trong hộp thoại in.`, true);
+}
+function exportListMsg(text, ok){
+  const el = document.getElementById('exportListMsg');
+  if(!el) return;
+  el.textContent = text;
+  el.className = 'backup-msg ' + (ok?'ok':'err');
+  clearTimeout(exportListMsg._t);
+  exportListMsg._t = setTimeout(()=>{ el.textContent=''; el.className='backup-msg'; }, 6000);
+}
+function doExportList(){
+  try{ sfx.add(); }catch(e){}
+  const src = _exSource;
+  const rows = exRowsFor(src);
+  if(!rows.length){ exportListMsg('❌ Không có mục nào khớp chủ đề đã chọn.', false); return; }
+  const records = rows.map(item=> exRecordFor(src, item));
+  const srcLabel = src==='vocab' ? 'tuvung' : src==='colloc' ? 'collocation' : src==='reading' ? 'bai-doc' : 'cau';
+
+  if(_exFormat==='pdf'){ doExportPDF(records, srcLabel); return; }
+
+  let content, mime, ext;
+  if(_exFormat==='csv'){ content = exToDelimited(records, ','); mime='text/csv'; ext='csv'; }
+  else if(_exFormat==='tsv'){ content = exToQuizletTSV(records); mime='text/tab-separated-values'; ext='txt'; }
+  else if(_exFormat==='txt'){ content = exToTXT(records); mime='text/plain'; ext='txt'; }
+  else{ content = JSON.stringify(records, null, 2); mime='application/json'; ext='json'; }
+
+  try{
+    const bom = (_exFormat==='csv') ? '\uFEFF' : '';   // BOM để Excel mở tiếng Việt không lỗi dấu
+    const blob = new Blob([bom+content], {type: mime+';charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const d = new Date();
+    const pad = n=>String(n).padStart(2,'0');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `xuat-${srcLabel}-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.${ext}`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+    exportListMsg(`✅ Đã xuất ${records.length} mục (${_exFormat.toUpperCase()}).`, true);
+  }catch(e){
+    exportListMsg('❌ Không xuất được file: ' + e.message, false);
+  }
+}
+function renderExportBox(){
+  const box = document.getElementById('exportListBox');
+  if(!box) return;
+  const topics = exTopicsFor(_exSource);
+  const fieldDefs = EX_FIELD_DEFS[_exSource];
+  const selFields = _exFields[_exSource];
+  const selTopics = _exTopics[_exSource];
+
+  box.innerHTML = `
+    <h3 style="margin-top:0">📤 Xuất danh sách học liệu</h3>
+    <p>Xuất từ vựng, collocation, câu ví dụ hoặc từ vựng trong bài đọc ra file để in hoặc nhập sang app khác (Quizlet, Anki…), hoặc xuất PDF để in trực tiếp. Chọn nguồn dữ liệu, chủ đề, đặc tính muốn hiện và định dạng bên dưới.</p>
+    <div class="rd-filters" id="exSourceChips">
+      <button class="rd-chip ${_exSource==='vocab'?'active':''}" data-src="vocab">📖 Từ vựng<b>${VOCAB.length}</b></button>
+      <button class="rd-chip ${_exSource==='colloc'?'active':''}" data-src="colloc">🧩 Collocation<b>${COLLOCATIONS.length}</b></button>
+      <button class="rd-chip ${_exSource==='sentence'?'active':''}" data-src="sentence">📜 Câu<b>${exSourceCount('sentence')}</b></button>
+      <button class="rd-chip ${_exSource==='reading'?'active':''}" data-src="reading">📕 Bài đọc<b>${exSourceCount('reading')}</b></button>
+    </div>
+    <p style="margin:12px 0 6px;font-weight:600">Chủ đề (bỏ trống = xuất tất cả)</p>
+    <div class="rd-filters" id="exTopicChips">
+      <button class="rd-chip ${!selTopics.length?'active':''}" data-t="__all__">Tất cả<b>${exSourceCount(_exSource)}</b></button>
+      ${topics.map(t=>`<button class="rd-chip ${selTopics.includes(t)?'active':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}
+    </div>
+    <p style="margin:12px 0 6px;font-weight:600">Đặc tính muốn hiện</p>
+    <div class="rd-filters" id="exFieldChips">
+      ${fieldDefs.map(f=>`<button class="rd-chip ${selFields.has(f.key)?'active':''}" data-f="${f.key}">${esc(f.label)}</button>`).join('')}
+    </div>
+    <p style="margin:12px 0 6px;font-weight:600">Định dạng file</p>
+    <div class="rd-filters" id="exFormatChips">
+      ${EX_FORMATS.map(([k,label])=>`<button class="rd-chip ${_exFormat===k?'active':''}" data-fmt="${k}">${esc(label)}</button>`).join('')}
+    </div>
+    <div class="backup-actions" style="margin-top:14px">
+      <button class="btn primary" id="exportListBtn">⬇️ Xuất danh sách (${exRowsFor(_exSource).length} mục)</button>
+    </div>
+    <div class="backup-msg" id="exportListMsg"></div>`;
+
+  box.querySelectorAll('#exSourceChips .rd-chip').forEach(btn=>{
+    btn.onclick = ()=>{ _exSource = btn.dataset.src; renderExportBox(); };
+  });
+  box.querySelectorAll('#exTopicChips .rd-chip').forEach(btn=>{
+    btn.onclick = ()=>{
+      const t = btn.dataset.t;
+      const arr = _exTopics[_exSource];
+      if(t==='__all__'){ arr.length = 0; }
+      else{
+        const i = arr.indexOf(t);
+        if(i>=0) arr.splice(i,1); else arr.push(t);
+      }
+      renderExportBox();
+    };
+  });
+  box.querySelectorAll('#exFieldChips .rd-chip').forEach(btn=>{
+    btn.onclick = ()=>{
+      const f = btn.dataset.f;
+      const set = _exFields[_exSource];
+      if(set.has(f)) set.delete(f); else set.add(f);
+      renderExportBox();
+    };
+  });
+  box.querySelectorAll('#exFormatChips .rd-chip').forEach(btn=>{
+    btn.onclick = ()=>{ _exFormat = btn.dataset.fmt; renderExportBox(); };
+  });
+  document.getElementById('exportListBtn').onclick = doExportList;
+}
+
+function showSettingsGroup(sg){
+  document.querySelectorAll('.settings-group').forEach(el=>{
+    el.style.display = (el.id === 'settingsGroup-'+sg) ? '' : 'none';
+  });
+  document.querySelectorAll('.settings-nav-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.sg === sg);
+  });
+  if(sg === 'notebook' && typeof renderNotebook === 'function') renderNotebook();
+  const scroll = document.querySelector('#panel-guide .guide-scroll');
+  if(scroll) scroll.scrollTo({top:0, behavior:'auto'});
+}
 function goBackup(){
   document.querySelector('.tab-btn[data-mode="guide"]').click();
   setTimeout(()=>{
+    showSettingsGroup('backup');
     const box = document.getElementById('backupBox');
     if(box) box.scrollIntoView({behavior:'smooth', block:'start'});
   }, 120);
@@ -30256,7 +30667,7 @@ function exportProgress(){
    Các key "cài đặt/giao diện" (không phải tiến độ) -> khi Gộp thì
    GIỮ NGUYÊN giá trị hiện tại trên máy, không bị file backup ghi đè.
    ============================================================ */
-const MERGE_SKIP_KEYS = /^vocab_(username|avatar|voice|theme|accent_theme|bg_theme|panel_alpha|fontsize|fontfamily|radius|density|sound|quizmode|st_quizmode|swipe_seen|synsource|syntopic|synrdbook|synrdid|synmode|syn_showvn|session_size|st_translate_active|st_translate_draft)$/;
+const MERGE_SKIP_KEYS = /^vocab_(username|avatar|voice|theme|accent_theme|bg_theme|panel_alpha|fontsize|fontfamily|radius|density|sound|quizmode|st_quizmode|swipe_seen|synsource|syntopic|synrdbook|synrdid|synmode|syn_showvn|session_size|st_translate_active|st_translate_draft|cl_typing_active)$/;
 
 const MERGE_SUM_STATS_KEYS  = ['vocab_quiz_stats_v1','vocab_syn_stats_v1','vocab_st_quiz_stats_v1'];
 const MERGE_WORDSTATS_KEYS  = ['vocab_quiz_wordstats_v1','vocab_syn_wordstats_v1','vocab_st_quiz_wordstats_v1'];
@@ -30490,6 +30901,7 @@ refreshStarUI();
                    P:[đoạn văn có {từ khoá}], T:[bản dịch], S:[truyện chêm] }
    ============================================================ */
 let _rdCur = null, _rdBook = 'all', _rdQuery = '', _rdInit = false;
+let _rdEditMode = false, _rdSelText = '';
 
 function rdEsc(t){ return esc(String(t==null?'':t)); }
 
@@ -30798,7 +31210,7 @@ function renderStructuresTab(){
   if(_stMode === 'lib') return stRenderLib(root);
   if(_stMode === 'quiz') return stRenderQuizStart(root);
   if(_stMode === 'translate') return stRenderTranslateEntry(root);
-  if(_stMode === 'colloc') return stRenderColloc(root);
+  if(_stMode === 'colloc') return clRenderCollocEntry(root);
   if(_stMode === 'all') return stRenderAllSentences(root);
 }
 
@@ -31773,6 +32185,60 @@ let _clTypeQueue = [], _clTypeIdx = 0, _clTypeScore = 0, _clTypeTotal = 0,
     _clTypeLocked = false, _clTypeHinted = false, _clTypeListens = 0,
     _clTypeRvT = null, _clTypeRvRaf = null, _clTypeLastPool = [];
 
+/* ============================================================
+   GIỮ NGUYÊN PHIÊN GÕ TỪ COLLOCATION — y hệt cơ chế của mục
+   "🌐 Dịch Việt → Anh": phiên đang luyện dở được lưu vào
+   localStorage nên chuyển tab/mode rồi quay lại (hoặc tải lại
+   trang) sẽ tiếp tục đúng chỗ đang dở, thay vì mất tiến độ.
+   Phiên chỉ bị xoá khi: (1) làm xong hết cụm trong phiên,
+   (2) bấm "🏁 Kết thúc phiên", hoặc (3) bấm "🔀 Luyện phiên khác".
+   ============================================================ */
+const CL_TP_ACTIVE_KEY = 'vocab_cl_typing_active';
+function clTpPersistActive(){
+  if(!_clTypeQueue.length || _clTypeIdx >= _clTypeQueue.length){ clTpClearActive(); return; }
+  try{
+    localStorage.setItem(CL_TP_ACTIVE_KEY, JSON.stringify({
+      ids: _clTypeQueue.map(c=>c.id),
+      lastIds: _clTypeLastPool.map(c=>c.id),
+      idx: _clTypeIdx, score: _clTypeScore, total: _clTypeTotal,
+      savedAt: Date.now()
+    }));
+  }catch(e){ /* localStorage đầy/bị chặn — bỏ qua, không chặn luyện tập */ }
+}
+function clTpClearActive(){
+  try{ localStorage.removeItem(CL_TP_ACTIVE_KEY); }catch(e){}
+}
+function clTpLoadActive(){
+  try{
+    const raw = localStorage.getItem(CL_TP_ACTIVE_KEY);
+    if(!raw) return null;
+    const data = JSON.parse(raw);
+    if(!data || !Array.isArray(data.ids) || !data.ids.length) return null;
+    const byId = new Map(COLLOCATIONS.map(c=>[c.id,c]));
+    const queue = data.ids.map(id=>byId.get(id)).filter(Boolean);
+    if(!queue.length || data.idx >= queue.length) return null;
+    const lastPool = (data.lastIds||[]).map(id=>byId.get(id)).filter(Boolean);
+    return {
+      queue, idx: data.idx, score: data.score||0, total: data.total||0,
+      lastPool: lastPool.length ? lastPool : queue
+    };
+  }catch(e){ return null; }
+}
+/* Vào mode "colloc" từ thanh mode-bar (hoặc quay lại tab Writing): nếu đang
+   có phiên Gõ từ dở (trong bộ nhớ hoặc đã lưu trước đó), tiếp tục đúng cụm
+   đang làm thay vì quay về danh sách Collocation. */
+function clRenderCollocEntry(root){
+  if(_clTypeQueue.length && _clTypeIdx < _clTypeQueue.length){ clNextTypeCard(); return; }
+  const saved = clTpLoadActive();
+  if(saved){
+    _clTypeQueue = saved.queue; _clTypeLastPool = saved.lastPool;
+    _clTypeIdx = saved.idx; _clTypeScore = saved.score; _clTypeTotal = saved.total;
+    clNextTypeCard();
+    return;
+  }
+  stRenderColloc(root);
+}
+
 function clClearTypeTimers(){
   if(_clTypeRvT){ clearTimeout(_clTypeRvT); _clTypeRvT=null; }
   if(_clTypeRvRaf){ cancelAnimationFrame(_clTypeRvRaf); _clTypeRvRaf=null; }
@@ -31781,9 +32247,25 @@ function clStartTyping(pool){
   _clTypeLastPool = (pool && pool.length ? pool : COLLOCATIONS).slice();
   _clTypeQueue = shuffle(_clTypeLastPool.slice());
   _clTypeIdx = 0; _clTypeScore = 0; _clTypeTotal = 0;
+  clTpPersistActive();
   clNextTypeCard();
 }
+/* "← Quay lại danh sách thiết lập": KHÔNG huỷ phiên đang dở — phiên vẫn được
+   giữ nguyên (đã lưu ở localStorage) để tiếp tục sau này. */
 function clTypingBack(){ clClearTypeTimers(); clRenderTypingSetup(document.getElementById('stRoot')); }
+/* "🏁 Kết thúc phiên": chốt phiên tại vị trí đang dở, không tính các cụm chưa làm. */
+function clEndTypingSessionEarly(){
+  clClearTypeTimers();
+  clTpClearActive();
+  clTypingSessionDone(document.getElementById('stRoot'), true);
+}
+/* "🔀 Luyện phiên khác": bỏ phiên dở hiện tại, về màn thiết lập để chọn phiên mới. */
+function clStartNewTypingSession(){
+  clClearTypeTimers();
+  clTpClearActive();
+  _clTypeQueue = []; _clTypeIdx = 0; _clTypeScore = 0; _clTypeTotal = 0;
+  clRenderTypingSetup(document.getElementById('stRoot'));
+}
 
 /* Chèn lại collocation vào gần vị trí hiện tại trong hàng đợi của
    phiên này, để gặp lại sớm hơn sau khi làm sai / xem đáp án. */
@@ -31800,6 +32282,7 @@ function clNextTypeCard(){
   if(!root) return;
   if(!_clTypeQueue.length){ root.innerHTML = `${stModeBar('colloc')}<div class="rd-empty">Không có collocation nào để luyện.</div>`; return; }
   if(_clTypeIdx >= _clTypeQueue.length) return clTypingSessionDone(root);
+  clTpPersistActive();
 
   const c = _clTypeQueue[_clTypeIdx];
   const phrase = c.phrase.toLowerCase();
@@ -31848,10 +32331,25 @@ function clNextTypeCard(){
       <button class="btn" id="clTypeShow">👁 Hiện đáp án</button>
       <button class="btn" id="clTypeSkip">Bỏ qua →</button>
     </div>
-    <div class="type-tip">Enter = kiểm tra · Backspace = xoá chữ · Ctrl/⌘+Enter = nghe lại</div>
-    <div class="cl-tp-stats">🧩 Đã thuộc ${stats.mastered}/${stats.total} · Đang luyện ${stats.learning} · Chưa gặp ${stats.unseen}${stats.acc!==null?` · Độ chính xác ${stats.acc}%`:''} · Cụm này: ${streakDots} (${streak}/${CL_MASTER_STREAK} đúng liên tiếp)</div>`;
+    <div class="type-tip">Enter = kiểm tra · Backspace = xoá chữ · Ctrl/⌘+Enter = nghe lại · Đang luyện dở? Cứ chuyển tab thoải mái — phiên sẽ tự lưu và giữ nguyên khi quay lại.</div>
+    <div class="cl-tp-stats">🧩 Đã thuộc ${stats.mastered}/${stats.total} · Đang luyện ${stats.learning} · Chưa gặp ${stats.unseen}${stats.acc!==null?` · Độ chính xác ${stats.acc}%`:''} · Cụm này: ${streakDots} (${streak}/${CL_MASTER_STREAK} đúng liên tiếp)</div>
+    <div class="st-tr-session-actions">
+      <button class="learn-ghost-btn" id="clTpEndSession">🏁 Kết thúc phiên</button>
+      <button class="learn-ghost-btn" id="clTpNewSession">🔀 Luyện phiên khác</button>
+    </div>`;
 
   document.getElementById('clTpBack').onclick = clTypingBack;
+  document.getElementById('clTpEndSession').onclick = ()=>{
+    if(confirm('Kết thúc phiên Gõ từ Collocation tại đây? Các cụm chưa làm sẽ không tính vào tóm tắt.')){
+      clEndTypingSessionEarly();
+    }
+  };
+  document.getElementById('clTpNewSession').onclick = ()=>{
+    const nothingToLose = (_clTypeIdx===0 && _clTypeTotal===0);
+    if(nothingToLose || confirm('Bắt đầu phiên Gõ từ khác? Phiên đang luyện dở sẽ bị huỷ (bậc nhớ từng cụm đã lưu riêng thì không mất).')){
+      clStartNewTypingSession();
+    }
+  };
 
   const inp = document.getElementById('clTypeHidden');
   const fb  = document.getElementById('clTypeFeedback');
@@ -32018,12 +32516,13 @@ function clNextTypeCard(){
   });
 }
 
-function clTypingSessionDone(root){
+function clTypingSessionDone(root, early){
+  clTpClearActive();
   const stats = clTypeStats(COLLOCATIONS);
   root.innerHTML = `
     ${stModeBar('colloc')}
     <div class="tp-review is-master">
-      <div class="tpr-flag">🎉 Hoàn thành phiên Gõ từ Collocation!</div>
+      <div class="tpr-flag">${early ? '🏁 Đã kết thúc phiên Gõ từ Collocation' : '🎉 Hoàn thành phiên Gõ từ Collocation!'}</div>
       <div class="tpr-vn">Đúng ${_clTypeScore}/${_clTypeTotal} lượt trong phiên này.</div>
       <div class="tpr-gate"><span>🧩 Tổng: đã thuộc ${stats.mastered}/${stats.total} collocation qua Gõ từ</span></div>
       <div class="tpr-foot">
@@ -33218,6 +33717,14 @@ function openReading(id){
 
   rdRenderArticle(); rdRenderStory(); rdRefreshUI();
   rdTab('read');
+  // Về trạng thái gốc mỗi khi mở bài mới: tắt Edit + tắt hiện ghi chú (tránh lẫn giữa các bài)
+  _rdEditMode = false; _rdShowNotes = false;
+  const editBtn = document.getElementById('rdEditBtn'), notesBtn = document.getElementById('rdShowNotesBtn'),
+        hint = document.getElementById('rdEditHint'), art = document.getElementById('rdArticle');
+  if(editBtn) editBtn.classList.remove('on');
+  if(notesBtn) notesBtn.classList.remove('on');
+  if(hint) hint.style.display = 'none';
+  if(art) art.classList.remove('rd-edit-mode');
   window.scrollTo({top:0, behavior:'auto'});
 }
 function rdBack(){
@@ -33349,6 +33856,7 @@ document.addEventListener('click', e=>{
   if(!pop) return;
   const w = e.target.closest('.rd-w');
   if(!w){ if(!e.target.closest('.rd-pop')) rdHidePop(); return; }
+  if(_rdEditMode) return; // chế độ Edit: tắt tra nghĩa khi chạm từ, cho phép bôi chọn tự do
   const v = _rdCur && _rdCur._lk[w.dataset.w];
   if(!v) return;
   speak(v[0]);
@@ -33371,6 +33879,303 @@ document.addEventListener('click', e=>{
   pop.style.left = left+'px';
   pop.style.top  = top+'px';
 });
+
+/* ---------- Chế độ Edit: bôi chọn văn bản tự do (Sao chép / Ghi chú / Thêm vào sổ) ---------- */
+(function(){ if(!document.getElementById('rdSelTip')){
+  const tip = document.createElement('div');
+  tip.className = 'rd-pop rd-seltip'; tip.id = 'rdSelTip';
+  document.body.appendChild(tip);
+}})();
+function rdHideSelTip(){ const t=document.getElementById('rdSelTip'); if(t) t.classList.remove('on'); }
+function rdPositionSelTip(rect){
+  const tip = document.getElementById('rdSelTip');
+  const pr = tip.getBoundingClientRect();
+  let left = rect.left + rect.width/2 - pr.width/2;
+  left = Math.max(10, Math.min(left, innerWidth - pr.width - 10));
+  let top = rect.top - pr.height - 10;
+  if(top < 10) top = rect.bottom + 10;
+  tip.style.left = left+'px';
+  tip.style.top  = top+'px';
+}
+function rdSelToolbar(){
+  if(!_rdEditMode) return;
+  const art = document.getElementById('rdArticle');
+  const sel = window.getSelection();
+  if(!sel || sel.isCollapsed || sel.rangeCount===0){ rdHideSelTip(); return; }
+  const range = sel.getRangeAt(0);
+  if(!art || !art.contains(range.commonAncestorContainer)){ rdHideSelTip(); return; }
+  const text = sel.toString().trim();
+  if(!text){ rdHideSelTip(); return; }
+  _rdSelText = text;
+  const tip = document.getElementById('rdSelTip');
+  tip.innerHTML = `
+    <div class="pb">
+      <button onclick="rdSelCopy()">📋 Sao chép</button>
+      <button onclick="rdSelNote()">📝 Ghi chú</button>
+      <button onclick="rdSelToNotebook()">📒 Thêm vào sổ</button>
+    </div>`;
+  tip.classList.add('on');
+  rdPositionSelTip(range.getBoundingClientRect());
+}
+document.addEventListener('mouseup', e=>{
+  if(!_rdEditMode || e.target.closest('#rdSelTip')) return;
+  setTimeout(rdSelToolbar, 10);
+});
+document.addEventListener('touchend', e=>{
+  if(!_rdEditMode || e.target.closest('#rdSelTip')) return;
+  setTimeout(rdSelToolbar, 10);
+});
+document.addEventListener('click', e=>{
+  const path = e.composedPath ? e.composedPath() : [e.target];
+  const inTip = path.some(el => el && el.id === 'rdSelTip');
+  const inArticle = path.some(el => el && el.id === 'rdArticle');
+  if(inTip || inArticle) return;
+  rdHideSelTip();
+});
+window.addEventListener('scroll', ()=>rdHideSelTip(), {passive:true});
+window.addEventListener('resize', rdHideSelTip);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') rdHideSelTip(); });
+
+function rdSelCopyFallback(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+}
+function rdSelCopy(){
+  const text = _rdSelText;
+  if(!text) return;
+  const done = ()=>{ toast('📋 Đã sao chép'); rdHideSelTip(); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>{ rdSelCopyFallback(text); done(); });
+  } else { rdSelCopyFallback(text); done(); }
+}
+function rdSelNote(){
+  const text = _rdSelText;
+  if(!text) return;
+  const tip = document.getElementById('rdSelTip');
+  const preview = text.length>160 ? text.slice(0,160)+'…' : text;
+  tip.innerHTML = `
+    <div class="rd-selnote-quote">"${rdEsc(preview)}"</div>
+    <textarea id="rdSelNoteInput" class="rd-selnote-input" rows="3" placeholder="Nhập ghi chú của bạn…"></textarea>
+    <div class="pb">
+      <button onclick="rdSelNoteSaveOnly()">📝 Ghi chú</button>
+      <button onclick="rdSelNoteSave()">📒 Thêm vào sổ</button>
+      <button onclick="rdHideSelTip()">✕ Huỷ</button>
+    </div>`;
+  const ta = document.getElementById('rdSelNoteInput');
+  if(ta) setTimeout(()=>ta.focus(), 30);
+}
+function rdSelNoteSave(){
+  const ta = document.getElementById('rdSelNoteInput');
+  const note = ta ? ta.value.trim() : '';
+  if(!note){ toast('Hãy nhập nội dung ghi chú'); return; }
+  notebookAddLine(_rdSelText, note, _rdCur ? _rdCur.title : '', _rdCur ? _rdCur.id : '');
+  toast('📝 Đã lưu ghi chú vào sổ');
+  rdHideSelTip();
+  if(_rdShowNotes) rdRenderNoteMarks();
+}
+/* Chỉ lưu ghi chú (hiện trong bài đọc khi bật "Hiện ghi chú"), KHÔNG thêm mục vào Sổ ghi chú */
+function rdSelNoteSaveOnly(){
+  const ta = document.getElementById('rdSelNoteInput');
+  const note = ta ? ta.value.trim() : '';
+  if(!note){ toast('Hãy nhập nội dung ghi chú'); return; }
+  notebookAddLine(_rdSelText, note, _rdCur ? _rdCur.title : '', _rdCur ? _rdCur.id : '', true);
+  toast('📝 Đã lưu ghi chú');
+  rdHideSelTip();
+  if(_rdShowNotes) rdRenderNoteMarks();
+}
+function rdSelToNotebook(){
+  const text = _rdSelText;
+  if(!text) return;
+  notebookAddLine(text, '', _rdCur ? _rdCur.title : '', _rdCur ? _rdCur.id : '');
+  toast('📒 Đã thêm vào sổ ghi chú');
+  rdHideSelTip();
+}
+
+/* ---------- Sổ ghi chú (lưu ở localStorage, tự động gồm trong Sao lưu/Khôi phục
+   vì tên khoá bắt đầu bằng "vocab_" — xem getAllVocabKeys()) ---------- */
+const NOTEBOOK_KEY = 'vocab_notebook_v1';
+function loadNotebook(){ try{ return JSON.parse(localStorage.getItem(NOTEBOOK_KEY)) || {}; }catch(e){ return {}; } }
+function saveNotebook(nb){ try{ localStorage.setItem(NOTEBOOK_KEY, JSON.stringify(nb)); }catch(e){} }
+function notebookAddLine(text, note, source, readingId, hidden){
+  if(!text) return;
+  const nb = loadNotebook();
+  const day = todayKey();
+  if(!nb[day]) nb[day] = [];
+  nb[day].unshift({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+    time: new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}),
+    text, note: note||'', source: source||'', readingId: readingId||'', hidden: !!hidden
+  });
+  saveNotebook(nb);
+  renderNotebook();
+}
+function notebookDeleteLine(day, id){
+  const nb = loadNotebook();
+  if(nb[day]){
+    nb[day] = nb[day].filter(x=>x.id!==id);
+    if(!nb[day].length) delete nb[day];
+  }
+  saveNotebook(nb);
+  renderNotebook();
+}
+function notebookClearAll(){
+  if(!confirm('Xoá toàn bộ Sổ ghi chú? Hành động này không thể hoàn tác.')) return;
+  saveNotebook({});
+  renderNotebook();
+  toast('Đã xoá toàn bộ sổ ghi chú');
+}
+function notebookDayLabel(day){
+  const p = day.split('-');
+  return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : day;
+}
+/* Văn bản thuần của 1 dòng — dùng chung cho copy 1 dòng và copy cả ô
+   Chỉ lấy đúng từ/cụm từ được ghi chú, không kèm ghi chú, nguồn hay dấu ngoặc kép */
+function notebookLineText(item){
+  return item.text;
+}
+function notebookCopyDone(){ toast('📋 Đã sao chép'); }
+function notebookCopyLine(day, id){
+  const nb = loadNotebook();
+  const item = (nb[day]||[]).find(x=>x.id===id);
+  if(!item) return;
+  rdCopyText(notebookLineText(item), notebookCopyDone);
+}
+function notebookCopyDay(day){
+  const nb = loadNotebook();
+  const items = (nb[day]||[]).filter(item=>!item.hidden);
+  if(!items.length) return;
+  const text = items.map(notebookLineText).join('\n');
+  rdCopyText(text, notebookCopyDone);
+}
+/* Tiện ích copy dùng chung: Clipboard API, có phương án dự phòng execCommand */
+function rdCopyText(text, cb){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(cb).catch(()=>{ rdSelCopyFallback(text); cb(); });
+  } else { rdSelCopyFallback(text); cb(); }
+}
+function renderNotebook(){
+  const el = document.getElementById('notebookList');
+  if(!el) return;
+  const nb = loadNotebook();
+  const visible = {};
+  Object.keys(nb).forEach(day=>{
+    const items = (nb[day]||[]).filter(item=>!item.hidden);
+    if(items.length) visible[day] = items;
+  });
+  const days = Object.keys(visible).sort((a,b)=>b.localeCompare(a));
+  if(!days.length){
+    el.innerHTML = '<div class="rd-empty">Chưa có ghi chú nào. Hãy bật <b>Edit</b> trong bài đọc (tab Reading) và bôi chọn văn bản để thêm.</div>';
+    return;
+  }
+  el.innerHTML = days.map(day => `
+    <div class="nb-day">
+      <div class="nb-day-head">
+        <b>📅 ${notebookDayLabel(day)}</b>
+        <div class="nb-day-acts">
+          <span>${visible[day].length} mục</span>
+          <button class="nb-copyall" title="Sao chép toàn bộ ghi chú trong ngày này" onclick="notebookCopyDay('${day}')">📋 Copy tất cả</button>
+        </div>
+      </div>
+      <div class="nb-lines">
+        ${visible[day].map(item => `
+          <div class="nb-line">
+            <div class="nb-line-main">
+              <div class="nb-quote">"${rdEsc(item.text)}"</div>
+              ${item.note ? `<div class="nb-note">📝 ${rdEsc(item.note)}</div>` : ''}
+              <div class="nb-meta">${item.time||''}${item.source?' · '+rdEsc(item.source):''}</div>
+            </div>
+            <div class="nb-line-acts">
+              <button class="nb-copy1" title="Sao chép dòng này" onclick="notebookCopyLine('${day}','${item.id}')">📋</button>
+              <button class="nb-del" title="Xoá mục này" onclick="notebookDeleteLine('${day}','${item.id}')">✕</button>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- Hiện ghi chú ngay trong bài đọc: tô lại đoạn đã ghi chú
+   và chèn 1 bong bóng comment có mũi tên chỉ đúng vị trí bên dưới ---------- */
+let _rdShowNotes = false;
+/* Tìm 1 đoạn text thuần trong 1 element (bỏ qua các thẻ span/mark lồng bên trong),
+   bọc nó lại bằng <mark class="rd-note-mark">. Trả về phần tử mark nếu tìm thấy. */
+function rdWrapTextInElement(el, searchText, className, dataAttrs){
+  if(!searchText) return null;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+  let node, fullText = '', nodesInfo = [];
+  while((node = walker.nextNode())){
+    nodesInfo.push({node, start: fullText.length, end: fullText.length + node.nodeValue.length});
+    fullText += node.nodeValue;
+  }
+  const idx = fullText.indexOf(searchText);
+  if(idx === -1) return null;
+  const endIdx = idx + searchText.length;
+  let startNode=null, startOffset=0, endNode=null, endOffset=0;
+  for(const info of nodesInfo){
+    if(startNode===null && idx >= info.start && idx <= info.end){ startNode = info.node; startOffset = idx - info.start; }
+    if(endNode===null && endIdx >= info.start && endIdx <= info.end){ endNode = info.node; endOffset = endIdx - info.start; }
+  }
+  if(!startNode || !endNode) return null;
+  const range = document.createRange();
+  try{
+    range.setStart(startNode, startOffset);
+    range.setEnd(endNode, endOffset);
+  }catch(e){ return null; }
+  const mark = document.createElement('mark');
+  mark.className = className;
+  if(dataAttrs) Object.keys(dataAttrs).forEach(k=> mark.dataset[k] = dataAttrs[k]);
+  try{
+    range.surroundContents(mark);
+  }catch(e){
+    try{
+      const frag = range.extractContents();
+      mark.appendChild(frag);
+      range.insertNode(mark);
+    }catch(e2){ return null; }
+  }
+  return mark;
+}
+function rdNotesForCurrent(){
+  if(!_rdCur) return [];
+  const nb = loadNotebook();
+  const out = [];
+  Object.keys(nb).forEach(day=>{
+    (nb[day]||[]).forEach(item=>{
+      if(item.note && item.readingId === _rdCur.id) out.push(Object.assign({day}, item));
+    });
+  });
+  return out;
+}
+function rdDeleteNoteMark(day, id){
+  notebookDeleteLine(day, id);
+  if(_rdShowNotes) rdRenderNoteMarks();
+}
+function rdRenderNoteMarks(){
+  if(!_rdCur) return;
+  rdRenderArticle(); // reset về trạng thái gốc trước khi đánh dấu lại
+  const items = rdNotesForCurrent();
+  if(!items.length){ toast('Bài này chưa có ghi chú nào'); return; }
+  const art = document.getElementById('rdArticle');
+  const paras = art.querySelectorAll('.rd-para p');
+  items.forEach(item=>{
+    let mark = null;
+    for(const p of paras){
+      mark = rdWrapTextInElement(p, item.text, 'rd-note-mark', {noteId:item.id});
+      if(mark) break;
+    }
+    if(!mark) return;
+    const bubble = document.createElement('span');
+    bubble.className = 'rd-note-bubble';
+    bubble.innerHTML = `
+      <span class="rd-note-arrow"></span>
+      <span class="rd-note-text">📝 ${rdEsc(item.note)}
+        <button type="button" class="rd-note-del" title="Xoá ghi chú này" onclick="rdDeleteNoteMark('${item.day}','${item.id}')">✕</button>
+      </span>`;
+    mark.after(bubble);
+  });
+}
 
 /* ---------- Đọc to cả bài ---------- */
 function rdSpeakAll(){
@@ -33409,6 +34214,18 @@ function rdPractice(id){
     clearTimeout(_rdT); _rdT = setTimeout(renderReadingLib, 140); };
   $('rdHL').onchange    = ()=>$('rdArticle').classList.toggle('no-hl', !$('rdHL').checked);
   $('rdTR').onchange    = ()=>$('rdArticle').classList.toggle('show-tr', $('rdTR').checked);
+  $('rdEditBtn').onclick = ()=>{
+    _rdEditMode = !_rdEditMode;
+    $('rdEditBtn').classList.toggle('on', _rdEditMode);
+    $('rdArticle').classList.toggle('rd-edit-mode', _rdEditMode);
+    $('rdEditHint').style.display = _rdEditMode ? '' : 'none';
+    if(!_rdEditMode){ rdHidePop(); rdHideSelTip(); window.getSelection && window.getSelection().removeAllRanges(); }
+  };
+  $('rdShowNotesBtn').onclick = ()=>{
+    _rdShowNotes = !_rdShowNotes;
+    $('rdShowNotesBtn').classList.toggle('on', _rdShowNotes);
+    if(_rdShowNotes) rdRenderNoteMarks(); else rdRenderArticle();
+  };
   $('rdStoryGloss').onchange = ()=>rdRenderStory();
   $('rdVSearch').oninput= ()=>rdRenderVocab();
   document.querySelectorAll('.rd-tab').forEach(b=> b.onclick = ()=>rdTab(b.dataset.rd));
@@ -33518,6 +34335,7 @@ const ACCENT_THEMES = [
   applyAccentTheme(saved);
   renderThemeSwatches();
 })();
+renderExportBox();
 function applyAccentTheme(key){
   if(key === 'teal') document.documentElement.removeAttribute('data-accent');
   else document.documentElement.setAttribute('data-accent', key);
