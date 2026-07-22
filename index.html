@@ -521,7 +521,7 @@ main {
   margin:0 auto; padding:30px 26px 64px;
 }
 .panel { display:none; contain:layout style paint; }
-.panel.active { display:block; animation:rise .32s cubic-bezier(.16,1,.3,1); will-change:opacity,transform; }
+.panel.active { display:block; animation:rise .32s cubic-bezier(.16,1,.3,1); will-change:auto; }
 /* #panel-flashcard: bỏ "paint" containment — "paint" khiến mọi phần tử con
    vượt quá khung bị CẮT MẤT hoàn toàn (không cuộn được, không thấy được),
    đây chính là lý do thanh điều hướng dưới cùng "biến mất" ở zoom 100%
@@ -1257,8 +1257,7 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
                      transform .62s cubic-bezier(.45,.05,.25,1);
 }
 /* will-change chỉ bật đúng lúc đang lật -> không giữ layer GPU vô ích */
-.flashcard.flipping .flash-inner,
-.flashcard.flipped  .flash-inner{ will-change:transform; }
+.flashcard.flipping .flash-inner{ will-change:transform; }
 .flashcard.flipped .flash-inner {
   -webkit-transform:rotateX(-180deg);
           transform:rotateX(-180deg);
@@ -1285,13 +1284,26 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
   display:flex; flex-direction:column;
   padding:30px 32px; overflow:hidden;
   transition:box-shadow .3s var(--ease-smooth);
-  /* Tách 2 mặt thành 2 lớp 3D riêng biệt -> iOS không trộn lẫn nội dung */
-  -webkit-transform:translateZ(0);
-          transform:translateZ(0);
-  /* Ép tạo compositing layer riêng, tránh lỗi "chảy chữ" xuyên mặt */
   isolation:isolate;
   -webkit-transform-style:flat;
           transform-style:flat;
+  text-rendering:optimizeLegibility;
+}
+/* FIX MỜ CHỮ: translateZ(0) ép mỗi mặt thẻ thành 1 lớp GPU (compositing
+   layer) riêng để vá lỗi "chữ lộ ngược" chỉ xảy ra trên iOS Safari.
+   Nhưng áp dụng nó cho MỌI trình duyệt khiến chữ trên các trình duyệt
+   khác (Chrome/Edge/Firefox Windows, Safari desktop...) bị raster thành
+   bitmap rồi scale lại -> mờ nhẹ so với chữ thường ở chỗ khác của trang.
+   Sửa: chỉ bật hack này đúng trên iOS Safari, nơi thật sự cần nó.
+   (-webkit-touch-callout: none) là thuộc tính chỉ iOS Safari hỗ trợ,
+   dùng làm điều kiện phát hiện an toàn, không ảnh hưởng trình duyệt khác. */
+@supports (-webkit-touch-callout: none) {
+  .flash-face {
+    -webkit-transform:translateZ(0);
+            transform:translateZ(0);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
 }
 .flash-front { justify-content:center; align-items:center; text-align:center; }
 .flash-front::before,
@@ -1329,15 +1341,15 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
 }
 .flash-front .word {
   font-family:var(--font-heading);
-  font-size:clamp(34px, 5.4vw, 56px); font-weight:700;
+  font-size:clamp(40px, 6.4vw, 66px); font-weight:700;
   letter-spacing:-2px; line-height:1.12;
   background:var(--accent-grad);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   animation:wordIn .42s var(--ease-out);
 }
 @keyframes wordIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
-.flash-front .pos { font-size:10.5px; color:var(--accent); text-transform:uppercase; letter-spacing:3px; margin-top:14px; font-weight:800; }
-.flash-front .ipa { color:var(--muted); font-size:18px; margin-top:9px; font-weight:500; font-style:normal; }
+.flash-front .pos { font-size:11.5px; color:var(--accent); text-transform:uppercase; letter-spacing:3px; margin-top:16px; font-weight:800; }
+.flash-front .ipa { color:var(--muted); font-size:20px; margin-top:10px; font-weight:500; font-style:normal; }
 .flash-front .lvl { position:absolute; top:20px; right:20px; z-index:2; }
 .flash-front .hint {
   position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
@@ -1351,11 +1363,17 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
 
 /* ===== BACK FACE — compact 2-col, fits without scrolling ===== */
 .flash-back {
-  -webkit-transform:rotateX(-180deg) translateZ(1px);
-          transform:rotateX(-180deg) translateZ(1px);
+  -webkit-transform:rotateX(-180deg);
+          transform:rotateX(-180deg);
   padding:24px 28px;
   overflow:hidden;
   display:flex; flex-direction:column;
+}
+@supports (-webkit-touch-callout: none) {
+  .flash-back {
+    -webkit-transform:rotateX(-180deg) translateZ(1px);
+            transform:rotateX(-180deg) translateZ(1px);
+  }
 }
 
 /* ===== CHỐT CHẶN CHO iOS SAFARI =====
@@ -1367,10 +1385,13 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
 .flash-back  { visibility:hidden;  transition:visibility 0s linear .31s; }
 .flashcard.flipped .flash-front { visibility:hidden; }
 .flashcard.flipped .flash-back  { visibility:visible; }
-/* Mặt trước nằm dưới 1 lớp -> iOS luôn biết mặt nào ở trên */
-.flash-front {
-  -webkit-transform:translateZ(1px);
-          transform:translateZ(1px);
+/* Mặt trước nằm dưới 1 lớp -> iOS luôn biết mặt nào ở trên
+   (chỉ cần trên iOS Safari, xem giải thích ở @supports của .flash-face) */
+@supports (-webkit-touch-callout: none) {
+  .flash-front {
+    -webkit-transform:translateZ(1px);
+            transform:translateZ(1px);
+  }
 }
 .fb-head {
   display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
@@ -1378,11 +1399,11 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
   border-bottom:1px solid var(--line);
   flex-shrink:0;
 }
-.fb-word { font-family:var(--font-word); font-size:20px; font-weight:700; letter-spacing:-.6px; color:var(--ink); }
-.fb-ipa { font-size:12.5px; color:var(--muted); font-weight:500; }
+.fb-word { font-family:var(--font-word); font-size:22px; font-weight:700; letter-spacing:-.6px; color:var(--ink); }
+.fb-ipa { font-size:13.5px; color:var(--muted); font-weight:500; }
 .flash-back .vn {
   font-family:var(--font-heading);
-  font-size:clamp(17px,2vw,21px); font-weight:700;
+  font-size:clamp(19px,2.3vw,23px); font-weight:700;
   color:var(--vn-color); letter-spacing:-.4px; line-height:1.35;
   margin-left:auto; text-align:right; max-width:58%;
 }
@@ -1397,7 +1418,7 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
 .fb-grid > .block.wide { grid-column:1/-1; }
 
 .flash-back .block {
-  font-size:13px; margin-bottom:13px; width:100%;
+  font-size:14.5px; margin-bottom:14px; width:100%;
   animation:blockIn .4s var(--ease-out) backwards;
 }
 .flash-back .block:nth-child(1){ animation-delay:.26s }
@@ -1408,12 +1429,12 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
 .flashcard:not(.flipped) .flash-back .block { animation:none; }
 
 .flash-back .label {
-  font-size:9px; text-transform:uppercase; letter-spacing:1.6px;
-  color:var(--muted); font-weight:800; margin-bottom:7px; display:block;
+  font-size:10px; text-transform:uppercase; letter-spacing:1.6px;
+  color:var(--muted); font-weight:800; margin-bottom:8px; display:block;
 }
 .chip {
   display:inline-block; background:var(--accent-bg); color:var(--accent);
-  font-size:12px; padding:4px 10px; border-radius:999px; margin:2px 4px 2px 0;
+  font-size:13px; padding:4px 11px; border-radius:999px; margin:2px 4px 2px 0;
   font-weight:700; border:1px solid color-mix(in srgb,var(--accent) 16%,transparent);
   transition:transform .18s var(--ease-spring);
 }
@@ -1422,19 +1443,19 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
 .form-chip {
   display:inline-block; background:var(--gold-bg); color:var(--ink);
   border:1px solid color-mix(in srgb,var(--gold) 26%,transparent);
-  font-size:12px; padding:4px 10px; border-radius:999px; font-weight:700;
+  font-size:13px; padding:4px 11px; border-radius:999px; font-weight:700;
   transition:transform .18s var(--ease-spring);
 }
 .form-chip:hover { transform:translateY(-2px); }
-.form-chip em { color:var(--gold); font-style:normal; font-weight:800; font-size:9px; text-transform:uppercase; letter-spacing:.8px; margin-right:4px; }
-.colloc-item { margin-bottom:5px; line-height:1.45; font-size:12.5px; padding-left:11px; position:relative; }
+.form-chip em { color:var(--gold); font-style:normal; font-weight:800; font-size:9.5px; text-transform:uppercase; letter-spacing:.8px; margin-right:4px; }
+.colloc-item { margin-bottom:6px; line-height:1.48; font-size:13.5px; padding-left:11px; position:relative; }
 .colloc-item::before { content:''; position:absolute; left:0; top:.62em; width:4px; height:4px; border-radius:50%; background:var(--accent-light); }
 .colloc-item .en { font-weight:700; color:var(--ink); }
 .colloc-item .vi { color:var(--muted); font-style:italic; }
-.example-en { font-style:normal; font-size:13.5px; color:var(--ex-color); line-height:1.6; font-weight:500; }
-.example-vi { color:var(--muted); font-size:12.5px; margin-top:4px; }
-.fb-example { padding:12px 14px; background:var(--paper); border-radius:12px; border-left:3px solid var(--accent-light); }
-.fb-example + .fb-example, .vc-example + .vc-example { margin-top:8px; }
+.example-en { font-style:normal; font-size:15px; color:var(--ex-color); line-height:1.62; font-weight:500; }
+.example-vi { color:var(--muted); font-size:13.5px; margin-top:5px; }
+.fb-example { padding:13px 15px; background:var(--paper); border-radius:12px; border-left:3px solid var(--accent-light); }
+.fb-example + .fb-example, .vc-example + .vc-example { margin-top:9px; }
 
 
 /* ===== HỌC THUỘC: banner phiên đang dở + ghi chú cỡ phiên ===== */
@@ -2001,11 +2022,11 @@ mark {
 }
 [data-theme="dark"] mark { background:color-mix(in srgb, var(--accent) 32%, transparent); }
 mark.ex-hl {
-  background:color-mix(in srgb, var(--accent) 16%, transparent);
-  color:inherit; font-weight:800; padding:1px 3px; border-radius:5px;
+  background:color-mix(in srgb, var(--accent) 24%, transparent);
+  color:var(--accent); font-weight:800; padding:1px 4px; border-radius:5px;
   box-decoration-break:clone; -webkit-box-decoration-break:clone;
 }
-[data-theme="dark"] mark.ex-hl { background:color-mix(in srgb, var(--accent) 26%, transparent); }
+[data-theme="dark"] mark.ex-hl { background:color-mix(in srgb, var(--accent) 34%, transparent); color:var(--ink); }
 .ex-tag { display:inline-block; font-size:10px; font-weight:800; letter-spacing:.6px; text-transform:uppercase;
   color:var(--accent); background:color-mix(in srgb,var(--accent) 12%,transparent);
   padding:2px 7px; border-radius:6px; margin-bottom:5px; }
@@ -4111,8 +4132,7 @@ body{
   transition:-webkit-transform .6s cubic-bezier(.45,.05,.25,1),
                      transform .6s cubic-bezier(.45,.05,.25,1);
 }
-.cl-fc-card.flipping .cl-fc-inner,
-.cl-fc-card.flipped  .cl-fc-inner{ will-change:transform; }
+.cl-fc-card.flipping .cl-fc-inner{ will-change:transform; }
 .cl-fc-card.flipped .cl-fc-inner{
   -webkit-transform:rotateX(-180deg); transform:rotateX(-180deg);
 }
@@ -4231,6 +4251,20 @@ html[data-fontsize="xlarge"] { --fontsize-zoom: 1.3; }
 html[data-density="compact"]  { --density-zoom: 0.93; }
 html[data-density="spacious"] { --density-zoom: 1.08; }
 /* data-density="normal" (mặc định) -> giữ 1 */
+
+/* ---- FIX: chữ trong flashcard bị mờ khi đổi cỡ chữ/mật độ ----
+   Nguyên nhân: html{zoom:...} ở trên với hệ số lẻ (vd 0.9*0.93=0.837)
+   kết hợp với layer GPU 3D (perspective/preserve-3d/backface-visibility)
+   trên .flashcard và .cl-fc-card khiến trình duyệt raster chữ thành
+   bitmap rồi scale lại -> mờ. Cách sửa: "hủy" zoom của cha ngay tại
+   2 khối này bằng zoom nghịch đảo, để phần render nội bộ của chúng
+   luôn ở hệ số 1 (nguyên, không bị raster-scale). Kích thước 2 khối
+   này vốn đã tự responsive bằng clamp()/vw nên không cần zoom theo
+   trang mới đúng/đẹp; phần còn lại của trang vẫn zoom bình thường,
+   không đổi gì khác. */
+.flashcard, .cl-fc-card {
+  zoom: calc(1 / var(--fontsize-zoom, 1) / var(--density-zoom, 1));
+}
 
 /* ---- Kiểu chữ: ghi đè trực tiếp lên biến font dùng chung nên
    áp dụng nhất quán cho mọi nơi trong app (đầu mục, nội dung...).
@@ -27640,6 +27674,33 @@ setTimeout(measureFcTop, 60);
 setTimeout(measureFcTop, 400);
 window.addEventListener('load', ()=>setTimeout(measureFcTop,50));
 if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>measureFcTop()); }
+
+/* ---------- Chống mờ chữ trên thẻ flashcard ----------
+   Nguyên nhân: .flashcard cao theo clamp()/calc(vh) nên chiều cao thường
+   ra số lẻ (vd 512.4px). Khi trình duyệt đẩy thẻ lên layer GPU riêng (do
+   backface-visibility/transform-style:preserve-3d để lật thẻ), nó phải
+   raster lại chữ ở một tỉ lệ không khớp lưới pixel màn hình -> chữ/nền mờ
+   đi ngay cả khi không lật. Ép chiều cao (và bề rộng) về số nguyên chẵn
+   loại bỏ hoàn toàn phần lẻ pixel này. */
+function snapFlashcardSize(){
+  document.querySelectorAll('.flashcard').forEach(card=>{
+    card.style.height = '';
+    card.style.width  = '';
+    const r = card.getBoundingClientRect();
+    if(!r.height || !r.width) return;
+    const h = Math.round(r.height / 2) * 2;
+    const w = Math.round(r.width  / 2) * 2;
+    card.style.height = h + 'px';
+    card.style.width  = w + 'px';
+  });
+}
+window.addEventListener('resize', snapFlashcardSize);
+window.addEventListener('orientationchange', ()=>setTimeout(snapFlashcardSize,120));
+document.addEventListener('DOMContentLoaded', snapFlashcardSize);
+setTimeout(snapFlashcardSize, 60);
+setTimeout(snapFlashcardSize, 400);
+window.addEventListener('load', ()=>setTimeout(snapFlashcardSize,50));
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>snapFlashcardSize()); }
 
 /* ---------- Fullscreen mode ---------- */
 const fcPanel = document.getElementById('panel-flashcard');
