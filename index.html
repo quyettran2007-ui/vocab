@@ -1643,11 +1643,22 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .st-head p{ font-size:12.5px; color:var(--muted); margin:0; }
 
 .st-list{ display:flex; flex-direction:column; gap:14px; margin-top:14px; }
+.st-list.cl-list{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); align-items:start; }
+@media (min-width:1300px){ .st-list.cl-list{ grid-template-columns:repeat(3,1fr); } }
 .st-card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px;
   content-visibility:auto; contain-intrinsic-size:auto 260px; }
 .st-card-top{ margin-bottom:8px; }
 .st-topic-tag{ display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.4px; text-transform:uppercase;
   color:var(--accent); background:var(--accent-bg); border-radius:7px; padding:3px 9px; }
+.st-status-line{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0 10px; }
+.st-status-badge{ display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:700;
+  padding:3px 10px; border-radius:20px; background:var(--card-sunken); border:1px solid var(--line); color:var(--ink-soft); white-space:nowrap; }
+.st-status-streak{ display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:700;
+  padding:3px 10px; border-radius:20px; background:var(--accent-bg); color:var(--accent); white-space:nowrap; }
+.st-status-score{ display:inline-flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700;
+  font-family:var(--font-mono); padding:3px 10px; border-radius:20px; background:var(--card-sunken); border:1px solid var(--line); white-space:nowrap; }
+.st-status-score .ok{ color:#16a34a; }
+.st-status-score .bad{ color:#dc2626; }
 .st-structure{ font-family:var(--font-heading); font-size:17px; font-weight:800; color:var(--ink);
   letter-spacing:-.2px; line-height:1.4; margin-bottom:4px; }
 .st-meaning{ font-size:14px; color:var(--vn-color); font-weight:600; line-height:1.55; margin-bottom:10px; }
@@ -2623,11 +2634,13 @@ body.page-fs { overflow-x:hidden; }
 .cl-tp-stats{ margin-top:14px; padding:10px 12px; border-radius:12px; background:var(--card-sunken);
   border:1px solid var(--line); font-size:12.5px; font-weight:700; color:var(--muted); text-align:center; }
 
-.cl-topic-bar-list{ display:flex; flex-direction:column; gap:10px; }
+.cl-topic-bar-list{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px 14px; }
+@media (min-width:1400px){ .cl-topic-bar-list{ grid-template-columns:repeat(4,1fr); } }
 .cl-topic-bar-row{ display:block; width:100%; text-align:left; background:none; border:1px solid transparent;
-  border-radius:10px; padding:6px 8px; cursor:pointer; font:inherit; color:inherit; transition:background .15s,border-color .15s; }
+  border-left:3px solid var(--tc,var(--line)); border-radius:10px; padding:6px 8px 6px 10px; cursor:pointer; font:inherit; color:inherit; transition:background .15s,border-color .15s; }
 .cl-topic-bar-row:hover{ background:var(--card-sunken); }
-.cl-topic-bar-row.active{ background:var(--accent-bg); border-color:var(--accent); }
+.cl-topic-bar-row.active{ background:var(--accent-bg); border-color:var(--accent); border-left-color:var(--tc,var(--accent)); }
+.cl-topic-bar-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--tc,var(--accent)); margin-right:6px; vertical-align:middle; flex-shrink:0; }
 .cl-topic-bar-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:5px; }
 .cl-topic-bar-name{ font-size:13px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .cl-topic-bar-count{ font-size:11.5px; font-weight:800; color:var(--muted); flex-shrink:0; }
@@ -4220,20 +4233,40 @@ html[data-density="spacious"] { --density-zoom: 1.08; }
 /* data-density="normal" (mặc định) -> giữ 1 */
 
 /* ---- Kiểu chữ: ghi đè trực tiếp lên biến font dùng chung nên
-   áp dụng nhất quán cho mọi nơi trong app (đầu mục, nội dung...). ---- */
+   áp dụng nhất quán cho mọi nơi trong app (đầu mục, nội dung...).
+   Tất cả các phông bên dưới đều được kiểm tra có hỗ trợ đầy đủ dấu
+   tiếng Việt (Google Fonts Vietnamese subset) — phông thực sự chỉ
+   được tải khi người dùng chọn (xem hàm clEnsureGoogleFont trong JS)
+   để không làm chậm tải trang mặc định. ---- */
 html[data-font="serif"]{
   --font-heading:'Fraunces','Georgia','Times New Roman',serif;
   --font-body:'Fraunces','Georgia','Times New Roman',serif;
 }
 html[data-font="rounded"]{
-  --font-heading:'Trebuchet MS','Segoe UI Rounded','Quicksand','Be Vietnam Pro',sans-serif;
-  --font-body:'Trebuchet MS','Segoe UI Rounded','Quicksand','Be Vietnam Pro',sans-serif;
+  --font-heading:'Quicksand','Trebuchet MS','Be Vietnam Pro',sans-serif;
+  --font-body:'Quicksand','Trebuchet MS','Be Vietnam Pro',sans-serif;
 }
 html[data-font="readable"]{
-  --font-heading:'Verdana','Comic Sans MS','Be Vietnam Pro',sans-serif;
-  --font-body:'Verdana','Comic Sans MS','Be Vietnam Pro',sans-serif;
+  --font-heading:'Open Sans','Verdana','Be Vietnam Pro',sans-serif;
+  --font-body:'Open Sans','Verdana','Be Vietnam Pro',sans-serif;
 }
 html[data-font="readable"] body{ letter-spacing:.015em; line-height:1.85; }
+html[data-font="modern"]{
+  --font-heading:'Inter','Be Vietnam Pro',-apple-system,sans-serif;
+  --font-body:'Inter','Be Vietnam Pro',-apple-system,sans-serif;
+}
+html[data-font="warm"]{
+  --font-heading:'Nunito','Be Vietnam Pro',sans-serif;
+  --font-body:'Nunito','Be Vietnam Pro',sans-serif;
+}
+html[data-font="elegant"]{
+  --font-heading:'Playfair Display','Georgia',serif;
+  --font-body:'Lora','Georgia',serif;
+}
+html[data-font="classic"]{
+  --font-heading:'Lora','Georgia',serif;
+  --font-body:'Lora','Georgia',serif;
+}
 /* data-font="default" (mặc định) -> giữ nguyên --font-heading/--font-body gốc */
 
 /* ---- Độ bo góc thẻ: ghi đè trực tiếp lên biến bán kính bo góc
@@ -31370,13 +31403,15 @@ function clResetTypingProgress(){
 
 /* Thanh tiến độ 3 màu (đã thuộc / đang luyện / chưa học) cho 1 chủ đề,
    bấm vào để lọc danh sách bên dưới theo đúng chủ đề đó. */
-function clTopicBarHTML(t){
+const CL_TOPIC_PALETTE = ['#6366f1','#ec4899','#f59e0b','#10b981','#06b6d4','#8b5cf6','#ef4444','#14b8a6','#f97316','#3b82f6','#84cc16','#d946ef','#eab308','#0ea5e9','#f43f5e','#22c55e','#a855f7','#0891b2','#fb923c','#65a30d'];
+function clTopicBarHTML(t, i){
   const pct = n => t.total ? (n/t.total*100) : 0;
   const active = _clStatTopicFilter === t.topic;
+  const tc = CL_TOPIC_PALETTE[i % CL_TOPIC_PALETTE.length];
   return `
-    <button type="button" class="cl-topic-bar-row ${active?'active':''}" data-topic="${esc(t.topic)}">
+    <button type="button" class="cl-topic-bar-row ${active?'active':''}" data-topic="${esc(t.topic)}" style="--tc:${tc}">
       <div class="cl-topic-bar-head">
-        <span class="cl-topic-bar-name">${esc(t.topic)}</span>
+        <span class="cl-topic-bar-name"><i class="cl-topic-bar-dot"></i>${esc(t.topic)}</span>
         <span class="cl-topic-bar-count">${t.mastered}/${t.total}</span>
       </div>
       <div class="cl-topic-bar-track">
@@ -31449,7 +31484,7 @@ function clRenderCollocStats(root){
     <details style="margin:12px 0" open>
       <summary style="cursor:pointer;font-weight:600">📚 Thống kê theo chủ đề (${byTopic.length} chủ đề) — bấm vào 1 chủ đề để xem danh sách</summary>
       <div class="cl-topic-bar-list" style="margin-top:10px">
-        ${byTopic.map(clTopicBarHTML).join('')}
+        ${byTopic.map((t,i)=>clTopicBarHTML(t,i)).join('')}
       </div>
     </details>
 
@@ -31472,7 +31507,11 @@ function clRenderCollocStats(root){
         return `<div class="st-card cl-card">
           <div class="st-card-top">
             <span class="st-topic-tag">${esc(c.topic)}</span>
-            <span title="Trạng thái">${statusIcon[st]} ${TAB_LABEL[st]}${e?` · đúng liên tiếp ${streak}/${CL_MASTER_STREAK} · ${e.correct||0}✓/${e.wrong||0}✗`:''}</span>
+          </div>
+          <div class="st-status-line" title="Trạng thái">
+            <span class="st-status-badge st-status-${st}">${statusIcon[st]} ${TAB_LABEL[st]}</span>
+            ${e?`<span class="st-status-streak">🔥 ${streak}/${CL_MASTER_STREAK}</span>
+            <span class="st-status-score"><b class="ok">✓${e.correct||0}</b><b class="bad">✗${e.wrong||0}</b></span>`:''}
           </div>
           <div class="st-structure">${esc(c.phrase)}</div>
           <div class="st-meaning">${esc(c.meaning)}</div>
@@ -33497,11 +33536,12 @@ function setPanelAlpha(pct){
    Dùng chung một "nhà máy" (factory) để khỏi lặp lại 4 lần cùng
    một khuôn mẫu apply/render/set như các theme phía trên.
    ============================================================ */
-function makePrefSwatch(attrName, storageKey, defaultVal, options, gridId){
+function makePrefSwatch(attrName, storageKey, defaultVal, options, gridId, onApply){
   function apply(key){
     if(key === defaultVal) document.documentElement.removeAttribute(attrName);
     else document.documentElement.setAttribute(attrName, key);
     try{ localStorage.setItem(storageKey, key); }catch(e){}
+    if(onApply) onApply(key);
   }
   function render(){
     const grid = document.getElementById(gridId);
@@ -33517,6 +33557,30 @@ function makePrefSwatch(attrName, storageKey, defaultVal, options, gridId){
   render();
 }
 
+/* Tải phông Google Fonts bổ sung CHỈ khi người dùng thực sự chọn kiểu
+   chữ đó, để không làm chậm lần tải trang đầu tiên. Toàn bộ các phông
+   trong bảng này đã được xác nhận có bộ subset tiếng Việt đầy đủ. */
+const CL_FONT_GOOGLE_SEGMENT = {
+  serif:    'Fraunces:ital,wght@0,400;0,500;0,600;0,700;1,400',
+  rounded:  'Quicksand:wght@400;500;600;700',
+  readable: 'Open+Sans:wght@400;500;600;700;800',
+  modern:   'Inter:wght@400;500;600;700;800',
+  warm:     'Nunito:wght@400;500;600;700;800',
+  elegant:  'Playfair+Display:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400',
+  classic:  'Lora:ital,wght@0,400;0,500;0,600;0,700;1,400'
+};
+function clEnsureGoogleFont(key){
+  const seg = CL_FONT_GOOGLE_SEGMENT[key];
+  if(!seg) return; // 'default' dùng font đã tải sẵn từ đầu trang
+  const id = 'gfont-' + key;
+  if(document.getElementById(id)) return;
+  const link = document.createElement('link');
+  link.id = id;
+  link.rel = 'stylesheet';
+  link.href = 'https://fonts.googleapis.com/css2?family=' + seg + '&display=swap';
+  document.head.appendChild(link);
+}
+
 makePrefSwatch('data-fontsize', 'vocab_fontsize', 'medium', [
   { key:'small',  name:'Nhỏ' },
   { key:'medium', name:'Vừa' },
@@ -33526,10 +33590,14 @@ makePrefSwatch('data-fontsize', 'vocab_fontsize', 'medium', [
 
 makePrefSwatch('data-font', 'vocab_fontfamily', 'default', [
   { key:'default',  name:'Mặc định' },
-  { key:'serif',    name:'Serif' },
+  { key:'modern',   name:'Hiện đại' },
+  { key:'warm',     name:'Ấm áp' },
   { key:'rounded',  name:'Tròn mềm' },
-  { key:'readable', name:'Dễ đọc' }
-], 'fontFamilySwatchGrid');
+  { key:'readable', name:'Dễ đọc' },
+  { key:'serif',    name:'Serif' },
+  { key:'classic',  name:'Cổ điển' },
+  { key:'elegant',  name:'Thanh lịch' }
+], 'fontFamilySwatchGrid', clEnsureGoogleFont);
 
 makePrefSwatch('data-radius', 'vocab_radius', 'medium', [
   { key:'square', name:'Vuông' },
