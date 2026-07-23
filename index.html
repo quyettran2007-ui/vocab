@@ -533,24 +533,92 @@ main {
 /* ============================================================
    TOOLBAR / FILTERS
    ============================================================ */
-.toolbar {
-  display:flex; gap:8px; align-items:center;
-  flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none;
-  margin-bottom:18px; padding:10px 12px;
+/* ---- Hàng gộp: nút Bộ lọc + ô tìm kiếm nằm cùng 1 hàng, dạng kính mờ giống thanh tìm kiếm Tổng quan ---- */
+.search-filter-row {
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  margin-bottom:14px;
+  /* .panel (danh sách từ, v.v.) dùng contain:layout style paint để tối ưu
+     hiệu năng, nhưng điều đó vô tình khiến nó tự tạo 1 stacking context
+     riêng và đè lên trên hàng tìm kiếm này dù .suggestions có z-index
+     cao hơn — vì z-index chỉ so sánh được trong CÙNG 1 stacking context.
+     Cho hẳn .search-filter-row 1 stacking context độc lập với z-index
+     rõ ràng, cao hơn mọi .panel, để ô gợi ý tìm kiếm luôn nổi lên trên
+     danh sách thẻ từ vựng bên dưới. */
+  position:relative; z-index:60;
+}
+.search-filter-row .counter{ flex:0 0 auto; white-space:nowrap; }
+.search-filter-row .search-wrap{
+  flex:1 1 220px; min-width:0; position:relative; display:flex; align-items:center;
+  border:1.5px solid var(--line); border-radius:15px; padding:2px 4px;
+  background:var(--card); box-shadow:0 1px 3px rgba(0,0,0,.04); transition:.18s;
+}
+.search-filter-row .search-wrap:focus-within{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-bg); }
+.search-filter-row .search-box{
+  flex:1; min-width:0; background:transparent !important; border:none !important; box-shadow:none !important;
+  padding:12px 34px 12px 12px; font-size:14.5px; font-weight:600; color:var(--ink); border-radius:0;
+}
+.search-filter-row .search-box:focus{ box-shadow:none !important; border:none !important; background:transparent !important; }
+.search-filter-row .search-box::placeholder{ color:var(--muted); font-weight:500; }
+/* Flashcard: không có ô tìm kiếm, thanh Bộ lọc co ngắn lại và nằm giữa hàng */
+.search-filter-row.compact{ justify-content:center; }
+.search-filter-row.compact .filter-toggle-btn{ flex:0 0 auto; }
+
+/* ---- Nút "Bộ lọc" gom toàn bộ thanh lọc để tiết kiệm hiển thị ---- */
+.filter-toggle-btn{
+  display:flex; align-items:center; gap:7px; flex:0 0 auto;
+  padding:12px 16px; font-family:var(--font-body); font-size:13px; font-weight:800;
+  color:var(--ink); background:var(--card); border:1.5px solid var(--line);
+  border-radius:15px; cursor:pointer; transition:.15s; box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.filter-toggle-btn:hover{ border-color:var(--accent); color:var(--accent); }
+.filter-toggle-btn.has-active{ border-color:var(--accent); color:var(--accent); }
+.filter-toggle-btn.open{ background:var(--accent-grad); border-color:transparent; color:#fff; box-shadow:var(--shadow-sm); }
+.filter-toggle-btn .ft-chev{ font-size:10px; transition:transform .18s; opacity:.75; }
+.filter-toggle-btn.open .ft-chev{ transform:rotate(180deg); }
+.filter-toggle-btn .ft-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:18px; height:18px; padding:0 5px; border-radius:99px;
+  background:var(--ember,#ef4444); color:#fff; font-size:10.5px; font-weight:800;
+  font-family:var(--font-heading);
+}
+.filter-toggle-btn.open .ft-badge{ background:rgba(255,255,255,.28); }
+.filter-clear-btn{
+  flex:0 0 auto; padding:9px 12px; font-size:12px; font-weight:700;
+  color:var(--muted); background:transparent; border:1px dashed var(--line);
+  border-radius:10px; cursor:pointer; transition:.15s; white-space:nowrap;
+}
+.filter-clear-btn:hover{ color:var(--ember,#ef4444); border-color:var(--ember,#ef4444); }
+@media(max-width:600px){
+  .filter-toggle-btn .ft-label{ display:none; }
+  .filter-toggle-btn{ padding:12px; }
+}
+
+/* ---- Bảng điều khiển bộ lọc (ẩn/hiện khi bấm nút Bộ lọc) ---- */
+.filter-panel{
+  margin:-4px 0 12px; padding:14px 16px 12px;
   background:var(--card); border:1px solid var(--line);
   border-radius:var(--radius); box-shadow:var(--shadow-sm);
+  animation:fadeUp .18s var(--ease-out, ease);
 }
-.toolbar::-webkit-scrollbar { display:none; }
-.toolbar select{
-  flex:1 1 0; min-width:132px; max-width:230px;
-  padding:9px 30px 9px 12px; font-size:12.5px;
+.filter-panel-grid{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px 12px;
 }
-/* Ô chủ đề cần rộng hơn vì tên dài */
-.toolbar #topicFilter{ flex:2 1 0; min-width:190px; max-width:300px; }
-.toolbar .counter{ flex:0 0 auto; margin-left:auto; white-space:nowrap; }
+.filter-field{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+.filter-field .ff-label{ font-size:11px; font-weight:700; color:var(--muted); padding-left:1px; }
+.filter-field select{ width:100%; padding:9px 30px 9px 12px; font-size:12.5px; }
+.filter-panel-actions{
+  display:flex; justify-content:flex-end; gap:8px;
+  margin-top:12px; padding-top:12px; border-top:1px solid var(--line);
+}
+.fp-btn{
+  padding:8px 14px; font-size:12.5px; font-weight:700; border-radius:9px; cursor:pointer;
+  background:var(--card); border:1px solid var(--line); color:var(--ink-soft); transition:.15s;
+}
+.fp-btn:hover{ border-color:var(--accent); color:var(--accent); }
+.fp-btn.primary{ background:var(--accent-grad); border-color:transparent; color:#fff; }
+.fp-btn.primary:hover{ opacity:.92; color:#fff; }
 @media(max-width:820px){
-  .toolbar select{ min-width:120px; }
-  .toolbar #topicFilter{ min-width:150px; }
+  .filter-panel-grid{ grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); }
 }
 select, .search-box {
   font-family:var(--font-body); font-size:13.5px; font-weight:600;
@@ -594,22 +662,6 @@ select:focus, .search-box:focus {
   margin-left:auto; font-size:11.5px; color:var(--muted); font-weight:700;
   letter-spacing:.3px; padding:5px 12px; background:var(--paper);
   border-radius:999px; border:1px solid var(--line);
-}
-
-/* Search row */
-.search-row { display:flex; justify-content:center; margin-bottom:20px; }
-.search-row .search-wrap { position:relative; width:58%; min-width:290px; max-width:560px; }
-.search-row .search-box {
-  width:100%; font-size:15px; font-weight:600;
-  padding:15px 22px; border-radius:16px;
-  border:1.5px solid var(--line); background:var(--card);
-  box-shadow:var(--shadow-sm); transition:.25s cubic-bezier(.4,0,.2,1);
-}
-.search-row .search-box::placeholder { color:var(--muted); font-weight:500; }
-.search-row .search-box:focus {
-  border-color:var(--accent);
-  box-shadow:0 0 0 5px var(--accent-bg), var(--shadow);
-  transform:translateY(-1px);
 }
 
 /* Suggestions */
@@ -840,55 +892,39 @@ select:focus, .search-box:focus {
 .se-list li{font-size:12px;color:var(--ink-soft);line-height:1.75;}
 
 /* ===== FLASHCARD: TỰ ĐÁNH GIÁ (SRS) ===== */
-.fc-rate{
-  display:flex; flex-direction:column; align-items:center; gap:8px;
-  margin:14px 0 4px;
-  /* Luôn nằm trong layout -> không bị "giật" khi xuất hiện.
-     Chỉ mờ + trượt nhẹ, và KHÔNG nhận chuột khi đang ẩn.       */
-  opacity:0;
-  transform:translateY(10px);
-  pointer-events:none;
-  visibility:hidden;
-  transition:opacity .34s cubic-bezier(.22,1,.36,1),
-             transform .44s cubic-bezier(.22,1,.36,1),
-             visibility 0s linear .34s;
+#fcRate.fc-rate{
+  position:absolute !important; left:50%; bottom:16px; z-index:2;
+  transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  max-width:calc(100% - 24px);
 }
-.fc-rate.show{
-  opacity:1;
-  transform:translateY(0);
-  pointer-events:auto;
-  visibility:visible;
-  /* hiện ở nửa sau của cú lật (0.62s) -> ăn khớp với thẻ */
-  transition:opacity .34s cubic-bezier(.22,1,.36,1) .30s,
-             transform .44s cubic-bezier(.22,1,.36,1) .30s,
-             visibility 0s linear .30s;
-}
-/* 4 nút nối tiếp nhau -> chuyển động có nhịp, không "bụp" cùng lúc */
 .fc-rate .fcr{
-  opacity:0; transform:translateY(8px) scale(.97);
-  transition:opacity .3s cubic-bezier(.22,1,.36,1),
-             transform .38s cubic-bezier(.22,1,.36,1),
-             border-color .15s, background .15s;
+  opacity:0; transform:translateY(6px) scale(.97);
+  animation:fcrIn .32s cubic-bezier(.22,1,.36,1) forwards;
+  transition:border-color .15s, background .15s;
 }
-.fc-rate.show .fcr{ opacity:1; transform:translateY(0) scale(1); }
-.fc-rate.show .fcr:nth-child(1){ transition-delay:.36s,.36s,0s,0s; }
-.fc-rate.show .fcr:nth-child(2){ transition-delay:.42s,.42s,0s,0s; }
-.fc-rate.show .fcr:nth-child(3){ transition-delay:.48s,.48s,0s,0s; }
-.fc-rate.show .fcr:nth-child(4){ transition-delay:.54s,.54s,0s,0s; }
+.fc-rate .fcr:nth-child(1){ animation-delay:.04s }
+.fc-rate .fcr:nth-child(2){ animation-delay:.08s }
+.fc-rate .fcr:nth-child(3){ animation-delay:.12s }
+.fc-rate .fcr:nth-child(4){ animation-delay:.16s }
+@keyframes fcrIn{ to{ opacity:1; transform:translateY(0) scale(1); } }
 @media (prefers-reduced-motion:reduce){
-  .fc-rate, .fc-rate .fcr{ transition-duration:.01ms !important; }
+  .fc-rate .fcr{ animation-duration:.01ms !important; }
 }
-.fcr-hint{ font-size:12.5px; color:var(--muted); font-weight:600; }
-.fcr-btns{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+.fcr-hint{ font-size:10px; color:var(--muted); font-weight:600; }
+.fcr-btns{ display:flex; gap:5px; flex-wrap:nowrap; justify-content:center; }
 .fcr{
-  display:flex; flex-direction:column; align-items:center; gap:2px;
-  min-width:96px; padding:9px 14px; border-radius:12px; cursor:pointer;
-  font-family:var(--font-body); font-size:13px; font-weight:700;
-  border:1.5px solid var(--line); background:var(--card); color:var(--ink);
+  display:flex; align-items:center; gap:4px;
+  padding:6px 10px; border-radius:999px; cursor:pointer;
+  font-family:var(--font-body); font-size:11.5px; font-weight:700;
+  white-space:nowrap;
+  border:1.5px solid var(--line);
+  background:color-mix(in srgb, var(--card) 94%, transparent);
+  color:var(--ink);
   transition:.15s;
 }
-.fcr small{ font-size:10px; font-weight:600; color:var(--muted); }
-.fcr:hover{ transform:translateY(-2px); box-shadow:var(--shadow-sm); }
+.fcr:hover{ background:var(--card); transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+.fcr small{ display:none; }
 .fcr.no:hover  { border-color:#dc2626; background:var(--coral-bg); }
 .fcr.hard:hover{ border-color:#f59e0b; background:var(--gold-bg); }
 .fcr.ok:hover  { border-color:#2563eb; background:#dbeafe; }
@@ -898,7 +934,13 @@ select:focus, .search-box:focus {
 .fc-srs .srs-dot{ width:8px; height:8px; }
 .fc-srs-due{ font-size:11px; color:var(--muted); font-weight:700; }
 .fc-srs-due.hot{ color:#f59e0b; }
-@media(max-width:640px){ .fcr{ min-width:74px; padding:8px 10px; font-size:12px; } }
+@media(max-width:640px){
+  .fcr-btns{ gap:4px; }
+  .fcr{ padding:6px 8px; font-size:11px; }
+}
+@media(max-width:400px){
+  .fcr{ padding:5px 7px; font-size:10px; gap:2px; }
+}
 
 /* ===== TƯƠNG PHẢN & MÀU SẮC TỔNG THỂ ===== */
 /* Nền trang: thêm sắc độ để thẻ trắng bật lên rõ */
@@ -938,7 +980,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
   border-color:var(--line-strong);
 }
 [data-theme="dark"] .hero-stat{ background:var(--card-sunken); border-color:var(--line-strong); }
-[data-theme="dark"] .tp-card{ background:linear-gradient(160deg, color-mix(in srgb,var(--tp-c,var(--accent)) 26%,var(--card-sunken)) 0%, color-mix(in srgb,var(--tp-c,var(--accent)) 10%,var(--card-sunken)) 100%); border-color:color-mix(in srgb,var(--tp-c,var(--line-strong)) 38%,var(--line-strong)); }
+[data-theme="dark"] .tp-card{ background:var(--card-sunken); border-color:color-mix(in srgb,var(--tp-c,var(--line-strong)) 30%,var(--line-strong)); }
 [data-theme="dark"] .vc-topic{ background:rgba(167,139,250,.16); }
 [data-theme="dark"] .fc-topic{ background:rgba(167,139,250,.16); }
 [data-theme="dark"] .ds-state.doing{ background:rgba(59,130,246,.22); color:#93c5fd; }
@@ -1143,15 +1185,17 @@ i.lg.learned{background:var(--green,#059669);} i.lg.doing{background:#3b82f6;} i
    chú giải gộp về 1 dòng để thẻ thấp gọn, đỡ phải cuộn nhiều. ===== */
 .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:12px;}
 .tp-card{
-  position:relative; border:1.5px solid color-mix(in srgb,var(--tp-c,var(--line-strong)) 30%,var(--line));
-  border-radius:14px; padding:13px 15px 12px;
-  background:linear-gradient(160deg,
-    color-mix(in srgb,var(--tp-c,var(--accent)) 20%,var(--card)) 0%,
-    color-mix(in srgb,var(--tp-c,var(--accent)) 8%,var(--card)) 100%);
+  position:relative; border:1px solid var(--line);
+  border-radius:14px; padding:13px 15px 12px 18px;
+  background:var(--card);
   box-shadow:var(--shadow-xs); overflow:hidden;
   transition:border-color .16s, box-shadow .16s, transform .16s; contain:layout paint style;
 }
-.tp-card:hover{ border-color:var(--tp-c,var(--line-strong)); box-shadow:var(--shadow); transform:translateY(-2px); }
+.tp-card::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+  background:var(--tp-c,var(--accent));
+}
+.tp-card:hover{ border-color:color-mix(in srgb,var(--tp-c,var(--line-strong)) 45%,var(--line)); box-shadow:var(--shadow); transform:translateY(-2px); }
 .tp-card[data-color="0"]{ --tp-c:var(--cc0); } .tp-card[data-color="1"]{ --tp-c:var(--cc1); }
 .tp-card[data-color="2"]{ --tp-c:var(--cc2); } .tp-card[data-color="3"]{ --tp-c:var(--cc3); }
 .tp-card[data-color="4"]{ --tp-c:var(--cc4); } .tp-card[data-color="5"]{ --tp-c:var(--cc5); }
@@ -1188,10 +1232,12 @@ i.lg.learned{background:var(--green,#059669);} i.lg.doing{background:#3b82f6;} i
 .tp-legend{display:flex;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--ink-soft);margin-bottom:9px;gap:3px 10px;}
 .tp-legend span{display:inline-flex;align-items:center;gap:4px;}
 .tp-total{margin-left:auto;font-weight:800;color:var(--ink);}
-.tp-subs{display:flex;flex-direction:column;gap:1px;padding-top:7px;
-  border-top:1px solid color-mix(in srgb,var(--tp-c,var(--line)) 18%,var(--line));}
-.tp-sub{display:flex;align-items:center;gap:8px;border-radius:8px;padding:5px 6px;margin:0 -6px;transition:background .12s;}
-.tp-sub:hover{background:color-mix(in srgb,var(--card) 55%,#fff 45%);}
+.tp-subs{display:flex;flex-direction:column;padding-top:5px;margin-top:2px;
+  border-top:1px solid var(--line);}
+.tp-sub{display:flex;align-items:center;gap:8px;padding:7px 6px;margin:0 -6px;transition:background .12s;
+  border-bottom:1px solid var(--paper-2);}
+.tp-sub:last-child{ border-bottom:none; }
+.tp-sub:hover{background:var(--paper);border-radius:8px;}
 .tp-sub[data-color="0"]{ --tp-c:var(--cc0); } .tp-sub[data-color="1"]{ --tp-c:var(--cc1); }
 .tp-sub[data-color="2"]{ --tp-c:var(--cc2); } .tp-sub[data-color="3"]{ --tp-c:var(--cc3); }
 .tp-sub[data-color="4"]{ --tp-c:var(--cc4); } .tp-sub[data-color="5"]{ --tp-c:var(--cc5); }
@@ -1266,6 +1312,7 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
   flex:1 1 auto; height:auto; min-height:300px; max-height:none;
 }
 .flashcard {
+  position:relative;
   width:100%; max-width:820px;
   height:clamp(400px, calc(100vh - 178px - var(--fc-chrome, 140px)), 660px);
   perspective:1400px;           /* shallower = far less "vertigo" */
@@ -1335,7 +1382,7 @@ body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; 
     -moz-osx-font-smoothing:grayscale;
   }
 }
-.flash-front { justify-content:center; align-items:center; text-align:center; }
+.flash-front { justify-content:center; align-items:center; text-align:center; padding-bottom:62px; }
 .flash-front::before,
 .flash-front::after{
   -webkit-backface-visibility:hidden;
@@ -1552,15 +1599,20 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .rd-toast.on{ opacity:1; transform:translate(-50%, 0); }
 
 /* ===== TOGGLE 2 CHẾ ĐỘ XEM Ở TAB DANH SÁCH: theo từ / theo danh mục ===== */
-.list-view-toggle{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.list-view-toggle{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; }
+.lv-seg{
+  display:inline-flex; gap:2px; padding:3px;
+  background:var(--paper); border:1px solid var(--line); border-radius:13px;
+}
 .lv-toggle-btn{
   display:inline-flex; align-items:center; gap:7px; cursor:pointer;
   font-family:var(--font-heading); font-size:13.5px; font-weight:700; color:var(--ink-soft);
-  background:var(--paper); border:1px solid var(--line); border-radius:11px; padding:9px 15px;
-  transition:color .18s var(--ease-smooth), background-color .18s var(--ease-smooth), border-color .18s var(--ease-smooth), box-shadow .18s var(--ease-smooth);
+  background:transparent; border:none; border-radius:10px; padding:8px 14px;
+  transition:color .18s var(--ease-smooth), background-color .18s var(--ease-smooth), box-shadow .18s var(--ease-smooth);
 }
-.lv-toggle-btn:hover{ border-color:var(--accent); color:var(--accent); }
-.lv-toggle-btn.active{ background:var(--accent-grad); border-color:transparent; color:#fff; box-shadow:var(--shadow-sm); }
+.lv-toggle-btn:hover{ color:var(--accent); }
+.lv-toggle-btn.active{ background:var(--accent-grad); color:#fff; box-shadow:var(--shadow-sm); }
+.lv-actions{ display:flex; align-items:center; gap:8px; margin-left:auto; }
 /* Nút hành động riêng (không phải toggle chuyển view) — cố tình khác kiểu
    .lv-toggle-btn để không bị hiểu nhầm là 1 view thứ 3, luôn nổi màu accent. */
 .lv-study-btn{
@@ -1570,11 +1622,19 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   box-shadow:var(--shadow-sm); transition:filter .18s, transform .18s;
 }
 .lv-study-btn:hover{ filter:brightness(1.07); transform:translateY(-1px); }
+.lv-info-btn{
+  width:34px; height:34px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center;
+  font-size:15px; color:var(--muted); background:var(--card); border:1px solid var(--line);
+  border-radius:10px; cursor:pointer; transition:.15s;
+}
+.lv-info-btn:hover, .lv-info-btn.active{ color:var(--accent); border-color:var(--accent); }
 .lv-study-hint{
-  display:inline-flex; align-items:center; gap:6px; flex-basis:100%;
-  font-size:11.5px; line-height:1.5; color:var(--muted); padding:2px 2px 0;
+  display:flex; align-items:center; gap:6px; flex-basis:100%;
+  font-size:11.5px; line-height:1.5; color:var(--muted);
+  background:var(--paper-2); border:1px dashed var(--line); border-radius:10px; padding:9px 12px;
 }
 .lv-study-hint b{ color:var(--ink-soft); font-weight:700; }
+@media(max-width:600px){ .lv-actions{ margin-left:0; width:100%; } .lv-study-btn{ flex:1; justify-content:center; } }
 #dashRoot > .topic-section, #listCatRoot > .topic-section{ margin:0 !important; }
 
 /* ===== 3 TAB NHỎ Ở KHU CHỦ ĐỀ TRANG CHỦ ===== */
@@ -1868,6 +1928,30 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 }
 .st-pick-chip.on{ border-color:var(--accent); background:var(--accent-bg); color:var(--ink); }
 .st-pick-chip.on b{ color:var(--accent); }
+
+/* ---- "Chọn chủ đề muốn luyện" thu gọn kiểu bộ lọc — mặc định đóng,
+   bấm vào mới sổ danh sách chủ đề ra để chọn (đỡ chiếm diện tích) ---- */
+.st-topic-toggle{
+  display:flex; align-items:center; gap:8px; width:100%;
+  padding:12px 16px; margin-bottom:4px; font-family:var(--font-body); font-size:13.5px; font-weight:800;
+  color:var(--ink); background:var(--card-sunken); border:1.5px solid var(--line);
+  border-radius:14px; cursor:pointer; transition:.15s;
+}
+.st-topic-toggle:hover{ border-color:var(--accent); color:var(--accent); }
+.st-topic-toggle.open{ background:var(--accent-grad); border-color:transparent; color:#fff; box-shadow:var(--shadow-sm); }
+.st-topic-toggle .stt-ico{ font-size:15px; }
+.st-topic-toggle .stt-label{ flex:1; text-align:left; }
+.st-topic-toggle .stt-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:22px; height:20px; padding:0 7px; border-radius:99px;
+  background:var(--accent-bg); color:var(--accent); font-size:11.5px; font-weight:800;
+  font-family:var(--font-mono);
+}
+.st-topic-toggle.open .stt-badge{ background:rgba(255,255,255,.24); color:#fff; }
+.st-topic-toggle .stt-chev{ font-size:10px; transition:transform .18s; opacity:.75; }
+.st-topic-toggle.open .stt-chev{ transform:rotate(180deg); }
+.st-topic-pick-panel{ margin:10px 0 20px; animation:fadeUp .18s var(--ease-out, ease); }
+.st-topic-pick-panel .st-topic-pick-head{ margin-top:0; }
 
 /* ---- Gợi ý từng từ ---- */
 .st-hint-row{ display:none; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center;
@@ -2250,20 +2334,13 @@ mark.ex-hl {
 .flash-nav .btn { padding:8px 16px; }
 .voice-bar { display:none; }
 
-/* Compact filter bar used only on Flashcard tab.
-   Kept on ONE line so the card never gets pushed down — with 6 selects it
-   would otherwise wrap and reintroduce page scroll. */
-.toolbar.compact {
-  padding:6px 8px; margin-bottom:10px; gap:5px;
-  flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none;
+/* Compact filter bar dùng riêng cho tab Flashcard: thanh Bộ lọc co ngắn
+   lại, không có ô tìm kiếm, và nằm giữa hàng (căn giữa qua .compact). */
+.search-filter-row.compact {
+  margin-bottom:10px; gap:8px;
 }
-.toolbar.compact::-webkit-scrollbar { display:none; }
-.toolbar.compact select {
-  padding:8px 30px 8px 12px; font-size:12.5px;
-  flex:1 1 auto; min-width:170px; max-width:260px;
-}
-.toolbar.compact .counter { flex:0 0 auto; margin-left:auto; }
-.toolbar.compact .counter { padding:4px 10px; font-size:11px; }
+.search-filter-row.compact .filter-toggle-btn { padding:9px 13px; font-size:12px; }
+.search-filter-row.compact .counter { padding:4px 10px; font-size:11px; margin-left:0; }
 
 /* ============================================================
    "CẦN HỌC" — star button, badge, panel, toast
@@ -2382,6 +2459,7 @@ mark.ex-hl {
    ============================================================ */
 @media (min-width:601px) and (max-height:820px) {
   .flash-face { padding:22px 24px; }
+  .flash-front { padding-bottom:56px; }
   .flash-back { padding:18px 22px; }
   .fb-head { padding-bottom:8px; margin-bottom:9px; }
   .fb-word { font-size:17px; }
@@ -2402,6 +2480,7 @@ mark.ex-hl {
 /* Very short (720p and below): squeeze further */
 @media (min-width:601px) and (max-height:760px) {
   .flash-face { padding:18px 20px; }
+  .flash-front { padding-bottom:52px; }
   .flash-back { padding:15px 18px; }
   .flash-back .block { font-size:11.5px; margin-bottom:7px; }
   .colloc-item { font-size:11px; margin-bottom:2px; }
@@ -2448,7 +2527,7 @@ mark.ex-hl {
 #panel-flashcard.fs .flash-back .label { font-size:10px; }
 /* hide page chrome while in fullscreen */
 body.fs-on header, body.fs-on nav.tabs,
-body.fs-on #topicToolbar, body.fs-on #searchRow { display:none !important; }
+body.fs-on #searchFilterRow { display:none !important; }
 body.fs-on { overflow:hidden; }
 
 /* ===== TOÀN MÀN HÌNH BẰNG CSS (dự phòng cho iPhone) =====
@@ -3012,13 +3091,14 @@ body.page-fs { overflow-x:hidden; }
   .tab-btn .tab-label { display:none; }
   .tab-btn .tab-icon { font-size:16px; }
   main { padding:20px 16px 44px; }
-  .toolbar { display:grid; grid-template-columns:1fr 1fr; gap:7px; padding:10px; }
-  .toolbar select { width:100%; }
-  .counter { grid-column:1/-1; margin-left:0; text-align:center; }
-  .search-row .search-wrap { width:100%; min-width:0; }
-  .search-row .search-box { padding:13px 18px; font-size:14px; }
+  .search-filter-row { gap:8px; }
+  .filter-panel-grid { grid-template-columns:1fr 1fr; }
+  .filter-panel select { width:100%; }
+  .search-filter-row .search-wrap { flex:1 1 0; min-width:0; }
+  .search-filter-row .search-box { padding:13px 34px 13px 12px; font-size:14px; }
   .flashcard { height:clamp(380px, calc(100vh - 210px), 500px); }
   .flash-face { padding:22px; }
+  .flash-front { padding-bottom:56px; }
   .flash-front .word { letter-spacing:-1.2px; }
   .flash-nav { flex-wrap:wrap; justify-content:center; }
 }
@@ -3857,9 +3937,8 @@ nav.tabs{
 [data-theme="dark"] .hero-cta{ color:#04120f; }
 .lvl{ font-family:var(--font-mono); font-size:10px; }
 
-/* Cụm nút trong toolbar xuống dòng gọn hơn trên máy hẹp */
-.toolbar{ gap:7px; }
-.toolbar select{ border-radius:9px; }
+/* Cụm nút trong hàng tìm kiếm/lọc xuống dòng gọn hơn trên máy hẹp */
+.search-filter-row{ gap:7px; }
 
 @media (max-width:760px){
   .fn-track{ flex-wrap:wrap; gap:6px; }
@@ -4211,7 +4290,8 @@ body{
 }
 
 /* ---- lớp kính: nền bán trong suốt + làm mờ hậu cảnh phía sau ---- */
-.dash-search, .hero-main, .hero-side, .funnel-card, .strip-card.progress-card, .topic-section{
+.dash-search, .hero-main, .hero-side, .funnel-card, .strip-card.progress-card, .topic-section,
+.search-filter-row .search-wrap, .search-filter-row .filter-toggle-btn:not(.open){
   background:rgba(255,255,255,.60);
   -webkit-backdrop-filter:blur(18px) saturate(160%);
   backdrop-filter:blur(18px) saturate(160%);
@@ -4222,7 +4302,9 @@ body{
 [data-theme="dark"] .hero-side,
 [data-theme="dark"] .funnel-card,
 [data-theme="dark"] .strip-card.progress-card,
-[data-theme="dark"] .topic-section{
+[data-theme="dark"] .topic-section,
+[data-theme="dark"] .search-filter-row .search-wrap,
+[data-theme="dark"] .search-filter-row .filter-toggle-btn:not(.open){
   background:rgba(22,26,36,.55);
   border-color:rgba(255,255,255,.09);
 }
@@ -4349,8 +4431,15 @@ body{
 .cl-fc-card{
   width:100%; max-width:520px; height:min(460px,62vh); perspective:1400px; cursor:pointer;
   position:relative; transition:transform .3s var(--ease-out);
+  touch-action:pan-y; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;
 }
 .cl-fc-card:active{ transform:scale(.992); }
+/* While the finger is down the card must track it with zero lag, so the
+   easing transition is switched off for the duration (swipe-to-navigate). */
+.cl-fc-card.dragging{ transition:none !important; cursor:grabbing; }
+.cl-fc-card.dragging .cl-fc-inner{ transition:none !important; }
+.cl-fc-card.sw-bounce{ animation:clSwBounce .34s cubic-bezier(.34,1.4,.64,1); }
+@keyframes clSwBounce{ 0%{ transform:translateX(var(--sw-from,0)); } 100%{ transform:translateX(0); } }
 .cl-fc-inner{
   position:relative; width:100%; height:100%;
   -webkit-transform-style:preserve-3d; transform-style:preserve-3d;
@@ -4368,7 +4457,7 @@ body{
   -webkit-backface-visibility:hidden; backface-visibility:hidden;
   border-radius:22px; border:1px solid var(--line); background:var(--card); box-shadow:var(--shadow-md);
   padding:32px 28px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:14px; text-align:center; overflow-y:auto; overscroll-behavior:contain;
+  gap:14px; text-align:center; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
   -webkit-transform:translateZ(0); transform:translateZ(0); isolation:isolate;
 }
 .cl-fc-front{ justify-content:center; }
@@ -4411,9 +4500,22 @@ body{
 .cl-fc-act.on{ background:#fef9c3; border-color:#fde047; color:#854d0e; }
 [data-theme="dark"] .cl-fc-act.on{ background:rgba(250,204,21,.18); border-color:rgba(250,204,21,.5); color:#fde047; }
 .cl-fc-nav{ display:flex; justify-content:center; gap:12px; margin-top:20px; }
+/* ---- Thanh công cụ gộp 1 hàng: Trước · Phát âm · Đánh dấu · Tiếp ---- */
+.cl-fc-toolbar{
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+  gap:10px; margin-top:20px;
+}
+.cl-fc-navbtn{
+  font-family:inherit; font-size:13px; font-weight:700; color:var(--ink);
+  background:var(--card); border:1px solid var(--line); border-radius:11px;
+  padding:10px 18px; cursor:pointer; transition:.15s;
+}
+.cl-fc-navbtn:hover{ box-shadow:var(--shadow-xs); }
 @media(max-width:640px){
   .cl-fc-face{ padding:24px 18px; }
   .cl-fc-phrase{ font-size:21px; }
+  .cl-fc-toolbar{ gap:8px; }
+  .cl-fc-act, .cl-fc-navbtn{ padding:9px 13px; font-size:12.5px; }
 }
 
 /* ============================================================
@@ -4658,45 +4760,76 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
 </nav>
 
 <main>
-  <div class="search-row" id="searchRow" style="display:none">
-    <div class="search-wrap">
+  <div class="search-filter-row" id="searchFilterRow" style="display:none">
+    <button type="button" class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleFilterPanel()">
+      <span class="ft-ico">🧰</span><span class="ft-label">Bộ lọc</span><span class="ft-badge" id="filterBadge" style="display:none">0</span><span class="ft-chev">▾</span>
+    </button>
+    <div class="search-wrap" id="searchWrap">
       <input class="search-box" id="searchBox" placeholder="🔍 Tìm từ vựng...">
       <button class="search-clear" id="searchClear" title="Xoá tìm kiếm">✕</button>
       <div class="suggestions" id="searchSuggestions"></div>
     </div>
-  </div>
-  <div class="toolbar" id="topicToolbar" style="display:none">
-    <select id="topicFilter" title="Chủ đề"><option value="all">Tất cả chủ đề</option></select>
-    <select id="posFilter" title="Loại từ"><option value="all">Tất cả loại từ</option></select>
-    <select id="levelFilter" title="Trình độ"><option value="all">Tất cả trình độ</option></select>
-    <select id="statusFilter" title="Trạng thái học">
-      <option value="all">Mọi trạng thái</option>
-      <option value="new">⬜ Chưa học</option>
-      <option value="learning">📗 Đang học</option>
-      <option value="due">🔔 Đến hạn ôn</option>
-      <option value="mastered">✅ Đã thuộc</option>
-    </select>
-    <select id="stageFilter" title="Bậc trong lộ trình 3 cửa">
-      <option value="all">Mọi bậc lộ trình</option>
-      <option value="0">⬜ Chưa gặp</option>
-      <option value="1">🃏 Qua cửa Flashcard</option>
-      <option value="2">❓ Qua cửa Trắc nghiệm</option>
-      <option value="3">⌨️ Qua cửa Gõ từ</option>
-      <option value="4">🔁 Đang ôn ngắt quãng</option>
-      <option value="5">✅ Đã thuộc</option>
-    </select>
-    <select id="starFilter" title="Cần học">
-      <option value="all">Tất cả từ</option>
-      <option value="star">⭐ Chỉ từ cần học</option>
-    </select>
-    <select id="sortOrder" title="Sắp xếp">
-      <option value="newest">Mới nhất trước</option>
-      <option value="oldest">Cũ nhất trước</option>
-      <option value="az">A → Z</option>
-      <option value="due">⏰ Sắp đến hạn ôn</option>
-      <option value="weak">🔥 Hay quên nhất</option>
-    </select>
     <span class="counter" id="filterCount"></span>
+    <button type="button" class="filter-clear-btn" id="filterClearBtn" onclick="clearAllFilters()" title="Xoá tất cả bộ lọc đang áp dụng" style="display:none">✕ Xoá lọc</button>
+  </div>
+  <div class="filter-panel" id="filterPanel" style="display:none">
+    <div class="filter-panel-grid">
+      <label class="filter-field">
+        <span class="ff-label">🗂️ Chủ đề</span>
+        <select id="topicFilter" title="Chủ đề"><option value="all">Tất cả chủ đề</option></select>
+      </label>
+      <label class="filter-field">
+        <span class="ff-label">🔤 Loại từ</span>
+        <select id="posFilter" title="Loại từ"><option value="all">Tất cả loại từ</option></select>
+      </label>
+      <label class="filter-field">
+        <span class="ff-label">🎯 Trình độ</span>
+        <select id="levelFilter" title="Trình độ"><option value="all">Tất cả trình độ</option></select>
+      </label>
+      <label class="filter-field">
+        <span class="ff-label">📊 Trạng thái học</span>
+        <select id="statusFilter" title="Trạng thái học">
+          <option value="all">Mọi trạng thái</option>
+          <option value="new">⬜ Chưa học</option>
+          <option value="learning">📗 Đang học</option>
+          <option value="due">🔔 Đến hạn ôn</option>
+          <option value="mastered">✅ Đã thuộc</option>
+        </select>
+      </label>
+      <label class="filter-field">
+        <span class="ff-label">🚦 Bậc lộ trình</span>
+        <select id="stageFilter" title="Bậc trong lộ trình 3 cửa">
+          <option value="all">Mọi bậc lộ trình</option>
+          <option value="0">⬜ Chưa gặp</option>
+          <option value="1">🃏 Qua cửa Flashcard</option>
+          <option value="2">❓ Qua cửa Trắc nghiệm</option>
+          <option value="3">⌨️ Qua cửa Gõ từ</option>
+          <option value="4">🔁 Đang ôn ngắt quãng</option>
+          <option value="5">✅ Đã thuộc</option>
+        </select>
+      </label>
+      <label class="filter-field">
+        <span class="ff-label">⭐ Cần học</span>
+        <select id="starFilter" title="Cần học">
+          <option value="all">Tất cả từ</option>
+          <option value="star">⭐ Chỉ từ cần học</option>
+        </select>
+      </label>
+      <label class="filter-field">
+        <span class="ff-label">↕️ Sắp xếp</span>
+        <select id="sortOrder" title="Sắp xếp">
+          <option value="newest">Mới nhất trước</option>
+          <option value="oldest">Cũ nhất trước</option>
+          <option value="az">A → Z</option>
+          <option value="due">⏰ Sắp đến hạn ôn</option>
+          <option value="weak">🔥 Hay quên nhất</option>
+        </select>
+      </label>
+    </div>
+    <div class="filter-panel-actions">
+      <button type="button" class="fp-btn" onclick="clearAllFilters()">↺ Xoá tất cả bộ lọc</button>
+      <button type="button" class="fp-btn primary" onclick="toggleFilterPanel(false)">Xong ✓</button>
+    </div>
   </div>
 
   <!-- DASHBOARD -->
@@ -4716,23 +4849,22 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
             <div class="word" id="fcWord">—</div>
             <div class="pos" id="fcPos"></div>
             <div class="ipa" id="fcIpa"></div>
-            <div class="hint">Nhấn để lật ↻</div>
+            <!-- Tự đánh giá: nằm ngay trên mặt trước, thay cho gợi ý "Nhấn để lật" -->
+            <div class="fc-rate" id="fcRate">
+              <span class="fcr-hint">Bạn nhớ từ này thế nào?</span>
+              <div class="fcr-btns">
+                <button class="fcr no"   data-q="0">😵 Quên<small>ôn lại ngay</small></button>
+                <button class="fcr hard" data-q="1">😕 Khó<small>ôn sớm</small></button>
+                <button class="fcr ok"   data-q="2">🙂 Nhớ<small id="fcrOk"></small></button>
+                <button class="fcr easy" data-q="3">😎 Dễ<small id="fcrEasy"></small></button>
+              </div>
+            </div>
           </div>
           <div class="flash-face flash-back" id="fcBack"></div>
         </div>
       </div>
       <div class="swipe-hint" id="swipeHint">
         <span class="arrow">‹</span> Vuốt để chuyển từ <span class="arrow r">›</span>
-      </div>
-      <!-- Tự đánh giá: chỉ hiện sau khi lật thẻ -->
-      <div class="fc-rate" id="fcRate">
-        <span class="fcr-hint">Bạn nhớ từ này thế nào?</span>
-        <div class="fcr-btns">
-          <button class="fcr no"   data-q="0">😵 Quên<small>ôn lại ngay</small></button>
-          <button class="fcr hard" data-q="1">😕 Khó<small>ôn sớm</small></button>
-          <button class="fcr ok"   data-q="2">🙂 Nhớ<small id="fcrOk"></small></button>
-          <button class="fcr easy" data-q="3">😎 Dễ<small id="fcrEasy"></small></button>
-        </div>
       </div>
       <div class="flash-nav">
         <button class="btn" id="fcPrev" title="Từ trước (←)">←</button>
@@ -4751,10 +4883,15 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
 
   <section class="panel" id="panel-list">
     <div class="list-view-toggle">
-      <button class="lv-toggle-btn active" id="lvBtnWords" onclick="setListView('words')">📖 Danh sách từ</button>
-      <button class="lv-toggle-btn" id="lvBtnCats" onclick="setListView('cats')">🗂️ Danh mục từ vựng</button>
-      <button class="lv-study-btn" onclick="goStudyThisTopic()" title="Học ngay đúng các từ đang hiển thị ở Danh sách từ">🎯 Học chủ đề này</button>
-      <span class="lv-study-hint">💡 Vào <b>🗂️ Danh mục từ vựng</b> → bấm <b>📖 Danh sách</b> ở thẻ chủ đề muốn học, rồi quay lại đây bấm <b>🎯 Học chủ đề này</b> để bắt đầu học đúng chủ đề đó.</span>
+      <div class="lv-seg">
+        <button class="lv-toggle-btn active" id="lvBtnWords" onclick="setListView('words')">📖 Danh sách từ</button>
+        <button class="lv-toggle-btn" id="lvBtnCats" onclick="setListView('cats')">🗂️ Danh mục từ vựng</button>
+      </div>
+      <div class="lv-actions">
+        <button class="lv-study-btn" onclick="goStudyThisTopic()" title="Học ngay đúng các từ đang hiển thị ở Danh sách từ">🎯 Học chủ đề này</button>
+        <button type="button" class="lv-info-btn" id="lvInfoBtn" onclick="toggleLvHint()" title="Xem hướng dẫn dùng 2 chế độ xem">ⓘ</button>
+      </div>
+      <div class="lv-study-hint" id="lvStudyHint" style="display:none">💡 Vào <b>🗂️ Danh mục từ vựng</b> → bấm <b>📖 Danh sách</b> ở thẻ chủ đề muốn học, rồi quay lại đây bấm <b>🎯 Học chủ đề này</b> để bắt đầu học đúng chủ đề đó.</div>
     </div>
     <div id="listWordsView">
       <div class="list-scroll"><div id="listContainer"></div></div>
@@ -26498,6 +26635,51 @@ function fmtDateGroup(d){
 }
 function fmtDateShort(d){ const t=parseDate(d); if(!t) return ''; const dt=new Date(t); return `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`; }
 
+function toggleLvHint(){
+  const hint = document.getElementById('lvStudyHint');
+  const btn = document.getElementById('lvInfoBtn');
+  if(!hint) return;
+  const show = hint.style.display === 'none';
+  hint.style.display = show ? 'flex' : 'none';
+  if(btn) btn.classList.toggle('active', show);
+}
+
+/* ---------- Nút "Bộ lọc" gom toàn bộ thanh lọc lại, ẩn/hiện để tiết kiệm hiển thị ---------- */
+function toggleFilterPanel(force){
+  const panel = document.getElementById('filterPanel');
+  const btn = document.getElementById('filterToggleBtn');
+  if(!panel) return;
+  const show = typeof force === 'boolean' ? force : (panel.style.display === 'none');
+  panel.style.display = show ? 'block' : 'none';
+  if(btn) btn.classList.toggle('open', show);
+}
+function closeFilterPanel(){ toggleFilterPanel(false); }
+document.addEventListener('click', e=>{
+  const panel = document.getElementById('filterPanel');
+  const btn = document.getElementById('filterToggleBtn');
+  if(!panel || panel.style.display==='none') return;
+  if(panel.contains(e.target) || (btn && btn.contains(e.target))) return;
+  closeFilterPanel();
+});
+function clearAllFilters(){
+  ['topicFilter','posFilter','levelFilter','statusFilter','stageFilter','starFilter'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.value = 'all';
+  });
+  _statusFilter = 'all'; _stageFilter = 'all'; _dateFilter = 'all'; _lsSetFilter = null; _pinnedWord = null;
+  applyFilter();
+}
+function updateFilterBadge(){
+  const g = id => (document.getElementById(id)||{}).value;
+  let n = 0;
+  ['topicFilter','posFilter','levelFilter','statusFilter','stageFilter','starFilter'].forEach(id=>{ if(g(id) && g(id)!=='all') n++; });
+  const badge = document.getElementById('filterBadge');
+  const btn = document.getElementById('filterToggleBtn');
+  const clearBtn = document.getElementById('filterClearBtn');
+  if(badge){ badge.textContent = n; badge.style.display = n>0 ? 'inline-flex' : 'none'; }
+  if(btn) btn.classList.toggle('has-active', n>0);
+  if(clearBtn) clearBtn.style.display = n>0 ? 'inline-flex' : 'none';
+}
+
 /* ---------- Init filters (dùng mapped topic) ---------- */
 function initFilters(){
   rebuildReadingTopicGroup();                 // cập nhật nhóm "BÀI ĐỌC" trước khi dựng bộ lọc
@@ -26610,6 +26792,7 @@ function applyFilter(){
 
   filtered = arr;
   document.getElementById('filterCount').textContent = filtered.length + ' từ';
+  updateFilterBadge();
   fcIndex = 0; _shufCache=null;
   // Only rebuild the panel the user is actually looking at. Rebuilding all four
   // (incl. a 1700-card list) on every filter change was the main tab-switch stutter.
@@ -27671,8 +27854,6 @@ function renderFlashcard(){
   if(fcIndex>=list.length) fcIndex=0;
   const v = list[fcIndex];
   fcCard.classList.remove('flipped');
-  const rateEl = document.getElementById('fcRate');
-  if(rateEl) rateEl.classList.remove('show');
   document.getElementById('fcWord').textContent = v.word;
   const tEl = document.getElementById('fcTopic');
   if(tEl){
@@ -27707,6 +27888,7 @@ function renderFlashcard(){
   `;
   document.getElementById('fcProgress').textContent = `${fcIndex+1} / ${list.length}`;
   refreshStarUI();
+  updateRatePreview();
 }
 let _flipTimer=null;
 function fcFlip(){
@@ -27715,14 +27897,6 @@ function fcFlip(){
   clearTimeout(_flipTimer);
   _flipTimer = setTimeout(()=>fcCard.classList.remove('flipping'), 640);
   if(fcCache[fcIndex]) speak(fcCache[fcIndex].word);
-
-  // Lật ra mặt sau -> cho phép tự đánh giá (ghi vào SRS)
-  const rate = document.getElementById('fcRate');
-  if(rate){
-    const flipped = fcCard.classList.contains('flipped');
-    rate.classList.toggle('show', flipped);
-    if(flipped) updateRatePreview();
-  }
 }
 /* Hiện trước khoảng cách ôn nếu chọn "Nhớ" / "Dễ" */
 function updateRatePreview(){
@@ -27738,6 +27912,12 @@ function updateRatePreview(){
   const a=document.getElementById('fcrOk'), b2=document.getElementById('fcrEasy');
   if(a) a.textContent = nb>=SRS_MASTER_BOX ? 'đã thuộc' : `+${dOk} ngày`;
   if(b2) b2.textContent = nb>=SRS_MASTER_BOX ? 'đã thuộc' : `+${dEasy} ngày`;
+  const btnOk=a&&a.closest('.fcr'), btnEasy=b2&&b2.closest('.fcr');
+  if(btnOk) btnOk.title = 'Nhớ — ' + (a.textContent);
+  if(btnEasy) btnEasy.title = 'Dễ — ' + (b2.textContent);
+  const btnNo=document.querySelector('#fcRate .fcr.no'), btnHard=document.querySelector('#fcRate .fcr.hard');
+  if(btnNo) btnNo.title = 'Quên — ôn lại ngay';
+  if(btnHard) btnHard.title = 'Khó — ôn sớm';
 }
 /* Bấm nút tự đánh giá */
 document.querySelectorAll('#fcRate .fcr').forEach(btn=>{
@@ -27870,8 +28050,6 @@ function fcSlide(dir){
   _fcSliding = true;
   fcCard.style.transform=''; fcCard.style.opacity='';
   fcCard.classList.remove('flipped','flipping','sw-bounce');
-  const rate = document.getElementById('fcRate');
-  if(rate) rate.classList.remove('show');
   fcCard.classList.add(dir>0?'slide-out-left':'slide-out-right');
   setTimeout(()=>{
     // VÒNG LẶP: qua từ cuối -> về từ đầu, và ngược lại
@@ -29248,11 +29426,14 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     panel.classList.add('active');
     // Show toolbar only for content tabs
     const showToolbar = ['flashcard','list','quiz','typing'].includes(mode);
-    const tb = document.getElementById('topicToolbar');
-    tb.style.display = showToolbar ? 'flex' : 'none';
-    // Flashcard: compact filters, no giant search row — keeps the card fully in view
-    tb.classList.toggle('compact', mode==='flashcard');
-    document.getElementById('searchRow').style.display = (showToolbar && mode!=='flashcard') ? 'flex' : 'none';
+    const row = document.getElementById('searchFilterRow');
+    row.style.display = showToolbar ? 'flex' : 'none';
+    closeFilterPanel();
+    // Chỉ tab Danh sách cần ô tìm kiếm to; Flashcard/Trắc nghiệm/Gõ từ chỉ cần
+    // thanh Bộ lọc, co ngắn lại và nằm giữa hàng.
+    const showSearch = mode==='list';
+    row.classList.toggle('compact', showToolbar && !showSearch);
+    document.getElementById('searchWrap').style.display = showSearch ? '' : 'none';
     window.scrollTo({top:0, behavior:'auto'});
     if(mode==='flashcard') requestAnimationFrame(measureFcTop);
     // Defer heavy DOM work until AFTER the panel has painted — this is what
@@ -32360,19 +32541,18 @@ function stRenderCollocFlashcard(root){
           </div>
         </div>
       </div>
-      <div class="cl-fc-actions">
-        <button class="cl-fc-act" id="clFcSpeak" title="Phát âm cụm từ">🔊 Phát âm</button>
-        <button class="cl-fc-act ${isBm?'on':''}" id="clFcBookmark" title="Đánh dấu để ôn lại">${isBm?'⭐ Đã đánh dấu':'☆ Đánh dấu'}</button>
-      </div>
     </div>
-    <div class="cl-fc-nav">
-      <button class="btn" id="clFcPrev">◀ Trước</button>
-      <button class="btn" id="clFcNext">Tiếp ▶</button>
+    <div class="cl-fc-toolbar">
+      <button class="cl-fc-navbtn" id="clFcPrev">◀ Trước</button>
+      <button class="cl-fc-act" id="clFcSpeak" title="Phát âm cụm từ">🔊 Phát âm</button>
+      <button class="cl-fc-act ${isBm?'on':''}" id="clFcBookmark" title="Đánh dấu để ôn lại">${isBm?'⭐ Đã đánh dấu':'☆ Đánh dấu'}</button>
+      <button class="cl-fc-navbtn" id="clFcNext">Tiếp ▶</button>
     </div>`;
 
   document.getElementById('clFcBack').onclick = clFlashcardBack;
   document.getElementById('clFcShuffle').onclick = clShuffleDeck;
-  document.getElementById('clFcCard').onclick = clFlipCard;
+  const clCardEl = document.getElementById('clFcCard');
+  clCardEl.onclick = ()=>{ if(_clSwipeMoved) return; clFlipCard(); };
   document.getElementById('clFcPrev').onclick = (e)=>{ e.stopPropagation(); clPrevCard(); };
   document.getElementById('clFcNext').onclick = (e)=>{ e.stopPropagation(); clNextCard(); };
   document.getElementById('clFcSpeak').onclick = (e)=>{ e.stopPropagation(); speak(c.phrase); };
@@ -32382,7 +32562,87 @@ function stRenderCollocFlashcard(root){
     e.currentTarget.innerHTML = on ? '⭐ Đã đánh dấu' : '☆ Đánh dấu';
     e.currentTarget.classList.toggle('on', on);
   };
+
+  // ---- Vuốt để chuyển thẻ (touch + kéo chuột) ----
+  clCardEl.addEventListener('touchstart', e=>{
+    if(e.touches.length !== 1) return;
+    clSwStart(clCardEl, e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive:true});
+  clCardEl.addEventListener('touchmove', e=>{
+    if(e.touches.length !== 1) return;
+    clSwMove(e.touches[0].clientX, e.touches[0].clientY, e);
+  }, {passive:false});
+  clCardEl.addEventListener('touchend', clSwEnd, {passive:true});
+  clCardEl.addEventListener('touchcancel', clSwEnd, {passive:true});
+  clCardEl.addEventListener('mousedown', e=>{
+    if(e.button !== 0) return;
+    clSwStart(clCardEl, e.clientX, e.clientY);
+  });
 }
+
+/* ============================================================
+   VUỐT ĐỂ CHUYỂN THẺ COLLOCATION (touch / kéo chuột)
+   Vuốt trái  → cụm tiếp theo
+   Vuốt phải  → cụm trước đó
+   Bộ thẻ collocation luôn xoay vòng (modulo) nên không cần lực
+   cản ở hai đầu như flashcard từ vựng.
+   ============================================================ */
+let _clSwX=0, _clSwY=0, _clSwDX=0, _clSwDown=false, _clSwMoved=false,
+    _clSwipeMoved=false, _clSwLock=null, _clSwT0=0, _clSwEl=null;
+const CL_SW_THRESHOLD = 60;   // px cần để xác nhận
+const CL_SW_VELOCITY  = 0.45; // px/ms — vuốt nhanh xác nhận sớm
+const CL_SW_SLOP      = 10;   // px trước khi coi là kéo (không phải chạm)
+
+function clSwStart(el, x, y){
+  if(!_clDeck || _clDeck.length < 2) return;
+  _clSwEl = el;
+  _clSwDown = true; _clSwMoved = false; _clSwLock = null;
+  _clSwX = x; _clSwY = y; _clSwDX = 0; _clSwT0 = performance.now();
+  el.classList.add('dragging');
+}
+function clSwMove(x, y, ev){
+  if(!_clSwDown || !_clSwEl) return;
+  const dx = x - _clSwX, dy = y - _clSwY;
+  if(_clSwLock === null){
+    if(Math.abs(dx) < CL_SW_SLOP && Math.abs(dy) < CL_SW_SLOP) return;
+    _clSwLock = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+  }
+  if(_clSwLock === 'y'){ clSwEnd(); return; }
+  if(ev && ev.cancelable) ev.preventDefault();
+  _clSwMoved = true;
+  _clSwDX = dx;
+  const rot = _clSwDX * 0.02;
+  const fade = Math.min(Math.abs(_clSwDX) / 260, .45);
+  _clSwEl.style.transform = `translateX(${_clSwDX}px) rotate(${rot}deg)`;
+  _clSwEl.style.opacity = String(1 - fade);
+}
+function clSwEnd(){
+  if(!_clSwDown) return;
+  _clSwDown = false;
+  const el = _clSwEl;
+  if(el){ el.classList.remove('dragging'); el.style.transform = ''; el.style.opacity = ''; }
+
+  const dt = Math.max(performance.now() - _clSwT0, 1);
+  const vel = Math.abs(_clSwDX) / dt;
+  const far  = Math.abs(_clSwDX) > CL_SW_THRESHOLD;
+  const fast = vel > CL_SW_VELOCITY && Math.abs(_clSwDX) > 24;
+
+  if(_clSwMoved && (far || fast)){
+    if(_clSwDX < 0) clNextCard();
+    else clPrevCard();
+  } else if(_clSwMoved && el){
+    el.classList.add('sw-bounce');
+    setTimeout(()=>el.classList.remove('sw-bounce'), 340);
+  }
+
+  _clSwipeMoved = _clSwMoved;
+  if(_clSwMoved) setTimeout(()=>{ _clSwipeMoved = false; }, 50);
+  _clSwDX = 0; _clSwMoved = false; _clSwLock = null; _clSwEl = null;
+}
+// Kéo chuột trên desktop cũng hoạt động như vuốt (gắn 1 lần duy nhất ở window,
+// vì thẻ .cl-fc-card bị tạo lại mỗi lần render).
+window.addEventListener('mousemove', e=>{ if(_clSwDown) clSwMove(e.clientX, e.clientY, e); });
+window.addEventListener('mouseup', ()=>{ if(_clSwDown) clSwEnd(); });
 
 /* ============================================================
    GÕ TỪ COLLOCATION — y hệt tính năng "⌨️ Gõ từ" của từ vựng
@@ -33564,6 +33824,7 @@ function stTokenize(s){
       xem toàn bộ lịch sử (theo ngày / theo chủ đề / độ chính xác).
    ============================================================ */
 let _stTrTopics = new Set(STRUCT_TOPICS);   // mặc định chọn tất cả chủ đề
+let _stTrPickOpen = false;                  // "Chọn chủ đề muốn luyện" mặc định thu gọn
 let _stTrHintsUsed = 0;
 let _stTrSessionLog = [];   // log của phiên hiện tại, dùng cho tóm tắt cuối phiên
 
@@ -33643,25 +33904,28 @@ function stRenderTranslateStart(root){
           <button class="st-stats-btn" id="stStatsBtn">📊 Thống kê (${hist.length} lượt)</button>
         </div>
       </div>
-      <p style="color:var(--muted);font-size:13.5px;margin:6px 0 16px">
-        Đọc câu tiếng Việt, gõ lại đúng câu tiếng Anh gốc. Bí quá thì bấm <b>💡 Gợi ý</b> để mở dần
-        từng từ, hoặc <b>👁 Hiện đáp án</b> nếu muốn xem luôn (sẽ tính là câu chưa thuộc). Sau khi
-        bấm Kiểm tra, khung bên dưới sẽ chấm từng từ: <span class="st-tag-good">xanh = đúng</span>,
-        <span class="st-tag-bad">đỏ = sai/thiếu</span>.</p>
 
-      <div class="st-topic-pick-head">
-        <span>Chọn chủ đề muốn luyện</span>
-        <div class="st-topic-pick-acts">
-          <button class="st-pick-mini" id="stPickAll">Chọn tất cả</button>
-          <button class="st-pick-mini" id="stPickNone">Bỏ chọn hết</button>
+      <button type="button" class="st-topic-toggle ${_stTrPickOpen?'open':''}" id="stTopicToggle">
+        <span class="stt-ico">🗂️</span>
+        <span class="stt-label">Chọn chủ đề muốn luyện</span>
+        <span class="stt-badge">${_stTrTopics.size}/${STRUCT_TOPICS.length}</span>
+        <span class="stt-chev">▾</span>
+      </button>
+      <div class="st-topic-pick-panel" id="stTopicPickPanel" style="${_stTrPickOpen?'':'display:none'}">
+        <div class="st-topic-pick-head">
+          <span>Chọn chủ đề muốn luyện</span>
+          <div class="st-topic-pick-acts">
+            <button class="st-pick-mini" id="stPickAll">Chọn tất cả</button>
+            <button class="st-pick-mini" id="stPickNone">Bỏ chọn hết</button>
+          </div>
         </div>
-      </div>
-      <div class="st-topic-pick" id="stTopicPick">
-        ${STRUCT_TOPICS.map(t=>`
-          <label class="st-pick-chip ${_stTrTopics.has(t)?'on':''}">
-            <input type="checkbox" data-topic="${esc(t)}" ${_stTrTopics.has(t)?'checked':''}>
-            <span>${esc(t)}</span><b>${counts[t]}</b>
-          </label>`).join('')}
+        <div class="st-topic-pick" id="stTopicPick">
+          ${STRUCT_TOPICS.map(t=>`
+            <label class="st-pick-chip ${_stTrTopics.has(t)?'on':''}">
+              <input type="checkbox" data-topic="${esc(t)}" ${_stTrTopics.has(t)?'checked':''}>
+              <span>${esc(t)}</span><b>${counts[t]}</b>
+            </label>`).join('')}
+        </div>
       </div>
 
       <button class="learn-big-btn" id="stTrGo" ${selectedN?'':'disabled'}>
@@ -33698,8 +33962,15 @@ function stRenderTranslateStart(root){
       if(v < 1) v = 1;
       randInput.value = v;
     }
+    const badge = document.querySelector('#stTopicToggle .stt-badge');
+    if(badge) badge.textContent = `${_stTrTopics.size}/${STRUCT_TOPICS.length}`;
   };
 
+  document.getElementById('stTopicToggle').onclick = ()=>{
+    _stTrPickOpen = !_stTrPickOpen;
+    document.getElementById('stTopicToggle').classList.toggle('open', _stTrPickOpen);
+    document.getElementById('stTopicPickPanel').style.display = _stTrPickOpen ? '' : 'none';
+  };
   root.querySelectorAll('#stTopicPick input[type=checkbox]').forEach(cb=>{
     cb.onchange = ()=>{
       const t = cb.dataset.topic;
@@ -33850,7 +34121,7 @@ function stNextTranslate(){
     </div>` : ''}
     <div class="st-hint-row" id="stHintRow"></div>
     <div class="st-tr-field">
-      <textarea id="stTrInput" rows="3" placeholder="Gõ câu tiếng Anh của bạn ở đây…" autocomplete="off" spellcheck="false">${esc(_stTrDraft)}</textarea>
+      <textarea id="stTrInput" rows="3" placeholder="Đọc câu tiếng Việt, gõ lại đúng câu tiếng Anh gốc. Bí quá thì bấm 💡 Gợi ý để mở dần từng từ, hoặc 👁 Hiện đáp án nếu muốn xem luôn (sẽ tính là câu chưa thuộc). Sau khi bấm Kiểm tra, khung bên dưới sẽ chấm từng từ: xanh = đúng, đỏ = sai/thiếu." autocomplete="off" spellcheck="false">${esc(_stTrDraft)}</textarea>
     </div>
     <div class="st-tr-feedback" id="stTrFeedback"></div>
     <div class="type-actions">
