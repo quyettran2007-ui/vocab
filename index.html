@@ -1053,13 +1053,27 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .hero-cta{margin-top:auto;background:var(--accent-grad,var(--accent));color:#fff;border:none;border-radius:12px;
   padding:14px 12px;font-weight:800;font-size:13.5px;cursor:pointer;transition:.16s;letter-spacing:.1px;}
 .hero-cta:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:var(--glow);}
-.hero-streak{display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0 12px;}
-.hero-streak-ring{--p:0;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;
-  background:conic-gradient(#f97316 calc(var(--p)*1%), var(--paper-2) 0);box-shadow:inset 0 0 0 1px var(--line);}
-.hero-streak-ring-in{width:48px;height:48px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;gap:3px;box-shadow:var(--shadow-xs);}
-.hero-streak-flame{font-size:13px;line-height:1;}
-.hero-streak-num{font-family:var(--font-heading);font-weight:900;font-size:16px;color:var(--ink);line-height:1;}
-.hero-streak-lbl{font-size:11px;color:var(--muted);font-weight:700;}
+.hero-streak{display:flex;flex-direction:column;gap:4px;padding:2px 0 14px;}
+/* Streak kiểu mới: ngọn lửa lớn + số ngày lồng bên trong, kèm hàng 7 ngày có dấu tick */
+.streak-v2-top{display:flex;align-items:center;gap:12px;}
+.streak-v2-flame{position:relative;width:58px;height:58px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.streak-v2-flame-ic{font-size:52px;line-height:1;filter:drop-shadow(0 3px 7px rgba(249,115,22,.4));}
+.streak-v2.zero .streak-v2-flame-ic{filter:grayscale(1) opacity(.45);}
+.streak-v2-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding-top:7px;
+  font-family:var(--font-heading);font-weight:900;font-size:19px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.3);}
+.streak-v2.zero .streak-v2-num{color:var(--muted);text-shadow:none;}
+.streak-v2-text{min-width:0;}
+.streak-v2-title{font-family:var(--font-heading);font-weight:800;font-size:15px;color:var(--ink);line-height:1.2;}
+.streak-v2-sub{font-size:11px;color:var(--muted);line-height:1.45;margin-top:3px;}
+.streak-v2-sub b{color:var(--ink-soft);}
+.streak-v2-days{display:flex;justify-content:space-between;gap:3px;margin-top:14px;}
+.streak-v2-day{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+.streak-v2-day-lbl{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+.streak-v2-day-lbl.is-today{color:var(--accent);}
+.streak-v2-check{width:25px;height:25px;border-radius:50%;background:var(--paper-2);display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:800;color:transparent;border:2px solid transparent;box-sizing:border-box;transition:.15s;}
+.streak-v2-check.done{background:linear-gradient(135deg,#fbbf24,#f97316);color:#fff;box-shadow:0 2px 6px rgba(249,115,22,.35);}
+.streak-v2-check.is-today:not(.done){border-color:var(--accent);}
 .hero-btn-row{margin-top:auto;display:flex;gap:8px;}
 .hero-cta.small{flex:1;padding:11px 8px;font-size:12px;margin-top:0;}
 .hero-cta.secondary{background:rgba(124,58,237,.12);color:#6d28d9;box-shadow:none;border:1px solid rgba(124,58,237,.35);}
@@ -2020,6 +2034,10 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .rd-seltip .pb button{ flex:1; font-size:11.5px; font-weight:700; cursor:pointer; white-space:nowrap;
   background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:7px 8px; color:var(--ink-soft); }
 .rd-seltip .pb button:hover{ border-color:var(--accent); color:var(--accent); }
+/* Trên điện thoại: neo cố định ở đáy màn hình để không bị trình duyệt (menu Chép/Chia sẻ...) đè lên */
+.rd-seltip.rd-seltip-dock{ left:12px !important; right:12px; bottom:calc(12px + env(safe-area-inset-bottom, 0px));
+  top:auto !important; max-width:none; width:auto; }
+.rd-seltip.rd-seltip-dock .pb button{ padding:11px 8px; font-size:13px; }
 .rd-selnote-quote{ font-size:12.5px; color:var(--muted); font-style:italic; margin-bottom:8px;
   padding:6px 9px; background:var(--paper); border-left:3px solid var(--accent); border-radius:0 8px 8px 0;
   max-height:70px; overflow:auto; }
@@ -2041,13 +2059,45 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-line:last-child{ border-bottom:none; padding-bottom:0; }
 .nb-line-main{ flex:1; min-width:0; }
 .nb-quote{ font-size:13.5px; font-style:italic; color:var(--ink); line-height:1.6; }
+.nb-quote.nb-manual{ font-style:normal; font-weight:600; }
 .nb-note{ margin-top:5px; font-size:13px; color:var(--ink-soft); background:var(--card);
   border-left:3px solid var(--accent); padding:6px 9px; border-radius:0 8px 8px 0; line-height:1.55; }
 .nb-meta{ margin-top:5px; font-size:11.5px; color:var(--muted); }
 .nb-line-acts{ display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
-.nb-copy1, .nb-del{ background:none; border:none; cursor:pointer; color:var(--muted); font-size:14px; padding:2px 4px; }
-.nb-copy1:hover{ color:var(--accent); }
+.nb-copy1, .nb-del, .nb-edit1, .nb-pin1{ background:none; border:none; cursor:pointer; color:var(--muted); font-size:14px; padding:2px 4px; }
+.nb-copy1:hover, .nb-edit1:hover{ color:var(--accent); }
 .nb-del:hover{ color:#ef4444; }
+.nb-pin1:hover{ color:#eab308; }
+.nb-pin1.on{ color:#eab308; }
+.nb-pin-badge{ font-size:11px; }
+
+/* Sửa ghi chú (inline) */
+.nb-edit-box textarea{ width:100%; box-sizing:border-box; font:inherit; font-size:13px; padding:7px 9px;
+  border-radius:8px; border:1px solid var(--line); resize:vertical; margin-bottom:6px; background:var(--paper); color:var(--ink); }
+.nb-edit-box textarea.nb-edit-note{ min-height:44px; }
+.nb-edit-acts{ display:flex; gap:8px; }
+.nb-edit-acts .btn{ font-size:12px; padding:6px 12px; }
+
+/* Bảng ghim: các ô ghi chú nổi, có thể tùy chỉnh màu */
+.nb-pinboard{ margin-bottom:22px; }
+.nb-pin-head{ font-size:14.5px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:6px; color:var(--ink); }
+.nb-pin-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); gap:14px; }
+.nb-pin-card{ position:relative; border-radius:12px; padding:12px 12px 10px; box-shadow:0 5px 14px rgba(0,0,0,.10);
+  border:1px solid rgba(0,0,0,.07); display:flex; flex-direction:column; gap:7px; min-height:120px; color:#2b2b2b; }
+[data-theme="dark"] .nb-pin-card{ box-shadow:0 6px 18px rgba(0,0,0,.4); border-color:rgba(0,0,0,.15); }
+.nb-pin-actions{ position:absolute; top:7px; right:7px; display:flex; gap:4px; }
+.nb-pin-actions button{ background:rgba(255,255,255,.75); border:none; border-radius:6px; width:22px; height:22px;
+  font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#333; }
+.nb-pin-actions button:hover{ background:#fff; }
+.nb-pin-text{ font-size:13.5px; font-style:italic; line-height:1.5; padding-right:56px; }
+.nb-pin-text.nb-manual{ font-style:normal; font-weight:700; }
+.nb-pin-note{ font-size:12.5px; background:rgba(255,255,255,.55); border-left:3px solid rgba(0,0,0,.22);
+  padding:5px 8px; border-radius:0 6px 6px 0; line-height:1.5; }
+.nb-pin-meta{ font-size:11px; color:rgba(0,0,0,.55); margin-top:auto; }
+.nb-pin-colors{ display:flex; gap:5px; flex-wrap:wrap; margin-top:2px; }
+.nb-color-dot{ width:16px; height:16px; border-radius:50%; cursor:pointer; border:2px solid rgba(0,0,0,.15); flex-shrink:0; padding:0; }
+.nb-color-dot.active{ border-color:#333; box-shadow:0 0 0 2px #fff inset; }
+.nb-pin-card .nb-edit-box textarea{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
 
 .settings-nav{
   display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px;
@@ -2833,15 +2883,20 @@ body.page-fs { overflow-x:hidden; }
 .lvl-bar-row:hover .lvl-bar-tag{ transform:scale(1.05); }
 
 /* loại từ (POS) */
-.pos-bars{ display:flex; flex-direction:column; gap:7px; }
-.pos-bar-row{ display:flex; align-items:center; gap:8px; }
-.pos-bar-tag{
-  font-size:12.5px; font-weight:700; color:var(--ink-soft); width:78px; flex:none;
-  text-transform:lowercase; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-.pos-bar-track{ flex:1; height:10px; border-radius:99px; background:var(--paper-2); overflow:hidden; }
-.pos-bar-fill{ display:block; height:100%; border-radius:99px; background:var(--accent-2,#0891b2); }
-.pos-bar-n{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); flex:none; min-width:22px; text-align:right; }
+.pos-pie-wrap{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+.pos-pie-chart{ position:relative; width:118px; height:118px; border-radius:50%; flex-shrink:0;
+  box-shadow:0 2px 10px rgba(0,0,0,.10); }
+.pos-pie-hole{ position:absolute; inset:20px; border-radius:50%; background:var(--card);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  box-shadow:inset 0 0 0 1px var(--line); }
+.pos-pie-hole b{ font-size:19px; color:var(--ink); line-height:1.15; }
+.pos-pie-hole span{ font-size:10.5px; color:var(--muted); }
+.pos-pie-legend{ display:flex; flex-direction:column; gap:7px; flex:1; min-width:150px; }
+.pos-pie-leg-item{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-soft); }
+.pos-pie-dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.pos-pie-leg-tag{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pos-pie-leg-n{ font-family:var(--font-mono); color:var(--ink); font-weight:700; }
+.pos-pie-leg-pct{ font-family:var(--font-mono); color:var(--muted); min-width:34px; text-align:right; }
 
 /* từ hay quên nhất */
 .hard-words{ display:flex; flex-wrap:wrap; gap:7px; }
@@ -4756,10 +4811,19 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
       <div class="settings-group" id="settingsGroup-notebook" style="display:none">
       <div class="backup-box" id="notebookBox">
         <h3 style="margin-top:0">📒 Sổ ghi chú</h3>
-        <p>Khi bạn bật <b>Edit</b> ở bài đọc (tab Reading) và bôi chọn một đoạn văn bản, các mục bạn <b>Ghi chú</b> hoặc <b>Thêm vào sổ</b> sẽ được lưu tại đây, nhóm theo từng ngày. Dữ liệu tự lưu vào máy và nằm trong bản <b>Sao lưu &amp; Khôi phục</b> ở mục bên cạnh.</p>
+        <p>Khi bạn bật <b>Edit</b> ở bài đọc (tab Reading) và bôi chọn một đoạn văn bản, các mục bạn <b>Ghi chú</b> hoặc <b>Thêm vào sổ</b> sẽ được lưu tại đây, nhóm theo từng ngày. Bạn cũng có thể tự tạo ghi chú riêng (không lấy từ bài đọc) bằng nút bên dưới. Dữ liệu tự lưu vào máy và nằm trong bản <b>Sao lưu &amp; Khôi phục</b> ở mục bên cạnh.</p>
         <div class="backup-actions" style="margin-bottom:16px">
+          <button class="btn primary" onclick="notebookToggleNewForm()">➕ Tạo ghi chú mới</button>
           <button class="btn danger-btn" onclick="notebookClearAll()">🗑️ Xoá toàn bộ sổ ghi chú</button>
         </div>
+        <div id="notebookNewForm" style="display:none;margin-bottom:16px;padding:12px;border:1px solid #ddd;border-radius:10px">
+          <textarea id="notebookNewInput" rows="3" placeholder="Nhập nội dung ghi chú của bạn…" style="width:100%;box-sizing:border-box;resize:vertical;padding:8px;border-radius:8px;border:1px solid #ccc;font:inherit"></textarea>
+          <div class="backup-actions" style="margin-top:10px">
+            <button class="btn primary" onclick="notebookSaveManual()">💾 Lưu ghi chú</button>
+            <button class="btn" onclick="notebookToggleNewForm(false)">Huỷ</button>
+          </div>
+        </div>
+        <div id="notebookPinboard"></div>
         <div id="notebookList"></div>
       </div>
       </div><!-- /settingsGroup-notebook -->
@@ -22188,7 +22252,7 @@ const COLLOCATIONS = [
     id: "cl778",
     stId: "st100",
     phrase: "rehabilitation programme",
-    meaning: "chương trình cải tạo",
+    meaning: "chương trình cải tạo (tù nhân)/ phục hồi chức năng (y tế)",
     topic: "Tội phạm và Luật pháp",
     synonyms: ["rehab program", "rehabilitation scheme", "correctional program"]
   },
@@ -26673,17 +26737,33 @@ function renderProgressCard(){
       : `<div class="lvl-bar-row ${cls}" title="Chưa gán trình độ: ${l.total} từ — ${l.mastered} đã thuộc (${pct}%)">${tag}</div>`;
   }).join('');
 
-  /* ---- Cụm 3: loại từ (POS) ---- */
-  const posMax = Math.max(1, ...WB.posList.map(p=>p.n));
-  const posBars = WB.posList.map(p=>{
-    const pct = Math.round(p.n/posMax*100);
+  /* ---- Cụm 3: loại từ (POS) — biểu đồ tròn (donut) ---- */
+  const POS_PIE_COLORS = ['#0891b2','#7c3aed','#f59e0b','#16a34a','#e11d48','#64748b','#0ea5e9','#a855f7'];
+  const posPieTotal = WB.posList.reduce((s,p)=>s+p.n,0);
+  let posPieAcc = 0;
+  const posPieStops = WB.posList.map((p,i)=>{
+    const start = posPieTotal ? (posPieAcc/posPieTotal*100) : 0;
+    posPieAcc += p.n;
+    const end = posPieTotal ? (posPieAcc/posPieTotal*100) : 0;
+    return `${POS_PIE_COLORS[i % POS_PIE_COLORS.length]} ${start}% ${end}%`;
+  }).join(', ');
+  const posPieLegend = WB.posList.map((p,i)=>{
+    const pct = posPieTotal ? Math.round(p.n/posPieTotal*100) : 0;
     return `
-    <div class="pos-bar-row" title="${p.pos}: ${p.n} từ">
-      <span class="pos-bar-tag">${esc(p.pos)}</span>
-      <span class="pos-bar-track"><span class="pos-bar-fill" style="width:${pct}%"></span></span>
-      <span class="pos-bar-n">${p.n}</span>
+    <div class="pos-pie-leg-item" title="${p.pos}: ${p.n} từ (${pct}%)">
+      <i class="pos-pie-dot" style="background:${POS_PIE_COLORS[i % POS_PIE_COLORS.length]}"></i>
+      <span class="pos-pie-leg-tag">${esc(p.pos)}</span>
+      <span class="pos-pie-leg-n">${p.n}</span>
+      <span class="pos-pie-leg-pct">${pct}%</span>
     </div>`;
-  }).join('') || `<div class="dt-empty-mini">Chưa có dữ liệu loại từ</div>`;
+  }).join('');
+  const posPie = WB.posList.length ? `
+    <div class="pos-pie-wrap">
+      <div class="pos-pie-chart" style="background:conic-gradient(${posPieStops})">
+        <div class="pos-pie-hole"><b>${posPieTotal}</b><span>từ</span></div>
+      </div>
+      <div class="pos-pie-legend">${posPieLegend}</div>
+    </div>` : `<div class="dt-empty-mini">Chưa có dữ liệu loại từ</div>`;
 
   /* ---- Cụm 4: từ khó nhớ nhất ---- */
   const hardChips = WB.hardest.length ? WB.hardest.map(h=>`
@@ -26757,7 +26837,7 @@ function renderProgressCard(){
 
       <div class="wb-block">
         <div class="wb-block-head"><span>🏷️ Loại từ phổ biến</span></div>
-        <div class="pos-bars">${posBars}</div>
+        ${posPie}
       </div>
 
       <div class="wb-block">
@@ -26902,13 +26982,24 @@ function renderDashboard(){
         </div>
       </div>
       <div class="hero-side">
-        <div class="hero-streak">
-          <div class="hero-streak-ring" style="--p:${Math.min(streak,30)/30*100}">
-            <div class="hero-streak-ring-in">
-              <span class="hero-streak-flame">🔥</span><b class="hero-streak-num">${streak}</b>
+        <div class="hero-streak streak-v2 ${streak?'':'zero'}">
+          <div class="streak-v2-top">
+            <div class="streak-v2-flame">
+              <span class="streak-v2-flame-ic">🔥</span>
+              <b class="streak-v2-num">${streak}</b>
+            </div>
+            <div class="streak-v2-text">
+              <div class="streak-v2-title">Chuỗi ngày học</div>
+              <div class="streak-v2-sub">${streak ? `Giữ vững <b>${streak} ngày</b> liên tiếp — đừng để đứt mạch!` : 'Học ít nhất 1 từ mỗi ngày để bắt đầu chuỗi streak'}</div>
             </div>
           </div>
-          <div class="hero-streak-lbl">ngày liên tiếp</div>
+          <div class="streak-v2-days">
+            ${weekData.map(w=>`
+              <div class="streak-v2-day" title="${w.label}${w.today?' (hôm nay)':''}: ${w.n?w.n+' từ đã học':'chưa học'}">
+                <span class="streak-v2-day-lbl ${w.today?'is-today':''}">${w.label}</span>
+                <span class="streak-v2-check ${w.n?'done':''} ${w.today?'is-today':''}">${w.n?'✓':''}</span>
+              </div>`).join('')}
+          </div>
         </div>
         <div class="hero-btn-row">
           <button class="hero-cta small" onclick="goSRS()">
@@ -30346,10 +30437,12 @@ const EX_FORMATS = [
   ['tsv', 'TSV — Quizlet (thuật ngữ ⇥ định nghĩa)'],
   ['txt', 'TXT (mỗi mục 1 đoạn)'],
   ['json', 'JSON'],
+  ['docx', 'Word (.doc)'],
   ['pdf', 'PDF (in / lưu file)']
 ];
 let _exSource = 'vocab';                       // 'vocab' | 'colloc' | 'sentence' | 'reading'
 let _exTopics = { vocab:[], colloc:[], sentence:[], reading:[] }; // rỗng = tất cả chủ đề
+let _exReadingIds = [];                         // rỗng = tất cả bài đọc (trong chủ đề đã lọc)
 let _exFields = {
   vocab: new Set(['ipa','pos','example','topic']),
   colloc: new Set(['topic']),
@@ -30357,6 +30450,7 @@ let _exFields = {
   reading: new Set(['meta','en','vi'])
 };
 let _exFormat = 'csv';
+let _exPlainText = false; // true = xuất bài đọc dạng văn bản thuần (không bảng), chỉ áp dụng cho nguồn "reading" + Word/PDF
 
 function exSentenceRows(){
   const out = [];
@@ -30372,7 +30466,13 @@ function exReadingRows(){
   return RD().map(r=>({
     id: r.id,
     title: r.title||'',
+    test: r.test||'?',
+    psg: r.psg||'?',
     meta: `Cambridge ${r.book||'?'} - Test ${r.test||'?'} - Bài ${r.psg||'?'}`,
+    // Giữ nguyên từng đoạn văn (paragraph) trong mảng riêng để khi xuất
+    // Word/PDF có thể ngắt dòng đúng đoạn thay vì dính liền một khối.
+    enParas: (r.P||[]).map(exStripBraces),
+    viParas: (r.T||[]),
     en: (r.P||[]).map(exStripBraces).join('\n\n'),
     vi: (r.T||[]).join('\n\n'),
     vocabList: (r.V||[]).map(row=> `${row[0]} — ${row[3]||''}`).join('; '),
@@ -30394,11 +30494,19 @@ function exTopicsFor(src){
   else list = STRUCT_TOPICS.slice();
   return list.sort((a,b)=>a.localeCompare(b));
 }
+// Danh sách bài đọc riêng lẻ để chọn (đã lọc theo chủ đề Cambridge đang chọn, nếu có)
+function exReadingChoicesFor(selTopics){
+  return exReadingRows().filter(r=> !selTopics.length || selTopics.includes(r.topic));
+}
 function exRowsFor(src){
   const selTopics = _exTopics[src];
   if(src==='vocab') return VOCAB.filter(v=> !selTopics.length || selTopics.includes(v.topic));
   if(src==='colloc') return COLLOCATIONS.filter(c=> !selTopics.length || selTopics.includes(c.topic));
-  if(src==='reading') return exReadingRows().filter(r=> !selTopics.length || selTopics.includes(r.topic));
+  if(src==='reading'){
+    let rows = exReadingChoicesFor(selTopics);
+    if(_exReadingIds.length) rows = rows.filter(r=> _exReadingIds.includes(r.id));
+    return rows;
+  }
   return exSentenceRows().filter(s=> !selTopics.length || selTopics.includes(s.topic));
 }
 function exRecordFor(src, item){
@@ -30427,6 +30535,8 @@ function exRecordFor(src, item){
     if(fields.has('vi')) rec.vi = item.vi||'';
     if(fields.has('vocabList')) rec.vocab = item.vocabList||'';
     if(fields.has('topic')) rec.topic = item.topic||'';
+    // Không đưa vào CSV/TSV nhưng giữ lại để renderer Word/PDF ngắt đúng từng đoạn
+    Object.defineProperty(rec, '_paras', { value: { en:item.enParas||[], vi:item.viParas||[] }, enumerable:false });
     return rec;
   }
   const rec = { term:item.en, meaning:item.vi||'' };
@@ -30467,9 +30577,86 @@ function exToTXT(records){
     return lines.join('\n');
   }).join('\n\n');
 }
+// Chuyển 1 chuỗi (có thể chứa nhiều đoạn cách nhau bởi dòng trống, hoặc
+// xuống dòng đơn) thành các thẻ <p>/<br> để hiển thị đúng từng đoạn thay
+// vì bị trình duyệt/Word dồn hết thành một khối chữ liền mạch.
+function exNlToHtmlParas(v){
+  const s = String(v==null?'':v);
+  if(!s) return '';
+  const paras = s.split(/\n{2,}/);
+  return paras.map(p=> `<p style="margin:0 0 10px">${esc(p).split('\n').join('<br>')}</p>`).join('');
+}
+// Ưu tiên dùng mảng đoạn văn gốc (_paras) khi có, để mỗi đoạn thành 1 <p>
+// riêng biệt — chính xác hơn việc tách lại theo dòng trống.
+function exFieldToHtml(rec, col){
+  const paras = rec._paras && rec._paras[col];
+  if(Array.isArray(paras) && paras.length){
+    return paras.map(p=> `<p style="margin:0 0 10px">${esc(String(p||'')).split('\n').join('<br>')}</p>`).join('');
+  }
+  return exNlToHtmlParas(rec[col]);
+}
+// Xuất bài đọc dạng văn bản thuần — không bảng, chỉ tiêu đề + các đoạn văn
+// nối tiếp nhau như một bài đọc bình thường. Dùng chung cho Word & PDF.
+function exReadingPlainBody(records){
+  return records.map(r=>{
+    const paras = r._paras || {};
+    const parts = [];
+    parts.push(`<h2 style="margin:0 0 4px">${esc(r.term||'')}</h2>`);
+    if(r.meta) parts.push(`<p style="margin:0 0 14px;color:#666;font-size:0.9em">${esc(r.meta)}</p>`);
+    if(r.en !== undefined){
+      const enParas = (paras.en && paras.en.length) ? paras.en : String(r.en||'').split(/\n{2,}/);
+      parts.push(enParas.map(p=>`<p style="margin:0 0 10px">${esc(String(p||'')).split('\n').join('<br>')}</p>`).join(''));
+    }
+    if(r.vi !== undefined){
+      const viParas = (paras.vi && paras.vi.length) ? paras.vi : String(r.vi||'').split(/\n{2,}/);
+      parts.push(`<h3 style="margin:16px 0 4px">Bản dịch</h3>`);
+      parts.push(viParas.map(p=>`<p style="margin:0 0 10px">${esc(String(p||'')).split('\n').join('<br>')}</p>`).join(''));
+    }
+    if(r.vocab){
+      parts.push(`<h3 style="margin:16px 0 4px">Từ vựng</h3>`);
+      parts.push(`<p style="margin:0 0 10px">${esc(r.vocab)}</p>`);
+    }
+    return `<div style="margin-bottom:36px">${parts.join('')}</div>`;
+  }).join('<hr style="border:none;border-top:1px solid #ccc;margin:24px 0">');
+}
+function exToPDFPlainHTML(records, srcLabel){
+  return `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8">
+<title>Xuất ${esc(srcLabel)}</title>
+<style>
+  body{ font-family:Georgia, "Times New Roman", serif; margin:24px; color:#1f2430; line-height:1.55; }
+  h1{ font-family:Arial, "Segoe UI", sans-serif; font-size:18px; margin-bottom:4px; }
+  p.meta{ font-family:Arial, "Segoe UI", sans-serif; font-size:12px; color:#666; margin-top:0; margin-bottom:18px; }
+  h2{ font-family:Arial, "Segoe UI", sans-serif; font-size:16px; }
+  h3{ font-family:Arial, "Segoe UI", sans-serif; font-size:13px; }
+  @media print{ body{ margin:10mm; } }
+</style></head>
+<body>
+  <h1>Xuất danh sách học liệu — ${esc(srcLabel)}</h1>
+  <p class="meta">${records.length} bài · xuất ngày ${new Date().toLocaleDateString('vi-VN')}</p>
+  ${exReadingPlainBody(records)}
+  <script>window.onload = function(){ window.print(); };<\/script>
+</body></html>`;
+}
+function exToDocxPlainHTML(records, srcLabel){
+  return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8">
+<title>Xuất ${esc(srcLabel)}</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+<style>
+  body{ font-family:Calibri, Arial, "Segoe UI", sans-serif; font-size:12pt; color:#1f2430; }
+  h1{ font-size:16pt; margin-bottom:4px; }
+  p.meta{ font-size:9pt; color:#666; margin-top:0; margin-bottom:16px; }
+  h2{ font-size:14pt; }
+  h3{ font-size:12pt; }
+</style></head>
+<body>
+  <h1>Xuất danh sách học liệu — ${esc(srcLabel)}</h1>
+  <p class="meta">${records.length} bài · xuất ngày ${new Date().toLocaleDateString('vi-VN')}</p>
+  ${exReadingPlainBody(records)}
+</body></html>`;
+}
 function exToPDFHTML(records, srcLabel){
   const cols = records.length ? Object.keys(records[0]) : ['term','meaning'];
-  const rows = records.map(r=> `<tr>${cols.map(c=>`<td>${esc(String(r[c]==null?'':r[c]))}</td>`).join('')}</tr>`).join('');
   const head = cols.map(c=>`<th>${esc(c)}</th>`).join('');
   return `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8">
 <title>Xuất ${esc(srcLabel)}</title>
@@ -30479,6 +30666,7 @@ function exToPDFHTML(records, srcLabel){
   p.meta{ font-size:12px; color:#666; margin-top:0; margin-bottom:18px; }
   table{ width:100%; border-collapse:collapse; font-size:12.5px; }
   th, td{ border:1px solid #ccc; padding:6px 8px; text-align:left; vertical-align:top; }
+  td p:last-child{ margin-bottom:0; }
   th{ background:#f0f0f0; }
   tr:nth-child(even){ background:#fafafa; }
   @media print{ body{ margin:10mm; } }
@@ -30491,11 +30679,51 @@ function exToPDFHTML(records, srcLabel){
 </body></html>`;
 }
 function doExportPDF(records, srcLabel){
-  const html = exToPDFHTML(records, srcLabel);
+  const html = (_exSource==='reading' && _exPlainText) ? exToPDFPlainHTML(records, srcLabel) : exToPDFHTML(records, srcLabel);
   const win = window.open('', '_blank');
   if(!win){ exportListMsg('❌ Trình duyệt đã chặn cửa sổ mới — hãy cho phép popup rồi thử lại.', false); return; }
   win.document.open(); win.document.write(html); win.document.close();
   exportListMsg(`✅ Đã mở ${records.length} mục — chọn "Lưu dưới dạng PDF" trong hộp thoại in.`, true);
+}
+// Xuất file Word (.doc) — dùng định dạng HTML có khai báo mso:Word hiểu
+// được (không cần thư viện ngoài). Mỗi đoạn văn được tách thành 1 thẻ
+// <p> riêng để Word hiển thị đúng từng đoạn, không dồn liền một khối.
+function exToDocxHTML(records, srcLabel){
+  const cols = records.length ? Object.keys(records[0]) : ['term','meaning'];
+  const rows = records.map(r=> `<tr>${cols.map(c=>`<td valign="top" style="border:1px solid #ccc;padding:6px 8px">${exFieldToHtml(r,c)}</td>`).join('')}</tr>`).join('');
+  const head = cols.map(c=>`<th style="border:1px solid #ccc;padding:6px 8px;background:#f0f0f0;text-align:left">${esc(c)}</th>`).join('');
+  return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8">
+<title>Xuất ${esc(srcLabel)}</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+<style>
+  body{ font-family:Calibri, Arial, "Segoe UI", sans-serif; font-size:12pt; color:#1f2430; }
+  h1{ font-size:16pt; margin-bottom:4px; }
+  p.meta{ font-size:9pt; color:#666; margin-top:0; margin-bottom:16px; }
+  table{ width:100%; border-collapse:collapse; font-size:10.5pt; }
+</style></head>
+<body>
+  <h1>Xuất danh sách học liệu — ${esc(srcLabel)}</h1>
+  <p class="meta">${records.length} mục · xuất ngày ${new Date().toLocaleDateString('vi-VN')}</p>
+  <table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>
+</body></html>`;
+}
+function doExportDocx(records, srcLabel){
+  const html = (_exSource==='reading' && _exPlainText) ? exToDocxPlainHTML(records, srcLabel) : exToDocxHTML(records, srcLabel);
+  try{
+    const blob = new Blob(['\ufeff'+html], {type:'application/msword;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const d = new Date();
+    const pad = n=>String(n).padStart(2,'0');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `xuat-${srcLabel}-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.doc`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+    exportListMsg(`✅ Đã xuất ${records.length} mục (Word .doc).`, true);
+  }catch(e){
+    exportListMsg('❌ Không xuất được file: ' + e.message, false);
+  }
 }
 function exportListMsg(text, ok){
   const el = document.getElementById('exportListMsg');
@@ -30514,6 +30742,7 @@ function doExportList(){
   const srcLabel = src==='vocab' ? 'tuvung' : src==='colloc' ? 'collocation' : src==='reading' ? 'bai-doc' : 'cau';
 
   if(_exFormat==='pdf'){ doExportPDF(records, srcLabel); return; }
+  if(_exFormat==='docx'){ doExportDocx(records, srcLabel); return; }
 
   let content, mime, ext;
   if(_exFormat==='csv'){ content = exToDelimited(records, ','); mime='text/csv'; ext='csv'; }
@@ -30544,10 +30773,12 @@ function renderExportBox(){
   const fieldDefs = EX_FIELD_DEFS[_exSource];
   const selFields = _exFields[_exSource];
   const selTopics = _exTopics[_exSource];
+  const isReading = _exSource==='reading';
+  const readingChoices = isReading ? exReadingChoicesFor(selTopics) : [];
 
   box.innerHTML = `
     <h3 style="margin-top:0">📤 Xuất danh sách học liệu</h3>
-    <p>Xuất từ vựng, collocation, câu ví dụ hoặc từ vựng trong bài đọc ra file để in hoặc nhập sang app khác (Quizlet, Anki…), hoặc xuất PDF để in trực tiếp. Chọn nguồn dữ liệu, chủ đề, đặc tính muốn hiện và định dạng bên dưới.</p>
+    <p>Xuất từ vựng, collocation, câu ví dụ hoặc bài đọc ra file để in hoặc nhập sang app khác (Quizlet, Anki, Word…), hoặc xuất PDF để in trực tiếp. Chọn nguồn dữ liệu, chủ đề, (với bài đọc: chọn từng bài cụ thể nếu muốn), đặc tính muốn hiện và định dạng bên dưới.</p>
     <div class="rd-filters" id="exSourceChips">
       <button class="rd-chip ${_exSource==='vocab'?'active':''}" data-src="vocab">📖 Từ vựng<b>${VOCAB.length}</b></button>
       <button class="rd-chip ${_exSource==='colloc'?'active':''}" data-src="colloc">🧩 Collocation<b>${COLLOCATIONS.length}</b></button>
@@ -30559,6 +30790,12 @@ function renderExportBox(){
       <button class="rd-chip ${!selTopics.length?'active':''}" data-t="__all__">Tất cả<b>${exSourceCount(_exSource)}</b></button>
       ${topics.map(t=>`<button class="rd-chip ${selTopics.includes(t)?'active':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}
     </div>
+    ${isReading ? `
+    <p style="margin:12px 0 6px;font-weight:600">Bài đọc cụ thể (bỏ trống = tất cả bài trong chủ đề đã chọn)</p>
+    <div class="rd-filters" id="exReadingChips">
+      <button class="rd-chip ${!_exReadingIds.length?'active':''}" data-id="__all__">Tất cả<b>${readingChoices.length}</b></button>
+      ${readingChoices.map(r=>`<button class="rd-chip ${_exReadingIds.includes(r.id)?'active':''}" data-id="${esc(r.id)}">${esc('Passage '+r.psg+' Test '+r.test+' - '+(r.title||r.id))}</button>`).join('')}
+    </div>` : ''}
     <p style="margin:12px 0 6px;font-weight:600">Đặc tính muốn hiện</p>
     <div class="rd-filters" id="exFieldChips">
       ${fieldDefs.map(f=>`<button class="rd-chip ${selFields.has(f.key)?'active':''}" data-f="${f.key}">${esc(f.label)}</button>`).join('')}
@@ -30567,6 +30804,12 @@ function renderExportBox(){
     <div class="rd-filters" id="exFormatChips">
       ${EX_FORMATS.map(([k,label])=>`<button class="rd-chip ${_exFormat===k?'active':''}" data-fmt="${k}">${esc(label)}</button>`).join('')}
     </div>
+    ${(isReading && (_exFormat==='docx' || _exFormat==='pdf')) ? `
+    <p style="margin:12px 0 6px;font-weight:600">Kiểu trình bày (Word/PDF)</p>
+    <div class="rd-filters" id="exLayoutChips">
+      <button class="rd-chip ${!_exPlainText?'active':''}" data-plain="0">📋 Dạng bảng</button>
+      <button class="rd-chip ${_exPlainText?'active':''}" data-plain="1">📄 Văn bản thuần (không bảng)</button>
+    </div>` : ''}
     <div class="backup-actions" style="margin-top:14px">
       <button class="btn primary" id="exportListBtn">⬇️ Xuất danh sách (${exRowsFor(_exSource).length} mục)</button>
     </div>
@@ -30584,9 +30827,24 @@ function renderExportBox(){
         const i = arr.indexOf(t);
         if(i>=0) arr.splice(i,1); else arr.push(t);
       }
+      _exReadingIds.length = 0; // đổi chủ đề thì bỏ chọn bài đọc cụ thể cũ
       renderExportBox();
     };
   });
+  const readingChipsBox = box.querySelector('#exReadingChips');
+  if(readingChipsBox){
+    readingChipsBox.querySelectorAll('.rd-chip').forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.dataset.id;
+        if(id==='__all__'){ _exReadingIds.length = 0; }
+        else{
+          const i = _exReadingIds.indexOf(id);
+          if(i>=0) _exReadingIds.splice(i,1); else _exReadingIds.push(id);
+        }
+        renderExportBox();
+      };
+    });
+  }
   box.querySelectorAll('#exFieldChips .rd-chip').forEach(btn=>{
     btn.onclick = ()=>{
       const f = btn.dataset.f;
@@ -30598,6 +30856,12 @@ function renderExportBox(){
   box.querySelectorAll('#exFormatChips .rd-chip').forEach(btn=>{
     btn.onclick = ()=>{ _exFormat = btn.dataset.fmt; renderExportBox(); };
   });
+  const layoutBox = box.querySelector('#exLayoutChips');
+  if(layoutBox){
+    layoutBox.querySelectorAll('.rd-chip').forEach(btn=>{
+      btn.onclick = ()=>{ _exPlainText = btn.dataset.plain==='1'; renderExportBox(); };
+    });
+  }
   document.getElementById('exportListBtn').onclick = doExportList;
 }
 
@@ -30902,6 +31166,7 @@ refreshStarUI();
    ============================================================ */
 let _rdCur = null, _rdBook = 'all', _rdQuery = '', _rdInit = false;
 let _rdEditMode = false, _rdSelText = '';
+let _rdSelTipLocked = false; /* true khi form nhập ghi chú đang mở, tránh bị selectionchange/click ngoài đóng mất */
 
 function rdEsc(t){ return esc(String(t==null?'':t)); }
 
@@ -33886,9 +34151,15 @@ document.addEventListener('click', e=>{
   tip.className = 'rd-pop rd-seltip'; tip.id = 'rdSelTip';
   document.body.appendChild(tip);
 }})();
-function rdHideSelTip(){ const t=document.getElementById('rdSelTip'); if(t) t.classList.remove('on'); }
+function rdHideSelTip(){ const t=document.getElementById('rdSelTip'); if(t) t.classList.remove('on'); _rdSelTipLocked = false; }
+/* Thiết bị cảm ứng (điện thoại/tablet): trình duyệt tự hiện menu "Chép/Chia sẻ/Chọn tất cả" ngay trên
+   vùng bôi chọn, đè lên popup nổi thông thường. Trên các thiết bị này ta neo thanh công cụ xuống đáy
+   màn hình thay vì đặt cạnh vùng chọn, để không bị menu của trình duyệt che mất. */
+const _rdIsTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || matchMedia('(pointer:coarse)').matches);
 function rdPositionSelTip(rect){
   const tip = document.getElementById('rdSelTip');
+  if(_rdIsTouch){ tip.classList.add('rd-seltip-dock'); return; }
+  tip.classList.remove('rd-seltip-dock');
   const pr = tip.getBoundingClientRect();
   let left = rect.left + rect.width/2 - pr.width/2;
   left = Math.max(10, Math.min(left, innerWidth - pr.width - 10));
@@ -33898,7 +34169,7 @@ function rdPositionSelTip(rect){
   tip.style.top  = top+'px';
 }
 function rdSelToolbar(){
-  if(!_rdEditMode) return;
+  if(!_rdEditMode || _rdSelTipLocked) return;
   const art = document.getElementById('rdArticle');
   const sel = window.getSelection();
   if(!sel || sel.isCollapsed || sel.rangeCount===0){ rdHideSelTip(); return; }
@@ -33924,6 +34195,15 @@ document.addEventListener('mouseup', e=>{
 document.addEventListener('touchend', e=>{
   if(!_rdEditMode || e.target.closest('#rdSelTip')) return;
   setTimeout(rdSelToolbar, 10);
+});
+/* Dự phòng cho di động: một số trình duyệt (đặc biệt khi chọn từ bằng double-tap/kéo tay cầm chọn)
+   không phát sự kiện touchend trên trang khi thao tác chọn văn bản được hệ điều hành xử lý riêng.
+   selectionchange luôn phát ra đáng tin cậy hơn trong các trường hợp đó, nên dùng thêm làm dự phòng. */
+let _rdSelChangeT = null;
+document.addEventListener('selectionchange', ()=>{
+  if(!_rdEditMode) return;
+  clearTimeout(_rdSelChangeT);
+  _rdSelChangeT = setTimeout(rdSelToolbar, _rdIsTouch ? 220 : 10);
 });
 document.addEventListener('click', e=>{
   const path = e.composedPath ? e.composedPath() : [e.target];
@@ -33954,6 +34234,7 @@ function rdSelCopy(){
 function rdSelNote(){
   const text = _rdSelText;
   if(!text) return;
+  _rdSelTipLocked = true;
   const tip = document.getElementById('rdSelTip');
   const preview = text.length>160 ? text.slice(0,160)+'…' : text;
   tip.innerHTML = `
@@ -33999,7 +34280,7 @@ function rdSelToNotebook(){
 const NOTEBOOK_KEY = 'vocab_notebook_v1';
 function loadNotebook(){ try{ return JSON.parse(localStorage.getItem(NOTEBOOK_KEY)) || {}; }catch(e){ return {}; } }
 function saveNotebook(nb){ try{ localStorage.setItem(NOTEBOOK_KEY, JSON.stringify(nb)); }catch(e){} }
-function notebookAddLine(text, note, source, readingId, hidden){
+function notebookAddLine(text, note, source, readingId, hidden, manual){
   if(!text) return;
   const nb = loadNotebook();
   const day = todayKey();
@@ -34007,10 +34288,30 @@ function notebookAddLine(text, note, source, readingId, hidden){
   nb[day].unshift({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
     time: new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}),
-    text, note: note||'', source: source||'', readingId: readingId||'', hidden: !!hidden
+    text, note: note||'', source: source||'', readingId: readingId||'', hidden: !!hidden, manual: !!manual,
+    pinned: false, color: ''
   });
   saveNotebook(nb);
   renderNotebook();
+}
+/* Tạo ghi chú riêng, không lấy từ bài đọc */
+function notebookToggleNewForm(show){
+  const box = document.getElementById('notebookNewForm');
+  if(!box) return;
+  const willShow = (show===undefined) ? (box.style.display==='none') : !!show;
+  box.style.display = willShow ? '' : 'none';
+  if(willShow){
+    const ta = document.getElementById('notebookNewInput');
+    if(ta){ ta.value=''; setTimeout(()=>ta.focus(), 30); }
+  }
+}
+function notebookSaveManual(){
+  const ta = document.getElementById('notebookNewInput');
+  const text = ta ? ta.value.trim() : '';
+  if(!text){ toast('Hãy nhập nội dung ghi chú'); return; }
+  notebookAddLine(text, '', 'Ghi chú tự tạo', '', false, true);
+  toast('📝 Đã tạo ghi chú mới');
+  notebookToggleNewForm(false);
 }
 function notebookDeleteLine(day, id){
   const nb = loadNotebook();
@@ -34026,6 +34327,52 @@ function notebookClearAll(){
   saveNotebook({});
   renderNotebook();
   toast('Đã xoá toàn bộ sổ ghi chú');
+}
+/* ---------- Sửa ghi chú ---------- */
+let _nbEditKey = null; /* "day|id" của mục đang sửa, chỉ 1 mục tại 1 thời điểm */
+function notebookStartEdit(day, id){
+  _nbEditKey = day + '|' + id;
+  renderNotebook();
+}
+function notebookCancelEdit(){
+  _nbEditKey = null;
+  renderNotebook();
+}
+function notebookSaveEdit(day, id){
+  const nb = loadNotebook();
+  const item = (nb[day]||[]).find(x=>x.id===id);
+  if(!item) return;
+  const textEl = document.getElementById('nbEditText_'+id);
+  const noteEl = document.getElementById('nbEditNote_'+id);
+  const newText = textEl ? textEl.value.trim() : item.text;
+  const newNote = noteEl ? noteEl.value.trim() : item.note;
+  if(!newText){ toast('Nội dung không được để trống'); return; }
+  item.text = newText;
+  item.note = newNote;
+  saveNotebook(nb);
+  _nbEditKey = null;
+  renderNotebook();
+  toast('💾 Đã lưu chỉnh sửa');
+}
+/* ---------- Ghim & màu sắc ---------- */
+const NB_COLORS = ['#fff4b8','#ffd6d6','#d7f5db','#d6e9ff','#efd9ff','#ffe3c2','#e4e4e4'];
+function notebookTogglePin(day, id){
+  const nb = loadNotebook();
+  const item = (nb[day]||[]).find(x=>x.id===id);
+  if(!item) return;
+  item.pinned = !item.pinned;
+  if(item.pinned && !item.color) item.color = NB_COLORS[0];
+  saveNotebook(nb);
+  renderNotebook();
+  toast(item.pinned ? '📌 Đã ghim ghi chú' : '📌 Đã bỏ ghim');
+}
+function notebookSetColor(day, id, color){
+  const nb = loadNotebook();
+  const item = (nb[day]||[]).find(x=>x.id===id);
+  if(!item) return;
+  item.color = color;
+  saveNotebook(nb);
+  renderNotebook();
 }
 function notebookDayLabel(day){
   const p = day.split('-');
@@ -34056,16 +34403,70 @@ function rdCopyText(text, cb){
     navigator.clipboard.writeText(text).then(cb).catch(()=>{ rdSelCopyFallback(text); cb(); });
   } else { rdSelCopyFallback(text); cb(); }
 }
+/* HTML phần sửa nội dung (dùng chung cho ô ngày & ô ghim) */
+function nbEditFormHtml(day, item){
+  return `
+    <div class="nb-edit-box">
+      <textarea id="nbEditText_${item.id}" rows="2">${rdEsc(item.text)}</textarea>
+      <textarea class="nb-edit-note" id="nbEditNote_${item.id}" rows="2" placeholder="Ghi chú (tuỳ chọn)…">${rdEsc(item.note||'')}</textarea>
+      <div class="nb-edit-acts">
+        <button class="btn primary" onclick="notebookSaveEdit('${day}','${item.id}')">💾 Lưu</button>
+        <button class="btn" onclick="notebookCancelEdit()">Huỷ</button>
+      </div>
+    </div>`;
+}
+function nbColorDotsHtml(day, item){
+  return `<div class="nb-pin-colors">${NB_COLORS.map(c=>
+    `<button class="nb-color-dot${item.color===c?' active':''}" style="background:${c}" title="Chọn màu" onclick="notebookSetColor('${day}','${item.id}','${c}')"></button>`
+  ).join('')}</div>`;
+}
 function renderNotebook(){
   const el = document.getElementById('notebookList');
+  const pinEl = document.getElementById('notebookPinboard');
   if(!el) return;
   const nb = loadNotebook();
   const visible = {};
-  Object.keys(nb).forEach(day=>{
+  const pinnedFlat = [];
+  Object.keys(nb).sort((a,b)=>b.localeCompare(a)).forEach(day=>{
     const items = (nb[day]||[]).filter(item=>!item.hidden);
     if(items.length) visible[day] = items;
+    items.forEach(item=>{ if(item.pinned) pinnedFlat.push({day, item}); });
   });
   const days = Object.keys(visible).sort((a,b)=>b.localeCompare(a));
+
+  /* ---- Bảng ghim: các ô nổi riêng, tùy chỉnh màu ---- */
+  if(pinEl){
+    if(!pinnedFlat.length){
+      pinEl.innerHTML = '';
+    } else {
+      pinEl.innerHTML = `
+        <div class="nb-pinboard">
+          <div class="nb-pin-head">📌 Ghi chú đã ghim</div>
+          <div class="nb-pin-grid">
+            ${pinnedFlat.map(({day,item})=>{
+              const editing = _nbEditKey === (day+'|'+item.id);
+              return `
+              <div class="nb-pin-card" style="background:${item.color||NB_COLORS[0]}">
+                <div class="nb-pin-actions">
+                  ${editing ? '' : `<button title="Sửa" onclick="notebookStartEdit('${day}','${item.id}')">✏️</button>`}
+                  <button title="Bỏ ghim" onclick="notebookTogglePin('${day}','${item.id}')">📌</button>
+                  <button title="Xoá" onclick="notebookDeleteLine('${day}','${item.id}')">✕</button>
+                </div>
+                ${editing ? nbEditFormHtml(day, item) : `
+                  ${item.manual
+                    ? `<div class="nb-pin-text nb-manual">🖊️ ${rdEsc(item.text)}</div>`
+                    : `<div class="nb-pin-text">"${rdEsc(item.text)}"</div>`}
+                  ${item.note ? `<div class="nb-pin-note">📝 ${rdEsc(item.note)}</div>` : ''}
+                  <div class="nb-pin-meta">${notebookDayLabel(day)}${item.time?' · '+item.time:''}${item.source?' · '+rdEsc(item.source):''}</div>
+                  ${nbColorDotsHtml(day, item)}
+                `}
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+    }
+  }
+
   if(!days.length){
     el.innerHTML = '<div class="rd-empty">Chưa có ghi chú nào. Hãy bật <b>Edit</b> trong bài đọc (tab Reading) và bôi chọn văn bản để thêm.</div>';
     return;
@@ -34080,18 +34481,28 @@ function renderNotebook(){
         </div>
       </div>
       <div class="nb-lines">
-        ${visible[day].map(item => `
+        ${visible[day].map(item => {
+          const editing = _nbEditKey === (day+'|'+item.id);
+          return `
           <div class="nb-line">
             <div class="nb-line-main">
-              <div class="nb-quote">"${rdEsc(item.text)}"</div>
-              ${item.note ? `<div class="nb-note">📝 ${rdEsc(item.note)}</div>` : ''}
-              <div class="nb-meta">${item.time||''}${item.source?' · '+rdEsc(item.source):''}</div>
+              ${editing ? nbEditFormHtml(day, item) : `
+                ${item.manual
+                  ? `<div class="nb-quote nb-manual">🖊️ ${rdEsc(item.text)}</div>`
+                  : `<div class="nb-quote">"${rdEsc(item.text)}"</div>`}
+                ${item.note ? `<div class="nb-note">📝 ${rdEsc(item.note)}</div>` : ''}
+                <div class="nb-meta">${item.pinned?'<span class="nb-pin-badge">📌</span> ':''}${item.time||''}${item.source?' · '+rdEsc(item.source):''}</div>
+              `}
             </div>
+            ${editing ? '' : `
             <div class="nb-line-acts">
+              <button class="nb-pin1${item.pinned?' on':''}" title="${item.pinned?'Bỏ ghim':'Ghim'}" onclick="notebookTogglePin('${day}','${item.id}')">📌</button>
+              <button class="nb-edit1" title="Sửa" onclick="notebookStartEdit('${day}','${item.id}')">✏️</button>
               <button class="nb-copy1" title="Sao chép dòng này" onclick="notebookCopyLine('${day}','${item.id}')">📋</button>
               <button class="nb-del" title="Xoá mục này" onclick="notebookDeleteLine('${day}','${item.id}')">✕</button>
-            </div>
-          </div>`).join('')}
+            </div>`}
+          </div>`;
+        }).join('')}
       </div>
     </div>`).join('');
 }
