@@ -1849,25 +1849,35 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .st-tr-feedback .btn{ margin-top:12px; }
 /* ---- Listening dùng chung khung .topic-grid / .tp-card với các thẻ danh mục
    khác (Writing&Speaking, Theo chủ đề, Reading, Từ mới) để đồng bộ giao diện.
-   Chỉ còn phần riêng: hàng 4 nút Test bên trong mỗi thẻ Cambridge. ---- */
+   Hàng 4 Test bên trong mỗi thẻ Cambridge giờ dùng lại đúng kiểu hàng
+   .tp-sub (icon + thanh tiến độ + số liệu) như các hàng chủ đề nhỏ, thay vì
+   khối nút rời — để toàn bộ các tab Từ vựng nhìn đồng nhất 1 kiểu. ---- */
 .ls-meta{ display:flex; align-items:center; justify-content:space-between; gap:14px;
   flex-wrap:wrap; margin-bottom:14px; }
 .ls-meta p{ margin:0; font-size:13px; color:var(--muted); }
 .ls-meta p b{ color:var(--ink); font-family:var(--font-heading); }
 .ls-search{ min-width:240px; }
-.ls-card-empty{ font-size:12px; color:var(--muted); padding:2px 0 4px; }
-.ls-tests{ display:grid; grid-template-columns:repeat(4,1fr); gap:5px;
-  margin-top:9px; padding-top:9px; border-top:1px solid var(--line); }
-.ls-test{ font-family:inherit; border:1px solid var(--line); background:var(--card-sunken);
-  border-radius:8px; padding:6px 4px; cursor:pointer; display:flex; flex-direction:column;
-  align-items:center; gap:1px; transition:.15s; color:var(--ink); }
-.ls-test b{ font-size:11.5px; font-weight:700; }
-.ls-test span{ font-size:9.5px; color:var(--muted); font-family:var(--font-mono); }
-.ls-test:hover{ border-color:var(--tp-c,var(--accent)); transform:translateY(-1px); }
-.ls-test.ok{ background:color-mix(in srgb, var(--tp-c,var(--accent)) 12%, var(--card)); border-color:var(--tp-c,var(--accent)); }
-.ls-test.ok span{ color:var(--tp-c,var(--accent)); font-weight:700; }
-.ls-test.empty{ opacity:.55; }
-@media(max-width:480px){ .ls-tests{ grid-template-columns:repeat(2,1fr); } }
+/* .topic-grid mặc định kéo dãn (stretch) mọi thẻ trong cùng 1 hàng lưới cho
+   cao bằng thẻ cao nhất hàng đó — với 21 thẻ Cambridge xen kẽ đầy/rỗng, điều
+   này khiến thẻ rỗng bị kéo to lệch hẳn. Cho riêng lưới Listening tự co theo
+   đúng nội dung của từng thẻ để các thẻ cao đều, không phụ thuộc thẻ bên cạnh. */
+#lsGrid.topic-grid{ align-items:start; }
+.ls-tests{ display:flex; flex-direction:column; gap:1px; margin-top:7px; padding-top:7px;
+  border-top:1px solid color-mix(in srgb,var(--tp-c,var(--line)) 18%,var(--line)); }
+.ls-test{ display:flex; align-items:center; gap:8px; width:calc(100% + 12px); margin:0 -6px;
+  border:none; background:none; border-radius:8px; padding:5px 6px; cursor:pointer;
+  font:inherit; text-align:left; color:var(--ink); transition:background .12s; }
+.ls-test:hover{ background:color-mix(in srgb,var(--card) 55%,#fff 45%); }
+.ls-test-ico{ font-size:9.5px; font-weight:800; flex-shrink:0; width:18px; height:18px; border-radius:6px;
+  display:grid; place-items:center; color:var(--ink-soft);
+  background:color-mix(in srgb,var(--tp-c,var(--muted)) 15%,var(--card-sunken)); }
+.ls-test-name{ font-size:12px; color:var(--ink-soft); width:52px; flex-shrink:0; }
+.ls-test:hover .ls-test-name{ color:var(--tp-c,var(--accent)); text-decoration:underline; }
+.ls-test-bar{ flex:1; height:5px; border-radius:99px; background:var(--paper-2); border:1px solid var(--line); overflow:hidden; min-width:26px; }
+.ls-test-fill{ height:100%; background:var(--tp-c,var(--green,#059669)); border-radius:99px; transition:width .6s; }
+.ls-test-n{ font-size:10.5px; color:var(--muted); font-weight:700; width:46px; text-align:right; flex-shrink:0; font-family:var(--font-heading); }
+.ls-test.ls-test--empty{ opacity:.6; }
+.ls-test.ls-test--empty .ls-test-n{ color:var(--muted); font-weight:600; }
 .rd-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
 .rd-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
   padding:16px 18px; cursor:pointer; text-align:left;
@@ -31344,6 +31354,13 @@ function lsBookWords(book){
   return VOCAB.filter(v => v.listening && v.listening.some(k => keys.includes(k)));
 }
 
+/* Từ của riêng 1 đề Cam-Test — dùng để vẽ thanh tiến độ mini cho từng
+   hàng Test, cùng kiểu với thanh tiến độ của các hàng chủ đề nhỏ (.tp-sub). */
+function lsTestWords(book, test){
+  const key = lsKey(book, test);
+  return VOCAB.filter(v => v.listening && v.listening.includes(key));
+}
+
 function renderListeningLib(){
   const grid = document.getElementById('lsGrid');
   if(!grid) return;
@@ -31353,7 +31370,10 @@ function renderListeningLib(){
     `21 quyển × 4 đề = 84 bộ · <b>${totalWords}</b> từ đã gán`;
 
   const q = _lsQuery.trim();
-  const books = q ? LISTENING_BOOKS.filter(b => String(b).includes(q)) : LISTENING_BOOKS;
+  const books = (q ? LISTENING_BOOKS.filter(b => String(b).includes(q)) : LISTENING_BOOKS.slice())
+    // Quyển đã gán từ lên trước (theo số từ giảm dần), quyển trống dồn xuống dưới,
+    // vẫn giữ thứ tự Cam1→Cam21 bên trong từng nhóm để dễ dò theo số quyển.
+    .sort((a,b) => lsBookTotal(b) - lsBookTotal(a) || a - b);
 
   if(!books.length){
     grid.innerHTML = `<div class="dt-empty"><div class="dt-empty-ic">🔍</div>
@@ -31362,9 +31382,12 @@ function renderListeningLib(){
   }
 
   grid.innerHTML = books.map(book=>{
+    // Luôn tính tiến độ qua topicProgress() — giống hệt mọi thẻ .tp-card khác
+    // (Writing&Speaking / Theo chủ đề / Reading / Từ mới) — để thanh tiến độ +
+    // chú thích luôn hiện ra đồng nhất, kể cả khi quyển chưa có từ nào (0%).
     const total = lsBookTotal(book);
-    const P = total ? topicProgress(lsBookWords(book)) : null;
-    const pct = P ? Math.round(P.learned / P.total * 100) : 0;
+    const P = topicProgress(lsBookWords(book));
+    const pct = total ? Math.round(P.learned / P.total * 100) : 0;
     return `
     <div class="tp-card" data-color="${topicColorIndex('Cambridge '+book)}">
       <div class="tp-head">
@@ -31373,27 +31396,31 @@ function renderListeningLib(){
           <span class="tp-macro-txt">Cambridge ${book}</span>
         </div>
         <div class="tp-head-right">
-          <span class="tp-pct">${total ? pct+'%' : '—'}</span>
+          <span class="tp-pct">${pct}%</span>
         </div>
       </div>
-      ${total ? `
       <div class="tp-macro-bar">
-        <div class="tp-seg learned" style="width:${P.learned/P.total*100}%"></div>
-        <div class="tp-seg doing" style="width:${P.doing/P.total*100}%"></div>
+        <div class="tp-seg learned" style="width:${total?P.learned/P.total*100:0}%"></div>
+        <div class="tp-seg doing" style="width:${total?P.doing/P.total*100:0}%"></div>
       </div>
       <div class="tp-legend">
         <span><i class="lg learned"></i>${P.learned} đã thuộc</span>
         <span><i class="lg doing"></i>${P.doing} đang học</span>
         <span><i class="lg newn"></i>${P.newN} chưa học</span>
         <span class="tp-total">${total} từ</span>
-      </div>` : `<div class="ls-card-empty">Chưa gán từ nào cho quyển này</div>`}
+      </div>
       <div class="ls-tests">
         ${LISTENING_TESTS.map(t=>{
-          const n = lsWordCount(book, t);
-          return `<button class="ls-test ${n?'ok':'empty'}" onclick="openListeningSet(${book},${t})"
-                    title="${lsKey(book,t)}">
-                    <b>Test ${t}</b>
-                    <span>${n ? `${n} từ` : 'trống'}</span>
+          const tw = lsTestWords(book, t);
+          const n = tw.length;
+          const tp = n ? topicProgress(tw) : null;
+          const tpct = tp ? Math.round(tp.learned / tp.total * 100) : 0;
+          return `<button class="ls-test ${n?'':'ls-test--empty'}" onclick="openListeningSet(${book},${t})"
+                    title="${lsKey(book,t)}: ${n ? `${n} từ — ${tp.learned} đã thuộc` : 'chưa gán từ nào'}">
+                    <span class="ls-test-ico">T${t}</span>
+                    <span class="ls-test-name">Test ${t}</span>
+                    <span class="ls-test-bar"><span class="ls-test-fill" style="width:${tpct}%"></span></span>
+                    <span class="ls-test-n">${n ? `${tp.learned}/${n}` : 'trống'}</span>
                   </button>`;
         }).join('')}
       </div>
