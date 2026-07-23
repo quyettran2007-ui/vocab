@@ -31283,6 +31283,21 @@ function mergeVocabValue(key, localRaw, importedRaw){
       if(merged.length>2000) merged.splice(0, merged.length-2000);
       return JSON.stringify(merged);
     }
+    if(key === NOTEBOOK_KEY){
+      /* Sổ ghi chú: gộp theo từng ngày, dedupe theo id — không ghi đè,
+         không nhân đôi mục trùng khi gộp cùng 1 file backup nhiều lần. */
+      const a = JSON.parse(localRaw)||{}, b = JSON.parse(importedRaw)||{};
+      const out = {};
+      const allDays = new Set([...Object.keys(a), ...Object.keys(b)]);
+      allDays.forEach(day=>{
+        const listA = a[day]||[], listB = b[day]||[];
+        const have = new Set(listA.map(x=>x.id));
+        const merged = listA.slice();
+        listB.forEach(x=>{ if(!have.has(x.id)){ have.add(x.id); merged.push(x); } });
+        out[day] = merged;
+      });
+      return JSON.stringify(out);
+    }
     if(key === 'vocab_st_translate_done'){
       const a = JSON.parse(localRaw)||{}, b = JSON.parse(importedRaw)||{};
       const out = {...a};
@@ -34547,8 +34562,11 @@ document.addEventListener('click', e=>{
   if(inTip || inArticle) return;
   rdHideSelTip();
 });
-window.addEventListener('scroll', ()=>rdHideSelTip(), {passive:true});
-window.addEventListener('resize', rdHideSelTip);
+/* Không tự đóng khi đang mở form nhập ghi chú (_rdSelTipLocked): trên di động,
+   chạm vào ô nhập để gõ sẽ làm bàn phím ảo trồi lên, kéo theo sự kiện resize/scroll
+   của trình duyệt — nếu không chặn ở đây thì popup ghi chú sẽ biến mất ngay khi vừa mở. */
+window.addEventListener('scroll', ()=>{ if(!_rdSelTipLocked) rdHideSelTip(); }, {passive:true});
+window.addEventListener('resize', ()=>{ if(!_rdSelTipLocked) rdHideSelTip(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') rdHideSelTip(); });
 
 function rdSelCopyFallback(text){
