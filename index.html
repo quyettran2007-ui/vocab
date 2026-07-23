@@ -2950,6 +2950,13 @@ body.page-fs { overflow-x:hidden; }
 
 .cl-overview-grid{ grid-template-columns:repeat(3,1fr); margin-bottom:10px; }
 @media(max-width:520px){ .cl-overview-grid{ grid-template-columns:repeat(2,1fr); } }
+/* Thu nhỏ để 6 ô thống kê nằm gọn 1 dòng */
+.cl-overview-grid-1row{ grid-template-columns:repeat(6,1fr); gap:6px; }
+.cl-overview-grid-1row .prog-stat{ padding:6px 4px; border-radius:8px; }
+.cl-overview-grid-1row .prog-stat b{ font-size:14px; line-height:1.15; }
+.cl-overview-grid-1row .prog-stat span{ font-size:9.5px; line-height:1.2; display:block; }
+@media(max-width:700px){ .cl-overview-grid-1row{ grid-template-columns:repeat(3,1fr); } }
+@media(max-width:420px){ .cl-overview-grid-1row{ grid-template-columns:repeat(2,1fr); } }
 .cl-overview-track{ display:flex; width:100%; height:12px; border-radius:7px; overflow:hidden;
   background:var(--card-sunken); border:1px solid var(--line); }
 
@@ -27789,8 +27796,9 @@ function openCollocFromSearch(id){
   if(!c) return;
   document.querySelector('.tab-btn[data-mode="structures"]').click();
   _stMode = 'colloc';
-  _clTopic = 'all';
-  _clQuery = c.phrase;
+  _clStatTab = 'all';
+  _clStatTopicFilter = null;
+  _clStatQuery = c.phrase;
   setTimeout(()=>{
     const root = document.getElementById('stRoot');
     if(!root) return;
@@ -31905,8 +31913,6 @@ let _stInit = false;
 let _stMode = 'lib';         // 'lib' | 'quiz' | 'translate' | 'colloc'
 let _stTopic = 'all';
 let _stQuery = '';
-let _clTopic = 'all';
-let _clQuery = '';
 let _clSortAZ = false;
 let _allQuery = '';
 let _allSearchT = null;
@@ -32295,67 +32301,120 @@ function stCardHTML(s){
    được sẽ tô đậm (giống thư viện cấu trúc).
    ============================================================ */
 function stRenderColloc(root){
-  const q = _clQuery.trim().toLowerCase();
-  const bm = clLoadBookmarks();
   const boxes = clLoadTypeBoxes();
-  const hits = COLLOCATIONS.filter(c=>{
-    if(_clTopic === 'bookmarked' && !bm[c.id]) return false;
-    else if(_clTopic === 'mastered' && clStatusOf(c, boxes)!=='mastered') return false;
-    else if(_clTopic !== 'all' && _clTopic !== 'bookmarked' && _clTopic !== 'mastered' && c.topic !== _clTopic) return false;
+  const overall = clTypeStats(COLLOCATIONS);
+
+  const byTopic = COLLOC_TOPICS.map(t=>{
+    const pool = COLLOCATIONS.filter(c=>c.topic===t);
+    const s = clTypeStats(pool);
+    return { topic:t, ...s };
+  }).sort((a,b)=> b.total-a.total);
+
+  const q = _clStatQuery.trim().toLowerCase();
+  let list = COLLOCATIONS.filter(c=>{
+    if(_clStatTab!=='all' && clStatusOf(c, boxes)!==_clStatTab) return false;
+    if(_clStatTopicFilter && c.topic!==_clStatTopicFilter) return false;
     if(!q) return true;
     return c.phrase.toLowerCase().includes(q) || c.meaning.toLowerCase().includes(q)
         || (c.synonyms||[]).some(s=>s.toLowerCase().includes(q));
   });
-  const bmCount = Object.keys(bm).length;
-  const masteredCount = COLLOCATIONS.filter(c=>clStatusOf(c, boxes)==='mastered').length;
-  if(_clSortAZ) hits.sort((a,b)=> a.phrase.localeCompare(b.phrase));
+  list = list.slice();
+  if(_clSortAZ) list.sort((a,b)=> a.phrase.localeCompare(b.phrase));
+
+  const TAB_LABEL = { all:'Tất cả', unseen:'Chưa học', learning:'Đang luyện', mastered:'Đã thuộc' };
+  const statusIcon = { unseen:'⚪', learning:'🟡', mastered:'✅' };
 
   root.innerHTML = `
     ${stModeBar('colloc')}
     <div class="st-head">
       <div>
         <h2>🧩 Collocation cho Writing</h2>
-        <p>${COLLOCATIONS.length} collocation · kèm nghĩa và từ/cụm đồng nghĩa để thay thế khi viết</p>
-      </div>
-      <div class="st-tr-head-btns">
-        <button class="st-stats-btn ${_clSortAZ?'active':''}" id="clSortAZBtn" title="Sắp xếp theo bảng chữ cái A→Z">🔤 A→Z</button>
-        <button class="st-stats-btn" id="clFlashcardBtn">🎴 Học Flashcard</button>
-        <button class="st-stats-btn" id="clTypingModeBtn">⌨️ Gõ từ</button>
-        <button class="st-stats-btn" id="clStatsBtn">📊 Thống kê</button>
+        <p>${overall.total} collocation · tổng quan tiến độ &amp; danh sách theo trạng thái Gõ từ</p>
       </div>
     </div>
-    <div class="st-head" style="margin-top:8px">
+    <div class="st-tr-head-btns" style="justify-content:center;width:100%;margin:10px 0">
+      <button class="st-stats-btn" id="clFlashcardBtn">🎴 Học Flashcard</button>
+      <button class="st-stats-btn" id="clTypingModeBtn">⌨️ Gõ từ</button>
+      <button class="st-stats-btn" id="clStatResetBtn" title="Xoá lịch sử &amp; tiến độ Gõ từ Collocation">🗑 Xoá lịch sử</button>
+    </div>
+
+    <div class="cl-overview" style="margin-top:10px;margin-bottom:14px">
+      <div class="prog-stats-grid cl-overview-grid cl-overview-grid-1row">
+        <div class="prog-stat" data-c="6"><b>${overall.total}</b><span>Tổng cụm</span></div>
+        <div class="prog-stat" data-c="5"><b>${overall.mastered}</b><span>✅ Đã thuộc</span></div>
+        <div class="prog-stat" data-c="3"><b>${overall.learning}</b><span>🟡 Đang luyện</span></div>
+        <div class="prog-stat" data-c="10"><b>${overall.unseen}</b><span>⚪ Chưa học</span></div>
+        <div class="prog-stat" data-c="2"><b>${overall.attempts}</b><span>📝 Lượt trả lời</span></div>
+        <div class="prog-stat" data-c="1"><b>${overall.acc!==null?overall.acc+'%':'—'}</b><span>Độ chính xác${overall.attempts?` (${overall.correct}✓/${overall.wrong}✗)`:''}</span></div>
+      </div>
+      <div class="cl-overview-track" title="Đã thuộc ${overall.mastered} · Đang luyện ${overall.learning} · Chưa học ${overall.unseen}">
+        <div class="cl-topic-bar-seg mastered" style="width:${overall.total?overall.mastered/overall.total*100:0}%"></div>
+        <div class="cl-topic-bar-seg learning" style="width:${overall.total?overall.learning/overall.total*100:0}%"></div>
+        <div class="cl-topic-bar-seg unseen" style="width:${overall.total?overall.unseen/overall.total*100:0}%"></div>
+      </div>
+    </div>
+
+    <div class="st-head">
       <div class="rd-search">
         <span>🔍</span>
         <input id="clSearch" type="text" placeholder="Tìm collocation, nghĩa, từ đồng nghĩa…" autocomplete="off">
         <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
       </div>
+      <button class="st-stats-btn ${_clSortAZ?'active':''}" id="clSortAZBtn" title="Sắp xếp theo bảng chữ cái A→Z">🔤 A→Z</button>
     </div>
-    <div class="rd-filters" id="clTopicChips">
-      <button class="rd-chip ${_clTopic==='all'?'active':''}" onclick="clFilterTopic('all')">Tất cả<b>${COLLOCATIONS.length}</b></button>
-      <button class="rd-chip ${_clTopic==='bookmarked'?'active':''}" onclick="clFilterTopic('bookmarked')">⭐ Đã đánh dấu<b>${bmCount}</b></button>
-      <button class="rd-chip ${_clTopic==='mastered'?'active':''}" onclick="clFilterTopic('mastered')" title="Đồng bộ với mục Thống kê Gõ từ">✅ Đã thuộc<b>${masteredCount}</b></button>
-      ${COLLOC_TOPICS.map(t=>{
-        const n = COLLOCATIONS.filter(c=>c.topic===t).length;
-        return `<button class="rd-chip ${_clTopic===t?'active':''}" onclick="clFilterTopic('${esc(t)}')">${esc(t)}<b>${n}</b></button>`;
+
+    <div class="rd-filters" id="clStatTabChips">
+      ${Object.keys(TAB_LABEL).map(k=>{
+        const n = k==='all' ? overall.total : (k==='unseen'?overall.unseen:k==='learning'?overall.learning:overall.mastered);
+        return `<button class="rd-chip ${_clStatTab===k?'active':''}" data-tab="${k}">${statusIcon[k]||''} ${TAB_LABEL[k]}<b>${n}</b></button>`;
       }).join('')}
     </div>
-    <div class="st-list cl-list">
-      ${hits.length ? hits.map(c=>clCardHTML(c, boxes)).join('') : `<div class="rd-empty">Không tìm thấy collocation nào khớp “${esc(_clQuery)}”.</div>`}
+
+    <details style="margin:12px 0" id="clTopicListDetails" ${_clTopicListOpen?'open':''}>
+      <summary style="cursor:pointer;font-weight:600">📚 Danh sách chủ đề</summary>
+      <div class="cl-topic-bar-list" style="margin-top:10px">
+        ${byTopic.map((t,i)=>clTopicBarHTML(t,i)).join('')}
+      </div>
+    </details>
+
+    ${_clStatTopicFilter ? `<div class="rd-filters" style="margin-top:6px">
+      <button class="rd-chip active" id="clStatTopicClear">📚 ${esc(_clStatTopicFilter)} ✕</button>
+    </div>` : ''}
+
+    <div class="st-list cl-list" id="clStatList">
+      ${list.length ? list.map(c=>clCardHTML(c, boxes)).join('') : `<div class="rd-empty">Không tìm thấy collocation nào khớp.</div>`}
     </div>`;
 
+  const topicDetailsEl = document.getElementById('clTopicListDetails');
+  if(topicDetailsEl) topicDetailsEl.ontoggle = ()=>{ _clTopicListOpen = topicDetailsEl.open; };
+
+  root.querySelectorAll('#clStatTabChips .rd-chip').forEach(btn=>{
+    btn.onclick = ()=>{ _clStatTab = btn.dataset.tab; stRenderColloc(root); };
+  });
+  root.querySelectorAll('.cl-topic-bar-row').forEach(btn=>{
+    btn.onclick = ()=>{
+      const t = btn.dataset.topic;
+      _clStatTopicFilter = (_clStatTopicFilter===t) ? null : t;
+      stRenderColloc(root);
+      const listEl = document.getElementById('clStatList');
+      if(listEl) listEl.scrollIntoView({behavior:'smooth', block:'start'});
+    };
+  });
+  const topicClearBtn = document.getElementById('clStatTopicClear');
+  if(topicClearBtn) topicClearBtn.onclick = ()=>{ _clStatTopicFilter = null; stRenderColloc(root); };
+
   document.getElementById('clSearch').oninput = e=>{
-    _clQuery = e.target.value;
+    _clStatQuery = e.target.value;
     const pos = e.target.selectionStart;
     stRenderColloc(root);
     const el = document.getElementById('clSearch');
     if(el){ el.focus(); try{ el.setSelectionRange(pos,pos); }catch(_){} }
   };
-  document.getElementById('clSearch').value = _clQuery;
-  document.getElementById('clFlashcardBtn').onclick = ()=> clStartFlashcards(hits.length ? hits : COLLOCATIONS);
-  document.getElementById('clTypingModeBtn').onclick = ()=> clOpenTypingSetup(_clTopic);
-  document.getElementById('clStatsBtn').onclick = ()=> clRenderCollocStats(root);
+  document.getElementById('clSearch').value = _clStatQuery;
+  document.getElementById('clFlashcardBtn').onclick = ()=> clStartFlashcards(list.length ? list : COLLOCATIONS);
+  document.getElementById('clTypingModeBtn').onclick = ()=> clOpenTypingSetup(_clStatTopicFilter || (_clStatTab==='learning' ? 'learning' : 'all'));
   document.getElementById('clSortAZBtn').onclick = ()=>{ _clSortAZ = !_clSortAZ; stRenderColloc(root); };
+  document.getElementById('clStatResetBtn').onclick = clResetTypingProgress;
 
   root.querySelectorAll('.cl-card-speak').forEach(btn=>{
     btn.onclick = ()=> speak(btn.dataset.phrase);
@@ -32370,10 +32429,8 @@ function stRenderColloc(root){
   });
 }
 
-function clFilterTopic(t){ _clTopic = t; stRenderColloc(document.getElementById('stRoot')); }
-
 function clCardHTML(c, boxes){
-  const q = _clQuery.trim();
+  const q = _clStatQuery.trim();
   const isBm = clIsBookmarked(c);
   boxes = boxes || clLoadTypeBoxes();
   const st = clStatusOf(c, boxes);
@@ -32715,6 +32772,7 @@ function clTypeStats(pool){
 let _clStatTab = 'all';      // 'all' | 'unseen' | 'learning' | 'mastered'
 let _clStatQuery = '';
 let _clStatTopicFilter = null; // chủ đề đang lọc khi bấm vào thanh tiến độ, null = tất cả chủ đề
+let _clTopicListOpen = true; // trạng thái đóng/mở khối "Danh sách chủ đề" — giữ nguyên qua các lần render lại (vd khi gõ tìm kiếm)
 
 function clStatusOf(c, boxes){
   const e = boxes[c.id];
@@ -32759,136 +32817,11 @@ function clTopicBarHTML(t, i){
     </button>`;
 }
 
-function clRenderCollocStats(root){
-  const boxes = clLoadTypeBoxes();
-  const overall = clTypeStats(COLLOCATIONS);
-
-  const byTopic = COLLOC_TOPICS.map(t=>{
-    const pool = COLLOCATIONS.filter(c=>c.topic===t);
-    const s = clTypeStats(pool);
-    return { topic:t, ...s };
-  }).sort((a,b)=> b.total-a.total);
-
-  const q = _clStatQuery.trim().toLowerCase();
-  let list = COLLOCATIONS.filter(c=>{
-    if(_clStatTab!=='all' && clStatusOf(c, boxes)!==_clStatTab) return false;
-    if(_clStatTopicFilter && c.topic!==_clStatTopicFilter) return false;
-    if(!q) return true;
-    return c.phrase.toLowerCase().includes(q) || c.meaning.toLowerCase().includes(q);
-  });
-  list = list.slice().sort((a,b)=>a.phrase.localeCompare(b.phrase));
-
-  const TAB_LABEL = { all:'Tất cả', unseen:'Chưa học', learning:'Đang luyện', mastered:'Đã thuộc' };
-  const statusIcon = { unseen:'⚪', learning:'🟡', mastered:'✅' };
-
-  root.innerHTML = `
-    ${stModeBar('colloc')}
-    <div class="st-head">
-      <div>
-        <h2>📊 Thống kê Collocation</h2>
-        <p>Tổng quan tiến độ &amp; danh sách các cụm theo trạng thái Gõ từ.</p>
-      </div>
-      <div class="st-tr-head-btns">
-        <button class="st-stats-btn" id="clStatBackList">← Danh sách Collocation</button>
-        <button class="st-stats-btn" id="clStatGoTyping">⌨️ Vào Gõ từ</button>
-        <button class="st-stats-btn" id="clStatResetBtn" title="Xoá lịch sử &amp; tiến độ Gõ từ Collocation">🗑 Xoá lịch sử</button>
-      </div>
-    </div>
-
-    <div class="cl-overview" style="margin-bottom:14px">
-      <div class="prog-stats-grid cl-overview-grid">
-        <div class="prog-stat" data-c="6"><b>${overall.total}</b><span>Tổng cụm</span></div>
-        <div class="prog-stat" data-c="5"><b>${overall.mastered}</b><span>✅ Đã thuộc</span></div>
-        <div class="prog-stat" data-c="3"><b>${overall.learning}</b><span>🟡 Đang luyện</span></div>
-        <div class="prog-stat" data-c="10"><b>${overall.unseen}</b><span>⚪ Chưa học</span></div>
-        <div class="prog-stat" data-c="2"><b>${overall.attempts}</b><span>📝 Lượt trả lời</span></div>
-        <div class="prog-stat" data-c="1"><b>${overall.acc!==null?overall.acc+'%':'—'}</b><span>Độ chính xác${overall.attempts?` (${overall.correct}✓/${overall.wrong}✗)`:''}</span></div>
-      </div>
-      <div class="cl-overview-track" title="Đã thuộc ${overall.mastered} · Đang luyện ${overall.learning} · Chưa học ${overall.unseen}">
-        <div class="cl-topic-bar-seg mastered" style="width:${overall.total?overall.mastered/overall.total*100:0}%"></div>
-        <div class="cl-topic-bar-seg learning" style="width:${overall.total?overall.learning/overall.total*100:0}%"></div>
-        <div class="cl-topic-bar-seg unseen" style="width:${overall.total?overall.unseen/overall.total*100:0}%"></div>
-      </div>
-    </div>
-
-    <div class="rd-filters" id="clStatTabChips">
-      ${Object.keys(TAB_LABEL).map(k=>{
-        const n = k==='all' ? overall.total : (k==='unseen'?overall.unseen:k==='learning'?overall.learning:overall.mastered);
-        return `<button class="rd-chip ${_clStatTab===k?'active':''}" data-tab="${k}">${statusIcon[k]||''} ${TAB_LABEL[k]}<b>${n}</b></button>`;
-      }).join('')}
-    </div>
-
-    <details style="margin:12px 0" open>
-      <summary style="cursor:pointer;font-weight:600">📚 Thống kê theo chủ đề (${byTopic.length} chủ đề) — bấm vào 1 chủ đề để xem danh sách</summary>
-      <div class="cl-topic-bar-list" style="margin-top:10px">
-        ${byTopic.map((t,i)=>clTopicBarHTML(t,i)).join('')}
-      </div>
-    </details>
-
-    <div class="st-head" style="margin-top:8px">
-      <div class="rd-search">
-        <span>🔍</span>
-        <input id="clStatSearch" type="text" placeholder="Tìm trong danh sách bên dưới…" autocomplete="off">
-        <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
-      </div>
-    </div>
-    ${_clStatTopicFilter ? `<div class="rd-filters" style="margin-top:6px">
-      <button class="rd-chip active" id="clStatTopicClear">📚 ${esc(_clStatTopicFilter)} ✕</button>
-    </div>` : ''}
-
-    <div class="st-list cl-list" id="clStatList">
-      ${list.length ? list.map(c=>{
-        const st = clStatusOf(c, boxes);
-        const e = boxes[c.id];
-        const streak = e ? (e.streak||0) : 0;
-        const ex = clFindExampleSentence(c);
-        return `<div class="st-card cl-card">
-          <div class="st-card-top">
-            <span class="st-topic-tag">${esc(c.topic)}</span>
-          </div>
-          <div class="st-status-line" title="Trạng thái">
-            <span class="st-status-badge st-status-${st}">${statusIcon[st]} ${TAB_LABEL[st]}</span>
-            ${e?`<span class="st-status-streak">🔥 ${streak}/${CL_MASTER_STREAK}</span>
-            <span class="st-status-score"><b class="ok">✓${e.correct||0}</b><b class="bad">✗${e.wrong||0}</b></span>`:''}
-          </div>
-          <div class="st-structure">${esc(c.phrase)}</div>
-          <div class="st-meaning">${esc(c.meaning)}</div>
-          ${ex ? `
-          <div class="cl-example">
-            <div class="cl-ex-en">${_clSpanHtml(ex.en, ex.enSpan)}</div>
-            <div class="cl-ex-vi">${_clSpanHtml(ex.vi, ex.viSpan)}</div>
-          </div>` : ''}
-        </div>`;
-      }).join('') : `<div class="rd-empty">Không có collocation nào khớp.</div>`}
-    </div>`;
-
-  root.querySelectorAll('#clStatTabChips .rd-chip').forEach(btn=>{
-    btn.onclick = ()=>{ _clStatTab = btn.dataset.tab; clRenderCollocStats(root); };
-  });
-  root.querySelectorAll('.cl-topic-bar-row').forEach(btn=>{
-    btn.onclick = ()=>{
-      const t = btn.dataset.topic;
-      _clStatTopicFilter = (_clStatTopicFilter===t) ? null : t;
-      clRenderCollocStats(root);
-      const list = document.getElementById('clStatList');
-      if(list) list.scrollIntoView({behavior:'smooth', block:'start'});
-    };
-  });
-  const topicClearBtn = document.getElementById('clStatTopicClear');
-  if(topicClearBtn) topicClearBtn.onclick = ()=>{ _clStatTopicFilter = null; clRenderCollocStats(root); };
-  const searchEl = document.getElementById('clStatSearch');
-  searchEl.value = _clStatQuery;
-  searchEl.oninput = e=>{
-    _clStatQuery = e.target.value;
-    const pos = e.target.selectionStart;
-    clRenderCollocStats(root);
-    const el = document.getElementById('clStatSearch');
-    if(el){ el.focus(); try{ el.setSelectionRange(pos,pos); }catch(_){} }
-  };
-  document.getElementById('clStatBackList').onclick = ()=> stRenderColloc(root);
-  document.getElementById('clStatGoTyping').onclick = ()=> clOpenTypingSetup(_clStatTab==='learning' ? 'learning' : 'all');
-  document.getElementById('clStatResetBtn').onclick = clResetTypingProgress;
-}
+/* Màn "Thống kê Collocation" độc lập đã được gộp thẳng vào danh sách
+   Collocation chính (xem stRenderColloc phía trên) — giữ lại tên hàm
+   này làm alias để các chỗ gọi cũ (nút "📊 Thống kê Collocation" trong
+   màn thiết lập Gõ từ, v.v.) vẫn hoạt động bình thường. */
+function clRenderCollocStats(root){ stRenderColloc(root); }
 
 /* ============================================================
    MÀN HÌNH THIẾT LẬP PHIÊN GÕ TỪ — chọn chủ đề (nhiều hoặc ngẫu
