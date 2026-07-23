@@ -4385,13 +4385,20 @@ body{
 .opacity-row{ display:flex; align-items:center; gap:12px; margin-top:10px; }
 .opacity-row input[type="range"]{ flex:1; accent-color:var(--accent); height:6px; }
 .opacity-val{ font-family:var(--font-heading); font-weight:800; font-size:13px; color:var(--accent); min-width:44px; text-align:right; }
-nav.tabs, .quiz-box, .type-box, .strip-card, .funnel-card, .tp-card,
-.hero-main, .hero-side, .dash-search, .rd-pane, .st-all-row, .ava-box{
+nav.tabs, .strip-card, .funnel-card, .tp-card,
+.hero-main, .hero-side, .dash-search, .st-all-row, .ava-box{
   background-color: rgba(var(--card-rgb), var(--panel-alpha)) !important;
 }
 .dash-search, .hero-main, .hero-side, .funnel-card, .strip-card.progress-card, .topic-section{
   background: rgba(var(--card-rgb), var(--panel-alpha)) !important;
 }
+/* .quiz-box / .type-box / .rd-pane là khung bọc ngoài không bo góc, không
+   viền — trước đây bị tô nền đặc (rgba theo --card-rgb) nên tạo thành 1
+   mảng màu chữ nhật cứng, lộ rõ và lệch tông khi dùng hình nền tuỳ chỉnh
+   (hoạ tiết núi/hoàng hôn...). Các phần tử con bên trong (.quiz-q, .opt,
+   thanh công cụ đọc bài...) đã tự có nền thẻ riêng, nên bỏ hẳn nền của
+   khung bọc ngoài để nó trong suốt, hoà theo đúng nền trang. */
+.quiz-box, .type-box, .rd-pane{ background:transparent !important; }
 
 /* thêm hình nền giao diện đa dạng hơn */
 .bg-preview-waves{ background:repeating-linear-gradient(45deg, rgba(14,165,233,.20) 0 10px, transparent 10px 20px); }
@@ -31847,6 +31854,37 @@ function _tokenizeWithPositions(text){
   while((m = re.exec(text))) out.push({word:m[0], start:m.index, end:m.index+m[0].length});
   return out;
 }
+/* Chỉ mục ngược CHO CÂU VÍ DỤ (khác EN_STEM_INDEX ở trên — cái đó tra
+   theo collocation, cái này tra theo CÂU): dạng-gốc-có-thể (vd "vote")
+   -> danh sách {s, ex} có câu tiếng Anh chứa từ đó. Dùng để tìm câu ví
+   dụ minh hoạ cho 1 collocation khi nó không có câu nào khớp trong
+   đúng cấu trúc được gán (c.stId) — TRƯỚC ĐÂY phải quét tuần tự toàn
+   bộ 298 cấu trúc / 925 câu ví dụ cho MỖI collocation rơi vào trường
+   hợp này (thực tế ~68% số collocation), khiến tab Collocation đơ ~4
+   giây mỗi lần mở. Giờ tra thẳng theo từ để chỉ thử so khớp với vài
+   chục câu "có khả năng khớp" (chứa ít nhất 1 từ lõi của collocation)
+   thay vì toàn bộ 925 câu — an toàn vì so khớp đòi ĐỦ mọi từ lõi nên
+   câu nào không chứa từ lõi nào chắc chắn không thể khớp. */
+const EX_WORD_INDEX = (() => {
+  const idx = new Map();
+  STRUCTURES.forEach(s=>{
+    (s.examples||[]).forEach(ex=>{
+      const tokens = _tokenizeWithPositions(ex.en);
+      const seen = new Set();
+      tokens.forEach(t=>{
+        const norm = t.word.toLowerCase().replace(/[’']/g,'');
+        _stemCandidates(norm).forEach(cand=>{
+          if(seen.has(cand)) return;
+          seen.add(cand);
+          let arr = idx.get(cand);
+          if(!arr){ arr = []; idx.set(cand, arr); }
+          arr.push({ s, ex });
+        });
+      });
+    });
+  });
+  return idx;
+})();
 /* Tìm vị trí của 1 chuỗi "từ lõi" xuất hiện LẦN LƯỢT (đúng thứ tự, được
    phép có từ khác chen giữa — như "được", hoặc hậu tố chia động từ khác
    nhau) trong danh sách token của câu. Giới hạn khoảng cách giữa từ đầu
@@ -32173,7 +32211,20 @@ function clFindExampleSentence(c){
   };
   let found = tryStruct(c.stId ? STRUCTURES.find(s=>s.id===c.stId) : null);
   if(!found){
-    for(const s of STRUCTURES){ found = tryStruct(s); if(found) break; }
+    // Trước đây quét tuần tự toàn bộ 298 cấu trúc (rất chậm — xem giải
+    // thích ở EX_WORD_INDEX phía trên). Giờ tra theo chỉ mục từ để chỉ
+    // thử so khớp với các câu "có khả năng khớp" thay vì toàn bộ 925 câu.
+    const candidates = new Map(); // dùng câu (ex) làm khoá để loại trùng
+    (c._enCore||[]).forEach(coreWord=>{
+      _stemCandidates(coreWord).forEach(cand=>{
+        const hit = EX_WORD_INDEX.get(cand);
+        if(hit) hit.forEach(pair=>{ candidates.set(pair.ex, pair); });
+      });
+    });
+    for(const { ex } of candidates.values()){
+      const enSpan = _clExampleSpan(ex.en, c._enCore, true);
+      if(enSpan){ found = { en:ex.en, vi:ex.vi, enSpan, viSpan:_clExampleSpan(ex.vi, c._viCore, false) }; break; }
+    }
   }
   _clAutoExampleCache.set(c.id, found);
   return found;
