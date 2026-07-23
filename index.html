@@ -1672,12 +1672,21 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 /* ---- Thanh tìm kiếm nhanh trong bài đọc — dính ở trên khi cuộn ---- */
 .rd-quick-search-wrap{
   position:sticky; top:var(--rd-qs-top,96px); z-index:30;
-  background:var(--glass);
-  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  background:none;
   padding:2px 0 12px; margin:0 0 14px;
-  border-bottom:1px solid var(--line);
+  display:flex; flex-direction:column; align-items:center;
 }
-.rd-quick-search-wrap .rd-search{ max-width:520px; }
+.rd-quick-search-wrap .rd-search{
+  max-width:520px; width:100%;
+  flex:none; min-width:0; padding:8px 14px;
+  background:rgba(255,255,255,.6); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-color:rgba(0,0,0,.08); box-shadow:none;
+}
+.rd-quick-search-wrap .rd-search input{ font-size:13.5px; }
+[data-theme="dark"] .rd-quick-search-wrap .rd-search{
+  background:rgba(20,30,27,.55); border-color:rgba(255,255,255,.09);
+}
+#rdQuickResults{ width:100%; max-width:520px; margin-left:auto; margin-right:auto; }
 #rdQuickResults{ display:none; }
 #rdQuickResults.open{
   display:block; margin-top:10px; padding-right:2px;
@@ -34477,15 +34486,20 @@ function rdHideSelTip(){ const t=document.getElementById('rdSelTip'); if(t) t.cl
    vùng bôi chọn, đè lên popup nổi thông thường. Trên các thiết bị này ta neo thanh công cụ xuống đáy
    màn hình thay vì đặt cạnh vùng chọn, để không bị menu của trình duyệt che mất. */
 const _rdIsTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || matchMedia('(pointer:coarse)').matches);
+/* Trên di động, hệ điều hành/trình duyệt tự chèn thanh "Chép/Chia sẻ/Chọn tất cả" (và đôi khi
+   1 thanh "Tìm trên Google" dính ở đáy màn hình) ngay khi có vùng bôi chọn — thanh đó có thể che
+   mất thanh công cụ neo đáy trước đây. Theo đề xuất của người dùng: đặt thanh công cụ ghi chú NẰM
+   PHÍA TRÊN vùng vừa bôi chọn (đẩy lên cao hơn hẳn so với trên desktop để tránh đè lên thanh
+   Chép/Chia sẻ của hệ điều hành), thay vì neo cố định xuống đáy màn hình. */
 function rdPositionSelTip(rect){
   const tip = document.getElementById('rdSelTip');
-  if(_rdIsTouch){ tip.classList.add('rd-seltip-dock'); return; }
   tip.classList.remove('rd-seltip-dock');
   const pr = tip.getBoundingClientRect();
   let left = rect.left + rect.width/2 - pr.width/2;
   left = Math.max(10, Math.min(left, innerWidth - pr.width - 10));
-  let top = rect.top - pr.height - 10;
-  if(top < 10) top = rect.bottom + 10;
+  const clearance = _rdIsTouch ? 54 : 10;   /* di động: chừa thêm chỗ cho thanh Chép/Chia sẻ của hệ điều hành */
+  let top = rect.top - pr.height - clearance;
+  if(top < 10) top = rect.bottom + clearance;
   tip.style.left = left+'px';
   tip.style.top  = top+'px';
 }
