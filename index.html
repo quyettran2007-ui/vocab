@@ -4285,6 +4285,18 @@ body{
 .cl-card-speak:hover{ background:var(--accent-bg); }
 .cl-card-bm.on{ background:#fef9c3; border-color:#fde047; }
 [data-theme="dark"] .cl-card-bm.on{ background:rgba(250,204,21,.18); border-color:rgba(250,204,21,.5); }
+.st-status-badge.st-status-mastered{ background:#d1fae5; color:#059669; border-color:#6ee7b7; }
+.st-status-badge.st-status-learning{ background:#fef9c3; color:#a16207; border-color:#fde047; }
+.st-status-badge.st-status-unseen{ background:var(--card-sunken); color:var(--muted); }
+[data-theme="dark"] .st-status-badge.st-status-mastered{ background:rgba(16,185,129,.2); color:#6ee7b7; border-color:rgba(16,185,129,.45); }
+[data-theme="dark"] .st-status-badge.st-status-learning{ background:rgba(250,204,21,.16); color:#fde047; border-color:rgba(250,204,21,.4); }
+.cl-example{ margin-top:10px; padding:10px 12px; border-radius:10px; background:var(--card-sunken); border:1px dashed var(--line); }
+.cl-ex-en{ font-family:var(--font-mono); font-size:12.5px; color:var(--ink); line-height:1.5; }
+.cl-ex-en b{ color:var(--accent); font-weight:800; }
+.cl-ex-vi{ font-size:12px; color:var(--muted); margin-top:3px; line-height:1.5; }
+.cl-ex-vi b{ color:var(--accent-2,var(--accent)); font-weight:700; }
+@keyframes clCardFlash{ 0%,100%{ box-shadow:0 0 0 0 rgba(0,0,0,0);} 20%,60%{ box-shadow:0 0 0 4px var(--accent-bg);} }
+.cl-card-flash{ animation: clCardFlash 1.6s ease; border-color:var(--accent) !important; }
 .st-card-top{ display:flex; align-items:center; }
 
 /* ---- Flashcard collocation ---- */
@@ -4402,6 +4414,40 @@ html[data-bg="candy"] body::before{
 html[data-bg="mono"] body::before{
   background-image: repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px 12px);
   opacity:.35;
+}
+
+/* ============================================================
+   PHONG CẢNH GIAO DIỆN — hình nền minh hoạ phong cảnh thật sự
+   (núi non, biển, đêm sao, hoa anh đào, mùa thu) thay vì chỉ
+   hoạ tiết/màu trơn như trên. Vẽ bằng SVG nhúng thẳng (không cần
+   mạng), phủ kín viewport, neo phía dưới để phần chân trời luôn
+   hiện rõ dù màn hình cao/thấp khác nhau.
+   ============================================================ */
+.bg-preview-mountain{ background:linear-gradient(180deg,#fcd34d 0%,#fb923c 45%,#7c3aed 100%); }
+.bg-preview-beach{ background:linear-gradient(180deg,#7dd3fc 0%,#e0f2fe 55%,#0ea5e9 100%); }
+.bg-preview-night{ background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%); }
+.bg-preview-sakura{ background:linear-gradient(180deg,#fce7f3 0%,#fbcfe8 100%); }
+.bg-preview-autumn{ background:linear-gradient(180deg,#fed7aa 0%,#fdba74 100%); }
+
+html[data-bg="mountain"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='sky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fcd34d'/%3E%3Cstop offset='.45' stop-color='%23fb923c'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23sky)'/%3E%3Ccircle cx='1200' cy='260' r='90' fill='%23fff7ed' opacity='.85'/%3E%3Cpolygon points='0,900 0,620 260,420 520,650 760,380 1000,640 1260,460 1600,700 1600,900' fill='%234c1d95' opacity='.55'/%3E%3Cpolygon points='0,900 0,720 300,560 620,760 900,540 1220,760 1600,600 1600,900' fill='%23312e81' opacity='.75'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="beach"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='sky2' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%237dd3fc'/%3E%3Cstop offset='1' stop-color='%23e0f2fe'/%3E%3C/linearGradient%3E%3ClinearGradient id='sea' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%230ea5e9'/%3E%3Cstop offset='1' stop-color='%230369a1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23sky2)'/%3E%3Ccircle cx='300' cy='220' r='70' fill='%23fef9c3' opacity='.9'/%3E%3Crect y='520' width='1600' height='380' fill='url(%23sea)' opacity='.55'/%3E%3Cpath d='M0 560 Q200 520 400 560 T800 560 T1200 560 T1600 560 V900 H0 Z' fill='%2338bdf8' opacity='.4'/%3E%3Crect y='760' width='1600' height='140' fill='%23fde68a' opacity='.5'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="night"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='night' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%230f172a'/%3E%3Cstop offset='1' stop-color='%231e293b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23night)'/%3E%3Ccircle cx='1300' cy='180' r='60' fill='%23fef9c3' opacity='.9'/%3E%3Cg fill='%23e2e8f0' opacity='.8'%3E%3Ccircle cx='120' cy='120' r='2.4'/%3E%3Ccircle cx='260' cy='260' r='1.8'/%3E%3Ccircle cx='420' cy='90' r='2'/%3E%3Ccircle cx='560' cy='300' r='2.2'/%3E%3Ccircle cx='700' cy='150' r='1.6'/%3E%3Ccircle cx='860' cy='250' r='2'/%3E%3Ccircle cx='980' cy='80' r='1.8'/%3E%3Ccircle cx='1100' cy='340' r='2.4'/%3E%3Ccircle cx='1450' cy='400' r='1.8'/%3E%3Ccircle cx='200' cy='420' r='1.6'/%3E%3Ccircle cx='500' cy='480' r='2'/%3E%3Ccircle cx='1500' cy='150' r='2.2'/%3E%3C/g%3E%3Cpolygon points='0,900 0,700 300,560 600,720 900,540 1200,700 1600,600 1600,900' fill='%23111827' opacity='.85'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.6;
+}
+html[data-bg="sakura"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='sk' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fce7f3'/%3E%3Cstop offset='1' stop-color='%23fbcfe8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23sk)'/%3E%3Cg fill='%23f9a8d4' opacity='.7'%3E%3Ccircle cx='150' cy='120' r='16'/%3E%3Ccircle cx='210' cy='90' r='12'/%3E%3Ccircle cx='90' cy='180' r='10'/%3E%3Ccircle cx='1450' cy='700' r='18'/%3E%3Ccircle cx='1500' cy='760' r='12'/%3E%3Ccircle cx='1380' cy='780' r='10'/%3E%3Ccircle cx='1300' cy='150' r='10'/%3E%3Ccircle cx='300' cy='700' r='14'/%3E%3C/g%3E%3Cg fill='%23fbcfe8' opacity='.5'%3E%3Ccircle cx='700' cy='200' r='8'/%3E%3Ccircle cx='900' cy='400' r='6'/%3E%3Ccircle cx='1100' cy='250' r='7'/%3E%3Ccircle cx='500' cy='500' r='6'/%3E%3Ccircle cx='1200' cy='600' r='8'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="autumn"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='au' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fed7aa'/%3E%3Cstop offset='1' stop-color='%23fdba74'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23au)'/%3E%3Cg fill='%23c2410c' opacity='.5'%3E%3Cellipse cx='200' cy='200' rx='14' ry='8'/%3E%3Cellipse cx='400' cy='400' rx='12' ry='7'/%3E%3Cellipse cx='800' cy='150' rx='16' ry='9'/%3E%3Cellipse cx='1200' cy='350' rx='13' ry='8'/%3E%3Cellipse cx='1450' cy='150' rx='12' ry='7'/%3E%3Cellipse cx='600' cy='600' rx='14' ry='8'/%3E%3C/g%3E%3Cg fill='%23b45309' opacity='.4'%3E%3Cellipse cx='300' cy='700' rx='16' ry='9'/%3E%3Cellipse cx='1000' cy='700' rx='14' ry='8'/%3E%3Cellipse cx='1400' cy='600' rx='12' ry='7'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
 }
 
 /* ============================================================
@@ -26011,7 +26057,8 @@ const sfx = {
   click:   ()=> tone([[880,0,.035]], 'sine', .06),                          // bấm nút nhẹ
   flip:    ()=> tone([[600,0,.04],[900,.03,.05]], 'sine', .08),             // lật flashcard
   add:     ()=> tone([[784,0,.06],[988,.06,.10]], 'sine', .12),             // thêm/lưu thành công
-  swipe:   ()=> tone([[520,0,.05]], 'triangle', .06)                        // vuốt/chuyển thẻ
+  swipe:   ()=> tone([[520,0,.05]], 'triangle', .06),                        // vuốt/chuyển thẻ
+  key:     ()=> tone([[1500+Math.random()*400,0,.018]], 'square', .05)      // tách gõ phím, mỗi lần hơi khác tông cho tự nhiên
 };
 function toggleSound(){
   SOUND_ON = !SOUND_ON;
@@ -27429,13 +27476,23 @@ function runDashSearch(q){
     (v._macro||'').toLowerCase().includes(q)
   ).slice(0, 60);
 
-  if(!hits.length){
-    box.innerHTML = `<div class="ds-empty">Không tìm thấy từ nào khớp "<b>${esc(q)}</b>"</div>`;
+  const clHits = COLLOCATIONS.filter(c =>
+    c.phrase.toLowerCase().includes(q) ||
+    (c.meaning||'').toLowerCase().includes(q) ||
+    (c.topic||'').toLowerCase().includes(q) ||
+    (c.synonyms||[]).some(s=>s.toLowerCase().includes(q))
+  ).slice(0, 30);
+
+  if(!hits.length && !clHits.length){
+    box.innerHTML = `<div class="ds-empty">Không tìm thấy từ vựng hay collocation nào khớp "<b>${esc(q)}</b>"</div>`;
     return;
   }
   const hl = t => esc(t).replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>');
-  box.innerHTML = `
-    <div class="ds-count">Tìm thấy <b>${hits.length}</b> từ${hits.length>=60?' (hiện 60 đầu)':''}</div>
+
+  let html = '';
+  if(hits.length){
+    html += `
+    <div class="ds-count">Tìm thấy <b>${hits.length}</b> từ vựng${hits.length>=60?' (hiện 60 đầu)':''}</div>
     <div class="ds-grid">
       ${hits.map(v=>{
         const st = srsState(v.word);
@@ -27461,6 +27518,53 @@ function runDashSearch(q){
         </div>`;
       }).join('')}
     </div>`;
+  }
+  if(clHits.length){
+    const clBoxes = clLoadTypeBoxes();
+    html += `
+    <div class="ds-count">🧩 Tìm thấy <b>${clHits.length}</b> collocation${clHits.length>=30?' (hiện 30 đầu)':''}</div>
+    <div class="ds-grid">
+      ${clHits.map(c=>{
+        const st = clStatusOf(c, clBoxes);
+        const stateCl = st==='mastered' ? 'learned' : (st==='learning' ? 'doing' : 'newn');
+        return `<div class="ds-item">
+          <div class="ds-top">
+            <button class="ds-word" onclick="openCollocFromSearch('${esc(c.id)}')" title="Mở collocation này">${hl(c.phrase)}</button>
+            <button class="speak-btn" onclick="speak('${esc(c.phrase)}')">🔊</button>
+            <span class="ds-state ${stateCl}">${CL_STATUS_ICON[st]} ${CL_STATUS_LABEL[st]}</span>
+          </div>
+          <div class="ds-vn">${hl(c.meaning||'')}</div>
+      <button class="vc-topic" onclick="openCollocFromSearch('${esc(c.id)}')">
+            <span>🧩</span>
+            <b>${esc(c.topic)}</b>
+          </button>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+  box.innerHTML = html;
+}
+
+/* Mở đúng 1 collocation từ kết quả tìm kiếm dashboard: nhảy sang tab
+   Toàn bộ câu → mục Collocation, lọc đúng cụm đó và cuộn tới, nháy sáng thẻ. */
+function openCollocFromSearch(id){
+  const c = COLLOCATIONS.find(x=>x.id===id);
+  if(!c) return;
+  document.querySelector('.tab-btn[data-mode="structures"]').click();
+  _stMode = 'colloc';
+  _clTopic = 'all';
+  _clQuery = c.phrase;
+  setTimeout(()=>{
+    const root = document.getElementById('stRoot');
+    if(!root) return;
+    stRenderColloc(root);
+    const card = document.getElementById('cl-card-'+c.id);
+    if(card){
+      card.scrollIntoView({behavior:'smooth', block:'center'});
+      card.classList.add('cl-card-flash');
+      setTimeout(()=>card.classList.remove('cl-card-flash'), 1700);
+    }
+  }, 80);
 }
 /* Mở đúng 1 từ trong Flashcard */
 function openWord(w){
@@ -28894,7 +28998,7 @@ function nextType(){
     else if(cells[MAX-1]) cells[MAX-1].classList.add('cursor');   // đầy ô -> vẫn báo vị trí để biết còn sửa được
     btnCheck.disabled = val.length === 0;
   }
-  inp.addEventListener('input', ()=>{ if(!_typeLocked) paint(); });
+  inp.addEventListener('input', ()=>{ if(!_typeLocked){ sfx.key(); paint(); } });
   document.getElementById('typeField').addEventListener('pointerdown', e=>{
     if(_typeLocked) return;
     e.preventDefault(); inp.focus();
@@ -31912,14 +32016,17 @@ function stCardHTML(s){
 function stRenderColloc(root){
   const q = _clQuery.trim().toLowerCase();
   const bm = clLoadBookmarks();
+  const boxes = clLoadTypeBoxes();
   const hits = COLLOCATIONS.filter(c=>{
     if(_clTopic === 'bookmarked' && !bm[c.id]) return false;
-    else if(_clTopic !== 'all' && _clTopic !== 'bookmarked' && c.topic !== _clTopic) return false;
+    else if(_clTopic === 'mastered' && clStatusOf(c, boxes)!=='mastered') return false;
+    else if(_clTopic !== 'all' && _clTopic !== 'bookmarked' && _clTopic !== 'mastered' && c.topic !== _clTopic) return false;
     if(!q) return true;
     return c.phrase.toLowerCase().includes(q) || c.meaning.toLowerCase().includes(q)
         || (c.synonyms||[]).some(s=>s.toLowerCase().includes(q));
   });
   const bmCount = Object.keys(bm).length;
+  const masteredCount = COLLOCATIONS.filter(c=>clStatusOf(c, boxes)==='mastered').length;
   if(_clSortAZ) hits.sort((a,b)=> a.phrase.localeCompare(b.phrase));
 
   root.innerHTML = `
@@ -31946,13 +32053,14 @@ function stRenderColloc(root){
     <div class="rd-filters" id="clTopicChips">
       <button class="rd-chip ${_clTopic==='all'?'active':''}" onclick="clFilterTopic('all')">Tất cả<b>${COLLOCATIONS.length}</b></button>
       <button class="rd-chip ${_clTopic==='bookmarked'?'active':''}" onclick="clFilterTopic('bookmarked')">⭐ Đã đánh dấu<b>${bmCount}</b></button>
+      <button class="rd-chip ${_clTopic==='mastered'?'active':''}" onclick="clFilterTopic('mastered')" title="Đồng bộ với mục Thống kê Gõ từ">✅ Đã thuộc<b>${masteredCount}</b></button>
       ${COLLOC_TOPICS.map(t=>{
         const n = COLLOCATIONS.filter(c=>c.topic===t).length;
         return `<button class="rd-chip ${_clTopic===t?'active':''}" onclick="clFilterTopic('${esc(t)}')">${esc(t)}<b>${n}</b></button>`;
       }).join('')}
     </div>
     <div class="st-list cl-list">
-      ${hits.length ? hits.map(clCardHTML).join('') : `<div class="rd-empty">Không tìm thấy collocation nào khớp “${esc(_clQuery)}”.</div>`}
+      ${hits.length ? hits.map(c=>clCardHTML(c, boxes)).join('') : `<div class="rd-empty">Không tìm thấy collocation nào khớp “${esc(_clQuery)}”.</div>`}
     </div>`;
 
   document.getElementById('clSearch').oninput = e=>{
@@ -31983,11 +32091,15 @@ function stRenderColloc(root){
 
 function clFilterTopic(t){ _clTopic = t; stRenderColloc(document.getElementById('stRoot')); }
 
-function clCardHTML(c){
+function clCardHTML(c, boxes){
   const q = _clQuery.trim();
   const isBm = clIsBookmarked(c);
+  boxes = boxes || clLoadTypeBoxes();
+  const st = clStatusOf(c, boxes);
+  const e = boxes[c.id];
+  const ex = clFindExampleSentence(c);
   return `
-  <div class="st-card cl-card">
+  <div class="st-card cl-card" id="cl-card-${esc(c.id)}">
     <div class="st-card-top">
       <span class="st-topic-tag">${esc(c.topic)}</span>
       <div class="cl-card-tools">
@@ -31995,11 +32107,20 @@ function clCardHTML(c){
         <button class="cl-card-bm ${isBm?'on':''}" data-id="${esc(c.id)}" title="Đánh dấu">${isBm?'⭐':'☆'}</button>
       </div>
     </div>
+    <div class="st-status-line" title="Trạng thái đồng bộ với mục Thống kê Gõ từ">
+      <span class="st-status-badge st-status-${st}">${CL_STATUS_ICON[st]} ${CL_STATUS_LABEL[st]}</span>
+      ${e ? `<span class="st-status-streak">🔥 ${e.streak||0}/${CL_MASTER_STREAK}</span>` : ''}
+    </div>
     <div class="st-structure">${stHl(c.phrase, q)}</div>
     <div class="st-meaning">${stHl(c.meaning, q)}</div>
     ${(c.synonyms&&c.synonyms.length) ? `
       <div class="st-equiv">
         <b>Đồng nghĩa:</b> ${c.synonyms.map(s=>`<span class="st-equiv-chip">${stHl(s, q)}</span>`).join('')}
+      </div>` : ''}
+    ${ex ? `
+      <div class="cl-example">
+        <div class="cl-ex-en">${_clSpanHtml(ex.en, ex.enSpan)}</div>
+        <div class="cl-ex-vi">${_clSpanHtml(ex.vi, ex.viSpan)}</div>
       </div>` : ''}
   </div>`;
 }
@@ -32227,6 +32348,11 @@ function clStatusOf(c, boxes){
   if(!e) return 'unseen';
   return (e.streak||0) >= CL_MASTER_STREAK ? 'mastered' : 'learning';
 }
+/* Nhãn/icon trạng thái dùng CHUNG cho cả màn Thống kê lẫn thẻ trong
+   thư viện Collocation, để "đã học" luôn đồng bộ 1 nguồn duy nhất:
+   tiến độ Gõ từ (streak), KHÔNG phải người dùng tự bấm đánh dấu. */
+const CL_STATUS_LABEL = { unseen:'Chưa học', learning:'Đang luyện', mastered:'Đã thuộc' };
+const CL_STATUS_ICON  = { unseen:'⚪', learning:'🟡', mastered:'✅' };
 
 /* Xoá lịch sử/tiến độ Gõ từ Collocation (streak, số lượt đúng/sai của
    từng cụm) — KHÔNG đụng tới các cụm đã đánh dấu ⭐ hay dữ liệu collocation. */
@@ -32342,6 +32468,7 @@ function clRenderCollocStats(root){
         const st = clStatusOf(c, boxes);
         const e = boxes[c.id];
         const streak = e ? (e.streak||0) : 0;
+        const ex = clFindExampleSentence(c);
         return `<div class="st-card cl-card">
           <div class="st-card-top">
             <span class="st-topic-tag">${esc(c.topic)}</span>
@@ -32353,6 +32480,11 @@ function clRenderCollocStats(root){
           </div>
           <div class="st-structure">${esc(c.phrase)}</div>
           <div class="st-meaning">${esc(c.meaning)}</div>
+          ${ex ? `
+          <div class="cl-example">
+            <div class="cl-ex-en">${_clSpanHtml(ex.en, ex.enSpan)}</div>
+            <div class="cl-ex-vi">${_clSpanHtml(ex.vi, ex.viSpan)}</div>
+          </div>` : ''}
         </div>`;
       }).join('') : `<div class="rd-empty">Không có collocation nào khớp.</div>`}
     </div>`;
@@ -32732,7 +32864,7 @@ function clNextTypeCard(){
     else if(cells[MAX-1]) cells[MAX-1].classList.add('cursor');
     btnCheck.disabled = val.length === 0;
   }
-  inp.addEventListener('input', ()=>{ if(!_clTypeLocked) paint(); });
+  inp.addEventListener('input', ()=>{ if(!_clTypeLocked){ sfx.key(); paint(); } });
   document.getElementById('clTypeField').addEventListener('pointerdown', e=>{
     if(_clTypeLocked) return;
     e.preventDefault(); inp.focus();
@@ -34879,6 +35011,11 @@ const BG_THEMES = [
   { key:'forest',  name:'Rừng xanh', cls:'bg-preview-forest' },
   { key:'candy',   name:'Kẹo ngọt',  cls:'bg-preview-candy' },
   { key:'mono',    name:'Kẻ sọc',    cls:'bg-preview-mono' },
+  { key:'mountain',name:'🏔️ Núi hoàng hôn', cls:'bg-preview-mountain' },
+  { key:'beach',   name:'🏖️ Biển nắng',    cls:'bg-preview-beach' },
+  { key:'night',   name:'🌌 Đêm sao',       cls:'bg-preview-night' },
+  { key:'sakura',  name:'🌸 Hoa anh đào',   cls:'bg-preview-sakura' },
+  { key:'autumn',  name:'🍁 Mùa thu',       cls:'bg-preview-autumn' },
   { key:'plain',   name:'Trơn',      cls:'bg-preview-plain' }
 ];
 (function initBgTheme(){
