@@ -1669,6 +1669,21 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .rd-search input:not(:placeholder-shown) ~ .rd-clear{ display:grid; }
 [data-theme="dark"] .rd-search .rd-clear{ background:var(--paper-2); }
 
+/* ---- Thanh tìm kiếm nhanh trong bài đọc — dính ở trên khi cuộn ---- */
+.rd-quick-search-wrap{
+  position:sticky; top:var(--rd-qs-top,96px); z-index:30;
+  background:var(--glass);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  padding:2px 0 12px; margin:0 0 14px;
+  border-bottom:1px solid var(--line);
+}
+.rd-quick-search-wrap .rd-search{ max-width:520px; }
+#rdQuickResults{ display:none; }
+#rdQuickResults.open{
+  display:block; margin-top:10px; padding-right:2px;
+  max-height:min(64vh,560px); overflow-y:auto;
+}
+
 .rd-filters{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;
   padding-bottom:14px; border-bottom:1px solid var(--paper-2); }
 .rd-chip{ cursor:pointer; font-size:12.5px; font-weight:700; color:var(--ink-soft);
@@ -2111,19 +2126,33 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin1.on{ color:#eab308; }
 .nb-pin-badge{ font-size:11px; }
 
-/* Sửa ghi chú (inline) */
+/* Sửa nội dung trích dẫn (inline, khi bấm ✏️ Sửa) */
 .nb-edit-box textarea{ width:100%; box-sizing:border-box; font:inherit; font-size:13px; padding:7px 9px;
-  border-radius:8px; border:1px solid var(--line); resize:vertical; margin-bottom:6px; background:var(--paper); color:var(--ink); }
-.nb-edit-box textarea.nb-edit-note{ min-height:44px; }
+  border-radius:8px; border:1px solid var(--line); resize:both; overflow:auto; max-width:100%; margin-bottom:6px; background:var(--paper); color:var(--ink); }
 .nb-edit-acts{ display:flex; gap:8px; }
 .nb-edit-acts .btn{ font-size:12px; padding:6px 12px; }
+
+/* Ô ghi chú (📝) — LUÔN ở dạng sửa trực tiếp, không cần bấm nút Sửa */
+.nb-note-wrap{ margin-top:5px; }
+.nb-fmt-toolbar{ display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin-bottom:5px; }
+.nb-fmt-toolbar button{ min-width:24px; height:24px; padding:0 6px; border-radius:6px; border:1px solid var(--line);
+  background:var(--card); color:var(--ink); cursor:pointer; font-size:12px; line-height:1; display:flex; align-items:center; justify-content:center; }
+.nb-fmt-toolbar button:hover{ border-color:var(--accent); color:var(--accent); }
+.nb-fmt-sep{ width:1px; align-self:stretch; background:var(--line); margin:0 2px; }
+.nb-fmt-color{ width:24px; height:24px; padding:0; border:1px solid var(--line); border-radius:6px; background:none; cursor:pointer; }
+.nb-note-editable{ width:100%; box-sizing:border-box; font-size:13px; color:var(--ink-soft); background:var(--card);
+  border:1px solid var(--line); border-left:3px solid var(--accent); padding:6px 9px; border-radius:0 8px 8px 0;
+  line-height:1.55; min-height:32px; resize:both; overflow:auto; max-width:100%; outline:none; cursor:text; }
+.nb-note-editable:empty:before{ content:attr(data-placeholder); color:var(--muted); }
+.nb-note-editable:focus{ box-shadow:0 0 0 2px var(--accent) inset; border-color:var(--accent); }
 
 /* Bảng ghim: các ô ghi chú nổi, có thể tùy chỉnh màu */
 .nb-pinboard{ margin-bottom:22px; }
 .nb-pin-head{ font-size:14.5px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:6px; color:var(--ink); }
 .nb-pin-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); gap:14px; }
 .nb-pin-card{ position:relative; border-radius:12px; padding:12px 12px 10px; box-shadow:0 5px 14px rgba(0,0,0,.10);
-  border:1px solid rgba(0,0,0,.07); display:flex; flex-direction:column; gap:7px; min-height:120px; color:#2b2b2b; }
+  border:1px solid rgba(0,0,0,.07); display:flex; flex-direction:column; gap:7px; min-height:120px; color:#2b2b2b;
+  resize:both; overflow:auto; box-sizing:border-box; width:100%; min-width:190px; justify-self:start; }
 [data-theme="dark"] .nb-pin-card{ box-shadow:0 6px 18px rgba(0,0,0,.4); border-color:rgba(0,0,0,.15); }
 .nb-pin-actions{ position:absolute; top:7px; right:7px; display:flex; gap:4px; }
 .nb-pin-actions button{ background:rgba(255,255,255,.75); border:none; border-radius:6px; width:22px; height:22px;
@@ -2131,13 +2160,14 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin-actions button:hover{ background:#fff; }
 .nb-pin-text{ font-size:13.5px; font-style:italic; line-height:1.5; padding-right:56px; }
 .nb-pin-text.nb-manual{ font-style:normal; font-weight:700; }
-.nb-pin-note{ font-size:12.5px; background:rgba(255,255,255,.55); border-left:3px solid rgba(0,0,0,.22);
-  padding:5px 8px; border-radius:0 6px 6px 0; line-height:1.5; }
 .nb-pin-meta{ font-size:11px; color:rgba(0,0,0,.55); margin-top:auto; }
 .nb-pin-colors{ display:flex; gap:5px; flex-wrap:wrap; margin-top:2px; }
 .nb-color-dot{ width:16px; height:16px; border-radius:50%; cursor:pointer; border:2px solid rgba(0,0,0,.15); flex-shrink:0; padding:0; }
 .nb-color-dot.active{ border-color:#333; box-shadow:0 0 0 2px #fff inset; }
 .nb-pin-card .nb-edit-box textarea{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
+.nb-pin-card .nb-note-editable{ background:rgba(255,255,255,.55); border-color:rgba(0,0,0,.18); border-left-color:rgba(0,0,0,.3); color:#2b2b2b; }
+.nb-pin-card .nb-fmt-toolbar button{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
+
 
 .settings-nav{
   display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px;
@@ -4791,6 +4821,14 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
     </div>
 
     <div class="rd-pane active" id="rdPane-read">
+      <div class="rd-quick-search-wrap" id="rdQuickSearchWrap">
+        <div class="rd-search rd-quick-search">
+          <span>🔍</span>
+          <input id="rdQuickSearch" type="text" placeholder="Tìm từ vựng, nghĩa tiếng Việt, chủ đề…" autocomplete="off">
+          <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
+        </div>
+        <div id="rdQuickResults"></div>
+      </div>
       <div class="rd-tools">
         <label><input type="checkbox" id="rdHL" checked> Gạch chân từ khoá</label>
         <label><input type="checkbox" id="rdTR"> Hiện bản dịch</label>
@@ -34626,16 +34664,135 @@ function notebookSaveEdit(day, id){
   const item = (nb[day]||[]).find(x=>x.id===id);
   if(!item) return;
   const textEl = document.getElementById('nbEditText_'+id);
-  const noteEl = document.getElementById('nbEditNote_'+id);
   const newText = textEl ? textEl.value.trim() : item.text;
-  const newNote = noteEl ? noteEl.value.trim() : item.note;
   if(!newText){ toast('Nội dung không được để trống'); return; }
   item.text = newText;
-  item.note = newNote;
   saveNotebook(nb);
   _nbEditKey = null;
   renderNotebook();
   toast('💾 Đã lưu chỉnh sửa');
+}
+/* Áp định dạng (đậm/nghiêng/căn lề/màu chữ) trực tiếp lên ô ghi chú, rồi lưu ngay */
+function nbFmt(domId, cmd, value){
+  const el = document.getElementById(domId);
+  if(!el) return;
+  el.focus();
+  try{ document.execCommand(cmd, false, value || null); }catch(e){}
+  nbNoteAutosave(el);
+}
+/* Tự động lưu ô ghi chú mỗi khi gõ hoặc rời khỏi ô — không cần bấm nút Sửa/Lưu.
+   Đồng thời đồng bộ ngay sang bản sao khác của cùng ghi chú (thẻ ghim & dòng trong ngày cùng 1 mục). */
+let _nbAutosaveTimer = null;
+function nbNoteAutosave(el){
+  clearTimeout(_nbAutosaveTimer);
+  _nbAutosaveTimer = setTimeout(function(){
+    const day = el.dataset.day, id = el.dataset.id;
+    if(!day || !id) return;
+    const nb = loadNotebook();
+    const item = (nb[day]||[]).find(x=>x.id===id);
+    if(!item) return;
+    const html = nbSanitizeHtml(el.innerHTML.trim());
+    item.note = html;
+    item.noteRich = true;
+    saveNotebook(nb);
+    document.querySelectorAll('.nb-note-editable[data-day="'+CSS.escape(day)+'"][data-id="'+CSS.escape(id)+'"]').forEach(function(other){
+      if(other !== el && document.activeElement !== other) other.innerHTML = html;
+    });
+  }, 250);
+}
+/* Lọc HTML từ execCommand: chỉ giữ các thẻ/định dạng an toàn (đậm, nghiêng, màu chữ, căn lề) */
+function nbSanitizeHtml(html){
+  const allowedTags = {B:1, STRONG:1, I:1, EM:1, SPAN:1, DIV:1, BR:1, FONT:1, P:1};
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  (function walk(node){
+    Array.prototype.slice.call(node.childNodes).forEach(function(child){
+      if(child.nodeType === 1){
+        if(!allowedTags[child.tagName]){
+          while(child.firstChild) node.insertBefore(child.firstChild, child);
+          node.removeChild(child);
+          return;
+        }
+        const s = child.style;
+        const keep = [];
+        if(s.color) keep.push('color:'+s.color);
+        if(s.textAlign) keep.push('text-align:'+s.textAlign);
+        if(s.fontWeight) keep.push('font-weight:'+s.fontWeight);
+        if(s.fontStyle) keep.push('font-style:'+s.fontStyle);
+        const color = child.getAttribute && child.getAttribute('color');
+        if(color) keep.push('color:'+color);
+        Array.prototype.slice.call(child.attributes).forEach(function(attr){ child.removeAttribute(attr.name); });
+        if(keep.length) child.setAttribute('style', keep.join(';'));
+        walk(child);
+      } else if(child.nodeType === 8){
+        node.removeChild(child);
+      }
+    });
+  })(tmp);
+  return tmp.innerHTML;
+}
+/* ---------- Lưu kích thước đã kéo (resize) để không bị mất khi tải lại trang ---------- */
+function nbSaveSize(day, id, key, w, h){
+  const nb = loadNotebook();
+  const item = (nb[day]||[]).find(x=>x.id===id);
+  if(!item) return;
+  item[key] = {w:w, h:h};
+  saveNotebook(nb);
+}
+function nbSizeStyleAttr(size){
+  return (size && size.w && size.h) ? `width:${size.w}px;height:${size.h}px;` : '';
+}
+/* Chỉ lưu kích thước khi kích thước thực sự đổi sau một thao tác nhấn-thả chuột/chạm
+   (đáng tin cậy hơn việc đoán vị trí tay cầm resize) */
+function nbEnableManualResize(elList, sizeKey){
+  elList.forEach(function(el){
+    if(el._nbResizeBound) return;
+    el._nbResizeBound = true;
+    el.addEventListener('pointerdown', function(){
+      const startW = el.offsetWidth, startH = el.offsetHeight;
+      let done = false;
+      const finish = function(){
+        if(done) return;
+        done = true;
+        document.removeEventListener('pointerup', finish);
+        document.removeEventListener('mouseup', finish);
+        const w = el.offsetWidth, h = el.offsetHeight;
+        if(w !== startW || h !== startH){
+          const day = el.dataset.day, id = el.dataset.id;
+          if(day && id) nbSaveSize(day, id, sizeKey, Math.round(w), Math.round(h));
+        }
+      };
+      document.addEventListener('pointerup', finish);
+      document.addEventListener('mouseup', finish);
+    });
+  });
+}
+function nbAttachResizeHandlers(root){
+  if(!root) return;
+  nbEnableManualResize(root.querySelectorAll('.nb-pin-card[data-day]'), 'pinSize');
+  nbEnableManualResize(root.querySelectorAll('.nb-note-editable[data-day]'), 'noteSize');
+}
+/* HTML của ô ghi chú — LUÔN ở dạng sửa trực tiếp (contenteditable), có sẵn thanh định dạng, tự lưu.
+   ctx phân biệt 2 nơi hiển thị cùng 1 ghi chú (thẻ ghim 'pin' / dòng trong ngày 'line') để không trùng id DOM. */
+function nbNoteBoxHtml(day, item, ctx){
+  const noteHtml = item.note ? (item.noteRich ? item.note : rdEsc(item.note)) : '';
+  const domId = `nbNote_${ctx}_${item.id}`;
+  return `
+    <div class="nb-note-wrap">
+      <div class="nb-fmt-toolbar">
+        <button type="button" title="In đậm" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','bold')"><b>B</b></button>
+        <button type="button" title="In nghiêng" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','italic')"><i>I</i></button>
+        <span class="nb-fmt-sep"></span>
+        <button type="button" title="Căn trái" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyLeft')">⯇</button>
+        <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyCenter')">≡</button>
+        <button type="button" title="Căn phải" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyRight')">⯈</button>
+        <span class="nb-fmt-sep"></span>
+        <input type="color" class="nb-fmt-color" title="Màu chữ" value="#e11d48" onmousedown="event.preventDefault()" oninput="nbFmt('${domId}','foreColor',this.value)">
+      </div>
+      <div class="nb-note-editable" contenteditable="true" id="${domId}" data-day="${day}" data-id="${item.id}"
+        style="${nbSizeStyleAttr(item.noteSize)}"
+        data-placeholder="📝 Bấm vào đây để nhập ghi chú…" oninput="nbNoteAutosave(this)" onblur="nbNoteAutosave(this)">${noteHtml}</div>
+    </div>`;
 }
 /* ---------- Ghim & màu sắc ---------- */
 const NB_COLORS = ['#fff4b8','#ffd6d6','#d7f5db','#d6e9ff','#efd9ff','#ffe3c2','#e4e4e4'];
@@ -34691,7 +34848,6 @@ function nbEditFormHtml(day, item){
   return `
     <div class="nb-edit-box">
       <textarea id="nbEditText_${item.id}" rows="2">${rdEsc(item.text)}</textarea>
-      <textarea class="nb-edit-note" id="nbEditNote_${item.id}" rows="2" placeholder="Ghi chú (tuỳ chọn)…">${rdEsc(item.note||'')}</textarea>
       <div class="nb-edit-acts">
         <button class="btn primary" onclick="notebookSaveEdit('${day}','${item.id}')">💾 Lưu</button>
         <button class="btn" onclick="notebookCancelEdit()">Huỷ</button>
@@ -34729,7 +34885,7 @@ function renderNotebook(){
             ${pinnedFlat.map(({day,item})=>{
               const editing = _nbEditKey === (day+'|'+item.id);
               return `
-              <div class="nb-pin-card" style="background:${item.color||NB_COLORS[0]}">
+              <div class="nb-pin-card" data-day="${day}" data-id="${item.id}" style="background:${item.color||NB_COLORS[0]};${nbSizeStyleAttr(item.pinSize)}">
                 <div class="nb-pin-actions">
                   ${editing ? '' : `<button title="Sửa" onclick="notebookStartEdit('${day}','${item.id}')">✏️</button>`}
                   <button title="Bỏ ghim" onclick="notebookTogglePin('${day}','${item.id}')">📌</button>
@@ -34739,7 +34895,9 @@ function renderNotebook(){
                   ${item.manual
                     ? `<div class="nb-pin-text nb-manual">🖊️ ${rdEsc(item.text)}</div>`
                     : `<div class="nb-pin-text">"${rdEsc(item.text)}"</div>`}
-                  ${item.note ? `<div class="nb-pin-note">📝 ${rdEsc(item.note)}</div>` : ''}
+                `}
+                ${nbNoteBoxHtml(day, item, 'pin')}
+                ${editing ? '' : `
                   <div class="nb-pin-meta">${notebookDayLabel(day)}${item.time?' · '+item.time:''}${item.source?' · '+rdEsc(item.source):''}</div>
                   ${nbColorDotsHtml(day, item)}
                 `}
@@ -34752,6 +34910,7 @@ function renderNotebook(){
 
   if(!days.length){
     el.innerHTML = '<div class="rd-empty">Chưa có ghi chú nào. Hãy bật <b>Edit</b> trong bài đọc (tab Reading) và bôi chọn văn bản để thêm.</div>';
+    nbAttachResizeHandlers(pinEl);
     return;
   }
   el.innerHTML = days.map(day => `
@@ -34773,7 +34932,9 @@ function renderNotebook(){
                 ${item.manual
                   ? `<div class="nb-quote nb-manual">🖊️ ${rdEsc(item.text)}</div>`
                   : `<div class="nb-quote">"${rdEsc(item.text)}"</div>`}
-                ${item.note ? `<div class="nb-note">📝 ${rdEsc(item.note)}</div>` : ''}
+              `}
+              ${nbNoteBoxHtml(day, item, 'line')}
+              ${editing ? '' : `
                 <div class="nb-meta">${item.pinned?'<span class="nb-pin-badge">📌</span> ':''}${item.time||''}${item.source?' · '+rdEsc(item.source):''}</div>
               `}
             </div>
@@ -34788,6 +34949,8 @@ function renderNotebook(){
         }).join('')}
       </div>
     </div>`).join('');
+  nbAttachResizeHandlers(pinEl);
+  nbAttachResizeHandlers(el);
 }
 
 /* ---------- Hiện ghi chú ngay trong bài đọc: tô lại đoạn đã ghi chú
@@ -34886,6 +35049,90 @@ function rdSpeakAll(){
 }
 function rdStopSpeak(){ if('speechSynthesis' in window) speechSynthesis.cancel(); }
 
+/* ---------- Tìm kiếm nhanh ngay trong bài đọc (giống thanh tìm kiếm dashboard) ---------- */
+function runRdQuickSearch(q){
+  const box = document.getElementById('rdQuickResults');
+  if(!box) return;
+  q = (q||'').trim().toLowerCase();
+  if(!q){ box.innerHTML=''; box.classList.remove('open'); return; }
+  box.classList.add('open');
+
+  const hits = VOCAB.filter(v =>
+    v.word.toLowerCase().includes(q) ||
+    (v.vn||'').toLowerCase().includes(q) ||
+    (v._topic||'').toLowerCase().includes(q) ||
+    (v._macro||'').toLowerCase().includes(q)
+  ).slice(0, 40);
+
+  const clHits = COLLOCATIONS.filter(c =>
+    c.phrase.toLowerCase().includes(q) ||
+    (c.meaning||'').toLowerCase().includes(q) ||
+    (c.topic||'').toLowerCase().includes(q) ||
+    (c.synonyms||[]).some(s=>s.toLowerCase().includes(q))
+  ).slice(0, 20);
+
+  if(!hits.length && !clHits.length){
+    box.innerHTML = `<div class="ds-empty">Không tìm thấy từ vựng hay collocation nào khớp "<b>${esc(q)}</b>"</div>`;
+    return;
+  }
+  const hl = t => esc(t).replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>');
+
+  let html = '';
+  if(hits.length){
+    html += `
+    <div class="ds-count">Tìm thấy <b>${hits.length}</b> từ vựng${hits.length>=40?' (hiện 40 đầu)':''}</div>
+    <div class="ds-grid">
+      ${hits.map(v=>{
+        const st = srsState(v.word);
+        const stMap = {mastered:['✅','Đã thuộc','learned'], review:['📗','Đang học','doing'],
+                       learning:['📗','Đang học','doing'], new:['⬜','Chưa học','newn']};
+        const [ic,lb,cl] = stMap[st];
+        return `<div class="ds-item">
+          <div class="ds-top">
+            <button class="ds-word" onclick="openWord('${v.word.replace(/'/g,"\\'")}')" title="Mở Flashcard từ này">${hl(v.word)}</button>
+            <button class="speak-btn" onclick="speak('${esc(v.word)}')">🔊</button>
+            ${v.ipa?`<span class="ds-ipa">${esc(v.ipa)}</span>`:''}
+            ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
+            <span class="ds-state ${cl}">${ic} ${lb}</span>
+            ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}
+          </div>
+          <div class="ds-vn">${hl(v.vn||'')}</div>
+          ${srsBadge(v.word)}
+          <button class="vc-topic" onclick="goTopic('${(v._topic||'').replace(/'/g,"\\'")}','list')">
+            <span>${TOPIC_ICONS[v._topic]||'🗂️'}</span>
+            ${v._macro && v._macro!==v._topic ? `<em>${esc(v._macro)}</em><i>›</i>` : ''}
+            <b>${esc(v._topic)}</b>
+          </button>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+  if(clHits.length){
+    const clBoxes = clLoadTypeBoxes();
+    html += `
+    <div class="ds-count">🧩 Tìm thấy <b>${clHits.length}</b> collocation${clHits.length>=20?' (hiện 20 đầu)':''}</div>
+    <div class="ds-grid">
+      ${clHits.map(c=>{
+        const st = clStatusOf(c, clBoxes);
+        const stateCl = st==='mastered' ? 'learned' : (st==='learning' ? 'doing' : 'newn');
+        return `<div class="ds-item">
+          <div class="ds-top">
+            <button class="ds-word" onclick="openCollocFromSearch('${esc(c.id)}')" title="Mở collocation này">${hl(c.phrase)}</button>
+            <button class="speak-btn" onclick="speak('${esc(c.phrase)}')">🔊</button>
+            <span class="ds-state ${stateCl}">${CL_STATUS_ICON[st]} ${CL_STATUS_LABEL[st]}</span>
+          </div>
+          <div class="ds-vn">${hl(c.meaning||'')}</div>
+          <button class="vc-topic" onclick="openCollocFromSearch('${esc(c.id)}')">
+            <span>🧩</span>
+            <b>${esc(c.topic)}</b>
+          </button>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+  box.innerHTML = html;
+}
+
 /* ---------- Luyện từ của bài bằng các chế độ có sẵn ---------- */
 function rdPractice(id){
   const r = RD().find(x=>x.id===id);
@@ -34923,6 +35170,35 @@ function rdPractice(id){
   $('rdStoryGloss').onchange = ()=>rdRenderStory();
   $('rdVSearch').oninput= ()=>rdRenderVocab();
   document.querySelectorAll('.rd-tab').forEach(b=> b.onclick = ()=>rdTab(b.dataset.rd));
+
+  /* Thanh tìm kiếm nhanh dính trên đầu bài đọc */
+  let _rdQsT = null;
+  $('rdQuickSearch').oninput = e=>{
+    clearTimeout(_rdQsT);
+    _rdQsT = setTimeout(()=>runRdQuickSearch(e.target.value), 140);
+  };
+  $('rdQuickSearch').onkeydown = e=>{
+    if(e.key==='Escape'){ e.target.value=''; runRdQuickSearch(''); e.target.blur(); }
+  };
+})();
+
+/* Tự tính chiều cao header + thanh tab để thanh tìm kiếm nhanh trong bài đọc
+   dính (sticky) đúng ngay bên dưới, không bị header/nav che mất — tính lại
+   mỗi khi kích thước 2 thanh đó đổi (đổi cỡ chữ, xoay màn hình, resize...). */
+(function(){
+  const header = document.querySelector('header');
+  const nav = document.querySelector('nav.tabs');
+  function updateRdQsTop(){
+    const h = (header?.offsetHeight||0) + (nav?.offsetHeight||0);
+    if(h) document.documentElement.style.setProperty('--rd-qs-top', h+'px');
+  }
+  updateRdQsTop();
+  window.addEventListener('resize', updateRdQsTop);
+  if(window.ResizeObserver){
+    const ro = new ResizeObserver(updateRdQsTop);
+    if(header) ro.observe(header);
+    if(nav) ro.observe(nav);
+  }
 })();
 
 /* Nút xoá (✕) dùng chung cho mọi thanh tìm kiếm kiểu .rd-search (rdSearch,
