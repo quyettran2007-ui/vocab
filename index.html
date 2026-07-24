@@ -27958,18 +27958,82 @@ function renderListCategories(){
   const wsCount    = (byMacro[WS_KEY]||[]).length;
   const rdCount    = (byMacro[RD_MACRO]||[]).length;
   const otherCount = VOCAB.length - wsCount - rdCount;   // không tính từ Reading
+  // Chỉ ĐẾM (không dựng HTML) cho 2 tab còn lại, để hiện số trên nút tab —
+  // đếm bằng filter().length rẻ hơn nhiều so với dựng cả trăm node DOM.
+  const RWCount = VOCAB.reduce((n,v)=> n + (v._fromReading?1:0), 0);
+  const LSWCount = VOCAB.reduce((n,v)=> n + (v.listening && v.listening.length?1:0), 0);
+  const NEWWCount = VOCAB.reduce((n,v)=> n + (v._isNew?1:0), 0);
 
-  /* "Chủ đề khác" -> mỗi chủ đề lớn là 1 tab con, mỗi lần chỉ hiện 1 ô -> gọn.
-     Chỉ dựng HTML số liệu gọn cho nút tab (nhẹ); nội dung thẻ chi tiết của
-     TỪNG chủ đề chỉ được dashMacroTab() dựng đúng lúc tab đó được mở. */
-  const otherGroups = TOPIC_TREE.filter(g=>g.key!==WS_KEY && g.key!==RD_MACRO && (byMacro[g.key]||[]).length);
+  /* ---- render ----
+     TRƯỚC: mỗi lần mở Danh mục, cả 4 tab con còn lại (Theo chủ đề — ~55 thẻ
+     chủ đề lớn, Reading — hàng chục quyển, Listening, Từ mới) đều được TÍNH
+     TOÁN VÀ DỰNG CHUỖI HTML ngay lập tức, dù chỉ tab "W và S" hiện ra đầu
+     tiên. Việc dựng ~55 thẻ "Từ vựng theo chủ đề" (kể cả khi ẩn) là phần
+     nặng nhất, tốn cả trăm mili-giây trên máy yếu.
+     GIỜ: renderListCategories() CHỈ dựng tab "W và S" (rẻ, 1 thẻ) + số đếm
+     cho các tab còn lại; nội dung chi tiết của "Từ vựng theo chủ đề" /
+     "Reading" / "Từ mới thêm" chỉ được TÍNH VÀ DỰNG đúng lúc người dùng bấm
+     mở tab đó lần đầu (xem ensureDtPane + các hàm buildAllTabHTML /
+     buildRdTabHTML / buildNewTabHTML bên dưới), rồi được nhớ lại (cache)
+     cho tới lần renderListCategories() kế tiếp. */
+  _dtPaneHTML = {
+    ws: `<div class="topic-grid one-col">${wsCard}</div>`,
+    ls: `
+        <div id="lsLibrary">
+          <div class="ls-meta">
+            <p id="lsCount">—</p>
+            <div class="rd-search ls-search">
+              <span>🔍</span>
+              <input id="lsSearch" type="text" placeholder="Gõ số sách để nhảy tới, vd: 17…" autocomplete="off" oninput="_lsQuery=this.value; renderListeningLib();">
+              <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
+            </div>
+          </div>
+          <div class="topic-grid" id="lsGrid"></div>
+        </div>`
+    // 'all' / 'rd' / 'new' KHÔNG có mặt ở đây — ensureDtPane() sẽ tự dựng
+    // và gán vào đây đúng lúc tab đó được mở lần đầu (xem bên dưới).
+  };
+  _dtPaneBuilt = {};
 
-  const slug = k => k.replace(/[^A-Za-zÀ-ỹ0-9]/g,'');
+  root.innerHTML = `
+    <div class="topic-section">
+      <div class="topic-section-head">
+        <div class="dt-tabs">
+          <button class="dt-tab active" data-dt="ws"  onclick="dashTopicTab('ws')"><span class="dt-tab-ic">✍️</span><span class="dt-tab-tx">Từ vựng W và S</span> <b>${wsCount}</b></button>
+          <button class="dt-tab"        data-dt="all" onclick="dashTopicTab('all')"><span class="dt-tab-ic">🗂️</span><span class="dt-tab-tx">Từ vựng theo chủ đề</span> <b>${otherCount}</b></button>
+          <button class="dt-tab"        data-dt="rd"  onclick="dashTopicTab('rd')"><span class="dt-tab-ic">📕</span><span class="dt-tab-tx">Từ vựng Reading</span> <b>${RWCount}</b></button>
+          <button class="dt-tab"        data-dt="ls"  onclick="dashTopicTab('ls')"><span class="dt-tab-ic">🎧</span><span class="dt-tab-tx">Từ vựng Listening</span> <b>${LSWCount}</b></button>
+          <button class="dt-tab"        data-dt="new" onclick="dashTopicTab('new')"><span class="dt-tab-ic">🆕</span><span class="dt-tab-tx">Từ mới thêm</span> <b>${NEWWCount}</b></button>
+        </div>
+        <div class="ts-legend">
+          <span><i class="lg learned"></i>Đã thuộc</span>
+          <span><i class="lg doing"></i>Đang học</span>
+          <span><i class="lg newn"></i>Chưa học</span>
+        </div>
+      </div>
+      <div class="dt-pane active" id="dtPane-ws"></div>
+      <div class="dt-pane" id="dtPane-all"></div>
+      <div class="dt-pane" id="dtPane-rd"></div>
+      <div class="dt-pane" id="dtPane-ls"></div>
+      <div class="dt-pane" id="dtPane-new"></div>
+    </div>
+  `;
+  dashTopicTab(_dtTab);   // giữ nguyên tab nhỏ đang xem sau khi vẽ lại -> tự dựng nội dung tab đó
+}
+
+const slug = k => k.replace(/[^A-Za-zÀ-ỹ0-9]/g,'');
+
+/* Dựng khu "Từ vựng theo chủ đề": chỉ dựng các NÚT TAB (rẻ — chỉ cần đếm),
+   còn nội dung thẻ chi tiết của từng chủ đề vẫn để dashMacroTab() dựng lười
+   từng chủ đề một (xem buildTopicCard ở trên) — 2 lớp lười lồng nhau. */
+function buildAllTabHTML(){
+  const WS_KEY = 'CỤM HAY WRITING & SPEAKING';
+  const otherGroups = TOPIC_TREE.filter(g=>g.key!==WS_KEY && g.key!==RD_MACRO && (_catByMacro[g.key]||[]).length);
   if(!otherGroups.some(g=>g.key===_dmTab)) _dmTab = otherGroups.length ? otherGroups[0].key : '';
 
   const otherSubTabs = otherGroups.map(g=>{
-    const n = (byMacro[g.key]||[]).length;
-    const P = topicProgress(byMacro[g.key]);
+    const n = (_catByMacro[g.key]||[]).length;
+    const P = topicProgress(_catByMacro[g.key]);
     return `<button class="dm-tab ${g.key===_dmTab?'active':''}" data-dm="${slug(g.key)}"
       onclick="dashMacroTab('${g.key.replace(/'/g,"\\'")}')" title="${g.key} — ${P.learned}/${n} đã thuộc">
       <span class="dm-ic">${g.icon}</span><span class="dm-tx">${esc(g.key)}</span><b>${n}</b>
@@ -27980,12 +28044,135 @@ function renderListCategories(){
   const otherPanes = otherGroups.map(g=>
     `<div class="dm-pane ${g.key===_dmTab?'active':''}" id="dmPane-${slug(g.key)}"></div>`).join('');
 
-  /* ---- TỪ MỚI THÊM: các từ có date >= NEW_SINCE_DATE, gom theo ngày thêm ---- */
+  return `<div class="dm-tabs">${otherSubTabs}</div>${otherPanes}`;
+}
+
+/* Dựng khu "Từ vựng Reading": gom theo bài đọc rồi theo quyển Cambridge. */
+function buildRdTabHTML(){
+  const RW = VOCAB.filter(v=>v._fromReading);
+  if(!RW.length){
+    return `
+        <div class="dt-empty">
+          <div class="dt-empty-ic">📕</div>
+          <b>Chưa thêm từ nào từ bài đọc</b>
+          <p>Vào tab <b>📕 Reading</b> → mở một bài → bấm <b>＋ Thêm vào bộ học</b>
+          (hoặc ☆/＋ trên từng từ). Từ sẽ hiện ở đây kèm tiến độ riêng theo từng bài.</p>
+          <button class="btn primary" onclick="document.querySelector('.tab-btn[data-mode=&quot;reading&quot;]').click()">📕 Mở thư viện bài đọc</button>
+        </div>`;
+  }
+  const rdByPsg = {};
+  RW.forEach(v=>{ (rdByPsg[v._topic] = rdByPsg[v._topic] || []).push(v); });
+  const rdTitles = Object.keys(rdByPsg);
+
+  const rdByBook = {};
+  rdTitles.forEach(t=>{
+    const bk = readingBookOf(rdByPsg[t][0]) || 'Khác';
+    (rdByBook[bk] = rdByBook[bk] || []).push(t);
+  });
+  const rdBookNames = Object.keys(rdByBook).sort((a,b)=>{
+    const na = parseInt(a.replace(/\D/g,''),10) || 0, nb = parseInt(b.replace(/\D/g,''),10) || 0;
+    return nb - na;                                   // quyển số lớn (mới) lên trước
+  });
+  if(!rdBookNames.includes(_dmRdTab)) _dmRdTab = rdBookNames.length ? rdBookNames[0] : '';
+
+  // tra Test mấy - Passage mấy theo tiêu đề bài đọc, để ghi kèm tên bài
+  const rdByTitle = {};
+  RD().forEach(r=>{ rdByTitle[r.title] = r; });
+  const rdLabel = t=>{
+    const r = rdByTitle[t];
+    return r ? `Test ${r.test||'?'} - Passage ${r.psg||'?'}: ${t}` : t;
+  };
+
+  const rdBookTabs = rdBookNames.map(bk=>{
+    const titles = rdByBook[bk];
+    const ws = titles.flatMap(t=>rdByPsg[t]);
+    return `<button class="dm-tab ${bk===_dmRdTab?'active':''}" data-dm="${slug(bk)}"
+      onclick="dashRdTab('${bk.replace(/'/g,"\\'")}')" title="${bk} — ${titles.length} bài, ${ws.length} từ">
+      <span class="dm-ic">📕</span><span class="dm-tx">${esc(bk)}</span><b>${ws.length}</b>
+    </button>`;
+  }).join('');
+
+  // Cũng lười theo quyển: chỉ dựng đầy đủ hàng-bài-đọc cho quyển đang mở,
+  // các quyển khác chỉ là vỏ rỗng (đỡ dựng hàng trăm hàng bài đọc cùng lúc).
+  const rdBookPanes = rdBookNames.map(bk=>{
+    if(bk!==_dmRdTab) return `<div class="dm-pane" id="dmRdPane-${slug(bk)}"></div>`;
+    return `<div class="dm-pane active" id="dmRdPane-${slug(bk)}">
+      <div class="topic-grid one-col">${buildRdBookCard(bk, rdByBook, rdByPsg, rdLabel)}</div>
+    </div>`;
+  }).join('');
+
+  // lưu lại để dashRdTab() dùng khi người dùng chuyển quyển
+  _rdByBook = rdByBook; _rdByPsg = rdByPsg; _rdLabel = rdLabel;
+
+  return `<div class="dm-tabs">${rdBookTabs}</div>${rdBookPanes}`;
+}
+let _rdByBook = null, _rdByPsg = null, _rdLabel = null;
+
+function buildRdBookCard(bk, rdByBook, rdByPsg, rdLabel){
+  const titles = rdByBook[bk];
+  const ws = titles.flatMap(t=>rdByPsg[t]);
+  const P = topicProgress(ws);
+  const pct = Math.round(P.learned/P.total*100);
+
+  const rows = titles.map(t=>{
+    const tw = rdByPsg[t];
+    const tp = topicProgress(tw);
+    const tpct = Math.round(tp.learned/tp.total*100);
+    return `<div class="tp-sub" data-color="${topicColorIndex(t)}">
+      <button class="tp-sub-name" onclick="goDate('reading:${t.replace(/'/g,"\\'")}','flashcard')" title="Flashcard: ${esc(rdLabel(t))}">
+        <span class="tp-ico">📖</span><span class="tp-txt">${esc(rdLabel(t))}</span>
+      </button>
+      <div class="tp-sub-bar"><div class="tp-sub-fill" style="width:${tpct}%"></div></div>
+      <span class="tp-sub-n">${tp.learned}/${tp.total}</span>
+      <span class="tp-sub-go">
+        <button class="tp-mini" onclick="goDate('reading:${t.replace(/'/g,"\\'")}','flashcard')" title="Flashcard">🃏</button>
+        <button class="tp-mini" onclick="goDate('reading:${t.replace(/'/g,"\\'")}','list')" title="Danh sách">📖</button>
+      </span>
+    </div>`;
+  }).join('');
+
+  return `<div class="tp-card" data-color="${topicColorIndex(bk)}">
+    <div class="tp-head">
+      <button class="tp-macro-name" onclick="goDate('reading:book:${bk.replace(/'/g,"\\'")}','flashcard')" title="Học toàn bộ ${esc(bk)} bằng Flashcard">
+        <span class="tp-macro-ico">📕</span>
+        <span class="tp-macro-txt">${esc(bk)}</span>
+      </button>
+      <div class="tp-head-right">
+        <span class="tp-pct">${pct}%</span>
+        <button class="tp-btn" onclick="goDate('reading:book:${bk.replace(/'/g,"\\'")}','flashcard')">🃏 Flashcard</button>
+        <button class="tp-btn" onclick="goDate('reading:book:${bk.replace(/'/g,"\\'")}','list')">📖 Danh sách</button>
+      </div>
+    </div>
+    <div class="tp-macro-bar">
+      <div class="tp-seg learned" style="width:${P.learned/P.total*100}%"></div>
+      <div class="tp-seg doing" style="width:${P.doing/P.total*100}%"></div>
+    </div>
+    <div class="tp-legend">
+      <span><i class="lg learned"></i>${P.learned} đã thuộc</span>
+      <span><i class="lg doing"></i>${P.doing} đang học</span>
+      <span><i class="lg newn"></i>${P.newN} chưa học</span>
+      <span class="tp-total">${P.total} từ</span>
+    </div>
+    <div class="tp-subs">${rows}</div>
+  </div>`;
+}
+
+/* Dựng khu "Từ mới thêm": các từ có date >= NEW_SINCE_DATE, gom theo ngày. */
+function buildNewTabHTML(){
   const NEWW = VOCAB.filter(v=>v._isNew);
+  if(!NEWW.length){
+    return `
+        <div class="dt-empty">
+          <div class="dt-empty-ic">🆕</div>
+          <b>Chưa có từ mới</b>
+          <p>Dán từ mới vào <b>cuối mảng <code>VOCAB</code></b> trong file HTML — chúng sẽ tự hiện ở đây kèm tiến độ riêng.<br>
+          Đừng quên <b>Xuất dữ liệu</b> trước và <b>Nhập lại</b> sau khi thêm để giữ tiến độ.</p>
+          <button class="btn" onclick="goBackup()">💾 Mở khu Sao lưu / Thêm từ</button>
+        </div>`;
+  }
   const byDate = {};
   NEWW.forEach(v=>{ const d=v.date||'—'; (byDate[d]=byDate[d]||[]).push(v); });
   const recentDates = Object.keys(byDate).sort((a,b)=>parseDate(b)-parseDate(a));
-  const NP = NEWW.length ? topicProgress(NEWW) : null;
 
   const fmtD = d => { const dd=new Date(d); return isNaN(dd) ? d :
       `${String(dd.getDate()).padStart(2,'0')}/${String(dd.getMonth()+1).padStart(2,'0')}/${dd.getFullYear()}`; };
@@ -28024,101 +28211,6 @@ function renderListCategories(){
     </div>`;
   };
 
-  /* ---- TỪ VỰNG READING CAMBRIDGE: gom theo từng bài đã thêm, rồi gom
-     tiếp theo quyển Cambridge (hàng chủ đề cấp 2, giống "Từ vựng theo
-     chủ đề") để dễ tìm đúng quyển thay vì cuộn qua cả trăm bài. ---- */
-  const RW = VOCAB.filter(v=>v._fromReading);
-  const rdByPsg = {};
-  RW.forEach(v=>{ (rdByPsg[v._topic] = rdByPsg[v._topic] || []).push(v); });
-  const rdTitles = Object.keys(rdByPsg);
-
-  const rdByBook = {};
-  rdTitles.forEach(t=>{
-    const bk = readingBookOf(rdByPsg[t][0]) || 'Khác';
-    (rdByBook[bk] = rdByBook[bk] || []).push(t);
-  });
-  const rdBookNames = Object.keys(rdByBook).sort((a,b)=>{
-    const na = parseInt(a.replace(/\D/g,''),10) || 0, nb = parseInt(b.replace(/\D/g,''),10) || 0;
-    return nb - na;                                   // quyển số lớn (mới) lên trước
-  });
-  if(!rdBookNames.includes(_dmRdTab)) _dmRdTab = rdBookNames.length ? rdBookNames[0] : '';
-
-  // tra Test mấy - Passage mấy theo tiêu đề bài đọc, để ghi kèm tên bài
-  // ở mỗi hàng chủ đề nhỏ trong khu Từ vựng Reading
-  const rdByTitle = {};
-  RD().forEach(r=>{ rdByTitle[r.title] = r; });
-  const rdLabel = t=>{
-    const r = rdByTitle[t];
-    return r ? `Test ${r.test||'?'} - Passage ${r.psg||'?'}: ${t}` : t;
-  };
-
-  const rdBookTabs = rdBookNames.map(bk=>{
-    const titles = rdByBook[bk];
-    const ws = titles.flatMap(t=>rdByPsg[t]);
-    return `<button class="dm-tab ${bk===_dmRdTab?'active':''}" data-dm="${slug(bk)}"
-      onclick="dashRdTab('${bk.replace(/'/g,"\\'")}')" title="${bk} — ${titles.length} bài, ${ws.length} từ">
-      <span class="dm-ic">📕</span><span class="dm-tx">${esc(bk)}</span><b>${ws.length}</b>
-    </button>`;
-  }).join('');
-
-  const rdBookPanes = rdBookNames.map(bk=>{
-    const titles = rdByBook[bk];
-    const ws = titles.flatMap(t=>rdByPsg[t]);
-    const P = topicProgress(ws);
-    const pct = Math.round(P.learned/P.total*100);
-
-    // mỗi bài đọc trong quyển -> 1 hàng gọn (icon + thanh tiến độ + số liệu),
-    // đúng kiểu "chủ đề nhỏ" trong thẻ Từ vựng theo chủ đề / Từ vựng W&S
-    const rows = titles.map(t=>{
-      const tw = rdByPsg[t];
-      const tp = topicProgress(tw);
-      const tpct = Math.round(tp.learned/tp.total*100);
-      return `<div class="tp-sub" data-color="${topicColorIndex(t)}">
-        <button class="tp-sub-name" onclick="goDate('reading:${t.replace(/'/g,"\\'")}','flashcard')" title="Flashcard: ${esc(rdLabel(t))}">
-          <span class="tp-ico">📖</span><span class="tp-txt">${esc(rdLabel(t))}</span>
-        </button>
-        <div class="tp-sub-bar"><div class="tp-sub-fill" style="width:${tpct}%"></div></div>
-        <span class="tp-sub-n">${tp.learned}/${tp.total}</span>
-        <span class="tp-sub-go">
-          <button class="tp-mini" onclick="goDate('reading:${t.replace(/'/g,"\\'")}','flashcard')" title="Flashcard">🃏</button>
-          <button class="tp-mini" onclick="goDate('reading:${t.replace(/'/g,"\\'")}','list')" title="Danh sách">📖</button>
-        </span>
-      </div>`;
-    }).join('');
-
-    const card = `<div class="tp-card" data-color="${topicColorIndex(bk)}">
-      <div class="tp-head">
-        <button class="tp-macro-name" onclick="goDate('reading:book:${bk.replace(/'/g,"\\'")}','flashcard')" title="Học toàn bộ ${esc(bk)} bằng Flashcard">
-          <span class="tp-macro-ico">📕</span>
-          <span class="tp-macro-txt">${esc(bk)}</span>
-        </button>
-        <div class="tp-head-right">
-          <span class="tp-pct">${pct}%</span>
-          <button class="tp-btn" onclick="goDate('reading:book:${bk.replace(/'/g,"\\'")}','flashcard')">🃏 Flashcard</button>
-          <button class="tp-btn" onclick="goDate('reading:book:${bk.replace(/'/g,"\\'")}','list')">📖 Danh sách</button>
-        </div>
-      </div>
-      <div class="tp-macro-bar">
-        <div class="tp-seg learned" style="width:${P.learned/P.total*100}%"></div>
-        <div class="tp-seg doing" style="width:${P.doing/P.total*100}%"></div>
-      </div>
-      <div class="tp-legend">
-        <span><i class="lg learned"></i>${P.learned} đã thuộc</span>
-        <span><i class="lg doing"></i>${P.doing} đang học</span>
-        <span><i class="lg newn"></i>${P.newN} chưa học</span>
-        <span class="tp-total">${P.total} từ</span>
-      </div>
-      <div class="tp-subs">${rows}</div>
-    </div>`;
-
-    return `<div class="dm-pane ${bk===_dmRdTab?'active':''}" id="dmRdPane-${slug(bk)}">
-      <div class="topic-grid one-col">${card}</div>
-    </div>`;
-  }).join('');
-
-  /* ---- TỪ VỰNG LISTENING CAMBRIDGE: đếm số từ đã gán theo đề ---- */
-  const LSW = VOCAB.filter(v=>v.listening && v.listening.length);
-
   let recentCards = '';
   const TW = NEWW.filter(isPlainTopicWord);
   if(TW.length){
@@ -28135,88 +28227,28 @@ function renderListCategories(){
       recentCards += nwCard(`Từ vựng theo chủ đề · ${fmtD(d)}`, '🗂️', `${topicsInBatch} chủ đề`, ws, 'topicnew:'+d);
     });
   }
-  if(NEWW.length){
-    if(recentDates.length > 1)
-      recentCards += nwCard(`Tất cả từ mới`, '🆕', 'tổng hợp', NEWW, 'new:*');
-    recentDates.slice(0,4).forEach((d,i)=>{
-      recentCards += nwCard(`Đợt ${fmtD(d)}`, i===0?'🆕':'📅', i===0&&recentDates.length>1?'mới nhất':'', byDate[d], 'new:'+d);
-    });
-  }
+  if(recentDates.length > 1)
+    recentCards += nwCard(`Tất cả từ mới`, '🆕', 'tổng hợp', NEWW, 'new:*');
+  recentDates.slice(0,4).forEach((d,i)=>{
+    recentCards += nwCard(`Đợt ${fmtD(d)}`, i===0?'🆕':'📅', i===0&&recentDates.length>1?'mới nhất':'', byDate[d], 'new:'+d);
+  });
 
-  /* ---- render ----
-     Trước đây cả 5 tab con (W&S / Theo chủ đề / Reading / Listening / Mới)
-     được dựng HTML VÀ gắn vào DOM cùng lúc, dù chỉ 1 tab hiện ra (4 tab kia
-     ẩn bằng CSS nhưng vẫn tốn dựng ~2000 node DOM). Đo được bước gán
-     root.innerHTML này chiếm phần lớn thời gian (~470/600ms trong 1 lần đo).
-     -> Giờ chỉ tạo sẵn "vỏ" 5 pane rỗng, rồi CHỈ gắn nội dung của tab đang
-     mở; các tab còn lại chỉ dựng khi người dùng thật sự bấm vào. */
-  _dtPaneHTML = {
-    ws: `<div class="topic-grid one-col">${wsCard}</div>`,
-    all: `<div class="dm-tabs">${otherSubTabs}</div>${otherPanes}`,
-    rd: rdBookNames.length ? `
-        <div class="dm-tabs">${rdBookTabs}</div>
-        ${rdBookPanes}` : `
-        <div class="dt-empty">
-          <div class="dt-empty-ic">📕</div>
-          <b>Chưa thêm từ nào từ bài đọc</b>
-          <p>Vào tab <b>📕 Reading</b> → mở một bài → bấm <b>＋ Thêm vào bộ học</b>
-          (hoặc ☆/＋ trên từng từ). Từ sẽ hiện ở đây kèm tiến độ riêng theo từng bài.</p>
-          <button class="btn primary" onclick="document.querySelector('.tab-btn[data-mode=&quot;reading&quot;]').click()">📕 Mở thư viện bài đọc</button>
-        </div>`,
-    ls: `
-        <div id="lsLibrary">
-          <div class="ls-meta">
-            <p id="lsCount">—</p>
-            <div class="rd-search ls-search">
-              <span>🔍</span>
-              <input id="lsSearch" type="text" placeholder="Gõ số sách để nhảy tới, vd: 17…" autocomplete="off" oninput="_lsQuery=this.value; renderListeningLib();">
-              <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
-            </div>
-          </div>
-          <div class="topic-grid" id="lsGrid"></div>
-        </div>`,
-    new: recentCards ? `<div class="topic-grid">${recentCards}</div>` : `
-        <div class="dt-empty">
-          <div class="dt-empty-ic">🆕</div>
-          <b>Chưa có từ mới</b>
-          <p>Dán từ mới vào <b>cuối mảng <code>VOCAB</code></b> trong file HTML — chúng sẽ tự hiện ở đây kèm tiến độ riêng.<br>
-          Đừng quên <b>Xuất dữ liệu</b> trước và <b>Nhập lại</b> sau khi thêm để giữ tiến độ.</p>
-          <button class="btn" onclick="goBackup()">💾 Mở khu Sao lưu / Thêm từ</button>
-        </div>`
-  };
-  _dtPaneBuilt = {};
-
-  root.innerHTML = `
-    <div class="topic-section">
-      <div class="topic-section-head">
-        <div class="dt-tabs">
-          <button class="dt-tab active" data-dt="ws"  onclick="dashTopicTab('ws')"><span class="dt-tab-ic">✍️</span><span class="dt-tab-tx">Từ vựng W và S</span> <b>${wsCount}</b></button>
-          <button class="dt-tab"        data-dt="all" onclick="dashTopicTab('all')"><span class="dt-tab-ic">🗂️</span><span class="dt-tab-tx">Từ vựng theo chủ đề</span> <b>${otherCount}</b></button>
-          <button class="dt-tab"        data-dt="rd"  onclick="dashTopicTab('rd')"><span class="dt-tab-ic">📕</span><span class="dt-tab-tx">Từ vựng Reading</span> <b>${RW.length}</b></button>
-          <button class="dt-tab"        data-dt="ls"  onclick="dashTopicTab('ls')"><span class="dt-tab-ic">🎧</span><span class="dt-tab-tx">Từ vựng Listening</span> <b>${LSW.length}</b></button>
-          <button class="dt-tab"        data-dt="new" onclick="dashTopicTab('new')"><span class="dt-tab-ic">🆕</span><span class="dt-tab-tx">Từ mới thêm</span> <b>${NEWW.length}</b></button>
-        </div>
-        <div class="ts-legend">
-          <span><i class="lg learned"></i>Đã thuộc</span>
-          <span><i class="lg doing"></i>Đang học</span>
-          <span><i class="lg newn"></i>Chưa học</span>
-        </div>
-      </div>
-      <div class="dt-pane active" id="dtPane-ws"></div>
-      <div class="dt-pane" id="dtPane-all"></div>
-      <div class="dt-pane" id="dtPane-rd"></div>
-      <div class="dt-pane" id="dtPane-ls"></div>
-      <div class="dt-pane" id="dtPane-new"></div>
-    </div>
-  `;
-  dashTopicTab(_dtTab);   // giữ nguyên tab nhỏ đang xem sau khi vẽ lại -> tự dựng nội dung tab đó
+  return recentCards ? `<div class="topic-grid">${recentCards}</div>` : '';
 }
 
 /* Dựng nội dung THẬT SỰ của 1 tab con (ws/all/rd/ls/new) đúng lúc mở tab đó
-   lần đầu, thay vì dựng cả 5 tab cùng lúc khi mở khu Danh mục. */
+   lần đầu, thay vì dựng cả 5 tab cùng lúc khi mở khu Danh mục. Với các tab
+   nặng (all/rd/new), nội dung còn CHƯA được tính tới lúc này — hàm build
+   tương ứng chỉ chạy đúng 1 lần ở đây rồi được nhớ lại trong _dtPaneHTML. */
 let _dtPaneHTML = null, _dtPaneBuilt = {};
 function ensureDtPane(t){
-  if(_dtPaneBuilt[t] || !_dtPaneHTML || _dtPaneHTML[t]===undefined) return;
+  if(_dtPaneBuilt[t]) return;
+  if(_dtPaneHTML[t]===undefined){
+    if(t==='all') _dtPaneHTML.all = buildAllTabHTML();
+    else if(t==='rd') _dtPaneHTML.rd = buildRdTabHTML();
+    else if(t==='new') _dtPaneHTML.new = buildNewTabHTML();
+    else return;
+  }
   const el = document.getElementById('dtPane-'+t);
   if(!el) return;
   el.innerHTML = _dtPaneHTML[t];
