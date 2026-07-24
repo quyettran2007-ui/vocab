@@ -2141,6 +2141,11 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .rd-note-text .rd-note-del{ margin-left:auto; flex-shrink:0; background:none; border:none; cursor:pointer;
   color:var(--muted); font-size:13px; padding:0 2px; }
 .rd-note-text .rd-note-del:hover{ color:#ef4444; }
+.rd-note-emoji{ flex-shrink:0; }
+.rd-note-body{ min-width:0; }
+.rd-note-editwrap{ flex:1; min-width:0; }
+.rd-note-text .nb-fmt-toolbar button{ background:var(--paper); }
+.rd-note-text .nb-note-editable{ min-height:24px; }
 .rd-vsearch{ flex:1; min-width:200px; background:var(--card); border:1px solid var(--line);
   border-radius:10px; padding:9px 13px; font:inherit; font-size:13.5px; color:var(--ink); outline:none; }
 .rd-vcount{ font-size:12.5px; font-weight:700; color:var(--muted); }
@@ -2287,6 +2292,9 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin1:hover{ color:#eab308; }
 .nb-pin1.on{ color:#eab308; }
 .nb-pin-badge{ font-size:11px; }
+.nb-source-link{ background:none; border:none; padding:0; margin:0; font:inherit; font-size:11.5px;
+  color:var(--accent); cursor:pointer; text-decoration:underline; text-underline-offset:2px; }
+.nb-source-link:hover{ color:var(--accent-2, var(--accent)); }
 
 /* Sửa nội dung trích dẫn (inline, khi bấm ✏️ Sửa) */
 .nb-edit-box textarea{ width:100%; box-sizing:border-box; font:inherit; font-size:13px; padding:7px 9px;
@@ -2329,6 +2337,7 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin-card .nb-edit-box textarea{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
 .nb-pin-card .nb-note-editable{ background:rgba(255,255,255,.55); border-color:rgba(0,0,0,.18); border-left-color:rgba(0,0,0,.3); color:#2b2b2b; }
 .nb-pin-card .nb-fmt-toolbar button{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
+.nb-pin-card .nb-source-link{ color:#2b2b2b; text-decoration-color:rgba(0,0,0,.4); }
 
 
 .settings-nav{
@@ -35435,7 +35444,10 @@ function notebookAddLine(text, note, source, readingId, hidden, manual){
   nb[day].unshift({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
     time: new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}),
-    text, note: note||'', source: source||'', readingId: readingId||'', hidden: !!hidden, manual: !!manual,
+    text, note: note||'', noteRich:false, source: source||'', readingId: readingId||'', hidden: !!hidden, manual: !!manual,
+    /* Bản sao độc lập của ghi chú, dùng riêng cho bong bóng trong bài đọc — sửa ở Sổ ghi chú (note)
+       hay sửa trực tiếp trong bài đọc (pnote) đều không ảnh hưởng lẫn nhau, chỉ đường link quay lại bài là dùng chung. */
+    pnote: note||'', pnoteRich:false,
     pinned: false, color: ''
   });
   saveNotebook(nb);
@@ -35644,6 +35656,36 @@ function notebookDayLabel(day){
   const p = day.split('-');
   return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : day;
 }
+/* Nhãn "Cam · Test · Passage" của 1 mục ghi chú, tra theo readingId ngay tại
+   thời điểm hiển thị (không lưu cứng lúc tạo) — nhờ vậy áp dụng được luôn cho
+   cả các ghi chú cũ đã lưu từ trước. Trả về '' nếu không tìm thấy bài (đã xoá/đổi id)
+   hoặc mục không gắn với bài đọc nào (ghi chú tự tạo). */
+/* HTML hiển thị "nguồn" của 1 mục ghi chú: nếu có readingId hợp lệ, gắn thêm
+   nhãn Cam/Test/Passage và biến cả cụm thành liên kết bấm để quay lại đúng bài đọc. */
+function nbSourceHtml(item){
+  if(!item.source) return '';
+  const meta = nbReadingMeta(item.readingId);
+  if(item.readingId && meta){
+    return ` · <button type="button" class="nb-source-link" title="Mở lại bài đọc này"
+      onclick="nbOpenReading('${item.readingId}')">🔗 ${rdEsc(meta)} · ${rdEsc(item.source)}</button>`;
+  }
+  return ` · ${rdEsc(item.source)}`;
+}
+function nbReadingMeta(readingId){
+  if(!readingId) return '';
+  const r = RD().find(x=>x.id===readingId);
+  if(!r) return '';
+  return `${r.book?`Cam ${r.book}`:''}${r.test?` · Test ${r.test}`:''}${r.psg?` · Passage ${r.psg}`:''}`;
+}
+/* Mở lại đúng bài đọc từ 1 mục trong Sổ ghi chú: chuyển sang tab Reading rồi mở bài. */
+function nbOpenReading(readingId){
+  if(!readingId) return;
+  const r = RD().find(x=>x.id===readingId);
+  if(!r){ toast('Không tìm thấy bài đọc này (có thể đã bị xoá)'); return; }
+  const btn = document.querySelector('.tab-btn[data-mode="reading"]');
+  if(btn) btn.click();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>openReading(readingId)));
+}
 /* Văn bản thuần của 1 dòng — dùng chung cho copy 1 dòng và copy cả ô
    Chỉ lấy đúng từ/cụm từ được ghi chú, không kèm ghi chú, nguồn hay dấu ngoặc kép */
 function notebookLineText(item){
@@ -35724,7 +35766,7 @@ function renderNotebook(){
                 `}
                 ${nbNoteBoxHtml(day, item, 'pin')}
                 ${editing ? '' : `
-                  <div class="nb-pin-meta">${notebookDayLabel(day)}${item.time?' · '+item.time:''}${item.source?' · '+rdEsc(item.source):''}</div>
+                  <div class="nb-pin-meta">${notebookDayLabel(day)}${item.time?' · '+item.time:''}${nbSourceHtml(item)}</div>
                   ${nbColorDotsHtml(day, item)}
                 `}
               </div>`;
@@ -35761,7 +35803,7 @@ function renderNotebook(){
               `}
               ${nbNoteBoxHtml(day, item, 'line')}
               ${editing ? '' : `
-                <div class="nb-meta">${item.pinned?'<span class="nb-pin-badge">📌</span> ':''}${item.time||''}${item.source?' · '+rdEsc(item.source):''}</div>
+                <div class="nb-meta">${item.pinned?'<span class="nb-pin-badge">📌</span> ':''}${item.time||''}${nbSourceHtml(item)}</div>
               `}
             </div>
             ${editing ? '' : `
@@ -35823,23 +35865,33 @@ function rdWrapTextInElement(el, searchText, className, dataAttrs){
 function rdNotesForCurrent(){
   if(!_rdCur) return [];
   const nb = loadNotebook();
+  let changed = false;
   const out = [];
   Object.keys(nb).forEach(day=>{
     (nb[day]||[]).forEach(item=>{
-      if(item.note && item.readingId === _rdCur.id) out.push(Object.assign({day}, item));
+      if(item.readingId !== _rdCur.id) return;
+      /* Ghi chú cũ (tạo trước khi có tính năng tách riêng): fork 1 lần duy nhất
+         thành pnote độc lập, từ đó về sau sửa ở bài đọc không còn ảnh hưởng tới Sổ ghi chú và ngược lại. */
+      if(item.pnote === undefined){
+        item.pnote = item.note || '';
+        item.pnoteRich = !!item.noteRich;
+        changed = true;
+      }
+      if(item.pnote) out.push(Object.assign({day}, item));
     });
   });
+  if(changed) saveNotebook(nb);
   return out;
 }
 function rdDeleteNoteMark(day, id){
   notebookDeleteLine(day, id);
   if(_rdShowNotes) rdRenderNoteMarks();
 }
-function rdRenderNoteMarks(){
+function rdRenderNoteMarks(silent){
   if(!_rdCur) return;
   rdRenderArticle(); // reset về trạng thái gốc trước khi đánh dấu lại
   const items = rdNotesForCurrent();
-  if(!items.length){ toast('Bài này chưa có ghi chú nào'); return; }
+  if(!items.length){ if(!silent) toast('Bài này chưa có ghi chú nào'); return; }
   const art = document.getElementById('rdArticle');
   const paras = art.querySelectorAll('.rd-para p');
   items.forEach(item=>{
@@ -35853,11 +35905,59 @@ function rdRenderNoteMarks(){
     bubble.className = 'rd-note-bubble';
     bubble.innerHTML = `
       <span class="rd-note-arrow"></span>
-      <span class="rd-note-text">📝 ${rdEsc(item.note)}
+      <span class="rd-note-text">
+        <span class="rd-note-emoji">📝</span>
+        ${rdNoteBodyHtml(item)}
         <button type="button" class="rd-note-del" title="Xoá ghi chú này" onclick="rdDeleteNoteMark('${item.day}','${item.id}')">✕</button>
       </span>`;
     mark.after(bubble);
   });
+}
+/* Nội dung bên trong bong bóng ghi chú: chỉ đọc khi Edit đang tắt; khi Edit bật thì
+   hiện thêm thanh định dạng nổi (giống Sổ ghi chú) và cho sửa trực tiếp, tự lưu vào
+   pnote — độc lập hoàn toàn với ghi chú (note) bên Sổ ghi chú ở tab Setting. */
+function rdNoteBodyHtml(item){
+  const html = item.pnoteRich ? item.pnote : rdEsc(item.pnote);
+  if(!_rdEditMode) return `<span class="rd-note-body">${html}</span>`;
+  const domId = 'rdNote_' + item.id;
+  return `
+    <span class="rd-note-editwrap">
+      <div class="nb-fmt-toolbar">
+        <button type="button" title="In đậm" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','bold')"><b>B</b></button>
+        <button type="button" title="In nghiêng" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','italic')"><i>I</i></button>
+        <span class="nb-fmt-sep"></span>
+        <button type="button" title="Căn trái" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyLeft')">⯇</button>
+        <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyCenter')">≡</button>
+        <button type="button" title="Căn phải" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyRight')">⯈</button>
+        <span class="nb-fmt-sep"></span>
+        <input type="color" class="nb-fmt-color" title="Màu chữ" value="#e11d48" onmousedown="event.preventDefault()" oninput="rdNoteFmt('${domId}','foreColor',this.value)">
+      </div>
+      <div class="nb-note-editable" contenteditable="true" id="${domId}" data-day="${item.day}" data-id="${item.id}"
+        data-placeholder="📝 Bấm để nhập ghi chú…" oninput="rdNoteAutosave(this)" onblur="rdNoteAutosave(this)">${html}</div>
+    </span>`;
+}
+function rdNoteFmt(domId, cmd, value){
+  const el = document.getElementById(domId);
+  if(!el) return;
+  el.focus();
+  try{ document.execCommand(cmd, false, value || null); }catch(e){}
+  rdNoteAutosave(el);
+}
+/* Tự lưu ghi chú sửa trực tiếp trong bài đọc — CHỈ ghi vào pnote, không đụng tới
+   note (bản của Sổ ghi chú), nên 2 bên hoàn toàn độc lập với nhau sau khi tạo. */
+let _rdNoteAutosaveTimer = null;
+function rdNoteAutosave(el){
+  clearTimeout(_rdNoteAutosaveTimer);
+  _rdNoteAutosaveTimer = setTimeout(function(){
+    const day = el.dataset.day, id = el.dataset.id;
+    if(!day || !id) return;
+    const nb = loadNotebook();
+    const item = (nb[day]||[]).find(x=>x.id===id);
+    if(!item) return;
+    item.pnote = nbSanitizeHtml(el.innerHTML.trim());
+    item.pnoteRich = true;
+    saveNotebook(nb);
+  }, 250);
 }
 
 /* ---------- Đọc to cả bài ---------- */
@@ -35987,6 +36087,7 @@ function rdPractice(id){
     $('rdArticle').classList.toggle('rd-edit-mode', _rdEditMode);
     $('rdEditHint').style.display = _rdEditMode ? '' : 'none';
     if(!_rdEditMode){ rdHidePop(); rdHideSelTip(); window.getSelection && window.getSelection().removeAllRanges(); }
+    if(_rdShowNotes) rdRenderNoteMarks(true);
   };
   $('rdShowNotesBtn').onclick = ()=>{
     _rdShowNotes = !_rdShowNotes;
