@@ -2308,27 +2308,36 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-fmt-toolbar button{ min-width:24px; height:24px; padding:0 6px; border-radius:6px; border:1px solid var(--line);
   background:var(--card); color:var(--ink); cursor:pointer; font-size:12px; line-height:1; display:flex; align-items:center; justify-content:center; }
 .nb-fmt-toolbar button:hover{ border-color:var(--accent); color:var(--accent); }
+.nb-fmt-toolbar button.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
 .nb-fmt-sep{ width:1px; align-self:stretch; background:var(--line); margin:0 2px; }
 .nb-fmt-color{ width:24px; height:24px; padding:0; border:1px solid var(--line); border-radius:6px; background:none; cursor:pointer; }
+.nb-fmt-size{ height:24px; border-radius:6px; border:1px solid var(--line); background:var(--card); color:var(--ink);
+  font-size:11.5px; padding:0 3px; cursor:pointer; }
 .nb-note-editable{ width:100%; box-sizing:border-box; font-size:13px; color:var(--ink-soft); background:var(--card);
   border:1px solid var(--line); border-left:3px solid var(--accent); padding:6px 9px; border-radius:0 8px 8px 0;
   line-height:1.55; min-height:32px; resize:both; overflow:auto; max-width:100%; outline:none; cursor:text; }
 .nb-note-editable:empty:before{ content:attr(data-placeholder); color:var(--muted); }
 .nb-note-editable:focus{ box-shadow:0 0 0 2px var(--accent) inset; border-color:var(--accent); }
+.nb-note-editable ul, .nb-note-editable ol{ margin:4px 0 4px 20px; padding:0; }
+.nb-note-editable li{ margin:2px 0; }
 
 /* Bảng ghim: các ô ghi chú nổi, có thể tùy chỉnh màu */
 .nb-pinboard{ margin-bottom:22px; }
 .nb-pin-head{ font-size:14.5px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:6px; color:var(--ink); }
-.nb-pin-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); gap:14px; }
-.nb-pin-card{ position:relative; border-radius:12px; padding:12px 12px 10px; box-shadow:0 5px 14px rgba(0,0,0,.10);
+.nb-pin-grid{ position:relative; }
+.nb-pin-card{ position:absolute; border-radius:12px; padding:12px 12px 10px; box-shadow:0 5px 14px rgba(0,0,0,.10);
   border:1px solid rgba(0,0,0,.07); display:flex; flex-direction:column; gap:7px; min-height:120px; color:#2b2b2b;
-  resize:both; overflow:auto; box-sizing:border-box; width:100%; min-width:190px; justify-self:start; }
+  resize:both; overflow:auto; box-sizing:border-box; width:220px; }
 [data-theme="dark"] .nb-pin-card{ box-shadow:0 6px 18px rgba(0,0,0,.4); border-color:rgba(0,0,0,.15); }
+.nb-pin-drag{ position:absolute; top:7px; left:7px; cursor:move; touch-action:none; user-select:none;
+  font-size:12px; line-height:1; color:rgba(0,0,0,.4); background:rgba(255,255,255,.65); border-radius:6px;
+  padding:3px 5px; z-index:2; }
+.nb-pin-drag:hover{ color:#333; background:rgba(255,255,255,.9); }
 .nb-pin-actions{ position:absolute; top:7px; right:7px; display:flex; gap:4px; }
 .nb-pin-actions button{ background:rgba(255,255,255,.75); border:none; border-radius:6px; width:22px; height:22px;
   font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#333; }
 .nb-pin-actions button:hover{ background:#fff; }
-.nb-pin-text{ font-size:13.5px; font-style:italic; line-height:1.5; padding-right:56px; }
+.nb-pin-text{ font-size:13.5px; font-style:italic; line-height:1.5; padding-right:56px; padding-left:26px; }
 .nb-pin-text.nb-manual{ font-style:normal; font-weight:700; }
 .nb-pin-meta{ font-size:11px; color:rgba(0,0,0,.55); margin-top:auto; }
 .nb-pin-colors{ display:flex; gap:5px; flex-wrap:wrap; margin-top:2px; }
@@ -2338,6 +2347,12 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin-card .nb-note-editable{ background:rgba(255,255,255,.55); border-color:rgba(0,0,0,.18); border-left-color:rgba(0,0,0,.3); color:#2b2b2b; }
 .nb-pin-card .nb-fmt-toolbar button{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
 .nb-pin-card .nb-source-link{ color:#2b2b2b; text-decoration-color:rgba(0,0,0,.4); }
+
+.nb-date-filter{ display:flex; align-items:center; gap:8px; margin-bottom:14px; font-size:13px; color:var(--ink-soft); }
+.nb-date-filter label{ font-weight:700; white-space:nowrap; }
+.nb-date-filter select{ font:inherit; font-size:13px; padding:6px 10px; border-radius:9px; border:1px solid var(--line);
+  background:var(--card); color:var(--ink); cursor:pointer; }
+.nb-date-filter select:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset; }
 
 
 .settings-nav{
@@ -5372,6 +5387,7 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
           </div>
         </div>
         <div id="notebookPinboard"></div>
+        <div id="notebookDateFilterBar"></div>
         <div id="notebookList"></div>
       </div>
       </div><!-- /settingsGroup-notebook -->
@@ -9853,9 +9869,6 @@ const VOCAB = [
   VOCAB.length = 0;
   merged.forEach(v => VOCAB.push(v));
   passthrough.forEach(v => VOCAB.push(v));
-
-  const msg = `Đã tự động gộp ${dupWords.length} từ bị trùng: ${dupWords.slice(0,15).join(', ')}${dupWords.length>15?'…':''}`;
-  console.warn('[VocabLab] ' + msg);
 })();
 
 /* Khởi tạo sẵn trường v.listening = [] cho mọi từ (nếu chưa có) —
@@ -35328,6 +35341,11 @@ function rdSelToolbar(){
   if(!sel || sel.isCollapsed || sel.rangeCount===0){ rdHideSelTip(); return; }
   const range = sel.getRangeAt(0);
   if(!art || !art.contains(range.commonAncestorContainer)){ rdHideSelTip(); return; }
+  /* Bôi chọn bên trong ô ghi chú (bong bóng ghi chú trong bài đọc) là để sửa/định dạng
+     nội dung ghi chú, không phải để trích đoạn văn bản gốc — bỏ qua, tránh popup che
+     mất thanh định dạng (B/I/màu chữ…) của ô ghi chú. */
+  const anchorEl = range.commonAncestorContainer.nodeType===1 ? range.commonAncestorContainer : range.commonAncestorContainer.parentElement;
+  if(anchorEl && anchorEl.closest('.rd-note-bubble')){ rdHideSelTip(); return; }
   const text = sel.toString().trim();
   if(!text){ rdHideSelTip(); return; }
   _rdSelText = text;
@@ -35436,7 +35454,7 @@ function rdSelToNotebook(){
 const NOTEBOOK_KEY = 'vocab_notebook_v1';
 function loadNotebook(){ try{ return JSON.parse(localStorage.getItem(NOTEBOOK_KEY)) || {}; }catch(e){ return {}; } }
 function saveNotebook(nb){ try{ localStorage.setItem(NOTEBOOK_KEY, JSON.stringify(nb)); }catch(e){} }
-function notebookAddLine(text, note, source, readingId, hidden, manual){
+function notebookAddLine(text, note, source, readingId, hidden, manual, pinnedDefault){
   if(!text) return;
   const nb = loadNotebook();
   const day = todayKey();
@@ -35448,7 +35466,10 @@ function notebookAddLine(text, note, source, readingId, hidden, manual){
     /* Bản sao độc lập của ghi chú, dùng riêng cho bong bóng trong bài đọc — sửa ở Sổ ghi chú (note)
        hay sửa trực tiếp trong bài đọc (pnote) đều không ảnh hưởng lẫn nhau, chỉ đường link quay lại bài là dùng chung. */
     pnote: note||'', pnoteRich:false,
-    pinned: false, color: ''
+    pinned: !!pinnedDefault, color: pinnedDefault ? NB_COLORS[0] : '', noteLinked: false, pinPos: null,
+    /* pinOnly: mục được ghim ngay từ lúc tạo (vd. bấm "Tạo ghi chú mới") sẽ chỉ hiện trong
+       Bảng ghim, không hiện lại trong danh sách theo ngày bên dưới, cho tới khi người dùng tự bỏ ghim. */
+    pinOnly: !!pinnedDefault
   });
   saveNotebook(nb);
   renderNotebook();
@@ -35468,8 +35489,8 @@ function notebookSaveManual(){
   const ta = document.getElementById('notebookNewInput');
   const text = ta ? ta.value.trim() : '';
   if(!text){ toast('Hãy nhập nội dung ghi chú'); return; }
-  notebookAddLine(text, '', 'Ghi chú tự tạo', '', false, true);
-  toast('📝 Đã tạo ghi chú mới');
+  notebookAddLine(text, '', 'Ghi chú tự tạo', '', false, true, true);
+  toast('📌 Đã tạo ghi chú mới (đã ghim)');
   notebookToggleNewForm(false);
 }
 function notebookDeleteLine(day, id){
@@ -35486,6 +35507,12 @@ function notebookClearAll(){
   saveNotebook({});
   renderNotebook();
   toast('Đã xoá toàn bộ sổ ghi chú');
+}
+/* ---------- Lọc theo ngày cho danh sách bên dưới (không ảnh hưởng Bảng ghim) ---------- */
+let _nbDateFilter = 'all'; /* 'all' = hiện tất cả các ngày, hoặc 1 ngày cụ thể "YYYY-MM-DD" */
+function notebookSetDateFilter(day){
+  _nbDateFilter = day || 'all';
+  renderNotebook();
 }
 /* ---------- Sửa ghi chú ---------- */
 let _nbEditKey = null; /* "day|id" của mục đang sửa, chỉ 1 mục tại 1 thời điểm */
@@ -35518,6 +35545,37 @@ function nbFmt(domId, cmd, value){
   try{ document.execCommand(cmd, false, value || null); }catch(e){}
   nbNoteAutosave(el);
 }
+/* Đổi cỡ chữ — dùng chung cho cả 2 nơi (Sổ ghi chú & bài đọc), tự nhận biết
+   nơi lưu đúng dựa vào tiền tố id của ô đang sửa. */
+function nbFmtFontSize(domId, px){
+  if(!px) return;
+  const el = document.getElementById(domId);
+  if(!el) return;
+  el.focus();
+  try{ document.execCommand('fontSize', false, '7'); }catch(e){}
+  el.querySelectorAll('font[size="7"]').forEach(function(f){
+    f.removeAttribute('size');
+    f.style.fontSize = px + 'px';
+  });
+  if(domId.indexOf('rdNote_') === 0) rdNoteAutosave(el); else nbNoteAutosave(el);
+}
+/* Bật/tắt liên kết 2 chiều giữa ghi chú trong Sổ ghi chú (note) và ghi chú
+   trong bài đọc (pnote). Khi bật, sửa 1 trong 2 chỗ sẽ cập nhật luôn chỗ kia. */
+function nbToggleLink(day, id){
+  const nb = loadNotebook();
+  const item = (nb[day]||[]).find(x=>x.id===id);
+  if(!item) return;
+  item.noteLinked = !item.noteLinked;
+  if(item.noteLinked){
+    /* Đồng bộ ngay lúc bật: lấy nội dung bên Sổ ghi chú làm bản gốc */
+    item.pnote = item.note;
+    item.pnoteRich = item.noteRich;
+  }
+  saveNotebook(nb);
+  renderNotebook();
+  if(typeof _rdShowNotes !== 'undefined' && _rdShowNotes) rdRenderNoteMarks(true);
+  toast(item.noteLinked ? '🔗 Đã liên kết 2 ghi chú' : '🔗 Đã huỷ liên kết');
+}
 /* Tự động lưu ô ghi chú mỗi khi gõ hoặc rời khỏi ô — không cần bấm nút Sửa/Lưu.
    Đồng thời đồng bộ ngay sang bản sao khác của cùng ghi chú (thẻ ghim & dòng trong ngày cùng 1 mục). */
 let _nbAutosaveTimer = null;
@@ -35532,15 +35590,21 @@ function nbNoteAutosave(el){
     const html = nbSanitizeHtml(el.innerHTML.trim());
     item.note = html;
     item.noteRich = true;
+    if(item.noteLinked){ item.pnote = html; item.pnoteRich = true; }
     saveNotebook(nb);
-    document.querySelectorAll('.nb-note-editable[data-day="'+CSS.escape(day)+'"][data-id="'+CSS.escape(id)+'"]').forEach(function(other){
+    document.querySelectorAll('.nb-note-editable-note[data-day="'+CSS.escape(day)+'"][data-id="'+CSS.escape(id)+'"]').forEach(function(other){
       if(other !== el && document.activeElement !== other) other.innerHTML = html;
     });
+    if(item.noteLinked){
+      document.querySelectorAll('.nb-note-editable-pnote[data-day="'+CSS.escape(day)+'"][data-id="'+CSS.escape(id)+'"]').forEach(function(other){
+        if(document.activeElement !== other) other.innerHTML = html;
+      });
+    }
   }, 250);
 }
 /* Lọc HTML từ execCommand: chỉ giữ các thẻ/định dạng an toàn (đậm, nghiêng, màu chữ, căn lề) */
 function nbSanitizeHtml(html){
-  const allowedTags = {B:1, STRONG:1, I:1, EM:1, SPAN:1, DIV:1, BR:1, FONT:1, P:1};
+  const allowedTags = {B:1, STRONG:1, I:1, EM:1, SPAN:1, DIV:1, BR:1, FONT:1, P:1, UL:1, OL:1, LI:1};
   const tmp = document.createElement('div');
   tmp.innerHTML = html;
   (function walk(node){
@@ -35557,6 +35621,7 @@ function nbSanitizeHtml(html){
         if(s.textAlign) keep.push('text-align:'+s.textAlign);
         if(s.fontWeight) keep.push('font-weight:'+s.fontWeight);
         if(s.fontStyle) keep.push('font-style:'+s.fontStyle);
+        if(s.fontSize) keep.push('font-size:'+s.fontSize);
         const color = child.getAttribute && child.getAttribute('color');
         if(color) keep.push('color:'+color);
         Array.prototype.slice.call(child.attributes).forEach(function(attr){ child.removeAttribute(attr.name); });
@@ -35579,6 +35644,83 @@ function nbSaveSize(day, id, key, w, h){
 }
 function nbSizeStyleAttr(size){
   return (size && size.w && size.h) ? `width:${size.w}px;height:${size.h}px;` : '';
+}
+/* ---------- Kéo-thả tự do các ghi chú đã ghim (tránh chồng lên nhau) ---------- */
+/* Đo chiều cao THỰC TẾ (offsetHeight) của tất cả thẻ ghim đang hiển thị và đặt lại
+   min-height của vùng ghim sao cho vừa đủ ôm hết đáy của thẻ thấp nhất + khoảng đệm.
+   Nhờ đó list bên dưới luôn được đẩy xuống bám sát theo ghi chú ghim, dù nội dung
+   ghi chú dài/ngắn khác nhau hay người dùng tự kéo resize từng thẻ. */
+function nbRecalcPinGridHeight(gridEl){
+  if(!gridEl) return;
+  let maxBottom = 200;
+  gridEl.querySelectorAll('.nb-pin-card').forEach(function(card){
+    const top = parseFloat(card.style.top) || 0;
+    maxBottom = Math.max(maxBottom, top + card.offsetHeight + 30);
+  });
+  gridEl.style.minHeight = maxBottom + 'px';
+}
+/* Theo dõi mọi thay đổi kích thước của từng thẻ ghim (gõ ghi chú dài ra, tự kéo resize…)
+   để tính lại chiều cao vùng ghim ngay lập tức, giữ khoảng cách linh hoạt với list bên dưới. */
+function nbWatchPinGridHeight(gridEl){
+  if(!gridEl || typeof ResizeObserver === 'undefined') return;
+  if(gridEl._nbPinRO) gridEl._nbPinRO.disconnect();
+  const ro = new ResizeObserver(function(){ nbRecalcPinGridHeight(gridEl); });
+  gridEl.querySelectorAll('.nb-pin-card').forEach(function(card){ ro.observe(card); });
+  gridEl._nbPinRO = ro;
+}
+let _nbDrag = null;
+function nbPinDragStart(e, day, id){
+  e.preventDefault();
+  const card = e.currentTarget.closest('.nb-pin-card');
+  if(!card) return;
+  const grid = card.parentElement;
+  const gridRect = grid.getBoundingClientRect();
+  const cardRect = card.getBoundingClientRect();
+  _nbDrag = {
+    day, id, card, grid,
+    offsetX: e.clientX - cardRect.left,
+    offsetY: e.clientY - cardRect.top,
+    lastX: cardRect.left - gridRect.left,
+    lastY: cardRect.top - gridRect.top
+  };
+  card.style.zIndex = 5;
+  document.addEventListener('pointermove', nbPinDragMove);
+  document.addEventListener('pointerup', nbPinDragEnd);
+}
+function nbPinDragMove(e){
+  if(!_nbDrag) return;
+  const gridRect = _nbDrag.grid.getBoundingClientRect();
+  let x = e.clientX - gridRect.left - _nbDrag.offsetX;
+  let y = e.clientY - gridRect.top - _nbDrag.offsetY;
+  x = Math.max(0, x);
+  y = Math.max(0, y);
+  _nbDrag.card.style.left = x + 'px';
+  _nbDrag.card.style.top = y + 'px';
+  _nbDrag.lastX = x; _nbDrag.lastY = y;
+  /* Ghi chú ghim được kéo tự do và có thể chồng lên nhau, nhưng nếu kéo chạm gần đáy
+     vùng ghim (tức gần chạm vùng danh sách bên dưới), tự động nới rộng vùng ghim ra
+     để đẩy danh sách xuống theo, tránh bị ghi chú ghim đè lên. */
+  const cardH = _nbDrag.card.offsetHeight;
+  const needed = Math.round(y + cardH + 30);
+  if(needed > _nbDrag.grid.offsetHeight){
+    _nbDrag.grid.style.minHeight = needed + 'px';
+  }
+}
+function nbPinDragEnd(){
+  if(!_nbDrag) return;
+  const {day, id, card, lastX, lastY} = _nbDrag;
+  document.removeEventListener('pointermove', nbPinDragMove);
+  document.removeEventListener('pointerup', nbPinDragEnd);
+  if(card) card.style.zIndex = '';
+  const nb = loadNotebook();
+  const item = (nb[day]||[]).find(x=>x.id===id);
+  if(item){
+    item.pinPos = {x:Math.round(lastX), y:Math.round(lastY)};
+    saveNotebook(nb);
+  }
+  _nbDrag = null;
+  /* Vẽ lại để tính đúng lại chiều cao vùng ghim theo vị trí cuối cùng của tất cả các thẻ */
+  renderNotebook();
 }
 /* Chỉ lưu kích thước khi kích thước thực sự đổi sau một thao tác nhấn-thả chuột/chạm
    (đáng tin cậy hơn việc đoán vị trí tay cầm resize) */
@@ -35620,14 +35762,25 @@ function nbNoteBoxHtml(day, item, ctx){
       <div class="nb-fmt-toolbar">
         <button type="button" title="In đậm" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','bold')"><b>B</b></button>
         <button type="button" title="In nghiêng" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','italic')"><i>I</i></button>
+        <button type="button" title="Gạch đầu dòng" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','insertUnorderedList')">• ≡</button>
+        <select class="nb-fmt-size" title="Cỡ chữ" onmousedown="event.stopPropagation()" onchange="nbFmtFontSize('${domId}', this.value); this.selectedIndex=0;">
+          <option value="">Cỡ chữ</option>
+          <option value="11">Nhỏ</option>
+          <option value="13">Vừa</option>
+          <option value="16">Lớn</option>
+          <option value="20">Rất lớn</option>
+        </select>
         <span class="nb-fmt-sep"></span>
         <button type="button" title="Căn trái" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyLeft')">⯇</button>
         <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyCenter')">≡</button>
         <button type="button" title="Căn phải" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyRight')">⯈</button>
         <span class="nb-fmt-sep"></span>
         <input type="color" class="nb-fmt-color" title="Màu chữ" value="#e11d48" onmousedown="event.preventDefault()" oninput="nbFmt('${domId}','foreColor',this.value)">
+        <span class="nb-fmt-sep"></span>
+        <button type="button" class="${item.noteLinked?'on':''}" title="${item.noteLinked?'Đang liên kết với ghi chú trong bài đọc — bấm để huỷ':'Liên kết 2 chiều với ghi chú trong bài đọc'}"
+          onmousedown="event.preventDefault()" onclick="nbToggleLink('${day}','${item.id}')">🔗</button>
       </div>
-      <div class="nb-note-editable" contenteditable="true" id="${domId}" data-day="${day}" data-id="${item.id}"
+      <div class="nb-note-editable nb-note-editable-note" contenteditable="true" id="${domId}" data-day="${day}" data-id="${item.id}"
         style="${nbSizeStyleAttr(item.noteSize)}"
         data-placeholder="📝 Bấm vào đây để nhập ghi chú…" oninput="nbNoteAutosave(this)" onblur="nbNoteAutosave(this)">${noteHtml}</div>
     </div>`;
@@ -35640,6 +35793,7 @@ function notebookTogglePin(day, id){
   if(!item) return;
   item.pinned = !item.pinned;
   if(item.pinned && !item.color) item.color = NB_COLORS[0];
+  if(!item.pinned) item.pinOnly = false; /* bỏ ghim -> hiện lại trong danh sách theo ngày */
   saveNotebook(nb);
   renderNotebook();
   toast(item.pinned ? '📌 Đã ghim ghi chú' : '📌 Đã bỏ ghim');
@@ -35730,30 +35884,57 @@ function nbColorDotsHtml(day, item){
 function renderNotebook(){
   const el = document.getElementById('notebookList');
   const pinEl = document.getElementById('notebookPinboard');
+  const filterEl = document.getElementById('notebookDateFilterBar');
   if(!el) return;
   const nb = loadNotebook();
   const visible = {};
   const pinnedFlat = [];
   Object.keys(nb).sort((a,b)=>b.localeCompare(a)).forEach(day=>{
-    const items = (nb[day]||[]).filter(item=>!item.hidden);
-    if(items.length) visible[day] = items;
-    items.forEach(item=>{ if(item.pinned) pinnedFlat.push({day, item}); });
+    /* dayItems: dùng để dựng Bảng ghim (bỏ qua các mục đã ẩn hẳn) */
+    const dayItems = (nb[day]||[]).filter(item=>!item.hidden);
+    /* listItems: dùng cho danh sách theo ngày bên dưới — loại thêm các ghi chú
+       "chỉ ghim" (pinOnly, vd. vừa bấm Tạo ghi chú mới) để không bị lặp lại */
+    const listItems = dayItems.filter(item=>!item.pinOnly);
+    if(listItems.length) visible[day] = listItems;
+    dayItems.forEach(item=>{ if(item.pinned) pinnedFlat.push({day, item}); });
   });
-  const days = Object.keys(visible).sort((a,b)=>b.localeCompare(a));
+  const allDays = Object.keys(visible).sort((a,b)=>b.localeCompare(a));
+  /* Nếu ngày đang lọc không còn tồn tại (đã xoá hết mục), quay về "Tất cả ngày" */
+  if(_nbDateFilter !== 'all' && !visible[_nbDateFilter]) _nbDateFilter = 'all';
+  const days = _nbDateFilter === 'all' ? allDays : [_nbDateFilter];
+
+  /* ---- Thanh chọn ngày / hiện tất cả (chỉ ảnh hưởng danh sách theo ngày, không ảnh hưởng Bảng ghim) ---- */
+  if(filterEl){
+    if(!allDays.length){
+      filterEl.innerHTML = '';
+    } else {
+      filterEl.innerHTML = `
+        <div class="nb-date-filter">
+          <label for="nbDateFilterSel">📅 Xem:</label>
+          <select id="nbDateFilterSel" onchange="notebookSetDateFilter(this.value)">
+            <option value="all"${_nbDateFilter==='all'?' selected':''}>Tất cả các ngày</option>
+            ${allDays.map(d=>`<option value="${d}"${_nbDateFilter===d?' selected':''}>${notebookDayLabel(d)}</option>`).join('')}
+          </select>
+        </div>`;
+    }
+  }
 
   /* ---- Bảng ghim: các ô nổi riêng, tùy chỉnh màu ---- */
   if(pinEl){
     if(!pinnedFlat.length){
       pinEl.innerHTML = '';
     } else {
-      pinEl.innerHTML = `
-        <div class="nb-pinboard">
-          <div class="nb-pin-head">📌 Ghi chú đã ghim</div>
-          <div class="nb-pin-grid">
-            ${pinnedFlat.map(({day,item})=>{
-              const editing = _nbEditKey === (day+'|'+item.id);
-              return `
-              <div class="nb-pin-card" data-day="${day}" data-id="${item.id}" style="background:${item.color||NB_COLORS[0]};${nbSizeStyleAttr(item.pinSize)}">
+      const PIN_W = 220, PIN_COL_GAP = 14, PIN_ROW_H = 250;
+      const perRow = Math.max(1, Math.floor(((pinEl.clientWidth||900)+PIN_COL_GAP) / (PIN_W+PIN_COL_GAP)));
+      let canvasH = 200;
+      const cardsHtml = pinnedFlat.map(({day,item}, idx)=>{
+        const editing = _nbEditKey === (day+'|'+item.id);
+        const pos = item.pinPos || {x:(idx%perRow)*(PIN_W+PIN_COL_GAP), y:Math.floor(idx/perRow)*PIN_ROW_H};
+        const h = (item.pinSize && item.pinSize.h) ? item.pinSize.h : 180;
+        canvasH = Math.max(canvasH, pos.y + h + 30);
+        return `
+              <div class="nb-pin-card" data-day="${day}" data-id="${item.id}" style="background:${item.color||NB_COLORS[0]};left:${pos.x}px;top:${pos.y}px;${nbSizeStyleAttr(item.pinSize)}">
+                <div class="nb-pin-drag" title="Kéo để di chuyển" onpointerdown="nbPinDragStart(event,'${day}','${item.id}')">⠿⠿</div>
                 <div class="nb-pin-actions">
                   ${editing ? '' : `<button title="Sửa" onclick="notebookStartEdit('${day}','${item.id}')">✏️</button>`}
                   <button title="Bỏ ghim" onclick="notebookTogglePin('${day}','${item.id}')">📌</button>
@@ -35770,9 +35951,19 @@ function renderNotebook(){
                   ${nbColorDotsHtml(day, item)}
                 `}
               </div>`;
-            }).join('')}
-          </div>
+      }).join('');
+      pinEl.innerHTML = `
+        <div class="nb-pinboard">
+          <div class="nb-pin-head">📌 Ghi chú đã ghim <span style="font-weight:400;font-size:11.5px;color:var(--muted)">(kéo ⠿⠿ để sắp xếp tự do)</span></div>
+          <div class="nb-pin-grid" style="min-height:${canvasH}px">${cardsHtml}</div>
         </div>`;
+      /* canvasH ở trên chỉ là ước lượng ban đầu (dựa trên chiều cao mặc định/đã lưu).
+         Sau khi DOM đã chèn xong, đo lại chiều cao THỰC TẾ của từng thẻ ghim (nội dung ghi chú
+         dài/ngắn khác nhau) để vùng ghim luôn đủ cao, giúp list bên dưới bám đúng theo đáy của
+         ghi chú ghim thấp nhất, không bị chồng lấp. */
+      const gridEl = pinEl.querySelector('.nb-pin-grid');
+      nbRecalcPinGridHeight(gridEl);
+      nbWatchPinGridHeight(gridEl);
     }
   }
 
@@ -35925,14 +36116,25 @@ function rdNoteBodyHtml(item){
       <div class="nb-fmt-toolbar">
         <button type="button" title="In đậm" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','bold')"><b>B</b></button>
         <button type="button" title="In nghiêng" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','italic')"><i>I</i></button>
+        <button type="button" title="Gạch đầu dòng" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','insertUnorderedList')">• ≡</button>
+        <select class="nb-fmt-size" title="Cỡ chữ" onmousedown="event.stopPropagation()" onchange="nbFmtFontSize('${domId}', this.value); this.selectedIndex=0;">
+          <option value="">Cỡ chữ</option>
+          <option value="11">Nhỏ</option>
+          <option value="13">Vừa</option>
+          <option value="16">Lớn</option>
+          <option value="20">Rất lớn</option>
+        </select>
         <span class="nb-fmt-sep"></span>
         <button type="button" title="Căn trái" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyLeft')">⯇</button>
         <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyCenter')">≡</button>
         <button type="button" title="Căn phải" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyRight')">⯈</button>
         <span class="nb-fmt-sep"></span>
         <input type="color" class="nb-fmt-color" title="Màu chữ" value="#e11d48" onmousedown="event.preventDefault()" oninput="rdNoteFmt('${domId}','foreColor',this.value)">
+        <span class="nb-fmt-sep"></span>
+        <button type="button" class="${item.noteLinked?'on':''}" title="${item.noteLinked?'Đang liên kết với Sổ ghi chú — bấm để huỷ':'Liên kết 2 chiều với Sổ ghi chú'}"
+          onmousedown="event.preventDefault()" onclick="nbToggleLink('${item.day}','${item.id}')">🔗</button>
       </div>
-      <div class="nb-note-editable" contenteditable="true" id="${domId}" data-day="${item.day}" data-id="${item.id}"
+      <div class="nb-note-editable nb-note-editable-pnote" contenteditable="true" id="${domId}" data-day="${item.day}" data-id="${item.id}"
         data-placeholder="📝 Bấm để nhập ghi chú…" oninput="rdNoteAutosave(this)" onblur="rdNoteAutosave(this)">${html}</div>
     </span>`;
 }
@@ -35954,9 +36156,19 @@ function rdNoteAutosave(el){
     const nb = loadNotebook();
     const item = (nb[day]||[]).find(x=>x.id===id);
     if(!item) return;
-    item.pnote = nbSanitizeHtml(el.innerHTML.trim());
+    const html = nbSanitizeHtml(el.innerHTML.trim());
+    item.pnote = html;
     item.pnoteRich = true;
+    if(item.noteLinked){ item.note = html; item.noteRich = true; }
     saveNotebook(nb);
+    document.querySelectorAll('.nb-note-editable-pnote[data-day="'+CSS.escape(day)+'"][data-id="'+CSS.escape(id)+'"]').forEach(function(other){
+      if(other !== el && document.activeElement !== other) other.innerHTML = html;
+    });
+    if(item.noteLinked){
+      document.querySelectorAll('.nb-note-editable-note[data-day="'+CSS.escape(day)+'"][data-id="'+CSS.escape(id)+'"]').forEach(function(other){
+        if(document.activeElement !== other) other.innerHTML = html;
+      });
+    }
   }, 250);
 }
 
