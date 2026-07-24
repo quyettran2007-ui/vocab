@@ -1691,19 +1691,35 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 @media(max-width:600px){ .lv-actions{ margin-left:0; width:100%; } .lv-study-btn{ flex:1; justify-content:center; } }
 #dashRoot > .topic-section, #listCatRoot > .topic-section{ margin:0 !important; }
 
-/* ===== 3 TAB NHỎ Ở KHU CHỦ ĐỀ TRANG CHỦ ===== */
-.dt-tabs{ display:flex; flex-wrap:wrap; gap:7px; }
+/* ===== 3 TAB NHỎ Ở KHU CHỦ ĐỀ TRANG CHỦ =====
+   Luôn nằm gọn trên 1 hàng (không cuộn ngang, không xuống dòng): mỗi tab
+   co giãn đều (flex:1 1 0), nhãn chữ tự rút gọn bằng "..." khi hết chỗ,
+   icon + số đếm luôn hiển thị đầy đủ. */
+.dt-tabs{ display:flex; flex-wrap:nowrap; gap:5px; width:100%; }
 .dt-tab{
-  display:inline-flex; align-items:center; gap:7px; cursor:pointer;
+  display:flex; flex:1 1 0; min-width:0; align-items:center; justify-content:center; gap:5px; cursor:pointer;
   font-family:var(--font-heading); font-size:13.5px; font-weight:700; color:var(--ink-soft);
-  background:var(--paper); border:1px solid var(--line); border-radius:11px; padding:8px 13px;
+  background:var(--paper); border:1px solid var(--line); border-radius:11px; padding:8px 10px;
   transition:color .18s var(--ease-smooth), background-color .18s var(--ease-smooth), border-color .18s var(--ease-smooth), transform .18s var(--ease-smooth), box-shadow .18s var(--ease-smooth);
 }
-.dt-tab b{ font-size:11.5px; font-weight:800; color:var(--muted);
+.dt-tab-ic{ flex-shrink:0; }
+.dt-tab-tx{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+.dt-tab b{ flex-shrink:0; font-size:11.5px; font-weight:800; color:var(--muted);
   background:var(--paper-2); border-radius:99px; padding:1px 7px; }
 .dt-tab:hover{ border-color:var(--accent); color:var(--accent); }
 .dt-tab.active{ background:var(--accent-grad); border-color:transparent; color:#fff; box-shadow:var(--shadow-sm); }
 .dt-tab.active b{ background:rgba(255,255,255,.22); color:#fff; }
+@media(max-width:760px){
+  .dt-tab{ gap:3px; padding:7px 5px; font-size:11px; }
+  .dt-tab b{ font-size:9.5px; padding:1px 5px; }
+}
+@media(max-width:480px){
+  .dt-tabs{ gap:3px; }
+  .dt-tab{ padding:6px 3px; font-size:0; gap:0; }
+  .dt-tab-ic{ font-size:16px; }
+  .dt-tab-tx{ display:none; }
+  .dt-tab b{ font-size:9.5px; padding:1px 4px; }
+}
 .dm-tabs{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;
   padding-bottom:13px; border-bottom:1px solid var(--paper-2); }
 .dm-tab{
@@ -4804,20 +4820,24 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
   margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid var(--line);
 }
 
-/* ---- CẤP 1: nguồn từ vựng — thanh segmented gọn, 1 hàng ---- */
+/* ---- CẤP 1: nguồn từ vựng — thanh segmented gọn, LUÔN 1 hàng, không
+   cuộn ngang, không xuống dòng: 5 tab co giãn đều nhau (flex:1 1 0),
+   nhãn chữ tự rút gọn "..." khi hết chỗ, icon + số đếm luôn còn đủ. ---- */
 .dt-tabs{
-  display:flex; flex-wrap:nowrap; gap:2px; padding:4px;
+  display:flex; flex-wrap:nowrap; gap:2px; padding:4px; width:100%;
   background:var(--paper-2); border:1px solid var(--line); border-radius:12px;
-  overflow-x:auto; scrollbar-width:thin; max-width:100%;
 }
 .dt-tab{
-  flex:0 0 auto; white-space:nowrap;
+  flex:1 1 0; min-width:0; display:flex; align-items:center; justify-content:center;
+  gap:5px; overflow:hidden;
   border:1px solid transparent !important; border-radius:9px !important;
   background:transparent !important; box-shadow:none !important;
-  padding:9px 14px !important; font-size:13px; font-weight:700; color:var(--ink-soft);
+  padding:9px 8px !important; font-size:13px; font-weight:700; color:var(--ink-soft);
   transition:background-color .15s, color .15s;
 }
-.dt-tab b{ background:var(--card); color:var(--muted); }
+.dt-tab-ic{ flex-shrink:0; }
+.dt-tab-tx{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+.dt-tab b{ flex-shrink:0; background:var(--card); color:var(--muted); }
 .dt-tab:hover{ background:color-mix(in srgb, var(--card) 70%, transparent) !important; color:var(--accent); }
 .dt-tab.active{
   background:var(--card) !important; color:var(--accent) !important;
@@ -4825,11 +4845,17 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
 }
 .dt-tab.active b{ background:var(--accent); color:#fff; }
 @media(max-width:640px){
-  .dt-tab{ font-size:12px !important; padding:8px 10px !important; }
-  /* Bỏ cuộn ngang trên di động: 3 tab tự xuống dòng khi không đủ chỗ,
-     tránh tình trạng tab đầu tiên bị che khuất một phần trông như lỗi. */
-  .dt-tabs{ flex-wrap:wrap !important; overflow-x:visible !important; }
-  .dt-tab{ flex:1 1 auto !important; justify-content:center; }
+  .dt-tabs{ gap:1px; padding:3px; }
+  .dt-tab{ font-size:11px !important; padding:7px 3px !important; gap:3px; }
+  .dt-tab b{ font-size:9px; padding:1px 4px; }
+}
+@media(max-width:420px){
+  /* Màn rất hẹp: chỉ giữ icon + số đếm, ẩn hẳn nhãn chữ để chắc chắn
+     không bao giờ phải cuộn hay vỡ hàng. */
+  .dt-tab{ padding:7px 2px !important; gap:2px; }
+  .dt-tab-ic{ font-size:15px; }
+  .dt-tab-tx{ display:none; }
+  .dt-tab b{ font-size:8.5px; padding:1px 3px; }
 }
 
 /* ---- Chú giải trạng thái: gọn, căn phải, cùng cỡ với tab ---- */
@@ -27331,6 +27357,7 @@ function dashTopicTab(t){
   _dtTab = t;
   document.querySelectorAll('.dt-tab').forEach(b=>b.classList.toggle('active', b.dataset.dt===t));
   document.querySelectorAll('.dt-pane').forEach(p=>p.classList.toggle('active', p.id==='dtPane-'+t));
+  ensureDtPane(t);
 }
 
 /* Mở đúng ĐỢT TỪ MỚI (theo ngày thêm) ở Flashcard / Danh sách */
@@ -27971,6 +27998,15 @@ function renderListCategories(){
   });
   if(!rdBookNames.includes(_dmRdTab)) _dmRdTab = rdBookNames.length ? rdBookNames[0] : '';
 
+  // tra Test mấy - Passage mấy theo tiêu đề bài đọc, để ghi kèm tên bài
+  // ở mỗi hàng chủ đề nhỏ trong khu Từ vựng Reading
+  const rdByTitle = {};
+  RD().forEach(r=>{ rdByTitle[r.title] = r; });
+  const rdLabel = t=>{
+    const r = rdByTitle[t];
+    return r ? `Test ${r.test||'?'} - Passage ${r.psg||'?'}: ${t}` : t;
+  };
+
   const rdBookTabs = rdBookNames.map(bk=>{
     const titles = rdByBook[bk];
     const ws = titles.flatMap(t=>rdByPsg[t]);
@@ -27983,10 +28019,55 @@ function renderListCategories(){
   const rdBookPanes = rdBookNames.map(bk=>{
     const titles = rdByBook[bk];
     const ws = titles.flatMap(t=>rdByPsg[t]);
-    const cards = (titles.length > 1 ? nwCard(`Tất cả ${bk}`, '📕', `${titles.length} bài`, ws, 'reading:book:'+bk) : '')
-      + titles.map(t => nwCard(t, '📖', '', rdByPsg[t], 'reading:'+t)).join('');
+    const P = topicProgress(ws);
+    const pct = Math.round(P.learned/P.total*100);
+
+    // mỗi bài đọc trong quyển -> 1 hàng gọn (icon + thanh tiến độ + số liệu),
+    // đúng kiểu "chủ đề nhỏ" trong thẻ Từ vựng theo chủ đề / Từ vựng W&S
+    const rows = titles.map(t=>{
+      const tw = rdByPsg[t];
+      const tp = topicProgress(tw);
+      const tpct = Math.round(tp.learned/tp.total*100);
+      return `<div class="tp-sub" data-color="${topicColorIndex(t)}">
+        <button class="tp-sub-name" onclick="goDate('reading:${t.replace(/'/g,"\\'")}','flashcard')" title="Flashcard: ${esc(rdLabel(t))}">
+          <span class="tp-ico">📖</span><span class="tp-txt">${esc(rdLabel(t))}</span>
+        </button>
+        <div class="tp-sub-bar"><div class="tp-sub-fill" style="width:${tpct}%"></div></div>
+        <span class="tp-sub-n">${tp.learned}/${tp.total}</span>
+        <span class="tp-sub-go">
+          <button class="tp-mini" onclick="goDate('reading:${t.replace(/'/g,"\\'")}','flashcard')" title="Flashcard">🃏</button>
+          <button class="tp-mini" onclick="goDate('reading:${t.replace(/'/g,"\\'")}','list')" title="Danh sách">📖</button>
+        </span>
+      </div>`;
+    }).join('');
+
+    const card = `<div class="tp-card" data-color="${topicColorIndex(bk)}">
+      <div class="tp-head">
+        <button class="tp-macro-name" onclick="goDate('reading:book:${bk.replace(/'/g,"\\'")}','flashcard')" title="Học toàn bộ ${esc(bk)} bằng Flashcard">
+          <span class="tp-macro-ico">📕</span>
+          <span class="tp-macro-txt">${esc(bk)}</span>
+        </button>
+        <div class="tp-head-right">
+          <span class="tp-pct">${pct}%</span>
+          <button class="tp-btn" onclick="goDate('reading:book:${bk.replace(/'/g,"\\'")}','flashcard')">🃏 Flashcard</button>
+          <button class="tp-btn" onclick="goDate('reading:book:${bk.replace(/'/g,"\\'")}','list')">📖 Danh sách</button>
+        </div>
+      </div>
+      <div class="tp-macro-bar">
+        <div class="tp-seg learned" style="width:${P.learned/P.total*100}%"></div>
+        <div class="tp-seg doing" style="width:${P.doing/P.total*100}%"></div>
+      </div>
+      <div class="tp-legend">
+        <span><i class="lg learned"></i>${P.learned} đã thuộc</span>
+        <span><i class="lg doing"></i>${P.doing} đang học</span>
+        <span><i class="lg newn"></i>${P.newN} chưa học</span>
+        <span class="tp-total">${P.total} từ</span>
+      </div>
+      <div class="tp-subs">${rows}</div>
+    </div>`;
+
     return `<div class="dm-pane ${bk===_dmRdTab?'active':''}" id="dmRdPane-${slug(bk)}">
-      <div class="topic-grid">${cards}</div>
+      <div class="topic-grid one-col">${card}</div>
     </div>`;
   }).join('');
 
@@ -28017,32 +28098,17 @@ function renderListCategories(){
     });
   }
 
-  /* ---- render ---- */
-  root.innerHTML = `
-    <div class="topic-section">
-      <div class="topic-section-head">
-        <div class="dt-tabs">
-          <button class="dt-tab active" data-dt="ws"  onclick="dashTopicTab('ws')">✍️ Từ vựng W và S <b>${wsCount}</b></button>
-          <button class="dt-tab"        data-dt="all" onclick="dashTopicTab('all')">🗂️ Từ vựng theo chủ đề <b>${otherCount}</b></button>
-          <button class="dt-tab"        data-dt="rd"  onclick="dashTopicTab('rd')">📕 Từ vựng Reading <b>${RW.length}</b></button>
-          <button class="dt-tab"        data-dt="ls"  onclick="dashTopicTab('ls')">🎧 Từ vựng Listening <b>${LSW.length}</b></button>
-          <button class="dt-tab"        data-dt="new" onclick="dashTopicTab('new')">🆕 Từ mới thêm <b>${NEWW.length}</b></button>
-        </div>
-        <div class="ts-legend">
-          <span><i class="lg learned"></i>Đã thuộc</span>
-          <span><i class="lg doing"></i>Đang học</span>
-          <span><i class="lg newn"></i>Chưa học</span>
-        </div>
-      </div>
-      <div class="dt-pane active" id="dtPane-ws">
-        <div class="topic-grid one-col">${wsCard}</div>
-      </div>
-      <div class="dt-pane" id="dtPane-all">
-        <div class="dm-tabs">${otherSubTabs}</div>
-        ${otherPanes}
-      </div>
-      <div class="dt-pane" id="dtPane-rd">
-        ${rdBookNames.length ? `
+  /* ---- render ----
+     Trước đây cả 5 tab con (W&S / Theo chủ đề / Reading / Listening / Mới)
+     được dựng HTML VÀ gắn vào DOM cùng lúc, dù chỉ 1 tab hiện ra (4 tab kia
+     ẩn bằng CSS nhưng vẫn tốn dựng ~2000 node DOM). Đo được bước gán
+     root.innerHTML này chiếm phần lớn thời gian (~470/600ms trong 1 lần đo).
+     -> Giờ chỉ tạo sẵn "vỏ" 5 pane rỗng, rồi CHỈ gắn nội dung của tab đang
+     mở; các tab còn lại chỉ dựng khi người dùng thật sự bấm vào. */
+  _dtPaneHTML = {
+    ws: `<div class="topic-grid one-col">${wsCard}</div>`,
+    all: `<div class="dm-tabs">${otherSubTabs}</div>${otherPanes}`,
+    rd: rdBookNames.length ? `
         <div class="dm-tabs">${rdBookTabs}</div>
         ${rdBookPanes}` : `
         <div class="dt-empty">
@@ -28051,9 +28117,8 @@ function renderListCategories(){
           <p>Vào tab <b>📕 Reading</b> → mở một bài → bấm <b>＋ Thêm vào bộ học</b>
           (hoặc ☆/＋ trên từng từ). Từ sẽ hiện ở đây kèm tiến độ riêng theo từng bài.</p>
           <button class="btn primary" onclick="document.querySelector('.tab-btn[data-mode=&quot;reading&quot;]').click()">📕 Mở thư viện bài đọc</button>
-        </div>`}
-      </div>
-      <div class="dt-pane" id="dtPane-ls">
+        </div>`,
+    ls: `
         <div id="lsLibrary">
           <div class="ls-meta">
             <p id="lsCount">—</p>
@@ -28064,22 +28129,54 @@ function renderListCategories(){
             </div>
           </div>
           <div class="topic-grid" id="lsGrid"></div>
-        </div>
-      </div>
-      <div class="dt-pane" id="dtPane-new">
-        ${recentCards ? `<div class="topic-grid">${recentCards}</div>` : `
+        </div>`,
+    new: recentCards ? `<div class="topic-grid">${recentCards}</div>` : `
         <div class="dt-empty">
           <div class="dt-empty-ic">🆕</div>
           <b>Chưa có từ mới</b>
           <p>Dán từ mới vào <b>cuối mảng <code>VOCAB</code></b> trong file HTML — chúng sẽ tự hiện ở đây kèm tiến độ riêng.<br>
           Đừng quên <b>Xuất dữ liệu</b> trước và <b>Nhập lại</b> sau khi thêm để giữ tiến độ.</p>
           <button class="btn" onclick="goBackup()">💾 Mở khu Sao lưu / Thêm từ</button>
-        </div>`}
+        </div>`
+  };
+  _dtPaneBuilt = {};
+
+  root.innerHTML = `
+    <div class="topic-section">
+      <div class="topic-section-head">
+        <div class="dt-tabs">
+          <button class="dt-tab active" data-dt="ws"  onclick="dashTopicTab('ws')"><span class="dt-tab-ic">✍️</span><span class="dt-tab-tx">Từ vựng W và S</span> <b>${wsCount}</b></button>
+          <button class="dt-tab"        data-dt="all" onclick="dashTopicTab('all')"><span class="dt-tab-ic">🗂️</span><span class="dt-tab-tx">Từ vựng theo chủ đề</span> <b>${otherCount}</b></button>
+          <button class="dt-tab"        data-dt="rd"  onclick="dashTopicTab('rd')"><span class="dt-tab-ic">📕</span><span class="dt-tab-tx">Từ vựng Reading</span> <b>${RW.length}</b></button>
+          <button class="dt-tab"        data-dt="ls"  onclick="dashTopicTab('ls')"><span class="dt-tab-ic">🎧</span><span class="dt-tab-tx">Từ vựng Listening</span> <b>${LSW.length}</b></button>
+          <button class="dt-tab"        data-dt="new" onclick="dashTopicTab('new')"><span class="dt-tab-ic">🆕</span><span class="dt-tab-tx">Từ mới thêm</span> <b>${NEWW.length}</b></button>
+        </div>
+        <div class="ts-legend">
+          <span><i class="lg learned"></i>Đã thuộc</span>
+          <span><i class="lg doing"></i>Đang học</span>
+          <span><i class="lg newn"></i>Chưa học</span>
+        </div>
       </div>
+      <div class="dt-pane active" id="dtPane-ws"></div>
+      <div class="dt-pane" id="dtPane-all"></div>
+      <div class="dt-pane" id="dtPane-rd"></div>
+      <div class="dt-pane" id="dtPane-ls"></div>
+      <div class="dt-pane" id="dtPane-new"></div>
     </div>
   `;
-  dashTopicTab(_dtTab);   // giữ nguyên tab nhỏ đang xem sau khi vẽ lại
-  renderListeningLib();   // vẽ lưới 21 quyển × 4 Test cho mục Từ vựng Listening
+  dashTopicTab(_dtTab);   // giữ nguyên tab nhỏ đang xem sau khi vẽ lại -> tự dựng nội dung tab đó
+}
+
+/* Dựng nội dung THẬT SỰ của 1 tab con (ws/all/rd/ls/new) đúng lúc mở tab đó
+   lần đầu, thay vì dựng cả 5 tab cùng lúc khi mở khu Danh mục. */
+let _dtPaneHTML = null, _dtPaneBuilt = {};
+function ensureDtPane(t){
+  if(_dtPaneBuilt[t] || !_dtPaneHTML || _dtPaneHTML[t]===undefined) return;
+  const el = document.getElementById('dtPane-'+t);
+  if(!el) return;
+  el.innerHTML = _dtPaneHTML[t];
+  _dtPaneBuilt[t] = true;
+  if(t==='ls') renderListeningLib();   // vẽ lưới 21 quyển × 4 Test khi mở tab Listening
 }
 
 /* ---------- Nút "Chọn chủ đề học" trên hàng tiến độ chính: nhảy sang tab
@@ -28103,7 +28200,9 @@ let _listCatsStale = true;      // true -> khu danh mục cần vẽ lại
 function setListView(v){
   if(v===_listView){
     // vẫn cho phép bấm lại để vẽ lại danh mục khi có dữ liệu mới
-    if(v==='cats' && _listCatsStale){ renderListCategories(); _listCatsStale=false; }
+    if(v==='cats' && _listCatsStale){
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{ renderListCategories(); _listCatsStale=false; }));
+    }
     return;
   }
   _listView = v;
@@ -28111,7 +28210,12 @@ function setListView(v){
   document.getElementById('lvBtnCats').classList.toggle('active', v==='cats');
   document.getElementById('listWordsView').style.display = v==='words' ? '' : 'none';
   document.getElementById('listCatsView').style.display  = v==='cats'  ? '' : 'none';
-  if(v==='cats' && _listCatsStale){ renderListCategories(); _listCatsStale=false; }
+  if(v==='cats' && _listCatsStale){
+    // Dựng ~15-40 thẻ chủ đề (mỗi thẻ lặp qua VOCAB để tính tiến độ) khá nặng
+    // -> hoãn 2 khung hình để nút bấm + hiệu ứng chuyển view chạy mượt trước,
+    // giống cách tab chính đã làm khi chuyển sang Dashboard/Reading/...
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ renderListCategories(); _listCatsStale=false; }));
+  }
 }
 
 
@@ -28903,14 +29007,21 @@ window.addEventListener('scroll', ()=>{
   _listTick = true;
   requestAnimationFrame(()=>{
     _listTick = false;
+    const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 1400;
+    if(!nearBottom) return;
+
     const p = document.getElementById('panel-list');
-    if(!p || !p.classList.contains('active')) return;
-    if(_listBusy || !_listBuild || _listPos >= _listBuild.length) return;
-    // nạp sớm hơn (1400px) -> người dùng không kịp thấy chỗ trống
-    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 1400){
+    if(p && p.classList.contains('active') && !_listBusy && _listBuild && _listPos < _listBuild.length){
       _listBusy = true;
       listAppend(60);
       _listBusy = false;
+    }
+
+    const sp = document.getElementById('panel-structures');
+    if(sp && sp.classList.contains('active') && _stMode==='all' && !_stAllBusy && _stAllBuild && _stAllPos < _stAllBuild.length){
+      _stAllBusy = true;
+      stAllAppend(50);
+      _stAllBusy = false;
     }
   });
 }, {passive:true});
@@ -33845,9 +33956,21 @@ function stRenderAllSentences(root){
         return `<button class="rd-chip ${_allTopic===t?'active':''}" onclick="stAllSetTopic('${esc(t)}')">${esc(t)}<b>${n}</b></button>`;
       }).join('')}
     </div>
-    <div class="st-all-list">
-      ${items.length ? items.map(it=>stAllRowHTML(it, q)).join('') : `<div class="rd-empty">Không có câu nào khớp bộ lọc hiện tại.</div>`}
-    </div>`;
+    <div class="st-all-list" id="stAllList"></div>`;
+
+  // Render tăng dần (lazy) — trước đây dựng HTML + tô màu collocation cho
+  // TẤT CẢ câu (800+) ngay khi mở tab -> giật khi bấm & giật khi cuộn vì
+  // DOM quá nặng cùng lúc. Giờ chỉ dựng đủ 1-2 màn hình đầu, phần còn lại
+  // nạp thêm khi cuộn gần tới cuối (xem scroll listener bên dưới).
+  _stAllBuild = items;
+  _stAllQuery = q;
+  _stAllPos = 0;
+  const stAllListEl = document.getElementById('stAllList');
+  if(!items.length){
+    stAllListEl.innerHTML = `<div class="rd-empty">Không có câu nào khớp bộ lọc hiện tại.</div>`;
+  } else {
+    stAllAppend(50);
+  }
 
   const el = document.getElementById('allSearch');
   el.oninput = e=>{
@@ -33883,6 +34006,19 @@ function stAllRowHTML(it, query){
     <div class="st-all-vi">${viHtml}</div>
     <div class="st-all-en">${enHtml}</div>
   </div>`;
+}
+
+/* Nạp dần các câu vào #stAllList khi cuộn — cùng cơ chế với danh sách từ vựng. */
+let _stAllBuild = null, _stAllPos = 0, _stAllBusy = false, _stAllQuery = '';
+function stAllAppend(n){
+  if(!_stAllBuild || _stAllPos >= _stAllBuild.length) return;
+  const c = document.getElementById('stAllList');
+  if(!c) return;
+  const end = Math.min(_stAllPos + n, _stAllBuild.length);
+  let html = '';
+  for(let i=_stAllPos; i<end; i++) html += stAllRowHTML(_stAllBuild[i], _stAllQuery);
+  _stAllPos = end;
+  c.insertAdjacentHTML('beforeend', html);
 }
 
 /* ============================================================
