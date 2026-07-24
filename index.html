@@ -593,6 +593,27 @@ main {
   .filter-toggle-btn{ padding:12px; }
 }
 
+/* ---- Nút thu phóng cỡ chữ Flashcard, đặt cạnh nút Bộ lọc ---- */
+:root{ --fc-zoom:1; }
+.fc-zoom-ctrl{
+  display:flex; align-items:center; gap:2px; flex:0 0 auto;
+  padding:4px; font-family:var(--font-body);
+  background:var(--card); border:1.5px solid var(--line);
+  border-radius:15px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.fc-zoom-ctrl .fz-btn{
+  width:28px; height:28px; display:flex; align-items:center; justify-content:center;
+  border:none; background:transparent; border-radius:11px; cursor:pointer;
+  font-size:15px; font-weight:800; color:var(--ink-soft); transition:.15s;
+}
+.fc-zoom-ctrl .fz-btn:hover{ background:var(--accent-bg); color:var(--accent); }
+.fc-zoom-ctrl .fz-btn:disabled{ opacity:.35; cursor:default; }
+.fc-zoom-ctrl .fz-btn:disabled:hover{ background:transparent; color:var(--ink-soft); }
+.fc-zoom-ctrl .fz-val{
+  min-width:38px; text-align:center; font-size:11.5px; font-weight:800; color:var(--muted);
+}
+#panel-flashcard .flash-wrap{ zoom:var(--fc-zoom); }
+
 /* ---- Bảng điều khiển bộ lọc (ẩn/hiện khi bấm nút Bộ lọc) ---- */
 .filter-panel{
   margin:-4px 0 12px; padding:14px 16px 12px;
@@ -604,6 +625,7 @@ main {
   display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px 12px;
 }
 .filter-field{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+.ff-topic-field select + select{ margin-top:2px; }
 .filter-field .ff-label{ font-size:11px; font-weight:700; color:var(--muted); padding-left:1px; }
 .filter-field select{ width:100%; padding:9px 30px 9px 12px; font-size:12.5px; }
 .filter-panel-actions{
@@ -620,6 +642,26 @@ main {
 @media(max-width:820px){
   .filter-panel-grid{ grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); }
 }
+/* ---- Cấp 2: "Bộ lọc nâng cao" — thu gọn mặc định để bộ lọc gọn hơn,
+   chỉ hiện 3 lọc hay dùng nhất (Chủ đề / Trạng thái / Sắp xếp) ---- */
+.fp-adv-toggle{
+  display:flex; align-items:center; gap:7px; width:100%;
+  margin-top:10px; padding:9px 12px; font-family:var(--font-body);
+  font-size:12.5px; font-weight:700; color:var(--ink-soft);
+  background:var(--card-sunken); border:1px dashed var(--line);
+  border-radius:10px; cursor:pointer; transition:.15s;
+}
+.fp-adv-toggle:hover{ border-color:var(--accent); color:var(--accent); }
+.fp-adv-toggle .fp-adv-chev{ margin-left:auto; font-size:10px; transition:transform .18s; opacity:.75; }
+.fp-adv-toggle.open .fp-adv-chev{ transform:rotate(180deg); }
+.fp-adv-toggle.open{ color:var(--accent); border-color:var(--accent); border-style:solid; }
+.fp-adv-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:17px; height:17px; padding:0 5px; border-radius:99px;
+  background:var(--ember,#ef4444); color:#fff; font-size:10px; font-weight:800;
+  font-family:var(--font-heading);
+}
+.filter-panel-grid.fp-advanced{ margin-top:10px; }
 select, .search-box {
   font-family:var(--font-body); font-size:13.5px; font-weight:600;
   padding:10px 14px; border:1px solid var(--line); border-radius:12px;
@@ -1289,27 +1331,39 @@ i.lg.learned{background:var(--green,#059669);} i.lg.doing{background:#3b82f6;} i
 .flash-wrap {
   display:flex; flex-direction:column; align-items:center;
   gap:12px; padding-top:0; width:100%;
+  flex:1 1 auto; min-height:0;
 }
-/* Flashcard tab fits the viewport exactly — zero page scroll */
-body:has(#panel-flashcard.active) main { padding-top:16px; padding-bottom:28px; }
-
-/* Thẻ chiếm trọn chiều cao còn lại của màn hình -> không thừa khoảng trắng,
-   hàng nút điều hướng luôn nằm trong tầm nhìn, không phải cuộn.
-   --fc-top do JS đo (khoảng cách từ đỉnh màn hình tới thẻ).
-   Trừ thêm khoảng đệm an toàn (36px) để thanh điều hướng dưới cùng
-   không bao giờ bị lẹm ở mép trình duyệt tại độ phóng mặc định;
-   nếu vẫn thiếu chỗ, cho phép cuộn dự phòng thay vì cắt mất thanh điều hướng. */
-#panel-flashcard:not(.fs) .flash-wrap {
-  height:calc(100dvh - var(--fc-top, 240px) - 36px);
-  overflow:visible;
+/* Flashcard tab fits the viewport exactly — zero page scroll.
+   TRƯỚC: đo --fc-top một lần bằng JS rồi tính chiều cao .flash-wrap từ con số
+   đó — dễ lệch (thừa khoảng trắng bên dưới HOẶC nội dung phải cuộn) mỗi khi
+   người dùng đổi cỡ chữ/mật độ hay hệ điều hành thu phóng font, vì khi đó
+   header/tab đổi kích thước SAU khi đã đo, số đo cũ không còn đúng nữa.
+   NAY: dùng flexbox nối liền từ <body> xuống tới .flashcard để trình duyệt
+   TỰ tính lại phần trống còn lại mỗi lần layout thay đổi (đổi cỡ chữ, xoay
+   màn hình, thu phóng...) — luôn khớp khít, không cần đo lại bằng JS. */
+body:has(#panel-flashcard.active) {
+  height:100dvh; overflow:hidden;
+  display:flex; flex-direction:column;
 }
 @supports not (height: 1dvh) {
-  #panel-flashcard:not(.fs) .flash-wrap {
-    height:calc(100vh - var(--fc-top, 240px) - 36px);
-  }
+  body:has(#panel-flashcard.active) { height:100vh; }
+}
+body:has(#panel-flashcard.active) header,
+body:has(#panel-flashcard.active) nav.tabs { flex:0 0 auto; }
+body:has(#panel-flashcard.active) main {
+  padding-top:16px; padding-bottom:28px;
+  flex:1 1 auto; min-height:0;
+  display:flex; flex-direction:column;
+}
+#panel-flashcard.active {
+  flex:1 1 auto; min-height:0;
+  display:flex !important; flex-direction:column;
+}
+#panel-flashcard:not(.fs) .flash-wrap {
+  overflow:visible;
 }
 #panel-flashcard:not(.fs) .flashcard {
-  flex:1 1 auto; height:auto; min-height:300px; max-height:none;
+  flex:1 1 auto; height:auto; min-height:260px; max-height:none;
 }
 .flashcard {
   position:relative;
@@ -1668,7 +1722,6 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .dm-pane{ display:none; }
 .dm-pane.active{ display:block; animation:fadeUp .28s var(--ease-out); }
 @media(max-width:640px){
-  .dm-tab .dm-tx{ display:none; }          /* mobile: chỉ còn icon + số cho gọn */
   .dm-tab{ padding:6px 9px; }
 }
 
@@ -2525,6 +2578,31 @@ mark.ex-hl {
 #panel-flashcard.fs .example-vi { font-size:14px; }
 #panel-flashcard.fs .chip, #panel-flashcard.fs .form-chip { font-size:13.5px; padding:5px 12px; }
 #panel-flashcard.fs .flash-back .label { font-size:10px; }
+/* Toàn màn hình trên điện thoại: các trị số ở trên (padding 44-48px, chữ
+   46-84px...) vốn tính cho màn hình lớn, trên điện thoại hẹp bề ngang lại
+   giữ nguyên khiến nội dung (nhất là câu ví dụ ở mặt sau) tràn ra ngoài,
+   phải cuộn mới xem hết. Thu nhỏ lại tương tự chế độ không-toàn-màn-hình
+   trên di động để vừa khít màn hình mà không cần cuộn. */
+@media (max-width:600px) {
+  #panel-flashcard.fs { padding:14px; }
+  #panel-flashcard.fs .flash-wrap { gap:10px; }
+  #panel-flashcard.fs .flashcard { height:min(80vh, 640px); }
+  #panel-flashcard.fs .flash-front .word { font-size:clamp(32px, 9vw, 44px); }
+  #panel-flashcard.fs .flash-front .ipa { font-size:16px; }
+  #panel-flashcard.fs .flash-face { padding:22px; }
+  #panel-flashcard.fs .flash-front { padding-bottom:56px; }
+  #panel-flashcard.fs .flash-back { padding:16px 18px; }
+  #panel-flashcard.fs .fb-word { font-size:18px; }
+  #panel-flashcard.fs .flash-back .vn { font-size:16px; }
+  #panel-flashcard.fs .fb-grid { grid-template-columns:1fr; gap:0; }
+  #panel-flashcard.fs .fb-head { flex-direction:column; align-items:flex-start; gap:4px; padding-bottom:8px; margin-bottom:9px; }
+  #panel-flashcard.fs .flash-back .vn { margin-left:0; text-align:left; max-width:100%; }
+  #panel-flashcard.fs .flash-back .block { font-size:12.5px; margin-bottom:10px; }
+  #panel-flashcard.fs .colloc-item { font-size:12px; margin-bottom:4px; }
+  #panel-flashcard.fs .example-en { font-size:12.5px; }
+  #panel-flashcard.fs .example-vi { font-size:11.5px; }
+  #panel-flashcard.fs .chip, #panel-flashcard.fs .form-chip { font-size:11.5px; padding:3px 9px; }
+}
 /* hide page chrome while in fullscreen */
 body.fs-on header, body.fs-on nav.tabs,
 body.fs-on #searchFilterRow { display:none !important; }
@@ -4746,7 +4824,13 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
   box-shadow:var(--shadow-xs) !important;
 }
 .dt-tab.active b{ background:var(--accent); color:#fff; }
-@media(max-width:640px){ .dt-tab{ font-size:12px !important; padding:8px 10px !important; } }
+@media(max-width:640px){
+  .dt-tab{ font-size:12px !important; padding:8px 10px !important; }
+  /* Bỏ cuộn ngang trên di động: 3 tab tự xuống dòng khi không đủ chỗ,
+     tránh tình trạng tab đầu tiên bị che khuất một phần trông như lỗi. */
+  .dt-tabs{ flex-wrap:wrap !important; overflow-x:visible !important; }
+  .dt-tab{ flex:1 1 auto !important; justify-content:center; }
+}
 
 /* ---- Chú giải trạng thái: gọn, căn phải, cùng cỡ với tab ---- */
 .ts-legend{ gap:16px; font-size:12px; font-weight:600; color:var(--muted); }
@@ -4895,6 +4979,11 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
     <button type="button" class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleFilterPanel()">
       <span class="ft-ico">🧰</span><span class="ft-label">Bộ lọc</span><span class="ft-badge" id="filterBadge" style="display:none">0</span><span class="ft-chev">▾</span>
     </button>
+    <div class="fc-zoom-ctrl" id="fcZoomCtrl" style="display:none" title="Thu phóng cỡ chữ Flashcard">
+      <button type="button" class="fz-btn" onclick="fcZoomStep(-1)" id="fcZoomOut">－</button>
+      <span class="fz-val" id="fcZoomVal">100%</span>
+      <button type="button" class="fz-btn" onclick="fcZoomStep(1)" id="fcZoomIn">＋</button>
+    </div>
     <div class="search-wrap" id="searchWrap">
       <input class="search-box" id="searchBox" placeholder="🔍 Tìm từ vựng...">
       <button class="search-clear" id="searchClear" title="Xoá tìm kiếm">✕</button>
@@ -4905,17 +4994,13 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
   </div>
   <div class="filter-panel" id="filterPanel" style="display:none">
     <div class="filter-panel-grid">
-      <label class="filter-field">
+      <label class="filter-field ff-topic-field">
         <span class="ff-label">🗂️ Chủ đề</span>
-        <select id="topicFilter" title="Chủ đề"><option value="all">Tất cả chủ đề</option></select>
-      </label>
-      <label class="filter-field">
-        <span class="ff-label">🔤 Loại từ</span>
-        <select id="posFilter" title="Loại từ"><option value="all">Tất cả loại từ</option></select>
-      </label>
-      <label class="filter-field">
-        <span class="ff-label">🎯 Trình độ</span>
-        <select id="levelFilter" title="Trình độ"><option value="all">Tất cả trình độ</option></select>
+        <select id="topicFilterL1" title="Nhóm chủ đề" onchange="onTopicL1Change()">
+          <option value="all">Tất cả chủ đề</option>
+        </select>
+        <select id="topicFilterL2" title="Chủ đề nhỏ" onchange="onTopicL2Change()" style="display:none"></select>
+        <select id="topicFilter" style="display:none"><option value="all">Tất cả chủ đề</option></select>
       </label>
       <label class="filter-field">
         <span class="ff-label">📊 Trạng thái học</span>
@@ -4926,6 +5011,24 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
           <option value="due">🔔 Đến hạn ôn</option>
           <option value="mastered">✅ Đã thuộc</option>
         </select>
+      </label>
+      <label class="filter-field">
+        <span class="ff-label">↕️ Sắp xếp</span>
+        <select id="sortOrder" title="Sắp xếp">
+          <option value="newest">Mới nhất trước</option>
+          <option value="oldest">Cũ nhất trước</option>
+          <option value="az">A → Z</option>
+          <option value="due">⏰ Sắp đến hạn ôn</option>
+          <option value="weak">🔥 Hay quên nhất</option>
+        </select>
+      </label>
+      <label class="filter-field">
+        <span class="ff-label">🔤 Loại từ</span>
+        <select id="posFilter" title="Loại từ"><option value="all">Tất cả loại từ</option></select>
+      </label>
+      <label class="filter-field">
+        <span class="ff-label">🎯 Trình độ</span>
+        <select id="levelFilter" title="Trình độ"><option value="all">Tất cả trình độ</option></select>
       </label>
       <label class="filter-field">
         <span class="ff-label">🚦 Bậc lộ trình</span>
@@ -4944,16 +5047,6 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
         <select id="starFilter" title="Cần học">
           <option value="all">Tất cả từ</option>
           <option value="star">⭐ Chỉ từ cần học</option>
-        </select>
-      </label>
-      <label class="filter-field">
-        <span class="ff-label">↕️ Sắp xếp</span>
-        <select id="sortOrder" title="Sắp xếp">
-          <option value="newest">Mới nhất trước</option>
-          <option value="oldest">Cũ nhất trước</option>
-          <option value="az">A → Z</option>
-          <option value="due">⏰ Sắp đến hạn ôn</option>
-          <option value="weak">🔥 Hay quên nhất</option>
         </select>
       </label>
     </div>
@@ -26795,6 +26888,7 @@ function toggleFilterPanel(force){
   const show = typeof force === 'boolean' ? force : (panel.style.display === 'none');
   panel.style.display = show ? 'block' : 'none';
   if(btn) btn.classList.toggle('open', show);
+  if(show) syncTopicL1L2();   // mở bảng lọc -> đồng bộ 2 tầng chủ đề với trạng thái lọc hiện tại
 }
 function closeFilterPanel(){ toggleFilterPanel(false); }
 document.addEventListener('click', e=>{
@@ -26804,23 +26898,176 @@ document.addEventListener('click', e=>{
   if(panel.contains(e.target) || (btn && btn.contains(e.target))) return;
   closeFilterPanel();
 });
+/* ---- Cấp 2 "Bộ lọc nâng cao": thu gọn/mở rộng ---- */
+function toggleAdvFilters(force){
+  const grid = document.getElementById('fpAdvancedGrid');
+  const btn = document.getElementById('fpAdvToggle');
+  if(!grid) return;
+  const show = typeof force === 'boolean' ? force : (grid.style.display === 'none');
+  grid.style.display = show ? 'grid' : 'none';
+  if(btn) btn.classList.toggle('open', show);
+}
 function clearAllFilters(){
   ['topicFilter','posFilter','levelFilter','statusFilter','stageFilter','starFilter'].forEach(id=>{
     const el = document.getElementById(id); if(el) el.value = 'all';
   });
   _statusFilter = 'all'; _stageFilter = 'all'; _dateFilter = 'all'; _lsSetFilter = null; _pinnedWord = null;
+  syncTopicL1L2();
   applyFilter();
+}
+
+/* ============================================================
+   BỘ LỌC CHỦ ĐỀ 2 TẦNG
+   Tầng 1: Từ vựng W & S / Từ vựng theo chủ đề / Từ vựng Reading /
+            Từ vựng Listening / Từ mới thêm
+   Tầng 2: chủ đề nhỏ tương ứng — ví dụ Reading: "Cam15-Test1-P1-..."
+   Bên dưới vẫn dùng select #topicFilter (ẩn) + biến _dateFilter để
+   không phải sửa lại toàn bộ logic applyFilter()/goTopic()/goDate()...
+   ============================================================ */
+function topicL1Avail(){
+  const used = new Set(VOCAB.map(v=>v._topic).filter(Boolean));
+  const hasWS = used.has(WS_MACRO) || (TOPIC_TREE.find(g=>g.key===WS_MACRO)||{subs:[]}).subs.some(s=>used.has(s));
+  const hasRD = VOCAB.some(v=>v._fromReading);
+  const hasLS = VOCAB.some(v=>v.listening && v.listening.length);
+  const hasNew = VOCAB.some(v=>v._isNew);
+  const hasTopic = TOPIC_TREE.some(g=> g.key!==WS_MACRO && g.key!==RD_MACRO && (used.has(g.key) || g.subs.some(s=>used.has(s))));
+  return {hasWS, hasRD, hasLS, hasNew, hasTopic};
+}
+function populateTopicL1(){
+  const sel = document.getElementById('topicFilterL1');
+  if(!sel) return;
+  const cur = sel.value || 'all';
+  const {hasWS, hasRD, hasLS, hasNew, hasTopic} = topicL1Avail();
+  const opts = [['all','🗂️ Tất cả chủ đề']];
+  if(hasWS) opts.push(['ws','✍️ Từ vựng W & S']);
+  if(hasTopic) opts.push(['topic','📚 Từ vựng theo chủ đề']);
+  if(hasRD) opts.push(['reading','📕 Từ vựng Reading']);
+  if(hasLS) opts.push(['listening','🎧 Từ vựng Listening']);
+  if(hasNew) opts.push(['new','🆕 Từ mới thêm']);
+  sel.innerHTML = opts.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+  sel.value = opts.some(o=>o[0]===cur) ? cur : 'all';
+}
+function populateTopicL2(applyAfter){
+  const l2 = document.getElementById('topicFilterL2');
+  const l1 = document.getElementById('topicFilterL1');
+  if(!l2 || !l1) return;
+  const mode = l1.value;
+  const used = new Set(VOCAB.map(v=>v._topic).filter(Boolean));
+  let html = '';
+  if(mode==='ws'){
+    const g = TOPIC_TREE.find(x=>x.key===WS_MACRO);
+    html += `<option value="macro:${esc(WS_MACRO)}">▸ Tất cả — Từ vựng W & S</option>`;
+    if(g) g.subs.filter(s=>used.has(s)).forEach(s=>{ html += `<option value="${esc(s)}">${esc(s)}</option>`; });
+  } else if(mode==='topic'){
+    TOPIC_TREE.filter(g=>g.key!==WS_MACRO && g.key!==RD_MACRO && (used.has(g.key)||g.subs.some(s=>used.has(s))))
+      .forEach(g=>{
+        const hasMacro = used.has(g.key);
+        const subs = g.subs.filter(s=>used.has(s));
+        html += `<optgroup label="${esc(g.icon||'')} ${esc(g.key)}">`;
+        html += `<option value="macro:${esc(g.key)}">▸ Tất cả — ${esc(g.key)}</option>`;
+        if(hasMacro) html += `<option value="${esc(g.key)}">   V/Adj/Adv/Phrase</option>`;
+        subs.forEach(s=>{ html += `<option value="${esc(s)}">   • ${esc(s)}</option>`; });
+        html += `</optgroup>`;
+      });
+  } else if(mode==='reading'){
+    const rdSubs = [...new Set(VOCAB.filter(v=>v._fromReading).map(v=>v._topic))];
+    const byTitle = {};
+    RD().forEach(r=>{ byTitle[r.title] = r; });
+    html += `<option value="macro:${esc(RD_MACRO)}">▸ Tất cả — Từ vựng Reading</option>`;
+    rdSubs.forEach(title=>{
+      const r = byTitle[title];
+      const label = r ? `Cam${r.book||'?'}-Test${r.test||'?'}-P${r.psg||'?'}-${title}` : title;
+      html += `<option value="${esc(title)}">${esc(label)}</option>`;
+    });
+  } else if(mode==='listening'){
+    const set = new Set();
+    VOCAB.forEach(v=>{ (v.listening||[]).forEach(k=>set.add(k)); });
+    [...set].sort().forEach(k=>{ html += `<option value="${esc(k)}">${esc(k)}</option>`; });
+  } else if(mode==='new'){
+    const dates = [...new Set(VOCAB.filter(v=>v._isNew).map(v=>v.date))].sort().reverse();
+    html += `<option value="newdate:*">▸ Tất cả — Từ mới thêm</option>`;
+    dates.forEach(d=>{
+      const parts = (d||'').split('-'); // YYYY-MM-DD -> D-M-YYYY
+      const label = parts.length===3 ? `${+parts[2]}-${+parts[1]}-${parts[0]}` : d;
+      html += `<option value="newdate:${esc(d)}">${esc(label)}</option>`;
+    });
+  }
+  l2.innerHTML = html;
+  l2.style.display = mode==='all' ? 'none' : '';
+  if(applyAfter) applyTopicL1L2();
+}
+function onTopicL1Change(){ populateTopicL2(true); }
+function onTopicL2Change(){ applyTopicL1L2(); }
+/* Đồng bộ lựa chọn 2 tầng -> giá trị lọc thực tế (#topicFilter hoặc _dateFilter) rồi lọc */
+function applyTopicL1L2(){
+  const l1 = document.getElementById('topicFilterL1');
+  const l2 = document.getElementById('topicFilterL2');
+  const topicSel = document.getElementById('topicFilter');
+  if(!l1 || !topicSel) return;
+  const mode = l1.value;
+  if(mode==='all'){
+    topicSel.value = 'all';
+    if(_dateFilter.startsWith('new:')) _dateFilter = 'all';
+  } else if(mode==='new'){
+    topicSel.value = 'all';
+    const v = (l2 && l2.value) || 'newdate:*';
+    _dateFilter = v.startsWith('newdate:') ? 'new:'+v.slice(8) : 'all';
+  } else {
+    if(_dateFilter.startsWith('new:')) _dateFilter = 'all';
+    const v = l2 && l2.value;
+    topicSel.value = v || 'all';
+  }
+  applyFilter();
+}
+/* Đồng bộ ngược: khi nơi khác (goTopic/goDate/goStatus/clearAllFilters...) đổi
+   #topicFilter hay _dateFilter, làm 2 tầng hiển thị khớp — gọi mỗi lần mở bảng lọc. */
+function syncTopicL1L2(){
+  const l1 = document.getElementById('topicFilterL1');
+  const l2 = document.getElementById('topicFilterL2');
+  const topicSel = document.getElementById('topicFilter');
+  if(!l1 || !l2 || !topicSel) return;
+  populateTopicL1();
+  const tv = topicSel.value;
+  let mode = 'all', l2v = '';
+  if(_dateFilter.startsWith('new:')){
+    mode = 'new'; l2v = 'newdate:'+_dateFilter.slice(4);
+  } else if(tv === 'all' || !tv){
+    mode = 'all';
+  } else if(tv.startsWith('macro:')){
+    const key = tv.slice(6);
+    if(key===WS_MACRO) mode='ws';
+    else if(key===RD_MACRO) mode='reading';
+    else mode='topic';
+    l2v = tv;
+  } else if(CAM_TEST_TOPIC_RE.test(tv)){
+    mode = 'listening'; l2v = tv;
+  } else {
+    const macro = SUB2MACRO[tv];
+    if(macro===WS_MACRO) mode='ws';
+    else if(macro===RD_MACRO) mode='reading';
+    else mode='topic';
+    l2v = tv;
+  }
+  l1.value = mode;
+  populateTopicL2(false);
+  if(l2v) l2.value = l2v;
 }
 function updateFilterBadge(){
   const g = id => (document.getElementById(id)||{}).value;
-  let n = 0;
-  ['topicFilter','posFilter','levelFilter','statusFilter','stageFilter','starFilter'].forEach(id=>{ if(g(id) && g(id)!=='all') n++; });
+  const basicIds = ['topicFilter','statusFilter'];
+  const advIds = ['posFilter','levelFilter','stageFilter','starFilter'];
+  let nBasic = 0; basicIds.forEach(id=>{ if(g(id) && g(id)!=='all') nBasic++; });
+  let nAdv = 0; advIds.forEach(id=>{ if(g(id) && g(id)!=='all') nAdv++; });
+  const n = nBasic + nAdv;
   const badge = document.getElementById('filterBadge');
   const btn = document.getElementById('filterToggleBtn');
   const clearBtn = document.getElementById('filterClearBtn');
   if(badge){ badge.textContent = n; badge.style.display = n>0 ? 'inline-flex' : 'none'; }
   if(btn) btn.classList.toggle('has-active', n>0);
   if(clearBtn) clearBtn.style.display = n>0 ? 'inline-flex' : 'none';
+  const advBadge = document.getElementById('fpAdvBadge');
+  if(advBadge){ advBadge.textContent = nAdv; advBadge.style.display = nAdv>0 ? 'inline-flex' : 'none'; }
+  if(nAdv>0) toggleAdvFilters(true);   // đang có lọc nâng cao đang bật -> tự mở ra để người dùng thấy
 }
 
 /* ---------- Init filters (dùng mapped topic) ---------- */
@@ -26844,7 +27091,7 @@ function initFilters(){
     if(hasMacro){
       const oM = document.createElement('option');
       oM.value = g.key;
-      oM.textContent = `   ${g.key} (V/Adj/Adv/Phrase)`;
+      oM.textContent = `   V/Adj/Adv/Phrase`;
       og.appendChild(oM);
     }
     subs.forEach(x=>{
@@ -26860,6 +27107,9 @@ function initFilters(){
     others.forEach(x=>{const o=document.createElement('option');o.value=x;o.textContent=x;og.appendChild(o);});
     sel.appendChild(og);
   }
+
+  populateTopicL1();
+  syncTopicL1L2();
 
   const posSet = [...new Set(VOCAB.map(v=>v.pos).filter(Boolean))].sort();
   const levels = [...new Set(VOCAB.map(v=>(v.level||'').toUpperCase()).filter(Boolean))]
@@ -29599,6 +29849,31 @@ function nextType(){
 }
 
 
+/* ---------- Thu phóng cỡ chữ Flashcard — tự động lưu lại lựa chọn ---------- */
+const LS_FC_ZOOM = 'vocab_fc_zoom';
+const FC_ZOOM_MIN = 0.7, FC_ZOOM_MAX = 1.6, FC_ZOOM_STEP = 0.1;
+let fcZoom = 1;
+(function loadFcZoom(){
+  try{
+    const saved = parseFloat(localStorage.getItem(LS_FC_ZOOM));
+    if(!isNaN(saved) && saved >= FC_ZOOM_MIN && saved <= FC_ZOOM_MAX) fcZoom = saved;
+  }catch(e){}
+})();
+function applyFcZoom(){
+  document.documentElement.style.setProperty('--fc-zoom', fcZoom);
+  const val = document.getElementById('fcZoomVal');
+  if(val) val.textContent = Math.round(fcZoom*100)+'%';
+  const out = document.getElementById('fcZoomOut'), inn = document.getElementById('fcZoomIn');
+  if(out) out.disabled = fcZoom <= FC_ZOOM_MIN + 1e-9;
+  if(inn) inn.disabled = fcZoom >= FC_ZOOM_MAX - 1e-9;
+}
+function fcZoomStep(dir){
+  fcZoom = Math.min(FC_ZOOM_MAX, Math.max(FC_ZOOM_MIN, +(fcZoom + dir*FC_ZOOM_STEP).toFixed(2)));
+  try{ localStorage.setItem(LS_FC_ZOOM, fcZoom); }catch(e){}
+  applyFcZoom();
+}
+applyFcZoom();
+
 /* ---------- Mode switching ---------- */
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.onclick = ()=>{
@@ -29619,6 +29894,8 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     const showSearch = mode==='list';
     row.classList.toggle('compact', showToolbar && !showSearch);
     document.getElementById('searchWrap').style.display = showSearch ? '' : 'none';
+    const zoomCtrl = document.getElementById('fcZoomCtrl');
+    if(zoomCtrl) zoomCtrl.style.display = mode==='flashcard' ? 'flex' : 'none';
     window.scrollTo({top:0, behavior:'auto'});
     if(mode==='flashcard') requestAnimationFrame(measureFcTop);
     // Defer heavy DOM work until AFTER the panel has painted — this is what
