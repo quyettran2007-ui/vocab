@@ -27368,6 +27368,14 @@ function dashMacroTab(key){
   const id = _slugK(key);
   document.querySelectorAll('.dm-tab').forEach(b=>b.classList.toggle('active', b.dataset.dm===id));
   document.querySelectorAll('.dm-pane').forEach(p=>p.classList.toggle('active', p.id==='dmPane-'+id));
+  if(!_dmPaneBuilt[key]){
+    const el = document.getElementById('dmPane-'+id);
+    if(el){
+      const g = TOPIC_TREE.find(x=>x.key===key);
+      el.innerHTML = `<div class="topic-grid one-col">${buildTopicCard(g, _catByMacro[key]||[], _catByTopic)}</div>`;
+      _dmPaneBuilt[key] = true;
+    }
+  }
 }
 function dashRdTab(key){
   _dmRdTab = key;
@@ -27850,6 +27858,88 @@ function renderDashboard(){
   bindDashSearch();
 }
 
+/* Dựng HTML thẻ chủ đề lớn (tp-card) cho ĐÚNG 1 nhóm macro (g). Tách riêng
+   khỏi renderListCategories() để có thể gọi LƯỜI cho từng chủ đề một, thay
+   vì trước đây renderListCategories() dựng HTML chi tiết (kèm toàn bộ hàng
+   chủ đề nhỏ) cho CẢ ~55 chủ đề lớn trong TOPIC_TREE mỗi lần vẽ lại — dù
+   khu "Chủ đề khác" chỉ hiện ĐÚNG 1 chủ đề tại 1 thời điểm. Đây là phần tốn
+   thời gian nhất khi mở Danh mục từ vựng; giờ chỉ dựng đúng chủ đề đang mở. */
+function buildTopicCard(g, mw, byTopic){
+  if(!g || !mw || !mw.length) return '';
+  const P = topicProgress(mw);
+  const pct = Math.round(P.learned / P.total * 100);
+
+  // hàng chủ đề nhỏ
+  const subs = g.subs.filter(x=>byTopic[x]).map(sub=>{
+    const sw = byTopic[sub];
+    const sp = topicProgress(sw);
+    const spct = Math.round(sp.learned/sp.total*100);
+    return `<div class="tp-sub" data-color="${topicColorIndex(sub)}">
+      <button class="tp-sub-name" onclick="goTopic('${sub.replace(/'/g,"\\'")}','flashcard')" title="Flashcard: ${sub}">
+        <span class="tp-ico">${TOPIC_ICONS[sub]||'•'}</span><span class="tp-txt">${sub}</span>
+      </button>
+      <div class="tp-sub-bar"><div class="tp-sub-fill" style="width:${spct}%"></div></div>
+      <span class="tp-sub-n">${sp.learned}/${sp.total}</span>
+      <span class="tp-sub-go">
+        <button class="tp-mini" onclick="goTopic('${sub.replace(/'/g,"\\'")}','flashcard')" title="Flashcard">🃏</button>
+        <button class="tp-mini" onclick="goTopic('${sub.replace(/'/g,"\\'")}','list')" title="Danh sách">📖</button>
+      </span>
+    </div>`;
+  }).join('');
+
+  // V/Adj/Adv/Phrase gắn thẳng vào chủ đề lớn
+  const selfW = byTopic[g.key] || [];
+  let selfRow = '';
+  if(selfW.length){
+    const sp = topicProgress(selfW);
+    const spct = Math.round(sp.learned/sp.total*100);
+    selfRow = `<div class="tp-sub" data-color="${topicColorIndex(g.key)}">
+      <button class="tp-sub-name" onclick="goTopic('${g.key.replace(/'/g,"\\'")}','flashcard')" title="Flashcard: động từ / tính từ / thành ngữ">
+        <span class="tp-ico">🔤</span><span class="tp-txt">Động từ · Tính từ · Thành ngữ</span>
+      </button>
+      <div class="tp-sub-bar"><div class="tp-sub-fill" style="width:${spct}%"></div></div>
+      <span class="tp-sub-n">${sp.learned}/${sp.total}</span>
+      <span class="tp-sub-go">
+        <button class="tp-mini" onclick="goTopic('${g.key.replace(/'/g,"\\'")}','flashcard')" title="Flashcard">🃏</button>
+        <button class="tp-mini" onclick="goTopic('${g.key.replace(/'/g,"\\'")}','list')" title="Danh sách">📖</button>
+      </span>
+    </div>`;
+  }
+
+  return `<div class="tp-card" data-color="${topicColorIndex(g.key)}">
+    <div class="tp-head">
+      <button class="tp-macro-name" onclick="goTopic('macro:${g.key.replace(/'/g,"\\'")}','flashcard')" title="Học toàn bộ chủ đề bằng Flashcard">
+        <span class="tp-macro-ico">${g.icon}</span>
+        <span class="tp-macro-txt">${g.key}</span>
+      </button>
+      <div class="tp-head-right">
+        <span class="tp-pct">${pct}%</span>
+        <button class="tp-btn" onclick="goTopic('macro:${g.key.replace(/'/g,"\\'")}','flashcard')">🃏 Flashcard</button>
+        <button class="tp-btn" onclick="goTopic('macro:${g.key.replace(/'/g,"\\'")}','list')">📖 Danh sách</button>
+      </div>
+    </div>
+    <div class="tp-macro-bar">
+      <div class="tp-seg learned" style="width:${P.learned/P.total*100}%"></div>
+      <div class="tp-seg doing" style="width:${P.doing/P.total*100}%"></div>
+    </div>
+    <div class="tp-legend">
+      <span><i class="lg learned"></i>${P.learned} đã thuộc</span>
+      <span><i class="lg doing"></i>${P.doing} đang học</span>
+      <span><i class="lg newn"></i>${P.newN} chưa học</span>
+      <span class="tp-total">${P.total} từ</span>
+    </div>
+    <div class="tp-subs">${subs}${selfRow}</div>
+  </div>`;
+}
+
+/* Dữ liệu tra cứu dùng chung giữa renderListCategories() và dashMacroTab()
+   (được cập nhật lại mỗi lần renderListCategories() chạy). */
+let _catByTopic = {}, _catByMacro = {};
+/* Cache: chủ đề lớn nào trong khu "Chủ đề khác" đã được dựng HTML rồi,
+   để bấm qua lại giữa các tab con không phải dựng lại từ đầu. Được xoá
+   mỗi lần renderListCategories() vẽ lại (dữ liệu VOCAB/tiến độ có thể đã đổi). */
+let _dmPaneBuilt = {};
+
 function renderListCategories(){
   const root = document.getElementById('listCatRoot');
   if(!root) return;
@@ -27860,84 +27950,18 @@ function renderListCategories(){
     (byTopic[v._topic] = byTopic[v._topic] || []).push(v);
     (byMacro[v._macro] = byMacro[v._macro] || []).push(v);
   });
+  _catByTopic = byTopic; _catByMacro = byMacro; _dmPaneBuilt = {};
 
   const WS_KEY = 'CỤM HAY WRITING & SPEAKING';
-  const topicCardMap = {};
-  TOPIC_TREE.map(g=>{
-    const mw = byMacro[g.key] || [];
-    if(!mw.length) return '';
-    const P = topicProgress(mw);
-    const pct = Math.round(P.learned / P.total * 100);
-
-    // hàng chủ đề nhỏ
-    const subs = g.subs.filter(x=>byTopic[x]).map(sub=>{
-      const sw = byTopic[sub];
-      const sp = topicProgress(sw);
-      const spct = Math.round(sp.learned/sp.total*100);
-      return `<div class="tp-sub" data-color="${topicColorIndex(sub)}">
-        <button class="tp-sub-name" onclick="goTopic('${sub.replace(/'/g,"\\'")}','flashcard')" title="Flashcard: ${sub}">
-          <span class="tp-ico">${TOPIC_ICONS[sub]||'•'}</span><span class="tp-txt">${sub}</span>
-        </button>
-        <div class="tp-sub-bar"><div class="tp-sub-fill" style="width:${spct}%"></div></div>
-        <span class="tp-sub-n">${sp.learned}/${sp.total}</span>
-        <span class="tp-sub-go">
-          <button class="tp-mini" onclick="goTopic('${sub.replace(/'/g,"\\'")}','flashcard')" title="Flashcard">🃏</button>
-          <button class="tp-mini" onclick="goTopic('${sub.replace(/'/g,"\\'")}','list')" title="Danh sách">📖</button>
-        </span>
-      </div>`;
-    }).join('');
-
-    // V/Adj/Adv/Phrase gắn thẳng vào chủ đề lớn
-    const selfW = byTopic[g.key] || [];
-    let selfRow = '';
-    if(selfW.length){
-      const sp = topicProgress(selfW);
-      const spct = Math.round(sp.learned/sp.total*100);
-      selfRow = `<div class="tp-sub" data-color="${topicColorIndex(g.key)}">
-        <button class="tp-sub-name" onclick="goTopic('${g.key.replace(/'/g,"\\'")}','flashcard')" title="Flashcard: động từ / tính từ / thành ngữ">
-          <span class="tp-ico">🔤</span><span class="tp-txt">Động từ · Tính từ · Thành ngữ</span>
-        </button>
-        <div class="tp-sub-bar"><div class="tp-sub-fill" style="width:${spct}%"></div></div>
-        <span class="tp-sub-n">${sp.learned}/${sp.total}</span>
-        <span class="tp-sub-go">
-          <button class="tp-mini" onclick="goTopic('${g.key.replace(/'/g,"\\'")}','flashcard')" title="Flashcard">🃏</button>
-          <button class="tp-mini" onclick="goTopic('${g.key.replace(/'/g,"\\'")}','list')" title="Danh sách">📖</button>
-        </span>
-      </div>`;
-    }
-
-    return `<div class="tp-card" data-color="${topicColorIndex(g.key)}">
-      <div class="tp-head">
-        <button class="tp-macro-name" onclick="goTopic('macro:${g.key.replace(/'/g,"\\'")}','flashcard')" title="Học toàn bộ chủ đề bằng Flashcard">
-          <span class="tp-macro-ico">${g.icon}</span>
-          <span class="tp-macro-txt">${g.key}</span>
-        </button>
-        <div class="tp-head-right">
-          <span class="tp-pct">${pct}%</span>
-          <button class="tp-btn" onclick="goTopic('macro:${g.key.replace(/'/g,"\\'")}','flashcard')">🃏 Flashcard</button>
-          <button class="tp-btn" onclick="goTopic('macro:${g.key.replace(/'/g,"\\'")}','list')">📖 Danh sách</button>
-        </div>
-      </div>
-      <div class="tp-macro-bar">
-        <div class="tp-seg learned" style="width:${P.learned/P.total*100}%"></div>
-        <div class="tp-seg doing" style="width:${P.doing/P.total*100}%"></div>
-      </div>
-      <div class="tp-legend">
-        <span><i class="lg learned"></i>${P.learned} đã thuộc</span>
-        <span><i class="lg doing"></i>${P.doing} đang học</span>
-        <span><i class="lg newn"></i>${P.newN} chưa học</span>
-        <span class="tp-total">${P.total} từ</span>
-      </div>
-      <div class="tp-subs">${subs}${selfRow}</div>
-    </div>`;
-  }).forEach((html,i)=>{ topicCardMap[TOPIC_TREE[i].key] = html; });
-
-  const wsCard     = topicCardMap[WS_KEY] || '';
+  const wsGroup = TOPIC_TREE.find(g=>g.key===WS_KEY);
+  const wsCard  = wsGroup ? buildTopicCard(wsGroup, byMacro[WS_KEY]||[], byTopic) : '';
   const wsCount    = (byMacro[WS_KEY]||[]).length;
   const rdCount    = (byMacro[RD_MACRO]||[]).length;
   const otherCount = VOCAB.length - wsCount - rdCount;   // không tính từ Reading
 
-  /* "Chủ đề khác" -> mỗi chủ đề lớn là 1 tab con, mỗi lần chỉ hiện 1 ô -> gọn */
+  /* "Chủ đề khác" -> mỗi chủ đề lớn là 1 tab con, mỗi lần chỉ hiện 1 ô -> gọn.
+     Chỉ dựng HTML số liệu gọn cho nút tab (nhẹ); nội dung thẻ chi tiết của
+     TỪNG chủ đề chỉ được dashMacroTab() dựng đúng lúc tab đó được mở. */
   const otherGroups = TOPIC_TREE.filter(g=>g.key!==WS_KEY && g.key!==RD_MACRO && (byMacro[g.key]||[]).length);
 
   const slug = k => k.replace(/[^A-Za-zÀ-ỹ0-9]/g,'');
@@ -27952,10 +27976,9 @@ function renderListCategories(){
     </button>`;
   }).join('');
 
+  // vỏ rỗng cho mỗi chủ đề — nội dung được dashMacroTab() điền lười vào lúc mở
   const otherPanes = otherGroups.map(g=>
-    `<div class="dm-pane ${g.key===_dmTab?'active':''}" id="dmPane-${slug(g.key)}">
-       <div class="topic-grid one-col">${topicCardMap[g.key]||''}</div>
-     </div>`).join('');
+    `<div class="dm-pane ${g.key===_dmTab?'active':''}" id="dmPane-${slug(g.key)}"></div>`).join('');
 
   /* ---- TỪ MỚI THÊM: các từ có date >= NEW_SINCE_DATE, gom theo ngày thêm ---- */
   const NEWW = VOCAB.filter(v=>v._isNew);
@@ -28199,6 +28222,7 @@ function ensureDtPane(t){
   el.innerHTML = _dtPaneHTML[t];
   _dtPaneBuilt[t] = true;
   if(t==='ls') renderListeningLib();   // vẽ lưới 21 quyển × 4 Test khi mở tab Listening
+  if(t==='all' && _dmTab) dashMacroTab(_dmTab);  // dựng nội dung chủ đề đang mở (pane vừa chèn vào DOM đang rỗng)
 }
 
 /* ---------- Nút "Chọn chủ đề học" trên hàng tiến độ chính: nhảy sang tab
@@ -29029,18 +29053,29 @@ window.addEventListener('scroll', ()=>{
   _listTick = true;
   requestAnimationFrame(()=>{
     _listTick = false;
+
+    // Trước đây bước dưới đọc document.body.offsetHeight (bắt buộc trình
+    // duyệt tính lại layout) trên MỌI lần cuộn, ở BẤT KỲ khu vực nào đang
+    // mở (kể cả Danh mục từ vựng, Dashboard...) dù 2 panel dưới đây
+    // (Danh sách / Cấu trúc câu) không hề hiển thị lúc đó -> đây là 1
+    // nguồn giật khi cuộn ở những khu vực khác. Giờ kiểm tra 2 panel có
+    // đang mở hay không TRƯỚC; nếu không panel nào đang mở thì thoát
+    // ngay, không đụng tới layout của trang.
+    const p  = document.getElementById('panel-list');
+    const sp = document.getElementById('panel-structures');
+    const pActive  = p  && p.classList.contains('active')  && !_listBusy  && _listBuild  && _listPos  < _listBuild.length;
+    const spActive = sp && sp.classList.contains('active') && _stMode==='all' && !_stAllBusy && _stAllBuild && _stAllPos < _stAllBuild.length;
+    if(!pActive && !spActive) return;
+
     const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 1400;
     if(!nearBottom) return;
 
-    const p = document.getElementById('panel-list');
-    if(p && p.classList.contains('active') && !_listBusy && _listBuild && _listPos < _listBuild.length){
+    if(pActive){
       _listBusy = true;
       listAppend(60);
       _listBusy = false;
     }
-
-    const sp = document.getElementById('panel-structures');
-    if(sp && sp.classList.contains('active') && _stMode==='all' && !_stAllBusy && _stAllBuild && _stAllPos < _stAllBuild.length){
+    if(spActive){
       _stAllBusy = true;
       stAllAppend(50);
       _stAllBusy = false;
