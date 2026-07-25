@@ -35442,7 +35442,7 @@ function renderNotebook(){
                     ? `<div class="nb-pin-text nb-manual">🖊️ ${rdEsc(item.text)}</div>`
                     : `<div class="nb-pin-text">"${rdEsc(item.text)}"</div>`}
                 `)}
-                ${nbNoteBoxHtml(day, item, 'pin', _nbPinCompact)}
+                ${nbNoteBoxHtml(day, item, 'pin', _nbPinCompact && !editing)}
                 ${(editing || _nbPinCompact) ? '' : `
                   <div class="nb-pin-meta">${notebookDayLabel(day)}${item.time?' · '+item.time:''}${nbSourceHtml(item)}</div>
                   ${nbColorDotsHtml(day, item)}
@@ -35491,7 +35491,7 @@ function renderNotebook(){
                   ? `<div class="nb-quote nb-manual">🖊️ ${rdEsc(item.text)}</div>`
                   : `<div class="nb-quote">"${rdEsc(item.text)}"</div>`}
               `)}
-              ${nbNoteBoxHtml(day, item, 'line', _nbListCompact)}
+              ${nbNoteBoxHtml(day, item, 'line', _nbListCompact && !editing)}
               ${(editing || _nbListCompact) ? '' : `
                 <div class="nb-meta">${item.pinned?'<span class="nb-pin-badge">📌</span> ':''}${item.time||''}${nbSourceHtml(item)}</div>
               `}
