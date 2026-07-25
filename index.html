@@ -4050,6 +4050,17 @@ nav.tabs{
 .letter-box.wrong{ border-color:transparent; color:#fff; background:var(--coral); }
 [data-theme="dark"] .letter-box.correct,[data-theme="dark"] .letter-box.wrong{ color:#08120f; }
 
+/* Hiệu ứng "chữ nhảy" — mỗi lần gõ 1 ký tự mới, ô chữ vừa điền nảy lên rồi
+   rơi xuống đúng vị trí (dùng cho Gõ từ Collocation & Gõ từ nhúng trong
+   "Học ngay"). */
+.letter-box.jump{ animation:letterJump .38s cubic-bezier(.34,1.56,.64,1); }
+@keyframes letterJump{
+  0%{ transform:translateY(0) scale(1); }
+  35%{ transform:translateY(-14px) scale(1.18); }
+  65%{ transform:translateY(3px) scale(.94); }
+  100%{ transform:translateY(0) scale(1); }
+}
+
 .tp-head{
   display:flex; justify-content:space-between; align-items:center; gap:10px;
   flex-wrap:wrap; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--line);
@@ -29616,6 +29627,8 @@ function nextType(){
       <button class="btn primary" id="typeCheck" disabled>✓ Kiểm tra</button>
       <button class="btn" id="typeClear">⌫ Xoá hết</button>
       <button class="btn" id="typeReveal">💡 Gợi ý 1 chữ</button>
+      <button class="btn" id="typeHintFirst">🔠 Chữ đầu</button>
+      <button class="btn" id="typeHintLast">🔡 Chữ cuối</button>
       <button class="btn" id="typeShow">👁 Hiện đáp án</button>
       <button class="btn" id="typeSkip">Bỏ qua →</button>
     </div>
@@ -29811,6 +29824,20 @@ function nextType(){
       inp.value = val + typable[val.length];  // nối đúng 1 chữ vào cuối
       paint();
     }
+    inp.focus();
+  };
+  document.getElementById('typeHintFirst').onclick = ()=>{
+    if(_typeLocked) return;
+    _typeHinted = true;
+    fb.innerHTML = `💡 Chữ đầu tiên: <b>${esc(typable[0].toUpperCase())}</b>`;
+    fb.className = 'type-feedback';
+    inp.focus();
+  };
+  document.getElementById('typeHintLast').onclick = ()=>{
+    if(_typeLocked) return;
+    _typeHinted = true;
+    fb.innerHTML = `💡 Chữ cuối cùng: <b>${esc(typable[MAX-1].toUpperCase())}</b>`;
+    fb.className = 'type-feedback';
     inp.focus();
   };
 
@@ -30702,6 +30729,8 @@ function learnTypeCard(item){
       <button class="btn primary" id="ltCheck" disabled>✓ Kiểm tra</button>
       <button class="btn" id="ltClear">⌫ Xoá hết</button>
       <button class="btn" id="ltHint">💡 Gợi ý 1 chữ</button>
+      <button class="btn" id="ltHintFirst">🔠 Chữ đầu</button>
+      <button class="btn" id="ltHintLast">🔡 Chữ cuối</button>
       <button class="btn" id="ltShow">👁 Hiện đáp án</button>
     </div>
     <div class="type-tip">Enter = kiểm tra · Backspace = xoá tự do</div>`;
@@ -30711,6 +30740,7 @@ function learnTypeCard(item){
   const cells = [...box.querySelectorAll('.letter-box:not(.space)')];
   const chk = box.querySelector('#ltCheck');
 
+  let _ltPaintedLen = 0;
   const paint = ()=>{
     const val = inp.value.toLowerCase().slice(0,MAX);
     cells.forEach((bx,i)=>{
@@ -30718,6 +30748,15 @@ function learnTypeCard(item){
       bx.textContent = val[i]||'';
       if(val[i]) bx.classList.add('filled');
     });
+    /* Chữ nhảy: chỉ ô vừa gõ mới nảy lên, không lặp lại cho các ô đã điền
+       từ trước để tránh giật khi backspace/gõ tiếp. */
+    if(val.length > _ltPaintedLen){
+      for(let i=_ltPaintedLen;i<val.length;i++){
+        const bx = cells[i];
+        if(bx){ bx.classList.remove('jump'); void bx.offsetWidth; bx.classList.add('jump'); }
+      }
+    }
+    _ltPaintedLen = val.length;
     if(val.length<MAX && cells[val.length]) cells[val.length].classList.add('cursor');
     chk.disabled = !val.length;
   };
@@ -30760,6 +30799,20 @@ function learnTypeCard(item){
     hinted = true;
     const val = inp.value.toLowerCase();
     if(val.length<MAX){ inp.value = val + typable[val.length]; paint(); }
+    inp.focus();
+  };
+  box.querySelector('#ltHintFirst').onclick = ()=>{
+    if(locked) return;
+    hinted = true;
+    fb.innerHTML = `💡 Chữ đầu tiên: <b>${esc(typable[0].toUpperCase())}</b>`;
+    fb.className = 'type-feedback';
+    inp.focus();
+  };
+  box.querySelector('#ltHintLast').onclick = ()=>{
+    if(locked) return;
+    hinted = true;
+    fb.innerHTML = `💡 Chữ cuối cùng: <b>${esc(typable[MAX-1].toUpperCase())}</b>`;
+    fb.className = 'type-feedback';
     inp.focus();
   };
   box.querySelector('#ltShow').onclick = ()=>{
@@ -32602,6 +32655,9 @@ function stRenderColloc(root){
   });
   list = list.slice();
   if(_clSortAZ) list.sort((a,b)=> a.phrase.localeCompare(b.phrase));
+  const totalMatched = list.length;
+  const shownList = list.slice(0, _clListShown);
+  const hasMore = totalMatched > shownList.length;
 
   const TAB_LABEL = { all:'Tất cả', unseen:'Chưa học', learning:'Đang luyện', mastered:'Đã thuộc' };
   const statusIcon = { unseen:'⚪', learning:'🟡', mastered:'✅' };
@@ -32664,38 +32720,56 @@ function stRenderColloc(root){
     </div>` : ''}
 
     <div class="st-list cl-list" id="clStatList">
-      ${list.length ? list.map(c=>clCardHTML(c, boxes)).join('') : `<div class="rd-empty">Không tìm thấy collocation nào khớp.</div>`}
-    </div>`;
+      ${shownList.length ? shownList.map(c=>clCardHTML(c, boxes)).join('') : `<div class="rd-empty">Không tìm thấy collocation nào khớp.</div>`}
+    </div>
+    ${hasMore ? `<div class="cl-load-more-wrap" style="text-align:center;margin:14px 0">
+      <button class="st-stats-btn" id="clLoadMoreBtn">⬇️ Xem thêm (${totalMatched - shownList.length} cụm còn lại)</button>
+    </div>` : ''}`;
 
   const topicDetailsEl = document.getElementById('clTopicListDetails');
   if(topicDetailsEl) topicDetailsEl.ontoggle = ()=>{ _clTopicListOpen = topicDetailsEl.open; };
 
   root.querySelectorAll('#clStatTabChips .rd-chip').forEach(btn=>{
-    btn.onclick = ()=>{ _clStatTab = btn.dataset.tab; stRenderColloc(root); };
+    btn.onclick = ()=>{ _clStatTab = btn.dataset.tab; _clListShown = CL_LIST_PAGE_SIZE; stRenderColloc(root); };
   });
   root.querySelectorAll('.cl-topic-bar-row').forEach(btn=>{
     btn.onclick = ()=>{
       const t = btn.dataset.topic;
       _clStatTopicFilter = (_clStatTopicFilter===t) ? null : t;
+      _clListShown = CL_LIST_PAGE_SIZE;
       stRenderColloc(root);
       const listEl = document.getElementById('clStatList');
       if(listEl) listEl.scrollIntoView({behavior:'smooth', block:'start'});
     };
   });
   const topicClearBtn = document.getElementById('clStatTopicClear');
-  if(topicClearBtn) topicClearBtn.onclick = ()=>{ _clStatTopicFilter = null; stRenderColloc(root); };
+  if(topicClearBtn) topicClearBtn.onclick = ()=>{ _clStatTopicFilter = null; _clListShown = CL_LIST_PAGE_SIZE; stRenderColloc(root); };
+
+  const clLoadMoreBtn = document.getElementById('clLoadMoreBtn');
+  if(clLoadMoreBtn) clLoadMoreBtn.onclick = ()=>{
+    _clListShown += CL_LIST_PAGE_SIZE;
+    stRenderColloc(root);
+  };
 
   document.getElementById('clSearch').oninput = e=>{
-    _clStatQuery = e.target.value;
+    const val = e.target.value;
     const pos = e.target.selectionStart;
-    stRenderColloc(root);
-    const el = document.getElementById('clSearch');
-    if(el){ el.focus(); try{ el.setSelectionRange(pos,pos); }catch(_){} }
+    /* Gõ tìm kiếm trước đây re-render TOÀN BỘ danh sách (có thể >1000 thẻ)
+       ngay trên mỗi lần gõ -> giật/lag rõ rệt. Debounce lại + luôn reset
+       về trang đầu khi đổi từ khoá tìm kiếm. */
+    clearTimeout(_clSearchDebounceT);
+    _clSearchDebounceT = setTimeout(()=>{
+      _clStatQuery = val;
+      _clListShown = CL_LIST_PAGE_SIZE;
+      stRenderColloc(root);
+      const el = document.getElementById('clSearch');
+      if(el){ el.focus(); try{ el.setSelectionRange(pos,pos); }catch(_){} }
+    }, 220);
   };
   document.getElementById('clSearch').value = _clStatQuery;
   document.getElementById('clFlashcardBtn').onclick = ()=> clStartFlashcards(list.length ? list : COLLOCATIONS);
   document.getElementById('clTypingModeBtn').onclick = ()=> clOpenTypingSetup(_clStatTopicFilter || (_clStatTab==='learning' ? 'learning' : 'all'));
-  document.getElementById('clSortAZBtn').onclick = ()=>{ _clSortAZ = !_clSortAZ; stRenderColloc(root); };
+  document.getElementById('clSortAZBtn').onclick = ()=>{ _clSortAZ = !_clSortAZ; _clListShown = CL_LIST_PAGE_SIZE; stRenderColloc(root); };
   document.getElementById('clStatResetBtn').onclick = clResetTypingProgress;
 
   root.querySelectorAll('.cl-card-speak').forEach(btn=>{
@@ -33055,6 +33129,14 @@ let _clStatTab = 'all';      // 'all' | 'unseen' | 'learning' | 'mastered'
 let _clStatQuery = '';
 let _clStatTopicFilter = null; // chủ đề đang lọc khi bấm vào thanh tiến độ, null = tất cả chủ đề
 let _clTopicListOpen = true; // trạng thái đóng/mở khối "Danh sách chủ đề" — giữ nguyên qua các lần render lại (vd khi gõ tìm kiếm)
+/* Danh sách collocation có thể lên tới ~1200+ mục; dựng toàn bộ HTML (kèm
+   tính câu ví dụ tự động cho từng thẻ) cho ngần ấy thẻ trong 1 lần render
+   đồng bộ là nguyên nhân chính gây lag/treo khi vào mục này. Nên chỉ vẽ
+   trước 1 trang, có nút "Xem thêm" để tải dần — vẫn giữ mọi logic lọc/sắp
+   xếp/tìm kiếm y nguyên trên toàn bộ mảng, chỉ giới hạn số thẻ VẼ RA. */
+const CL_LIST_PAGE_SIZE = 60;
+let _clListShown = CL_LIST_PAGE_SIZE;
+let _clSearchDebounceT = null;
 
 function clStatusOf(c, boxes){
   const e = boxes[c.id];
@@ -33413,6 +33495,8 @@ function clNextTypeCard(){
     <div class="type-actions">
       <button class="btn primary" id="clTypeCheck" disabled>✓ Kiểm tra</button>
       <button class="btn" id="clTypeReveal">💡 Gợi ý 1 chữ</button>
+      <button class="btn" id="clTypeHintFirst">🔠 Chữ đầu</button>
+      <button class="btn" id="clTypeHintLast">🔡 Chữ cuối</button>
       <button class="btn" id="clTypeShow">👁 Hiện đáp án</button>
       <button class="btn" id="clTypeSkip">Bỏ qua →</button>
     </div>
@@ -33441,6 +33525,7 @@ function clNextTypeCard(){
   const cells = [...root.querySelectorAll('.letter-box:not(.space)')];
   const btnCheck = document.getElementById('clTypeCheck');
 
+  let _clPaintedLen = 0;
   function paint(){
     const val = inp.value.toLowerCase().slice(0, MAX);
     cells.forEach((bx,i)=>{
@@ -33448,6 +33533,15 @@ function clNextTypeCard(){
       bx.textContent = val[i] || '';
       if(val[i]) bx.classList.add('filled');
     });
+    /* Chữ nhảy: chỉ ô vừa được điền mới (so với lần vẽ trước) mới nảy lên,
+       tránh làm toàn bộ ô đã gõ trước đó nhảy lại mỗi lần re-paint. */
+    if(val.length > _clPaintedLen){
+      for(let i=_clPaintedLen;i<val.length;i++){
+        const bx = cells[i];
+        if(bx){ bx.classList.remove('jump'); void bx.offsetWidth; bx.classList.add('jump'); }
+      }
+    }
+    _clPaintedLen = val.length;
     if(val.length < MAX && cells[val.length]) cells[val.length].classList.add('cursor');
     else if(cells[MAX-1]) cells[MAX-1].classList.add('cursor');
     btnCheck.disabled = val.length === 0;
@@ -33591,6 +33685,20 @@ function clNextTypeCard(){
     _clTypeHinted = true;
     const val = inp.value.toLowerCase();
     if(val.length < MAX){ inp.value = val + typable[val.length]; paint(); }
+    inp.focus();
+  };
+  document.getElementById('clTypeHintFirst').onclick = ()=>{
+    if(_clTypeLocked) return;
+    _clTypeHinted = true;
+    fb.innerHTML = `💡 Chữ đầu tiên: <b>${esc(typable[0].toUpperCase())}</b>`;
+    fb.className = 'type-feedback';
+    inp.focus();
+  };
+  document.getElementById('clTypeHintLast').onclick = ()=>{
+    if(_clTypeLocked) return;
+    _clTypeHinted = true;
+    fb.innerHTML = `💡 Chữ cuối cùng: <b>${esc(typable[MAX-1].toUpperCase())}</b>`;
+    fb.className = 'type-feedback';
     inp.focus();
   };
 
