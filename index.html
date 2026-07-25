@@ -2347,12 +2347,21 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin-card .nb-note-editable{ background:rgba(255,255,255,.55); border-color:rgba(0,0,0,.18); border-left-color:rgba(0,0,0,.3); color:#2b2b2b; }
 .nb-pin-card .nb-fmt-toolbar button{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
 .nb-pin-card .nb-source-link{ color:#2b2b2b; text-decoration-color:rgba(0,0,0,.4); }
+/* Cố định viền trong theo viền ngoài: bên trong ô ghi chú luôn lấp đầy phần còn lại của
+   thẻ ghim, không tự resize riêng nữa — chỉ cần kéo giãn thẻ ghim (viền ngoài) là đủ. */
+.nb-pin-card .nb-note-wrap{ display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
+.nb-pin-card .nb-note-editable{ flex:1 1 auto; min-height:0; height:auto !important; width:auto !important; resize:none; }
 
 .nb-date-filter{ display:flex; align-items:center; gap:8px; margin-bottom:14px; font-size:13px; color:var(--ink-soft); }
 .nb-date-filter label{ font-weight:700; white-space:nowrap; }
 .nb-date-filter select{ font:inherit; font-size:13px; padding:6px 10px; border-radius:9px; border:1px solid var(--line);
   background:var(--card); color:var(--ink); cursor:pointer; }
 .nb-date-filter select:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset; }
+.nb-compact-toggle{ display:inline-flex; align-items:center; justify-content:center; gap:4px; height:26px; padding:0 9px;
+  border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer; font-size:12px; white-space:nowrap; }
+.nb-compact-toggle:hover{ border-color:var(--accent); color:var(--accent); }
+.nb-compact-toggle.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
+.nb-pin-head .nb-compact-toggle{ margin-left:auto; }
 
 
 .settings-nav{
@@ -5373,7 +5382,10 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
           <button class="btn danger-btn" onclick="notebookClearAll()">🗑️ Xoá toàn bộ sổ ghi chú</button>
         </div>
         <div id="notebookNewForm" style="display:none;margin-bottom:16px;padding:12px;border:1px solid #ddd;border-radius:10px">
-          <textarea id="notebookNewInput" rows="3" placeholder="Nhập nội dung ghi chú của bạn…" style="width:100%;box-sizing:border-box;resize:vertical;padding:8px;border-radius:8px;border:1px solid #ccc;font:inherit"></textarea>
+          <label for="notebookNewTitle" style="display:block;font-size:12.5px;font-weight:700;margin-bottom:4px;color:var(--ink-soft)">Tiêu đề / trích dẫn</label>
+          <textarea id="notebookNewTitle" rows="2" placeholder="Nhập tiêu đề hoặc đoạn trích…" style="width:100%;box-sizing:border-box;resize:vertical;padding:8px;border-radius:8px;border:1px solid #ccc;font:inherit;margin-bottom:10px"></textarea>
+          <label for="notebookNewContent" style="display:block;font-size:12.5px;font-weight:700;margin-bottom:4px;color:var(--ink-soft)">Nội dung ghi chú</label>
+          <textarea id="notebookNewContent" rows="3" placeholder="Nhập nội dung ghi chú của bạn…" style="width:100%;box-sizing:border-box;resize:vertical;padding:8px;border-radius:8px;border:1px solid #ccc;font:inherit"></textarea>
           <div class="backup-actions" style="margin-top:10px">
             <button class="btn primary" onclick="notebookSaveManual()">💾 Lưu ghi chú</button>
             <button class="btn" onclick="notebookToggleNewForm(false)">Huỷ</button>
@@ -34924,7 +34936,7 @@ function notebookAddLine(text, note, source, readingId, hidden, manual, pinnedDe
     /* Bản sao độc lập của ghi chú, dùng riêng cho bong bóng trong bài đọc — sửa ở Sổ ghi chú (note)
        hay sửa trực tiếp trong bài đọc (pnote) đều không ảnh hưởng lẫn nhau, chỉ đường link quay lại bài là dùng chung. */
     pnote: note||'', pnoteRich:false,
-    pinned: !!pinnedDefault, color: pinnedDefault ? NB_COLORS[0] : '', noteLinked: false, pinPos: null,
+    pinned: !!pinnedDefault, color: pinnedDefault ? NB_COLORS[0] : '', noteLinked: true, pinPos: null,
     /* pinOnly: mục được ghim ngay từ lúc tạo (vd. bấm "Tạo ghi chú mới") sẽ chỉ hiện trong
        Bảng ghim, không hiện lại trong danh sách theo ngày bên dưới, cho tới khi người dùng tự bỏ ghim. */
     pinOnly: !!pinnedDefault
@@ -34939,15 +34951,20 @@ function notebookToggleNewForm(show){
   const willShow = (show===undefined) ? (box.style.display==='none') : !!show;
   box.style.display = willShow ? '' : 'none';
   if(willShow){
-    const ta = document.getElementById('notebookNewInput');
-    if(ta){ ta.value=''; setTimeout(()=>ta.focus(), 30); }
+    const ta = document.getElementById('notebookNewTitle');
+    const ca = document.getElementById('notebookNewContent');
+    if(ta) ta.value='';
+    if(ca) ca.value='';
+    if(ta) setTimeout(()=>ta.focus(), 30);
   }
 }
 function notebookSaveManual(){
-  const ta = document.getElementById('notebookNewInput');
-  const text = ta ? ta.value.trim() : '';
-  if(!text){ toast('Hãy nhập nội dung ghi chú'); return; }
-  notebookAddLine(text, '', 'Ghi chú tự tạo', '', false, true, true);
+  const ta = document.getElementById('notebookNewTitle');
+  const ca = document.getElementById('notebookNewContent');
+  const title = ta ? ta.value.trim() : '';
+  const content = ca ? ca.value.trim() : '';
+  if(!title && !content){ toast('Hãy nhập tiêu đề hoặc nội dung ghi chú'); return; }
+  notebookAddLine(title || content, content, 'Ghi chú tự tạo', '', false, true, true);
   toast('📌 Đã tạo ghi chú mới (đã ghim)');
   notebookToggleNewForm(false);
 }
@@ -34970,6 +34987,23 @@ function notebookClearAll(){
 let _nbDateFilter = 'all'; /* 'all' = hiện tất cả các ngày, hoặc 1 ngày cụ thể "YYYY-MM-DD" */
 function notebookSetDateFilter(day){
   _nbDateFilter = day || 'all';
+  renderNotebook();
+}
+/* ---------- Chế độ "chỉ hiện nội dung" (ẩn trích dẫn, thanh công cụ định dạng,
+   meta & chấm màu) — 2 công tắc độc lập: 1 cho Bảng ghim, 1 cho danh sách theo ngày.
+   Trạng thái được nhớ qua localStorage để giữ nguyên lựa chọn giữa các lần mở lại. */
+const NB_PIN_COMPACT_KEY = 'vocab_nb_pin_compact';
+const NB_LIST_COMPACT_KEY = 'vocab_nb_list_compact';
+let _nbPinCompact = (function(){ try{ return localStorage.getItem(NB_PIN_COMPACT_KEY)==='1'; }catch(e){ return false; } })();
+let _nbListCompact = (function(){ try{ return localStorage.getItem(NB_LIST_COMPACT_KEY)==='1'; }catch(e){ return false; } })();
+function nbToggleCompact(scope){
+  if(scope==='pin'){
+    _nbPinCompact = !_nbPinCompact;
+    try{ localStorage.setItem(NB_PIN_COMPACT_KEY, _nbPinCompact ? '1' : '0'); }catch(e){}
+  } else {
+    _nbListCompact = !_nbListCompact;
+    try{ localStorage.setItem(NB_LIST_COMPACT_KEY, _nbListCompact ? '1' : '0'); }catch(e){}
+  }
   renderNotebook();
 }
 /* ---------- Sửa ghi chú ---------- */
@@ -35212,12 +35246,16 @@ function nbAttachResizeHandlers(root){
 }
 /* HTML của ô ghi chú — LUÔN ở dạng sửa trực tiếp (contenteditable), có sẵn thanh định dạng, tự lưu.
    ctx phân biệt 2 nơi hiển thị cùng 1 ghi chú (thẻ ghim 'pin' / dòng trong ngày 'line') để không trùng id DOM. */
-function nbNoteBoxHtml(day, item, ctx){
+function nbNoteBoxHtml(day, item, ctx, compact){
   const noteHtml = item.note ? (item.noteRich ? item.note : rdEsc(item.note)) : '';
   const domId = `nbNote_${ctx}_${item.id}`;
   return `
     <div class="nb-note-wrap">
+      ${compact ? '' : `
       <div class="nb-fmt-toolbar">
+        <button type="button" title="Hoàn tác" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','undo')">↩️</button>
+        <button type="button" title="Làm lại" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','redo')">↪️</button>
+        <span class="nb-fmt-sep"></span>
         <button type="button" title="In đậm" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','bold')"><b>B</b></button>
         <button type="button" title="In nghiêng" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','italic')"><i>I</i></button>
         <button type="button" title="Gạch đầu dòng" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','insertUnorderedList')">• ≡</button>
@@ -35237,7 +35275,7 @@ function nbNoteBoxHtml(day, item, ctx){
         <span class="nb-fmt-sep"></span>
         <button type="button" class="${item.noteLinked?'on':''}" title="${item.noteLinked?'Đang liên kết với ghi chú trong bài đọc — bấm để huỷ':'Liên kết 2 chiều với ghi chú trong bài đọc'}"
           onmousedown="event.preventDefault()" onclick="nbToggleLink('${day}','${item.id}')">🔗</button>
-      </div>
+      </div>`}
       <div class="nb-note-editable nb-note-editable-note" contenteditable="true" id="${domId}" data-day="${day}" data-id="${item.id}"
         style="${nbSizeStyleAttr(item.noteSize)}"
         data-placeholder="📝 Bấm vào đây để nhập ghi chú…" oninput="nbNoteAutosave(this)" onblur="nbNoteAutosave(this)">${noteHtml}</div>
@@ -35373,6 +35411,7 @@ function renderNotebook(){
             <option value="all"${_nbDateFilter==='all'?' selected':''}>Tất cả các ngày</option>
             ${allDays.map(d=>`<option value="${d}"${_nbDateFilter===d?' selected':''}>${notebookDayLabel(d)}</option>`).join('')}
           </select>
+          <button type="button" class="nb-compact-toggle${_nbListCompact?' on':''}" title="${_nbListCompact?'Hiện đầy đủ (trích dẫn, thanh công cụ, thông tin ngày/giờ)':'Chỉ hiện nội dung ghi chú, ẩn trích dẫn, thanh công cụ và thông tin ngày/giờ'}" onclick="nbToggleCompact('list')">${_nbListCompact?'👁️':'🙈'} Chỉ hiện nội dung</button>
         </div>`;
     }
   }
@@ -35398,13 +35437,13 @@ function renderNotebook(){
                   <button title="Bỏ ghim" onclick="notebookTogglePin('${day}','${item.id}')">📌</button>
                   <button title="Xoá" onclick="notebookDeleteLine('${day}','${item.id}')">✕</button>
                 </div>
-                ${editing ? nbEditFormHtml(day, item) : `
+                ${editing ? nbEditFormHtml(day, item) : (_nbPinCompact ? '' : `
                   ${item.manual
                     ? `<div class="nb-pin-text nb-manual">🖊️ ${rdEsc(item.text)}</div>`
                     : `<div class="nb-pin-text">"${rdEsc(item.text)}"</div>`}
-                `}
-                ${nbNoteBoxHtml(day, item, 'pin')}
-                ${editing ? '' : `
+                `)}
+                ${nbNoteBoxHtml(day, item, 'pin', _nbPinCompact)}
+                ${(editing || _nbPinCompact) ? '' : `
                   <div class="nb-pin-meta">${notebookDayLabel(day)}${item.time?' · '+item.time:''}${nbSourceHtml(item)}</div>
                   ${nbColorDotsHtml(day, item)}
                 `}
@@ -35412,7 +35451,9 @@ function renderNotebook(){
       }).join('');
       pinEl.innerHTML = `
         <div class="nb-pinboard">
-          <div class="nb-pin-head">📌 Ghi chú đã ghim <span style="font-weight:400;font-size:11.5px;color:var(--muted)">(kéo ⠿⠿ để sắp xếp tự do)</span></div>
+          <div class="nb-pin-head">📌 Ghi chú đã ghim <span style="font-weight:400;font-size:11.5px;color:var(--muted)">(kéo ⠿⠿ để sắp xếp tự do)</span>
+            <button type="button" class="nb-compact-toggle${_nbPinCompact?' on':''}" title="${_nbPinCompact?'Hiện đầy đủ (trích dẫn, thanh công cụ, thông tin & chấm màu)':'Chỉ hiện nội dung ghi chú, ẩn trích dẫn, thanh công cụ, thông tin & chấm màu'}" onclick="nbToggleCompact('pin')">${_nbPinCompact?'👁️':'🙈'} Chỉ hiện nội dung</button>
+          </div>
           <div class="nb-pin-grid" style="min-height:${canvasH}px">${cardsHtml}</div>
         </div>`;
       /* canvasH ở trên chỉ là ước lượng ban đầu (dựa trên chiều cao mặc định/đã lưu).
@@ -35445,13 +35486,13 @@ function renderNotebook(){
           return `
           <div class="nb-line">
             <div class="nb-line-main">
-              ${editing ? nbEditFormHtml(day, item) : `
+              ${editing ? nbEditFormHtml(day, item) : (_nbListCompact ? '' : `
                 ${item.manual
                   ? `<div class="nb-quote nb-manual">🖊️ ${rdEsc(item.text)}</div>`
                   : `<div class="nb-quote">"${rdEsc(item.text)}"</div>`}
-              `}
-              ${nbNoteBoxHtml(day, item, 'line')}
-              ${editing ? '' : `
+              `)}
+              ${nbNoteBoxHtml(day, item, 'line', _nbListCompact)}
+              ${(editing || _nbListCompact) ? '' : `
                 <div class="nb-meta">${item.pinned?'<span class="nb-pin-badge">📌</span> ':''}${item.time||''}${nbSourceHtml(item)}</div>
               `}
             </div>
@@ -35572,6 +35613,9 @@ function rdNoteBodyHtml(item){
   return `
     <span class="rd-note-editwrap">
       <div class="nb-fmt-toolbar">
+        <button type="button" title="Hoàn tác" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','undo')">↩️</button>
+        <button type="button" title="Làm lại" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','redo')">↪️</button>
+        <span class="nb-fmt-sep"></span>
         <button type="button" title="In đậm" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','bold')"><b>B</b></button>
         <button type="button" title="In nghiêng" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','italic')"><i>I</i></button>
         <button type="button" title="Gạch đầu dòng" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','insertUnorderedList')">• ≡</button>
