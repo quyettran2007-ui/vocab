@@ -4201,9 +4201,27 @@ nav.tabs{
    backdrop-filter trên nhiều thẻ là nguyên nhân giật khi cuộn. */
 .panel, .quiz-box, .type-box, .profile-card, .dash-hero, .strip-card{ backdrop-filter:none; }
 
-/* Máy cảm ứng: bỏ hiệu ứng hover nhấc thẻ (gây nháy khi chạm) */
+/* Máy cảm ứng: bỏ hiệu ứng hover nhấc thẻ (gây nháy khi chạm).
+   Dashboard có khá nhiều thẻ dùng transform+box-shadow khi hover (profile-card,
+   hero-stat, cefr-chip, prog-stat, pf-avatar-wrap, hero-cta, hero-pick-btn) —
+   trên điện thoại, chạm để bắt đầu cuộn cũng kích hoạt :hover, khiến các
+   transition này chạy đúng lúc đang cuộn -> đây là nguyên nhân chính gây
+   giật/chưa mượt khi cuộn ở Dashboard. Tắt hết transform/box-shadow khi
+   hover trên máy không có con trỏ chuột thật (chạm), giữ nguyên trên desktop. */
 @media (hover:none){
-  .fn-step:hover, .topic-card:hover, .opt:hover{ transform:none; }
+  .fn-step:hover, .topic-card:hover, .opt:hover,
+  .profile-card:hover, .hero-stat:hover, .cefr-chip:hover, .prog-stat:hover,
+  .pf-avatar-wrap:hover, .hero-cta:hover, .hero-cta.secondary:hover,
+  .hero-pick-btn:hover{
+    transform:none; box-shadow:none; filter:none;
+  }
+  .profile-card:hover{ box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.12) inset; }
+  .hero-stat.learned:hover{ box-shadow:none; }
+  .hero-stat.doing:hover{ box-shadow:none; }
+  .hero-stat.due:hover{ box-shadow:none; }
+  .hero-stat.new:hover{ box-shadow:none; }
+  .pf-avatar-wrap:hover .pf-edit{ opacity:1; }
+  .hero-pick-btn:hover .hpb-arrow{ transform:none; }
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{
