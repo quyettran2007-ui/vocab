@@ -242,6 +242,66 @@
   --accent-grad: linear-gradient(135deg,#64748b 0%,#94a3b8 55%,#cbd5e1 100%);
   --accent-grad-soft: linear-gradient(135deg,rgba(148,163,184,.15),rgba(203,213,225,.08));
 }
+[data-accent="cyan"] {
+  --accent:#0891b2; --accent-2:#06b6d4; --accent-hover:#0e7490; --accent-light:#67e8f9;
+  --accent-bg:#d6f3fa;
+  --accent-grad: linear-gradient(135deg,#0891b2 0%,#06b6d4 55%,#22d3ee 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(8,145,178,.10),rgba(6,182,212,.08));
+}
+[data-theme="dark"][data-accent="cyan"] {
+  --accent:#22d3ee; --accent-2:#67e8f9; --accent-hover:#06b6d4; --accent-light:#a5f3fc;
+  --accent-bg:rgba(34,211,238,.16);
+  --accent-grad: linear-gradient(135deg,#06b6d4 0%,#22d3ee 55%,#67e8f9 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(34,211,238,.15),rgba(103,232,249,.08));
+}
+[data-accent="indigo"] {
+  --accent:#4f46e5; --accent-2:#6366f1; --accent-hover:#4338ca; --accent-light:#a5b4fc;
+  --accent-bg:#e6e5fc;
+  --accent-grad: linear-gradient(135deg,#4f46e5 0%,#6366f1 55%,#818cf8 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(79,70,229,.10),rgba(99,102,241,.08));
+}
+[data-theme="dark"][data-accent="indigo"] {
+  --accent:#818cf8; --accent-2:#a5b4fc; --accent-hover:#6366f1; --accent-light:#c7d2fe;
+  --accent-bg:rgba(129,140,248,.16);
+  --accent-grad: linear-gradient(135deg,#6366f1 0%,#818cf8 55%,#a5b4fc 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(129,140,248,.15),rgba(165,180,252,.08));
+}
+[data-accent="fuchsia"] {
+  --accent:#c026d3; --accent-2:#d946ef; --accent-hover:#a21caf; --accent-light:#f0abfc;
+  --accent-bg:#fbe4fb;
+  --accent-grad: linear-gradient(135deg,#c026d3 0%,#d946ef 55%,#e879f9 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(192,38,211,.10),rgba(217,70,239,.08));
+}
+[data-theme="dark"][data-accent="fuchsia"] {
+  --accent:#e879f9; --accent-2:#f0abfc; --accent-hover:#d946ef; --accent-light:#f5d0fe;
+  --accent-bg:rgba(232,121,249,.16);
+  --accent-grad: linear-gradient(135deg,#d946ef 0%,#e879f9 55%,#f0abfc 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(232,121,249,.15),rgba(240,171,252,.08));
+}
+[data-accent="orange"] {
+  --accent:#ea580c; --accent-2:#f97316; --accent-hover:#c2410c; --accent-light:#fdba74;
+  --accent-bg:#fee3d3;
+  --accent-grad: linear-gradient(135deg,#ea580c 0%,#f97316 55%,#fb923c 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(234,88,12,.10),rgba(249,115,22,.08));
+}
+[data-theme="dark"][data-accent="orange"] {
+  --accent:#fb923c; --accent-2:#fdba74; --accent-hover:#f97316; --accent-light:#fed7aa;
+  --accent-bg:rgba(251,146,60,.16);
+  --accent-grad: linear-gradient(135deg,#f97316 0%,#fb923c 55%,#fdba74 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(251,146,60,.15),rgba(253,186,116,.08));
+}
+[data-accent="brown"] {
+  --accent:#92400e; --accent-2:#b45309; --accent-hover:#78350f; --accent-light:#d6a973;
+  --accent-bg:#f0e0cf;
+  --accent-grad: linear-gradient(135deg,#92400e 0%,#b45309 55%,#c2703d 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(146,64,14,.10),rgba(180,83,9,.08));
+}
+[data-theme="dark"][data-accent="brown"] {
+  --accent:#d6a973; --accent-2:#e0b98a; --accent-hover:#b98956; --accent-light:#ecd3b0;
+  --accent-bg:rgba(214,169,115,.16);
+  --accent-grad: linear-gradient(135deg,#b98956 0%,#d6a973 55%,#e0b98a 100%);
+  --accent-grad-soft: linear-gradient(135deg,rgba(214,169,115,.15),rgba(224,185,138,.08));
+}
 
 /* ---- Setting tab: bảng chọn chủ đề màu ---- */
 .theme-swatch-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px; margin-top:10px; }
@@ -1224,7 +1284,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 
 .dash-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
 .strip-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;}
-.strip-title{font-size:13.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px;}
+.strip-title{font-size:13.5px;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px;}
 .cefr-row{display:flex;flex-wrap:wrap;gap:6px;}
 .cefr-chip{display:inline-flex;align-items:center;gap:7px;border-radius:99px;
   padding:8px 14px;font-size:13px;cursor:pointer;transition:.16s;font:inherit;
@@ -2378,7 +2438,7 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin-actions button{ background:rgba(255,255,255,.75); border:none; border-radius:6px; width:22px; height:22px;
   font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#333; }
 .nb-pin-actions button:hover{ background:#fff; }
-.nb-pin-text{ font-size:13.5px; font-style:italic; line-height:1.5; padding-right:56px; padding-left:26px; }
+.nb-pin-text{ font-size:13.5px; font-style:italic; line-height:1.5; padding-right:80px; padding-left:26px; }
 .nb-pin-text.nb-manual{ font-style:normal; font-weight:700; }
 .nb-pin-meta{ font-size:11px; color:rgba(0,0,0,.55); margin-top:auto; }
 .nb-pin-colors{ display:flex; gap:5px; flex-wrap:wrap; margin-top:2px; }
@@ -2402,7 +2462,13 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer; font-size:12px; white-space:nowrap; }
 .nb-compact-toggle:hover{ border-color:var(--accent); color:var(--accent); }
 .nb-compact-toggle.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
-.nb-pin-head .nb-compact-toggle{ margin-left:auto; }
+.nb-pin-head-actions{ display:flex; align-items:center; gap:6px; margin-left:auto; flex-wrap:wrap; }
+.nb-pin-cols{ display:flex; align-items:center; gap:4px; }
+.nb-pin-cols-label{ font-size:11.5px; color:var(--muted); white-space:nowrap; }
+.nb-pin-col-btn{ width:24px; height:24px; padding:0; border-radius:7px; border:1px solid var(--line); background:var(--card);
+  color:var(--ink-soft); cursor:pointer; font-size:12px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; }
+.nb-pin-col-btn:hover{ border-color:var(--accent); color:var(--accent); }
+.nb-pin-col-btn.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
 
 
 .settings-nav{
@@ -3139,15 +3205,18 @@ body.page-fs { overflow-x:hidden; }
   display:grid; grid-template-columns:1fr 1fr; gap:14px;
   margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);
 }
-/* Thẻ trung tính giống ô "Chuỗi ngày học" — không tô nền màu cả khối,
-   màu chỉ tập trung ở icon-badge tròn để đồng bộ với phần còn lại của
-   dashboard (hero-side, funnel-card đều dùng nền var(--card) trung tính). */
+/* Mỗi khối tô nền màu nhạt riêng theo chủ đề — cùng phong cách với các
+   ô thống kê màu (prog-stat) ở khối "Tiến trình học tập" phía trên. */
 .wb-block{
-  background:var(--card); border:var(--dash-border,1px solid var(--line));
+  border:1px solid transparent;
   border-radius:var(--radius-xl,18px); padding:16px 18px;
   box-shadow:var(--shadow-xs); transition:transform .15s,box-shadow .15s;
 }
-[data-theme="dark"] .wb-block{ background:var(--card-sunken); }
+.wb-block-bank{ background:rgba(13,110,95,.10); border-color:rgba(13,110,95,.28); }
+[data-theme="dark"] .wb-block-bank{ background:rgba(94,234,212,.10); border-color:rgba(94,234,212,.24); }
+.wb-block-cefr{ background:var(--stage1-bg); border-color:rgba(96,165,250,.30); }
+.wb-block-pos{ background:var(--stage4-bg); border-color:rgba(245,158,11,.30); }
+.wb-block-hard{ background:var(--coral-bg); border-color:rgba(244,63,94,.30); }
 .wb-block:hover{ transform:translateY(-2px); box-shadow:var(--shadow-sm); }
 .wb-block-head{ display:flex; align-items:center; gap:12px; margin-bottom:13px; }
 .wb-ic{
@@ -3208,7 +3277,7 @@ body.page-fs { overflow-x:hidden; }
 }
 .lvl-bar-track{ flex:1; height:10px; border-radius:99px; background:var(--paper-2); overflow:hidden; }
 .lvl-bar-fill{ display:block; height:100%; border-radius:99px; background:var(--accent); }
-.lvl-bar-n{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); flex:none; min-width:48px; text-align:right; }
+.lvl-bar-n{ font-family:var(--font-mono); font-size:12.5px; color:var(--ink); font-weight:700; flex:none; min-width:48px; text-align:right; }
 .lvl-bar-n i{ font-style:normal; }
 .lvl-bar-row.lv-A1 .lvl-bar-tag,.lvl-bar-row.lv-A2 .lvl-bar-tag{ background:var(--green-bg); color:var(--green); }
 .lvl-bar-row.lv-A1 .lvl-bar-fill,.lvl-bar-row.lv-A2 .lvl-bar-fill{ background:var(--green,#047857); }
@@ -4779,6 +4848,29 @@ html[data-bg="mono"] body::before{
   background-image: repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px 12px);
   opacity:.35;
 }
+.bg-preview-diamond{ background-image: repeating-conic-gradient(from 45deg, var(--line-strong) 0 25%, transparent 0 50%); background-size:18px 18px; }
+.bg-preview-confetti{ background-image:
+    radial-gradient(circle at 15% 25%, #ef4444 3px, transparent 4px),
+    radial-gradient(circle at 60% 15%, #22c55e 3px, transparent 4px),
+    radial-gradient(circle at 80% 60%, #3b82f6 3px, transparent 4px),
+    radial-gradient(circle at 30% 70%, #eab308 3px, transparent 4px),
+    radial-gradient(circle at 50% 45%, #ec4899 3px, transparent 4px);
+  background-size:34px 34px; }
+html[data-bg="diamond"] body::before{
+  background-image: repeating-conic-gradient(from 45deg, var(--line-strong) 0 25%, transparent 0 50%);
+  background-size:34px 34px;
+  opacity:.32;
+}
+html[data-bg="confetti"] body::before{
+  background-image:
+    radial-gradient(circle at 15% 25%, rgba(239,68,68,.20) 3px, transparent 4px),
+    radial-gradient(circle at 60% 15%, rgba(34,197,94,.20) 3px, transparent 4px),
+    radial-gradient(circle at 80% 60%, rgba(59,130,246,.20) 3px, transparent 4px),
+    radial-gradient(circle at 30% 70%, rgba(234,179,8,.20) 3px, transparent 4px),
+    radial-gradient(circle at 50% 45%, rgba(236,72,153,.20) 3px, transparent 4px);
+  background-size:70px 70px;
+  opacity:.65;
+}
 
 /* ============================================================
    PHONG CẢNH GIAO DIỆN — hình nền minh hoạ phong cảnh thật sự
@@ -4792,6 +4884,10 @@ html[data-bg="mono"] body::before{
 .bg-preview-night{ background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%); }
 .bg-preview-sakura{ background:linear-gradient(180deg,#fce7f3 0%,#fbcfe8 100%); }
 .bg-preview-autumn{ background:linear-gradient(180deg,#fed7aa 0%,#fdba74 100%); }
+.bg-preview-galaxy{ background:linear-gradient(180deg,#05010f 0%,#1e1b4b 55%,#2e1065 100%); }
+.bg-preview-lavender{ background:linear-gradient(180deg,#e0e7ff 0%,#8b5cf6 100%); }
+.bg-preview-snow{ background:linear-gradient(180deg,#e0f2fe 0%,#bfdbfe 100%); }
+.bg-preview-desert{ background:linear-gradient(180deg,#fde68a 0%,#c2410c 100%); }
 
 html[data-bg="mountain"] body::before{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='sky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fcd34d'/%3E%3Cstop offset='.45' stop-color='%23fb923c'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23sky)'/%3E%3Ccircle cx='1200' cy='260' r='90' fill='%23fff7ed' opacity='.85'/%3E%3Cpolygon points='0,900 0,620 260,420 520,650 760,380 1000,640 1260,460 1600,700 1600,900' fill='%234c1d95' opacity='.55'/%3E%3Cpolygon points='0,900 0,720 300,560 620,760 900,540 1220,760 1600,600 1600,900' fill='%23312e81' opacity='.75'/%3E%3C/svg%3E");
@@ -4811,6 +4907,22 @@ html[data-bg="sakura"] body::before{
 }
 html[data-bg="autumn"] body::before{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='au' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fed7aa'/%3E%3Cstop offset='1' stop-color='%23fdba74'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23au)'/%3E%3Cg fill='%23c2410c' opacity='.5'%3E%3Cellipse cx='200' cy='200' rx='14' ry='8'/%3E%3Cellipse cx='400' cy='400' rx='12' ry='7'/%3E%3Cellipse cx='800' cy='150' rx='16' ry='9'/%3E%3Cellipse cx='1200' cy='350' rx='13' ry='8'/%3E%3Cellipse cx='1450' cy='150' rx='12' ry='7'/%3E%3Cellipse cx='600' cy='600' rx='14' ry='8'/%3E%3C/g%3E%3Cg fill='%23b45309' opacity='.4'%3E%3Cellipse cx='300' cy='700' rx='16' ry='9'/%3E%3Cellipse cx='1000' cy='700' rx='14' ry='8'/%3E%3Cellipse cx='1400' cy='600' rx='12' ry='7'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
+}
+html[data-bg="galaxy"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='gal' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%2305010f'/%3E%3Cstop offset='.55' stop-color='%231e1b4b'/%3E%3Cstop offset='1' stop-color='%232e1065'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23gal)'/%3E%3Cellipse cx='420' cy='320' rx='420' ry='260' fill='%237c3aed' opacity='.22'/%3E%3Cellipse cx='1150' cy='500' rx='460' ry='300' fill='%23db2777' opacity='.18'/%3E%3Cellipse cx='800' cy='200' rx='340' ry='180' fill='%230ea5e9' opacity='.16'/%3E%3Cg fill='%23f8fafc' opacity='.85'%3E%3Ccircle cx='120' cy='120' r='2.2'/%3E%3Ccircle cx='300' cy='260' r='1.8'/%3E%3Ccircle cx='500' cy='90' r='2'/%3E%3Ccircle cx='680' cy='320' r='2.4'/%3E%3Ccircle cx='860' cy='140' r='1.6'/%3E%3Ccircle cx='1040' cy='260' r='2'/%3E%3Ccircle cx='1220' cy='90' r='1.8'/%3E%3Ccircle cx='1380' cy='340' r='2.4'/%3E%3Ccircle cx='1500' cy='160' r='1.8'/%3E%3Ccircle cx='200' cy='420' r='1.6'/%3E%3Ccircle cx='560' cy='480' r='2'/%3E%3Ccircle cx='920' cy='420' r='1.8'/%3E%3Ccircle cx='1300' cy='460' r='2.2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
+}
+html[data-bg="lavender"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='lav' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e0e7ff'/%3E%3Cstop offset='1' stop-color='%23c7d2fe'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23lav)'/%3E%3Ccircle cx='250' cy='180' r='60' fill='%23fef9c3' opacity='.85'/%3E%3Crect y='560' width='1600' height='340' fill='%238b5cf6' opacity='.22'/%3E%3Cg fill='%237c3aed' opacity='.5'%3E%3Cellipse cx='100' cy='620' rx='10' ry='40'/%3E%3Cellipse cx='180' cy='640' rx='10' ry='40'/%3E%3Cellipse cx='260' cy='620' rx='10' ry='40'/%3E%3Cellipse cx='340' cy='650' rx='10' ry='40'/%3E%3Cellipse cx='420' cy='620' rx='10' ry='40'/%3E%3Cellipse cx='500' cy='640' rx='10' ry='40'/%3E%3Cellipse cx='580' cy='620' rx='10' ry='40'/%3E%3Cellipse cx='660' cy='650' rx='10' ry='40'/%3E%3Cellipse cx='740' cy='620' rx='10' ry='40'/%3E%3Cellipse cx='820' cy='640' rx='10' ry='40'/%3E%3Cellipse cx='900' cy='620' rx='10' ry='40'/%3E%3Cellipse cx='980' cy='650' rx='10' ry='40'/%3E%3Cellipse cx='1060' cy='620' rx='10' ry='40'/%3E%3Cellipse cx='1140' cy='640' rx='10' ry='40'/%3E%3Cellipse cx='1220' cy='620' rx='10' ry='40'/%3E%3Cellipse cx='1300' cy='650' rx='10' ry='40'/%3E%3Cellipse cx='1380' cy='620' rx='10' ry='40'/%3E%3Cellipse cx='1460' cy='640' rx='10' ry='40'/%3E%3Cellipse cx='1540' cy='620' rx='10' ry='40'/%3E%3C/g%3E%3Crect y='760' width='1600' height='140' fill='%236d28d9' opacity='.35'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
+}
+html[data-bg="snow"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='sn' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e0f2fe'/%3E%3Cstop offset='1' stop-color='%23bae6fd'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23sn)'/%3E%3Ccircle cx='1250' cy='200' r='70' fill='%23ffffff' opacity='.9'/%3E%3Cpolygon points='0,900 0,640 300,420 600,660 900,380 1200,640 1600,480 1600,900' fill='%23bfdbfe' opacity='.6'/%3E%3Cpolygon points='0,900 0,740 320,600 640,760 960,580 1280,760 1600,650 1600,900' fill='%23e2e8f0' opacity='.85'/%3E%3Cg fill='%23ffffff' opacity='.9'%3E%3Ccircle cx='150' cy='260' r='3'/%3E%3Ccircle cx='340' cy='180' r='2.4'/%3E%3Ccircle cx='560' cy='300' r='3'/%3E%3Ccircle cx='780' cy='200' r='2.2'/%3E%3Ccircle cx='1000' cy='320' r='3'/%3E%3Ccircle cx='1200' cy='260' r='2.4'/%3E%3Ccircle cx='1420' cy='340' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="desert"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='ds' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fde68a'/%3E%3Cstop offset='.5' stop-color='%23fbbf24'/%3E%3Cstop offset='1' stop-color='%23c2410c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23ds)'/%3E%3Ccircle cx='1300' cy='220' r='80' fill='%23fff7ed' opacity='.8'/%3E%3Cpath d='M0 620 Q200 560 400 610 T800 600 T1200 615 T1600 600 V900 H0 Z' fill='%23d97706' opacity='.5'/%3E%3Cpath d='M0 720 Q220 660 460 710 T900 700 T1360 715 T1600 700 V900 H0 Z' fill='%23b45309' opacity='.6'/%3E%3C/svg%3E");
   background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
 }
 
@@ -27676,14 +27788,16 @@ function renderProgressCard(){
         </div>
         <div class="status-bar">${statusBar}</div>
         <div class="status-legend">${statusLegend}</div>
-        <div class="status-bar" style="margin-top:10px" title="Đã thuộc (Gõ từ): ${CLB.mastered}/${CLB.total} · Đang học: ${CLB.learning}/${CLB.total}">
+        <div class="status-bar" style="margin-top:10px" title="Đã thuộc: ${CLB.mastered}/${CLB.total} · Đang học: ${CLB.learning}/${CLB.total} · Chưa học: ${CLB.unseen}/${CLB.total}">
           <span class="status-seg" style="width:${CLB.total?(CLB.mastered/CLB.total*100):0}%;background:var(--stage2)"></span>
           <span class="status-seg" style="width:${CLB.total?(CLB.learning/CLB.total*100):0}%;background:var(--ember-2)"></span>
+          <span class="status-seg" style="width:${CLB.total?(CLB.unseen/CLB.total*100):0}%;background:var(--line-strong)"></span>
         </div>
         <div class="status-legend" style="margin-top:6px">
           <span class="status-leg-item" style="cursor:pointer" onclick="goCollocType()" title="Đến Gõ từ Collocation"><i class="status-dot" style="background:var(--stage2)"></i>🧩 Collocation<b>${CLB.total}</b></span>
-          <span class="status-leg-item" style="cursor:default">🧠 Đang học (Gõ từ)<b>${CLB.learning}</b></span>
-          <span class="status-leg-item" style="cursor:default">✅ Đã thuộc (Gõ từ)<b>${CLB.mastered}</b></span>
+          <span class="status-leg-item" style="cursor:default">🧠 Đang học<b>${CLB.learning}</b></span>
+          <span class="status-leg-item" style="cursor:default">✅ Đã thuộc<b>${CLB.mastered}</b></span>
+          <span class="status-leg-item" style="cursor:default">⬜ Chưa học<b>${CLB.unseen}</b></span>
         </div>
       </div>
 
@@ -35235,7 +35349,103 @@ function nbSaveSize(day, id, key, w, h){
 function nbSizeStyleAttr(size){
   return (size && size.w && size.h) ? `width:${size.w}px;height:${size.h}px;` : '';
 }
+/* ---------- Tự fit từng thẻ ghim theo nội dung (nút 📏 trên mỗi thẻ) ---------- */
+/* Đo kích thước THỰC TẾ mà nội dung của một thẻ ghim cần để hiển thị đầy đủ,
+   không bị cắt/che bởi khung cố định (resize:both) rồi áp dụng kích thước đó
+   và lưu lại thành pinSize, để khi tải lại trang thẻ vẫn giữ nguyên độ vừa khít. */
+function nbPinFitCard(day, id){
+  const card = document.querySelector('.nb-pin-card[data-day="'+CSS.escape(day)+'"][data-id="'+CSS.escape(id)+'"]');
+  if(!card) return;
+  const grid = card.parentElement;
+  /* Tạm bỏ kích thước cố định + giới hạn chiều rộng để đo kích thước tự nhiên
+     mà nội dung bên trong cần, tránh vừa đo vừa bị chính khung cũ giới hạn lại. */
+  const prevWidth = card.style.width, prevHeight = card.style.height;
+  card.style.width = 'auto';
+  card.style.height = 'auto';
+  card.style.maxWidth = '520px';
+  void card.offsetHeight; /* ép reflow để scrollWidth/scrollHeight phản ánh đúng nội dung */
+  const neededW = Math.min(520, Math.max(220, Math.ceil(card.scrollWidth) + 2));
+  const neededH = Math.max(120, Math.ceil(card.scrollHeight) + 2);
+  card.style.maxWidth = '';
+  card.style.width = neededW + 'px';
+  card.style.height = neededH + 'px';
+  const nb = loadNotebook();
+  const item = (nb[day]||[]).find(function(x){ return x.id === id; });
+  if(item){
+    item.pinSize = {w: Math.round(neededW), h: Math.round(neededH)};
+    saveNotebook(nb);
+  } else {
+    /* Không tìm thấy dữ liệu (hiếm khi xảy ra) — khôi phục lại kích thước cũ để tránh lỗi hiển thị */
+    card.style.width = prevWidth; card.style.height = prevHeight;
+    return;
+  }
+  nbRecalcPinGridHeight(grid);
+  if(typeof toast === 'function') toast('📏 Đã hiện đủ nội dung, không còn bị che chữ');
+}
 /* ---------- Kéo-thả tự do các ghi chú đã ghim (tránh chồng lên nhau) ---------- */
+/* Tự động sắp xếp lại toàn bộ thẻ ghim thành dạng lưới gọn gàng, vừa khít chiều rộng
+   màn hình/khung hiện tại và không có thẻ nào chồng lên thẻ nào — dùng cho nút
+   "📐 Tự fit màn hình" ở đầu Bảng ghim. Dựa trên kích thước THỰC TẾ (offsetWidth/
+   offsetHeight) của từng thẻ (tôn trọng kích thước đã tự kéo resize trước đó). */
+const NB_PIN_COLS_KEY = 'vocab_nb_pin_cols';
+/* Số cột được chọn khi Tự fit màn hình: 1, 2 hoặc 3 (mặc định 2) */
+let _nbPinCols = (function(){
+  try{
+    const v = parseInt(localStorage.getItem(NB_PIN_COLS_KEY), 10);
+    return (v===1 || v===2 || v===3) ? v : 2;
+  }catch(e){ return 2; }
+})();
+function nbSetPinCols(n){
+  n = parseInt(n, 10);
+  if(n!==1 && n!==2 && n!==3) return;
+  if(_nbPinCols === n) return;
+  _nbPinCols = n;
+  try{ localStorage.setItem(NB_PIN_COLS_KEY, String(n)); }catch(e){}
+  renderNotebook();
+  nbPinAutoFit();
+}
+/* Tự động sắp xếp lại toàn bộ thẻ ghim thành đúng số cột đã chọn (1/2/3), mỗi cột
+   rộng bằng nhau và lấp đầy toàn bộ chiều rộng khung hiện tại (không dư khoảng trống
+   thừa như kiểu xếp "tham lam" theo hàng trước đây). Thẻ được xếp kiểu masonry —
+   luôn thả vào cột đang thấp nhất — và chiều cao mỗi thẻ được đo lại theo đúng nội
+   dung thực tế ở chiều rộng cột mới, để không thẻ nào bị cắt/che chữ. */
+function nbPinAutoFit(){
+  const pinEl = document.getElementById('notebookPinboard');
+  const gridEl = pinEl && pinEl.querySelector('.nb-pin-grid');
+  if(!gridEl) return;
+  const cards = Array.from(gridEl.querySelectorAll('.nb-pin-card'));
+  if(!cards.length) return;
+  const GAP = 14;
+  const cols = _nbPinCols || 2;
+  const availW = Math.max(220, (gridEl.clientWidth || pinEl.clientWidth || 900));
+  const colW = Math.max(180, Math.floor((availW - (cols-1)*GAP) / cols));
+  const nb = loadNotebook();
+  const colBottoms = new Array(cols).fill(0);
+  cards.forEach(function(card){
+    /* Chọn cột đang thấp nhất để thả thẻ tiếp theo vào, giúp các cột cân bằng chiều cao */
+    let col = 0;
+    for(let c=1; c<cols; c++){ if(colBottoms[c] < colBottoms[col]) col = c; }
+    card.style.width = colW + 'px';
+    card.style.height = 'auto';
+    void card.offsetHeight; /* ép reflow để scrollHeight phản ánh đúng nội dung ở chiều rộng mới */
+    const h = Math.max(120, Math.ceil(card.scrollHeight) + 2);
+    const x = col * (colW + GAP);
+    const y = colBottoms[col];
+    card.style.left = x + 'px';
+    card.style.top = y + 'px';
+    card.style.height = h + 'px';
+    colBottoms[col] = y + h + GAP;
+    const day = card.dataset.day, id = card.dataset.id;
+    const item = (nb[day]||[]).find(function(it){ return it.id === id; });
+    if(item){
+      item.pinPos = {x: Math.round(x), y: Math.round(y)};
+      item.pinSize = {w: colW, h: h};
+    }
+  });
+  saveNotebook(nb);
+  nbRecalcPinGridHeight(gridEl);
+  if(typeof toast === 'function') toast('📐 Đã sắp xếp lại '+cols+' cột, vừa màn hình, không dư khoảng trống');
+}
 /* Đo chiều cao THỰC TẾ (offsetHeight) của tất cả thẻ ghim đang hiển thị và đặt lại
    min-height của vùng ghim sao cho vừa đủ ôm hết đáy của thẻ thấp nhất + khoảng đệm.
    Nhờ đó list bên dưới luôn được đẩy xuống bám sát theo ghi chú ghim, dù nội dung
@@ -35259,6 +35469,24 @@ function nbWatchPinGridHeight(gridEl){
   gridEl._nbPinRO = ro;
 }
 let _nbDrag = null;
+/* Kiểm tra 2 hình chữ nhật (thẻ ghim) có chồng lên nhau không */
+function nbPinRectsOverlap(ax,ay,aw,ah,bx,by,bw,bh){
+  return ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by;
+}
+/* Lấy vị trí & kích thước hiện tại của tất cả các thẻ ghim khác (trừ thẻ đang kéo) */
+function nbPinGetOtherRects(grid, excludeCard){
+  const rects = [];
+  grid.querySelectorAll('.nb-pin-card').forEach(function(c){
+    if(c === excludeCard) return;
+    rects.push({
+      x: parseFloat(c.style.left) || 0,
+      y: parseFloat(c.style.top) || 0,
+      w: c.offsetWidth,
+      h: c.offsetHeight
+    });
+  });
+  return rects;
+}
 function nbPinDragStart(e, day, id){
   e.preventDefault();
   const card = e.currentTarget.closest('.nb-pin-card');
@@ -35271,7 +35499,12 @@ function nbPinDragStart(e, day, id){
     offsetX: e.clientX - cardRect.left,
     offsetY: e.clientY - cardRect.top,
     lastX: cardRect.left - gridRect.left,
-    lastY: cardRect.top - gridRect.top
+    lastY: cardRect.top - gridRect.top,
+    w: card.offsetWidth,
+    h: card.offsetHeight,
+    /* Chụp lại vị trí của các thẻ ghim khác ngay khi bắt đầu kéo, dùng để kiểm tra va chạm
+       trong suốt quá trình kéo — nhờ đó thẻ đang kéo không thể chồng lên thẻ khác. */
+    others: nbPinGetOtherRects(grid, card)
   };
   card.style.zIndex = 5;
   document.addEventListener('pointermove', nbPinDragMove);
@@ -35284,14 +35517,27 @@ function nbPinDragMove(e){
   let y = e.clientY - gridRect.top - _nbDrag.offsetY;
   x = Math.max(0, x);
   y = Math.max(0, y);
-  _nbDrag.card.style.left = x + 'px';
-  _nbDrag.card.style.top = y + 'px';
-  _nbDrag.lastX = x; _nbDrag.lastY = y;
-  /* Ghi chú ghim được kéo tự do và có thể chồng lên nhau, nhưng nếu kéo chạm gần đáy
+  const w = _nbDrag.w, h = _nbDrag.h;
+  const PAD = 8; /* khoảng đệm tối thiểu để 2 thẻ không dính sát nhau */
+  const collidesAt = function(px, py){
+    return _nbDrag.others.some(function(r){
+      return nbPinRectsOverlap(px, py, w+PAD, h+PAD, r.x, r.y, r.w, r.h);
+    });
+  };
+  /* Trượt theo từng trục: cho phép di chuyển trên trục X nếu không đụng thẻ khác,
+     tương tự với trục Y — nhờ đó thẻ có thể "trượt" dọc theo mép thẻ bên cạnh
+     thay vì bị chồng lên nhau hoặc bị kẹt cứng hoàn toàn. */
+  let nx = _nbDrag.lastX, ny = _nbDrag.lastY;
+  if(!collidesAt(x, _nbDrag.lastY)) nx = x;
+  if(!collidesAt(nx, y)) ny = y;
+  _nbDrag.card.style.left = nx + 'px';
+  _nbDrag.card.style.top = ny + 'px';
+  _nbDrag.lastX = nx; _nbDrag.lastY = ny;
+  /* Ghi chú ghim không còn được phép chồng lên nhau nữa; nếu kéo chạm gần đáy
      vùng ghim (tức gần chạm vùng danh sách bên dưới), tự động nới rộng vùng ghim ra
      để đẩy danh sách xuống theo, tránh bị ghi chú ghim đè lên. */
   const cardH = _nbDrag.card.offsetHeight;
-  const needed = Math.round(y + cardH + 30);
+  const needed = Math.round(ny + cardH + 30);
   if(needed > _nbDrag.grid.offsetHeight){
     _nbDrag.grid.style.minHeight = needed + 'px';
   }
@@ -35531,6 +35777,7 @@ function renderNotebook(){
               <div class="nb-pin-card" data-day="${day}" data-id="${item.id}" style="background:${item.color||NB_COLORS[0]};left:${pos.x}px;top:${pos.y}px;${nbSizeStyleAttr(item.pinSize)}">
                 <div class="nb-pin-drag" title="Kéo để di chuyển" onpointerdown="nbPinDragStart(event,'${day}','${item.id}')">⠿⠿</div>
                 <div class="nb-pin-actions">
+                  <button title="Vừa khít nội dung (hiện đủ chữ, không bị che/cắt)" onclick="nbPinFitCard('${day}','${item.id}')">📏</button>
                   ${editing ? '' : `<button title="Sửa" onclick="notebookStartEdit('${day}','${item.id}')">✏️</button>`}
                   <button title="Bỏ ghim" onclick="notebookTogglePin('${day}','${item.id}')">📌</button>
                   <button title="Xoá" onclick="notebookDeleteLine('${day}','${item.id}')">✕</button>
@@ -35549,8 +35796,17 @@ function renderNotebook(){
       }).join('');
       pinEl.innerHTML = `
         <div class="nb-pinboard">
-          <div class="nb-pin-head">📌 Ghi chú đã ghim <span style="font-weight:400;font-size:11.5px;color:var(--muted)">(kéo ⠿⠿ để sắp xếp tự do)</span>
-            <button type="button" class="nb-compact-toggle${_nbPinCompact?' on':''}" title="${_nbPinCompact?'Hiện đầy đủ (trích dẫn, thanh công cụ, thông tin & chấm màu)':'Chỉ hiện nội dung ghi chú, ẩn trích dẫn, thanh công cụ, thông tin & chấm màu'}" onclick="nbToggleCompact('pin')">${_nbPinCompact?'👁️':'🙈'} Chỉ hiện nội dung</button>
+          <div class="nb-pin-head">📌 Ghi chú đã ghim <span style="font-weight:400;font-size:11.5px;color:var(--muted)">(kéo ⠿⠿ để sắp xếp tự do, không chồng lên nhau)</span>
+            <div class="nb-pin-head-actions">
+              <div class="nb-pin-cols" title="Số cột khi bấm Tự fit màn hình">
+                <span class="nb-pin-cols-label">Cột:</span>
+                <button type="button" class="nb-pin-col-btn${_nbPinCols===1?' on':''}" onclick="nbSetPinCols(1)">1</button>
+                <button type="button" class="nb-pin-col-btn${_nbPinCols===2?' on':''}" onclick="nbSetPinCols(2)">2</button>
+                <button type="button" class="nb-pin-col-btn${_nbPinCols===3?' on':''}" onclick="nbSetPinCols(3)">3</button>
+              </div>
+              <button type="button" class="nb-compact-toggle" title="Sắp xếp lại toàn bộ thẻ ghim theo số cột đã chọn, vừa khít chiều rộng màn hình, không chồng lên nhau và không dư khoảng trống" onclick="nbPinAutoFit()">📐 Tự fit màn hình</button>
+              <button type="button" class="nb-compact-toggle${_nbPinCompact?' on':''}" title="${_nbPinCompact?'Hiện đầy đủ (trích dẫn, thanh công cụ, thông tin & chấm màu)':'Chỉ hiện nội dung ghi chú, ẩn trích dẫn, thanh công cụ, thông tin & chấm màu'}" onclick="nbToggleCompact('pin')">${_nbPinCompact?'👁️':'🙈'} Chỉ hiện nội dung</button>
+            </div>
           </div>
           <div class="nb-pin-grid" style="min-height:${canvasH}px">${cardsHtml}</div>
         </div>`;
@@ -36031,13 +36287,18 @@ if('speechSynthesis' in window){
 
 /* ---------- Chủ đề màu giao diện (accent theme) ---------- */
 const ACCENT_THEMES = [
-  { key:'teal',   name:'Ngọc lam', color:'#0d6e5f', grad:'linear-gradient(135deg,#0d6e5f,#0891b2)' },
-  { key:'blue',   name:'Xanh dương', color:'#2563eb', grad:'linear-gradient(135deg,#2563eb,#0ea5e9)' },
-  { key:'purple', name:'Tím', color:'#7c3aed', grad:'linear-gradient(135deg,#7c3aed,#a855f7)' },
-  { key:'rose',   name:'Hồng đỏ', color:'#e11d48', grad:'linear-gradient(135deg,#e11d48,#db2777)' },
-  { key:'amber',  name:'Cam vàng', color:'#d97706', grad:'linear-gradient(135deg,#d97706,#ea580c)' },
-  { key:'green',  name:'Xanh lá', color:'#16a34a', grad:'linear-gradient(135deg,#16a34a,#65a30d)' },
-  { key:'slate',  name:'Xám xanh', color:'#475569', grad:'linear-gradient(135deg,#475569,#64748b)' }
+  { key:'teal',    name:'Ngọc lam', color:'#0d6e5f', grad:'linear-gradient(135deg,#0d6e5f,#0891b2)' },
+  { key:'blue',    name:'Xanh dương', color:'#2563eb', grad:'linear-gradient(135deg,#2563eb,#0ea5e9)' },
+  { key:'cyan',    name:'Xanh cyan', color:'#0891b2', grad:'linear-gradient(135deg,#0891b2,#22d3ee)' },
+  { key:'indigo',  name:'Chàm', color:'#4f46e5', grad:'linear-gradient(135deg,#4f46e5,#818cf8)' },
+  { key:'purple',  name:'Tím', color:'#7c3aed', grad:'linear-gradient(135deg,#7c3aed,#a855f7)' },
+  { key:'fuchsia', name:'Hồng tím', color:'#c026d3', grad:'linear-gradient(135deg,#c026d3,#e879f9)' },
+  { key:'rose',    name:'Hồng đỏ', color:'#e11d48', grad:'linear-gradient(135deg,#e11d48,#db2777)' },
+  { key:'orange',  name:'Cam đỏ', color:'#ea580c', grad:'linear-gradient(135deg,#ea580c,#fb923c)' },
+  { key:'amber',   name:'Cam vàng', color:'#d97706', grad:'linear-gradient(135deg,#d97706,#ea580c)' },
+  { key:'green',   name:'Xanh lá', color:'#16a34a', grad:'linear-gradient(135deg,#16a34a,#65a30d)' },
+  { key:'brown',   name:'Nâu cà phê', color:'#92400e', grad:'linear-gradient(135deg,#92400e,#c2703d)' },
+  { key:'slate',   name:'Xám xanh', color:'#475569', grad:'linear-gradient(135deg,#475569,#64748b)' }
 ];
 (function initAccentTheme(){
   const saved = localStorage.getItem('vocab_accent_theme') || 'teal';
@@ -36070,6 +36331,8 @@ const BG_THEMES = [
   { key:'default', name:'Mặc định', cls:'bg-preview-default' },
   { key:'dots',    name:'Chấm bi',   cls:'bg-preview-dots' },
   { key:'grid',    name:'Lưới ô vuông', cls:'bg-preview-grid' },
+  { key:'diamond', name:'Kim cương',  cls:'bg-preview-diamond' },
+  { key:'confetti',name:'🎉 Confetti', cls:'bg-preview-confetti' },
   { key:'aurora',  name:'Cực quang', cls:'bg-preview-aurora' },
   { key:'sunset',  name:'Hoàng hôn', cls:'bg-preview-sunset' },
   { key:'paper',   name:'Giấy ấm',   cls:'bg-preview-paper' },
@@ -36080,8 +36343,12 @@ const BG_THEMES = [
   { key:'mountain',name:'🏔️ Núi hoàng hôn', cls:'bg-preview-mountain' },
   { key:'beach',   name:'🏖️ Biển nắng',    cls:'bg-preview-beach' },
   { key:'night',   name:'🌌 Đêm sao',       cls:'bg-preview-night' },
+  { key:'galaxy',  name:'🌠 Thiên hà',      cls:'bg-preview-galaxy' },
   { key:'sakura',  name:'🌸 Hoa anh đào',   cls:'bg-preview-sakura' },
+  { key:'lavender',name:'💜 Đồng lavender', cls:'bg-preview-lavender' },
   { key:'autumn',  name:'🍁 Mùa thu',       cls:'bg-preview-autumn' },
+  { key:'snow',    name:'❄️ Tuyết',         cls:'bg-preview-snow' },
+  { key:'desert',  name:'🏜️ Sa mạc',        cls:'bg-preview-desert' },
   { key:'plain',   name:'Trơn',      cls:'bg-preview-plain' }
 ];
 (function initBgTheme(){
