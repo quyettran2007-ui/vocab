@@ -4242,6 +4242,8 @@ nav.tabs{
 
 /* ---------- 13. TINH CHỈNH CHUNG ---------- */
 .btn{ border-radius:10px; font-weight:600; }
+.btn.active{ background:var(--green); border-color:var(--green); color:#fff; }
+[data-theme="dark"] .btn.active{ color:#08120f; }
 .btn.primary{ background:var(--accent); box-shadow:var(--shadow-sm); }
 .btn.primary:hover{ background:var(--accent-hover); }
 [data-theme="dark"] .btn.primary{ color:#04120f; }
@@ -29260,6 +29262,25 @@ function readingBookOf(v){
   }
   return _rdBookCache[v._rid] || 'Khác';
 }
+/* Tra lại "Cambridge X · Test Y · Passage Z" cho 1 từ lấy từ bài đọc, dùng
+   để LUÔN có tiền tố này trước tên bài (kể cả với từ đã lưu trong
+   localStorage từ trước khi trường _camLabel tồn tại — vá thẳng vào object
+   đang dùng, không cần người dùng xoá bộ nhớ / học lại). */
+let _rdCamLabelCache = null;
+function readingCamLabelOf(v){
+  if(!v || !v._fromReading || !v._rid) return '';
+  if(v._camLabel) return v._camLabel;
+  if(!_rdCamLabelCache){
+    _rdCamLabelCache = {};
+    RD().forEach(r=>{
+      _rdCamLabelCache[r.id] = (r.book||r.test||r.psg)
+        ? `Cambridge ${r.book||'?'} · Test ${r.test||'?'} · Passage ${r.psg||'?'}` : '';
+    });
+  }
+  const label = _rdCamLabelCache[v._rid] || '';
+  if(label) v._camLabel = label;   // vá lại object hiện tại để lần sau khỏi tra nữa
+  return label;
+}
 
 /* ============================================================
    ⬆⬆⬆  KẾT THÚC DỮ LIỆU TỪ VỰNG  ⬆⬆⬆
@@ -33319,8 +33340,9 @@ function topicTagHTML(v){
   const isCamTest = CAM_TEST_TOPIC_RE.test(v.topic||'');
   const label = v._topic || v.topic;
   if(!label) return '';
-  const camPart = (v._fromReading && v._camLabel)
-    ? `<span class="lq-topic-cam">${esc(v._camLabel)}</span><span class="lq-topic-sep">·</span>` : '';
+  const camLabel = v._fromReading ? readingCamLabelOf(v) : '';
+  const camPart = camLabel
+    ? `<span class="lq-topic-cam">${esc(camLabel)}</span><span class="lq-topic-sep">·</span>` : '';
   return `<div class="lq-topic-tag${isCamTest?' is-camtest':''}" title="${isCamTest?'Đề Listening của từ này':'Chủ đề của từ này'}">${isCamTest?'🎧':'🏷️'} ${camPart}${esc(label)}</div>`;
 }
 
@@ -34925,7 +34947,7 @@ function rdToEntry(v, r){
     synonyms: syn, level: normalizeLevel(''), collocations: [], wordforms: [],
     example: v[5] ? { en: v[5].en||'', vi: v[5].vi||'' } : null,
     topic: r.title, _topic: r.title, _macro: RD_MACRO,
-    _camLabel: (r.book||r.test||r.psg) ? `Cambridge ${r.book||'?'} - Test ${r.test||'?'} - Bài ${r.psg||'?'}` : '',
+    _camLabel: (r.book||r.test||r.psg) ? `Cambridge ${r.book||'?'} · Test ${r.test||'?'} · Passage ${r.psg||'?'}` : '',
     _isNew: false, _fromReading: true, _rid: r.id,
     date: new Date().toISOString().slice(0,10)
   };
@@ -35890,6 +35912,17 @@ window.addEventListener('mouseup', ()=>{ if(_clSwDown) clSwEnd(); });
    ============================================================ */
 const CL_TYPE_KEY = 'vocab_colloc_typing_box';
 const CL_MASTER_STREAK = 3;
+/* Bật/tắt "tô xanh ngay khi gõ" cho Gõ từ Collocation: khi bật, mỗi ký tự
+   gõ đúng được tô xanh ngay (không cần bấm Kiểm tra) — áp dụng cho MỌI
+   cụm từ sau đó trong phiên (và các phiên sau), tới khi người dùng bấm
+   tắt lại. Trạng thái lưu vào localStorage nên giữ nguyên qua các lần
+   tải trang. */
+const CL_TP_AUTOCHECK_KEY = 'vocab_colloc_tp_autocheck';
+let CL_TP_AUTOCHECK = localStorage.getItem(CL_TP_AUTOCHECK_KEY) === '1';
+function clSetAutoCheck(on){
+  CL_TP_AUTOCHECK = !!on;
+  try{ localStorage.setItem(CL_TP_AUTOCHECK_KEY, CL_TP_AUTOCHECK ? '1' : '0'); }catch(e){}
+}
 function clLoadTypeBoxes(){
   let raw;
   try{ raw = JSON.parse(localStorage.getItem(CL_TYPE_KEY)) || {}; }catch(e){ return {}; }
@@ -36314,6 +36347,7 @@ function clNextTypeCard(){
       <button class="btn" id="clTypeHintLast">🔡 Chữ cuối</button>
       <button class="btn" id="clTypeShow">👁 Hiện đáp án</button>
       <button class="btn" id="clTypeSkip">Bỏ qua →</button>
+      <button class="btn ${CL_TP_AUTOCHECK?'active':''}" id="clTypeAutoToggle" title="Khi bật: chữ gõ trùng đáp án được tô xanh ngay, không cần bấm Kiểm tra. Áp dụng cho mọi cụm sau đó tới khi tắt.">${CL_TP_AUTOCHECK?'⚡ Tô xanh khi gõ: BẬT':'⚡ Tô xanh khi gõ: TẮT'}</button>
     </div>
     <div class="type-tip">Enter = kiểm tra · Backspace = xoá chữ · Ctrl/⌘+Enter = nghe lại · Đang luyện dở? Cứ chuyển tab thoải mái — phiên sẽ tự lưu và giữ nguyên khi quay lại.</div>
     <div class="cl-tp-stats">🧩 Đã thuộc ${stats.mastered}/${stats.total} · Đang luyện ${stats.learning} · Chưa gặp ${stats.unseen}${stats.acc!==null?` · Độ chính xác ${stats.acc}%`:''} · Cụm này: ${streakDots} (${streak}/${CL_MASTER_STREAK} đúng liên tiếp)</div>
@@ -36346,7 +36380,11 @@ function clNextTypeCard(){
     cells.forEach((bx,i)=>{
       bx.classList.remove('filled','cursor','correct','wrong','revealed');
       bx.textContent = val[i] || '';
-      if(val[i]) bx.classList.add('filled');
+      if(val[i]){
+        bx.classList.add('filled');
+        // "Tô xanh khi gõ" bật -> so khớp ngay từng ký tự, không cần bấm Kiểm tra
+        if(CL_TP_AUTOCHECK) bx.classList.add(val[i]===typable[i] ? 'correct' : 'wrong');
+      }
     });
     /* Chữ nhảy: chỉ ô vừa được điền mới (so với lần vẽ trước) mới nảy lên,
        tránh làm toàn bộ ô đã gõ trước đó nhảy lại mỗi lần re-paint. */
@@ -36492,6 +36530,15 @@ function clNextTypeCard(){
   }
   document.getElementById('clTpSpeak').onclick     = ()=> doListen(0.9);
   document.getElementById('clTpSpeakSlow').onclick = ()=> doListen(0.55);
+
+  const autoBtn = document.getElementById('clTypeAutoToggle');
+  autoBtn.onclick = ()=>{
+    clSetAutoCheck(!CL_TP_AUTOCHECK);
+    autoBtn.classList.toggle('active', CL_TP_AUTOCHECK);
+    autoBtn.textContent = CL_TP_AUTOCHECK ? '⚡ Tô xanh khi gõ: BẬT' : '⚡ Tô xanh khi gõ: TẮT';
+    paint();      // áp dụng ngay cho những chữ đã gõ trong ô hiện tại
+    inp.focus();
+  };
 
   btnCheck.onclick = checkTyping;
   document.getElementById('clTypeShow').onclick = showAnswer;
