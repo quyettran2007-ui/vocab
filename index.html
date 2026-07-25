@@ -4019,6 +4019,8 @@ nav.tabs{
 }
 .lq-topic-tag.is-camtest{ color:#0891b2; background:rgba(8,145,178,.12); }
 [data-theme="dark"] .lq-topic-tag.is-camtest{ color:#67e8f9; background:rgba(34,211,238,.16); }
+.lq-topic-cam{ opacity:.72; font-weight:600; }
+.lq-topic-sep{ opacity:.5; }
 
 /* ---------- 6. GÕ TỪ: Ô CHỮ + INPUT THẬT ---------- */
 /* Input phủ đúng lên hàng ô, chữ trong suốt. Trình duyệt lo hết
@@ -31840,6 +31842,7 @@ function nextQuiz(){
       <button class="qm-btn" id="quizStatsBtn">📊 Thống kê</button>
     </div>
     <div id="quizStatsPanel" style="display:none"></div>
+    ${topicTagHTML(correct)}
     <div class="quiz-q">
       <div class="prompt-label">${askVN?'Nghĩa của từ này là gì?':'Từ tiếng Anh của nghĩa này?'}</div>
       <div class="prompt-word ${askVN?'':'small'}">${askVN?esc(correct.word):esc(correct.vn)}</div>
@@ -32247,6 +32250,7 @@ function nextSynQuiz(){
       <button class="qm-btn" id="synStatsBtn">📊 Thống kê</button>
     </div>
     <div id="synStatsPanel" style="display:none"></div>
+    ${topicTagHTML(correct)}
     <div class="quiz-q">
       <div class="prompt-label">${askSyn ? 'Từ nào ĐỒNG NGHĨA với từ này?' : 'Đây là từ đồng nghĩa của từ nào?'}</div>
       <div class="prompt-word">${esc(promptText)}</div>
@@ -32391,6 +32395,7 @@ function nextType(){
       }</span></div>
       <span class="tp-score">Đúng <b>${typeScore}</b>/${typeTotal}</span>
     </div>
+    ${topicTagHTML(v)}
 
     <div class="quiz-q">
       <div class="prompt-label">Gõ từ tiếng Anh cho nghĩa</div>
@@ -33306,6 +33311,19 @@ function nextLearnCard(){
   renderLearnStep(pick);
 }
 
+/* Nhãn chủ đề dùng chung cho Học ngay / Trắc nghiệm / Gõ từ / Đồng nghĩa.
+   Với từ lấy từ bài đọc, hiện thêm "Cambridge X - Test Y - Bài Z" trước
+   tên bài, để biết chính xác từ này thuộc đề nào. */
+function topicTagHTML(v){
+  if(!v) return '';
+  const isCamTest = CAM_TEST_TOPIC_RE.test(v.topic||'');
+  const label = v._topic || v.topic;
+  if(!label) return '';
+  const camPart = (v._fromReading && v._camLabel)
+    ? `<span class="lq-topic-cam">${esc(v._camLabel)}</span><span class="lq-topic-sep">·</span>` : '';
+  return `<div class="lq-topic-tag${isCamTest?' is-camtest':''}" title="${isCamTest?'Đề Listening của từ này':'Chủ đề của từ này'}">${isCamTest?'🎧':'🏷️'} ${camPart}${esc(label)}</div>`;
+}
+
 /* Khung chung (thanh tiến độ + topbar) cho mọi bước */
 function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
   const v = item.v;
@@ -33344,12 +33362,7 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
       <span class="step ${stageOf(v.word)===5?'ok cur':''}"><i>✅</i><em>Thuộc</em></span>
     </div>
     <div class="step-hint"><b>${stepIc} ${stepName}</b> — ${stepHint}</div>
-    ${(()=>{
-      const isCamTest = CAM_TEST_TOPIC_RE.test(v.topic||'');
-      const label = v._topic || v.topic;
-      if(!label) return '';
-      return `<div class="lq-topic-tag${isCamTest?' is-camtest':''}" title="${isCamTest?'Đề Listening của từ này':'Chủ đề của từ này'}">${isCamTest?'🎧':'🏷️'} ${esc(label)}</div>`;
-    })()}
+    ${topicTagHTML(v)}
 
     ${bodyHTML}
   </div></div>`;
@@ -34912,6 +34925,7 @@ function rdToEntry(v, r){
     synonyms: syn, level: normalizeLevel(''), collocations: [], wordforms: [],
     example: v[5] ? { en: v[5].en||'', vi: v[5].vi||'' } : null,
     topic: r.title, _topic: r.title, _macro: RD_MACRO,
+    _camLabel: (r.book||r.test||r.psg) ? `Cambridge ${r.book||'?'} - Test ${r.test||'?'} - Bài ${r.psg||'?'}` : '',
     _isNew: false, _fromReading: true, _rid: r.id,
     date: new Date().toISOString().slice(0,10)
   };
