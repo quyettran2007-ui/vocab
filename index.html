@@ -34871,18 +34871,48 @@ function rdTab(t){
      (_lk), không phải dạng chữ thô của từ trong câu — để khi chạm vào,
      việc tra popup nghĩa luôn tìm thấy đúng mục dù từ trong câu bị
      chia ở dạng số nhiều/thì khác (vd "running" khớp mục gốc "run"). */
+/* Sinh danh sách các "ứng viên" dạng gốc có thể có của 1 từ đã biến đổi
+   (số nhiều/thì/dạng -ing...), để so khớp với từ điển (_lk). Bản cũ chỉ
+   cắt đuôi (ies/ed/ing/es/s/d) một cách thô nên bị SAI với khá nhiều từ:
+   - "taxonomies" -> cắt "ies" còn "taxonom" (đúng ra phải là "taxonomy")
+   - "hypotheses" -> cắt "es" còn "hypothes" (đúng ra phải là "hypothesis")
+   - "comprised"  -> cắt "ed" còn "compris" (đúng ra phải là "comprise", thiếu chữ "e")
+   - "stopped"    -> cắt "ed" còn "stopp" (đúng ra phải là "stop", thừa phụ âm đôi)
+   Hàm dưới đây thử thêm các quy tắc trên trước khi chịu thua, nên nhiều
+   từ trước đây bấm không ra nghĩa (do không khớp được mục từ vựng) nay
+   sẽ khớp đúng. */
+function _rdStemCandidates(lower){
+  const c = [lower];
+  if(/ies$/.test(lower) && lower.length > 4) c.push(lower.slice(0,-3)+'y');           // taxonomies -> taxonomy
+  if(/eses$/.test(lower)) c.push(lower.slice(0,-4)+'esis');                            // hypotheses -> hypothesis
+  if(/([^aeiou])\1ing$/.test(lower)) c.push(lower.slice(0,-4));                        // stopping -> stop
+  if(/([^aeiou])\1ed$/.test(lower))  c.push(lower.slice(0,-3));                        // stopped  -> stop
+  ['ing','ed','es','s','d'].forEach(suf=>{
+    if(lower.endsWith(suf) && lower.length > suf.length){
+      const stem = lower.slice(0, -suf.length);
+      c.push(stem);       // send -> send (cắt thô, giữ nguyên như bản cũ)
+      c.push(stem+'e');   // compris(ed) -> comprise (khôi phục "e" câm bị mất)
+    }
+  });
+  return c;
+}
 function _rdResolveKey(word){
   const lower = word.toLowerCase();
-  if(_rdCur._lk[lower]) return lower;
-  const stem = lower.replace(/(ies|ed|ing|es|s|d)$/,'');
-  if(_rdCur._lk[stem]) return stem;
+  const cands = _rdStemCandidates(lower);
+  for(let i=0;i<cands.length;i++){
+    if(_rdCur._lk[cands[i]]) return cands[i];
+  }
   return null;
 }
 function rdMark(text, showGloss){
   const esc = rdEsc(text);
   return esc.replace(/\{([^{}]+)\}|\b([A-Za-zÀ-ỹ']+)\b/g, (m, braced, plain) => {
     if(braced !== undefined){
-      const key = _rdResolveKey(braced) || braced.toLowerCase();
+      const key = _rdResolveKey(braced);
+      // Không tìm được mục từ vựng khớp -> KHÔNG bọc span "rd-w" nữa (trước đây
+      // vẫn bọc với key = braced.toLowerCase() khiến từ trông như bấm được
+      // nhưng thực ra _lk[key] không tồn tại -> bấm vào không hiện gì cả).
+      if(!key) return braced;
       return `<span class="rd-w" data-w="${rdEsc(key)}">${braced}</span>${rdGlossHTML(showGloss, key)}`;
     }
     const key = _rdResolveKey(plain);
