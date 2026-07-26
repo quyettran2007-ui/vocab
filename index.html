@@ -1923,6 +1923,20 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   max-height:min(64vh,560px); overflow-y:auto;
 }
 
+/* ---- Thanh công cụ nhỏ (gạch chân từ khoá / bản dịch / edit / ghi chú) —
+   dính ngay dưới thanh tìm kiếm nhanh khi cuộn xuống, cỡ nhỏ gọn ---- */
+.rd-tools-pin{
+  position:sticky; top:var(--rd-tools-top,150px); z-index:25;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  background:rgba(255,255,255,.75); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line); border-radius:9px;
+  padding:5px 9px; margin-bottom:8px;
+  font-size:12px;
+}
+[data-theme="dark"] .rd-tools-pin{ background:rgba(20,30,27,.72); }
+.rd-tools-pin label{ display:flex; align-items:center; gap:4px; font-size:12px; font-weight:600; }
+.rd-tools-pin .btn{ font-size:12px; padding:5px 9px; }
+
 .rd-filters{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;
   padding-bottom:14px; border-bottom:1px solid var(--paper-2); }
 .rd-chip{ cursor:pointer; font-size:12.5px; font-weight:700; color:var(--ink-soft);
@@ -2412,14 +2426,19 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-fmt-toolbar button:hover{ border-color:var(--accent); color:var(--accent); }
 .nb-fmt-toolbar button.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
 .nb-fmt-sep{ width:1px; align-self:stretch; background:var(--line); margin:0 2px; }
-.nb-fmt-color{ width:24px; height:24px; padding:0; border:1px solid var(--line); border-radius:6px; background:none; cursor:pointer; }
+.nb-fmt-swatches{ display:inline-flex; align-items:center; gap:3px; }
+.nb-fmt-swatch{ width:17px; height:17px; border-radius:5px; padding:0; cursor:pointer;
+  border:1.5px solid rgba(0,0,0,.18); flex-shrink:0; }
+.nb-fmt-swatch:hover{ transform:scale(1.12); }
+[data-theme="dark"] .nb-fmt-swatch{ border-color:rgba(255,255,255,.25); }
 .nb-fmt-size{ height:24px; border-radius:6px; border:1px solid var(--line); background:var(--card); color:var(--ink);
   font-size:11.5px; padding:0 3px; cursor:pointer; }
 .nb-note-editable{ width:100%; box-sizing:border-box; font-size:13px; color:var(--ink-soft); background:var(--card);
   border:1px solid var(--line); border-left:3px solid var(--accent); padding:6px 9px; border-radius:0 8px 8px 0;
-  line-height:1.55; min-height:32px; resize:both; overflow:auto; max-width:100%; outline:none; cursor:text; }
+  line-height:1.55; min-height:32px; resize:both; overflow:auto; max-width:100%; outline:none; cursor:text; white-space:pre-wrap; }
 .nb-note-editable:empty:before{ content:attr(data-placeholder); color:var(--muted); }
 .nb-note-editable:focus{ box-shadow:0 0 0 2px var(--accent) inset; border-color:var(--accent); }
+.nb-note-readonly{ cursor:default; }
 .nb-note-editable ul, .nb-note-editable ol{ margin:4px 0 4px 20px; padding:0; }
 .nb-note-editable li{ margin:2px 0; }
 
@@ -3841,6 +3860,14 @@ html { scroll-behavior:smooth; }
 .ssr-word{ font-weight:700; }
 .ssr-nums{ color:var(--muted); font-size:12px; }
 .ssr-nums em{ font-style:normal; color:var(--ink-soft); }
+.syn-stats-scope{
+  font-size:11.5px; font-weight:700; color:var(--muted); text-align:center;
+  margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed var(--line);
+}
+.syn-stats-scope b{ color:var(--ink-soft); }
+.syn-wrong-practice-btn{ display:block; width:100%; margin-top:14px; text-align:center; }
+.syn-wrong-banner{ text-align:center; }
+.syn-wrong-banner .syn-source-panel-label{ color:var(--ember,#e0663a); }
 /* ============================================================
    ⬇ LỚP GIAO DIỆN MỚI v3 — ghi đè lên phần CSS cũ ở trên
    ============================================================ */
@@ -4021,6 +4048,10 @@ nav.tabs{
 [data-theme="dark"] .lq-topic-tag.is-camtest{ color:#67e8f9; background:rgba(34,211,238,.16); }
 .lq-topic-cam{ opacity:.72; font-weight:600; }
 .lq-topic-sep{ opacity:.5; }
+.lq-topic-tag.is-clickable{ cursor:pointer; transition:transform .12s ease, filter .12s ease; }
+.lq-topic-tag.is-clickable:hover{ filter:brightness(0.95); transform:translateY(-1px); }
+.lq-topic-tag.is-clickable:active{ transform:translateY(0); }
+.lq-topic-tag.is-clickable:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
 /* ---------- 6. GÕ TỪ: Ô CHỮ + INPUT THẬT ---------- */
 /* Input phủ đúng lên hàng ô, chữ trong suốt. Trình duyệt lo hết
@@ -5488,11 +5519,13 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
         </div>
         <div id="rdQuickResults"></div>
       </div>
-      <div class="rd-tools">
+      <div class="rd-tools-pin" id="rdToolsPin">
         <label><input type="checkbox" id="rdHL" checked> Gạch chân từ khoá</label>
         <label><input type="checkbox" id="rdTR"> Hiện bản dịch</label>
         <button type="button" class="btn rd-edit-btn" id="rdEditBtn" title="Bật để bôi chọn văn bản tự do trong bài (tắt tạm tính năng chạm từ để tra nghĩa)">✎ Edit</button>
         <button type="button" class="btn rd-notes-btn" id="rdShowNotesBtn" title="Hiện các ghi chú đã lưu ngay trong bài, kèm mũi tên chỉ đúng vị trí">🗨️ Hiện ghi chú</button>
+      </div>
+      <div class="rd-tools">
         <span class="rd-edit-hint" id="rdEditHint" style="display:none">✏️ Đang bật Edit — bôi chọn văn bản để Sao chép / Ghi chú / Thêm vào sổ</span>
         <button class="btn" onclick="rdSpeakAll()">🔊 Đọc bài</button>
         <button class="btn" onclick="rdStopSpeak()">⏹ Dừng</button>
@@ -5620,9 +5653,38 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
         </div>
         <div id="notebookNewForm" style="display:none;margin-bottom:16px;padding:12px;border:1px solid #ddd;border-radius:10px">
           <label for="notebookNewTitle" style="display:block;font-size:12.5px;font-weight:700;margin-bottom:4px;color:var(--ink-soft)">Tiêu đề / trích dẫn</label>
-          <textarea id="notebookNewTitle" rows="2" placeholder="Nhập tiêu đề hoặc đoạn trích…" style="width:100%;box-sizing:border-box;resize:vertical;padding:8px;border-radius:8px;border:1px solid #ccc;font:inherit;margin-bottom:10px"></textarea>
+          <textarea id="notebookNewTitle" rows="2" placeholder="Nhập tiêu đề hoặc đoạn trích…" oninput="nbAutoGrowTextarea(this)" style="width:100%;box-sizing:border-box;resize:vertical;padding:8px;border-radius:8px;border:1px solid #ccc;font:inherit;margin-bottom:10px;overflow:hidden"></textarea>
           <label for="notebookNewContent" style="display:block;font-size:12.5px;font-weight:700;margin-bottom:4px;color:var(--ink-soft)">Nội dung ghi chú</label>
-          <textarea id="notebookNewContent" rows="3" placeholder="Nhập nội dung ghi chú của bạn…" style="width:100%;box-sizing:border-box;resize:vertical;padding:8px;border-radius:8px;border:1px solid #ccc;font:inherit"></textarea>
+          <div class="nb-fmt-toolbar">
+            <button type="button" title="Hoàn tác" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','undo')">↩️</button>
+            <button type="button" title="Làm lại" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','redo')">↪️</button>
+            <span class="nb-fmt-sep"></span>
+            <button type="button" title="In đậm" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','bold')"><b>B</b></button>
+            <button type="button" title="In nghiêng" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','italic')"><i>I</i></button>
+            <button type="button" title="Gạch đầu dòng" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','insertUnorderedList')">• ≡</button>
+            <select class="nb-fmt-size" title="Cỡ chữ" onmousedown="event.stopPropagation()" onchange="nbFmtFontSize('notebookNewContent', this.value); this.selectedIndex=0;">
+              <option value="">Cỡ chữ</option>
+              <option value="11">Nhỏ</option>
+              <option value="13">Vừa</option>
+              <option value="16">Lớn</option>
+              <option value="20">Rất lớn</option>
+            </select>
+            <span class="nb-fmt-sep"></span>
+            <button type="button" title="Căn trái" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','justifyLeft')">⯇</button>
+            <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','justifyCenter')">≡</button>
+            <button type="button" title="Căn phải" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','justifyRight')">⯈</button>
+            <span class="nb-fmt-sep"></span>
+            <span class="nb-fmt-swatches">
+              <button type="button" class="nb-fmt-swatch" style="background:#1f2937" title="#1f2937" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','foreColor','#1f2937')"></button>
+              <button type="button" class="nb-fmt-swatch" style="background:#dc2626" title="#dc2626" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','foreColor','#dc2626')"></button>
+              <button type="button" class="nb-fmt-swatch" style="background:#ea580c" title="#ea580c" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','foreColor','#ea580c')"></button>
+              <button type="button" class="nb-fmt-swatch" style="background:#16a34a" title="#16a34a" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','foreColor','#16a34a')"></button>
+              <button type="button" class="nb-fmt-swatch" style="background:#2563eb" title="#2563eb" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','foreColor','#2563eb')"></button>
+              <button type="button" class="nb-fmt-swatch" style="background:#7c3aed" title="#7c3aed" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','foreColor','#7c3aed')"></button>
+              <button type="button" class="nb-fmt-swatch" style="background:#db2777" title="#db2777" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','foreColor','#db2777')"></button>
+            </span>
+          </div>
+          <div id="notebookNewContent" class="nb-note-editable" contenteditable="true" data-placeholder="Nhập nội dung ghi chú của bạn…" style="min-height:80px;margin-bottom:0"></div>
           <div class="backup-actions" style="margin-top:10px">
             <button class="btn primary" onclick="notebookSaveManual()">💾 Lưu ghi chú</button>
             <button class="btn" onclick="notebookToggleNewForm(false)">Huỷ</button>
@@ -16623,7 +16685,667 @@ const STRUCTURES = [
       "ielts_topic": "Technology & Employment"
     }
   ]
-}
+},
+  {
+    id: "st283",
+    topic: "Bảo tàng",
+    structure: "House a vast collection",
+    meaning: "lưu giữ một bộ sưu tập đồ sộ",
+    equivalents: ["hold an extensive collection", "boast a wide-ranging collection"],
+    examples: [
+      { en: "Unlike smaller regional galleries, national museums typically house a vast collection spanning almost every period of history.",
+        vi: "Không giống như các phòng trưng bày nhỏ hơn ở địa phương, các bảo tàng quốc gia thường lưu giữ một bộ sưu tập đồ sộ trải dài qua hầu hết mọi thời kỳ lịch sử." },
+      { en: "One effective way to justify public investment in museums is to ensure they house a vast collection accessible to researchers as well as the general public.",
+        vi: "Một cách hiệu quả để biện minh cho việc đầu tư công vào bảo tàng là đảm bảo chúng lưu giữ một bộ sưu tập đồ sộ mà cả nhà nghiên cứu lẫn công chúng đều có thể tiếp cận." },
+      { en: "In my view, a museum's true value lies not merely in the fact that it houses a vast collection, but in how effectively it makes that collection meaningful to visitors.",
+        vi: "Theo quan điểm của tôi, giá trị thực sự của một bảo tàng không chỉ nằm ở việc nó lưu giữ một bộ sưu tập đồ sộ, mà còn ở cách nó truyền tải ý nghĩa của bộ sưu tập đó đến du khách một cách hiệu quả." }
+    ]
+  },
+  {
+    id: "st284",
+    topic: "Bảo tàng",
+    structure: "Showcase historical artefacts",
+    meaning: "trưng bày hiện vật lịch sử",
+    equivalents: ["display historical relics", "exhibit ancient artefacts"],
+    examples: [
+      { en: "Whereas art galleries focus primarily on aesthetic appreciation, history museums are designed to showcase historical artefacts that illuminate how ordinary people once lived.",
+        vi: "Trong khi các phòng trưng bày nghệ thuật chủ yếu tập trung vào thưởng thức thẩm mỹ, các bảo tàng lịch sử được thiết kế để trưng bày hiện vật lịch sử làm sáng tỏ cách con người từng sinh sống." },
+      { en: "To make history more accessible to younger generations, schools could organise more field trips to institutions that showcase historical artefacts in interactive ways.",
+        vi: "Để giúp lịch sử dễ tiếp cận hơn với thế hệ trẻ, các trường học có thể tổ chức nhiều chuyến tham quan hơn đến các cơ sở trưng bày hiện vật lịch sử theo hình thức tương tác." },
+      { en: "It could be argued that no textbook can rival the impact of standing before artefacts that showcase historical events firsthand.",
+        vi: "Có thể lập luận rằng không cuốn sách giáo khoa nào có thể sánh được với tác động của việc đứng trước những hiện vật trưng bày trực tiếp các sự kiện lịch sử." }
+    ]
+  },
+  {
+    id: "st285",
+    topic: "Bảo tàng",
+    structure: "Attract a large number of visitors",
+    meaning: "thu hút đông đảo du khách",
+    equivalents: ["draw huge crowds", "pull in large numbers of tourists"],
+    examples: [
+      { en: "Compared with museums that charge high entrance fees, those offering free access tend to attract a large number of visitors from a wider range of social backgrounds.",
+        vi: "So với các bảo tàng thu phí vào cửa cao, những nơi cho vào cửa miễn phí thường thu hút đông đảo du khách từ nhiều tầng lớp xã hội hơn." },
+      { en: "Extending opening hours during holiday periods is one practical measure that could help venues attract a large number of visitors without overcrowding at peak times.",
+        vi: "Kéo dài giờ mở cửa vào các dịp lễ là một biện pháp thực tế có thể giúp các địa điểm thu hút đông đảo du khách mà không gây quá tải vào giờ cao điểm." },
+      { en: "I would argue that a museum's ability to attract a large number of visitors matters far less than the quality of the experience it provides.",
+        vi: "Tôi cho rằng khả năng thu hút đông đảo du khách của một bảo tàng ít quan trọng hơn nhiều so với chất lượng trải nghiệm mà nó mang lại." }
+    ]
+  },
+  {
+    id: "st286",
+    topic: "Bảo tàng",
+    structure: "Preserve cultural heritage",
+    meaning: "bảo tồn di sản văn hóa",
+    equivalents: ["safeguard cultural legacy", "conserve heritage sites"],
+    examples: [
+      { en: "Unlike countries that prioritise rapid urban development, those that invest heavily in efforts to preserve cultural heritage often retain a stronger sense of national identity.",
+        vi: "Không giống như các quốc gia ưu tiên phát triển đô thị nhanh chóng, những nước đầu tư mạnh vào nỗ lực bảo tồn di sản văn hóa thường giữ được ý thức bản sắc dân tộc mạnh mẽ hơn." },
+      { en: "Governments could preserve cultural heritage more effectively by offering tax incentives to private organisations willing to fund restoration projects.",
+        vi: "Các chính phủ có thể bảo tồn di sản văn hóa hiệu quả hơn bằng cách đưa ra các ưu đãi thuế cho các tổ chức tư nhân sẵn sàng tài trợ các dự án phục hồi." },
+      { en: "In my opinion, the responsibility to preserve cultural heritage should not fall solely on governments; local communities must also play an active role.",
+        vi: "Theo tôi, trách nhiệm bảo tồn di sản văn hóa không nên chỉ đặt lên vai chính phủ; cộng đồng địa phương cũng phải đóng vai trò tích cực." }
+    ]
+  },
+  {
+    id: "st287",
+    topic: "Bảo tàng",
+    structure: "Provide an immersive experience",
+    meaning: "mang lại trải nghiệm sống động",
+    equivalents: ["offer an engaging experience", "create a captivating atmosphere"],
+    examples: [
+      { en: "In contrast to static exhibits, interactive displays that provide an immersive experience tend to leave a far more lasting impression on visitors.",
+        vi: "Trái ngược với các trưng bày tĩnh, những màn trình diễn tương tác mang lại trải nghiệm sống động thường để lại ấn tượng lâu dài hơn nhiều đối với du khách." },
+      { en: "One way museums could remain relevant in the digital age is to provide an immersive experience through augmented reality technology.",
+        vi: "Một cách để các bảo tàng duy trì tính phù hợp trong thời đại số là mang lại trải nghiệm sống động thông qua công nghệ thực tế tăng cường." },
+      { en: "It could be contended that technology which fails to provide an immersive experience adds little genuine educational value to a museum visit.",
+        vi: "Có thể lập luận rằng công nghệ không mang lại trải nghiệm sống động thì đóng góp rất ít giá trị giáo dục thực sự cho một chuyến tham quan bảo tàng." }
+    ]
+  },
+  {
+    id: "st288",
+    topic: "Bảo tàng",
+    structure: "Admission fee",
+    meaning: "phí vào cửa",
+    equivalents: ["entrance fee", "ticket price"],
+    examples: [
+      { en: "Whereas some countries choose to waive the admission fee entirely for national museums, others rely on ticket sales as a major source of funding.",
+        vi: "Trong khi một số quốc gia chọn miễn hoàn toàn phí vào cửa cho các bảo tàng quốc gia, những nước khác lại dựa vào doanh thu bán vé như một nguồn tài trợ chính." },
+      { en: "Introducing a reduced admission fee for students and low-income families would be one practical way of widening access to cultural institutions.",
+        vi: "Việc áp dụng phí vào cửa giảm cho sinh viên và các gia đình thu nhập thấp sẽ là một cách thực tế để mở rộng khả năng tiếp cận các cơ sở văn hóa." },
+      { en: "I firmly believe that charging an admission fee is justifiable only if the revenue is reinvested directly into preservation and education.",
+        vi: "Tôi tin chắc rằng việc thu phí vào cửa chỉ hợp lý nếu nguồn thu được tái đầu tư trực tiếp vào công tác bảo tồn và giáo dục." }
+    ]
+  },
+  {
+    id: "st289",
+    topic: "Bảo tàng",
+    structure: "Guided tour",
+    meaning: "chuyến tham quan có hướng dẫn",
+    equivalents: ["escorted tour", "docent-led tour"],
+    examples: [
+      { en: "Compared with wandering through exhibits unaided, joining a guided tour generally results in a much richer understanding of the material on display.",
+        vi: "So với việc tự đi dạo qua các khu trưng bày mà không có hướng dẫn, việc tham gia chuyến tham quan có hướng dẫn thường mang lại sự hiểu biết phong phú hơn nhiều về các hiện vật trưng bày." },
+      { en: "Training more multilingual staff to lead a guided tour would help museums cater more effectively to international visitors.",
+        vi: "Đào tạo thêm nhân viên đa ngôn ngữ để dẫn chuyến tham quan có hướng dẫn sẽ giúp các bảo tàng phục vụ du khách quốc tế hiệu quả hơn." },
+      { en: "Personally, I believe that a guided tour, however informative, can never fully replace the freedom of exploring a museum at one's own pace.",
+        vi: "Cá nhân tôi cho rằng một chuyến tham quan có hướng dẫn, dù bổ ích đến đâu, cũng không bao giờ có thể thay thế hoàn toàn sự tự do khám phá bảo tàng theo nhịp độ của riêng mình." }
+    ]
+  },
+  {
+    id: "st290",
+    topic: "Bảo tàng",
+    structure: "State-of-the-art exhibition",
+    meaning: "triển lãm hiện đại nhất",
+    equivalents: ["cutting-edge exhibition", "ultra-modern display"],
+    examples: [
+      { en: "Unlike older institutions that rely on traditional display cases, newer museums are increasingly investing in a state-of-the-art exhibition equipped with digital technology.",
+        vi: "Không giống như các cơ sở lâu đời dựa vào tủ trưng bày truyền thống, các bảo tàng mới hơn ngày càng đầu tư vào triển lãm hiện đại nhất được trang bị công nghệ số." },
+      { en: "Securing partnerships with technology firms could allow smaller museums to design a state-of-the-art exhibition without bearing the full cost themselves.",
+        vi: "Việc thiết lập quan hệ đối tác với các công ty công nghệ có thể giúp các bảo tàng nhỏ hơn thiết kế được triển lãm hiện đại nhất mà không phải gánh toàn bộ chi phí." },
+      { en: "While a state-of-the-art exhibition undoubtedly attracts attention, I would argue that authenticity matters just as much as technological novelty.",
+        vi: "Mặc dù một triển lãm hiện đại nhất chắc chắn thu hút sự chú ý, tôi cho rằng tính chân thực cũng quan trọng không kém sự mới lạ về công nghệ." }
+    ]
+  },
+  {
+    id: "st291",
+    topic: "Bảo tàng",
+    structure: "A treasure trove of knowledge",
+    meaning: "kho tàng tri thức",
+    equivalents: ["a wealth of information", "a rich source of knowledge"],
+    examples: [
+      { en: "Whereas the internet offers vast but often unverified information, a well-curated archive remains a treasure trove of knowledge grounded in scholarly rigour.",
+        vi: "Trong khi internet cung cấp lượng thông tin khổng lồ nhưng thường chưa được kiểm chứng, một kho lưu trữ được biên soạn cẩn thận vẫn là một kho tàng tri thức dựa trên tính nghiêm ngặt học thuật." },
+      { en: "Digitising archives that constitute a treasure trove of knowledge would allow researchers worldwide to access them without having to travel.",
+        vi: "Số hóa các kho lưu trữ vốn là một kho tàng tri thức sẽ cho phép các nhà nghiên cứu trên toàn thế giới tiếp cận mà không cần phải di chuyển." },
+      { en: "In my opinion, failing to fund institutions that serve as a treasure trove of knowledge represents a serious loss for future generations.",
+        vi: "Theo tôi, việc không tài trợ cho các cơ sở đóng vai trò là một kho tàng tri thức là một tổn thất nghiêm trọng đối với các thế hệ tương lai." }
+    ]
+  },
+  {
+    id: "st292",
+    topic: "Chính phủ & Chính sách",
+    structure: "A hotly debated issue",
+    meaning: "vấn đề gây tranh cãi gay gắt",
+    equivalents: ["a contentious topic", "a controversial matter"],
+    examples: [
+      { en: "Whereas taxation policy tends to divide opinion along economic lines, immigration remains a hotly debated issue that cuts across almost every section of society.",
+        vi: "Trong khi chính sách thuế thường chia rẽ quan điểm theo ranh giới kinh tế, nhập cư vẫn là một vấn đề gây tranh cãi gay gắt xuyên suốt hầu hết mọi tầng lớp xã hội." },
+      { en: "Holding open public consultations could help resolve what remains a hotly debated issue by allowing citizens to voice their concerns directly.",
+        vi: "Tổ chức các buổi tham vấn công khai có thể giúp giải quyết vấn đề gây tranh cãi gay gắt này bằng cách cho phép người dân trực tiếp bày tỏ quan ngại." },
+      { en: "Personally, I believe that climate policy will remain a hotly debated issue until governments agree on a shared set of long-term priorities.",
+        vi: "Cá nhân tôi tin rằng chính sách khí hậu sẽ vẫn là một vấn đề gây tranh cãi gay gắt cho đến khi các chính phủ thống nhất được một bộ ưu tiên dài hạn chung." }
+    ]
+  },
+  {
+    id: "st293",
+    topic: "Chính phủ & Chính sách",
+    structure: "Spearhead a campaign",
+    meaning: "dẫn đầu một chiến dịch",
+    equivalents: ["lead a campaign", "champion a cause"],
+    examples: [
+      { en: "Unlike top-down government initiatives, grassroots movements that spearhead a campaign often succeed in generating more genuine public engagement.",
+        vi: "Không giống như các sáng kiến từ trên xuống của chính phủ, các phong trào cơ sở dẫn đầu một chiến dịch thường thành công hơn trong việc tạo ra sự tham gia thực chất của công chúng." },
+      { en: "Appointing a credible public figure to spearhead a campaign against corruption could significantly boost its chances of gaining traction.",
+        vi: "Việc bổ nhiệm một nhân vật công chúng đáng tin cậy để dẫn đầu một chiến dịch chống tham nhũng có thể nâng cao đáng kể cơ hội thu hút sự chú ý của chiến dịch đó." },
+      { en: "I would argue that any minister who chooses to spearhead a campaign must be prepared to see it through, rather than abandoning it once media attention fades.",
+        vi: "Tôi cho rằng bất kỳ bộ trưởng nào chọn dẫn đầu một chiến dịch cũng phải sẵn sàng theo đuổi đến cùng, thay vì từ bỏ khi sự chú ý của truyền thông giảm dần." }
+    ]
+  },
+  {
+    id: "st294",
+    topic: "Chính phủ & Chính sách",
+    structure: "Bolster the economy",
+    meaning: "củng cố / thúc đẩy nền kinh tế",
+    equivalents: ["boost economic growth", "stimulate the economy"],
+    examples: [
+      { en: "Whereas tax cuts tend to bolster the economy in the short term, investment in education yields benefits that are felt only years later.",
+        vi: "Trong khi cắt giảm thuế có xu hướng thúc đẩy nền kinh tế trong ngắn hạn, đầu tư vào giáo dục lại mang lại lợi ích chỉ được cảm nhận sau nhiều năm." },
+      { en: "One measure that could bolster the economy without adding to public debt is to streamline regulations that currently discourage small business growth.",
+        vi: "Một biện pháp có thể thúc đẩy nền kinh tế mà không làm tăng nợ công là tinh giản các quy định hiện đang cản trở sự phát triển của doanh nghiệp nhỏ." },
+      { en: "In my view, no single policy can bolster the economy on its own; a coordinated combination of measures is required instead.",
+        vi: "Theo tôi, không một chính sách đơn lẻ nào có thể tự mình thúc đẩy nền kinh tế; thay vào đó cần một sự phối hợp đồng bộ giữa nhiều biện pháp." }
+    ]
+  },
+  {
+    id: "st295",
+    topic: "Chính phủ & Chính sách",
+    structure: "Alleviate social inequality",
+    meaning: "giảm bớt bất bình đẳng xã hội",
+    equivalents: ["reduce social disparity", "narrow the wealth gap"],
+    examples: [
+      { en: "Compared with tax reform alone, a combination of education subsidies and healthcare access tends to alleviate social inequality far more effectively.",
+        vi: "So với chỉ cải cách thuế, sự kết hợp giữa trợ cấp giáo dục và khả năng tiếp cận y tế thường giảm bớt bất bình đẳng xã hội hiệu quả hơn nhiều." },
+      { en: "Expanding access to vocational training is one solution that could help alleviate social inequality by giving disadvantaged groups a genuine route into employment.",
+        vi: "Mở rộng khả năng tiếp cận đào tạo nghề là một giải pháp có thể giúp giảm bớt bất bình đẳng xã hội bằng cách tạo cho các nhóm yếu thế một con đường thực sự vào việc làm." },
+      { en: "I would contend that governments have a moral obligation to alleviate social inequality, even when doing so requires unpopular fiscal decisions.",
+        vi: "Tôi cho rằng các chính phủ có nghĩa vụ đạo đức trong việc giảm bớt bất bình đẳng xã hội, ngay cả khi điều đó đòi hỏi những quyết định tài khóa không được lòng dân." }
+    ]
+  },
+  {
+    id: "st296",
+    topic: "Chính phủ & Chính sách",
+    structure: "Impose stringent regulations",
+    meaning: "áp đặt các quy định nghiêm ngặt",
+    equivalents: ["enforce strict rules", "impose tight controls"],
+    examples: [
+      { en: "Unlike voluntary industry guidelines, which are frequently ignored, governments that impose stringent regulations tend to achieve far more consistent compliance.",
+        vi: "Không giống như các hướng dẫn tự nguyện của ngành, vốn thường bị bỏ qua, các chính phủ áp đặt các quy định nghiêm ngặt thường đạt được mức độ tuân thủ nhất quán hơn nhiều." },
+      { en: "To curb pollution effectively, authorities should impose stringent regulations on emissions while simultaneously offering subsidies for cleaner technology.",
+        vi: "Để kiểm soát ô nhiễm hiệu quả, các cơ quan chức năng nên áp đặt các quy định nghiêm ngặt về khí thải đồng thời cung cấp trợ cấp cho công nghệ sạch hơn." },
+      { en: "While some argue that businesses should be left to self-regulate, I believe it is only by imposing stringent regulations that genuine environmental progress can be achieved.",
+        vi: "Trong khi một số người cho rằng doanh nghiệp nên được để tự điều chỉnh, tôi tin rằng chỉ bằng cách áp đặt các quy định nghiêm ngặt mới có thể đạt được tiến bộ môi trường thực sự." }
+    ]
+  },
+  {
+    id: "st297",
+    topic: "Chính phủ & Chính sách",
+    structure: "Allocate public funds",
+    meaning: "phân bổ ngân sách công",
+    equivalents: ["distribute government funding", "assign public resources"],
+    examples: [
+      { en: "Whereas some nations allocate public funds primarily to defence, others prioritise healthcare and education instead.",
+        vi: "Trong khi một số quốc gia phân bổ ngân sách công chủ yếu cho quốc phòng, những nước khác lại ưu tiên y tế và giáo dục." },
+      { en: "Establishing an independent oversight body could ensure that governments allocate public funds more transparently and in line with public need.",
+        vi: "Việc thành lập một cơ quan giám sát độc lập có thể đảm bảo các chính phủ phân bổ ngân sách công minh bạch hơn và phù hợp với nhu cầu của người dân." },
+      { en: "In my opinion, the way a government chooses to allocate public funds reveals more about its true priorities than any official statement.",
+        vi: "Theo tôi, cách một chính phủ chọn phân bổ ngân sách công tiết lộ nhiều điều về ưu tiên thực sự của họ hơn bất kỳ tuyên bố chính thức nào." }
+    ]
+  },
+  {
+    id: "st298",
+    topic: "Chính phủ & Chính sách",
+    structure: "A sharp divide in opinion",
+    meaning: "sự chia rẽ sâu sắc trong quan điểm",
+    equivalents: ["a stark difference of opinion", "polarised views"],
+    examples: [
+      { en: "Unlike attitudes towards renewable energy, which enjoy broad consensus, nuclear power continues to reveal a sharp divide in opinion among voters.",
+        vi: "Không giống như thái độ đối với năng lượng tái tạo, vốn nhận được sự đồng thuận rộng rãi, năng lượng hạt nhân vẫn tiếp tục cho thấy một sự chia rẽ sâu sắc trong quan điểm giữa các cử tri." },
+      { en: "Providing balanced, evidence-based public information could help narrow the sharp divide in opinion surrounding this policy.",
+        vi: "Cung cấp thông tin công khai cân bằng và dựa trên bằng chứng có thể giúp thu hẹp sự chia rẽ sâu sắc trong quan điểm xung quanh chính sách này." },
+      { en: "Although a sharp divide in opinion persists, I personally side with those who believe the long-term environmental benefits outweigh the short-term costs.",
+        vi: "Mặc dù một sự chia rẽ sâu sắc trong quan điểm vẫn tồn tại, cá nhân tôi nghiêng về phía những người tin rằng lợi ích môi trường dài hạn vượt trội hơn chi phí ngắn hạn." }
+    ]
+  },
+  {
+    id: "st299",
+    topic: "Chính phủ & Chính sách",
+    structure: "Exercise political power",
+    meaning: "thực thi quyền lực chính trị",
+    equivalents: ["wield political influence", "hold political authority"],
+    examples: [
+      { en: "Whereas monarchs once exercised political power with few checks, modern heads of state typically operate within strict constitutional limits.",
+        vi: "Trong khi các vị vua từng thực thi quyền lực chính trị với rất ít sự kiểm soát, các nguyên thủ quốc gia hiện đại thường hoạt động trong giới hạn hiến pháp nghiêm ngặt." },
+      { en: "Strengthening independent judicial oversight is one way to prevent officials from exercising political power beyond their legal mandate.",
+        vi: "Tăng cường giám sát tư pháp độc lập là một cách để ngăn các quan chức thực thi quyền lực chính trị vượt quá thẩm quyền pháp lý của họ." },
+      { en: "I would argue that transparency, not merely legal restriction, is what ultimately prevents officials from exercising political power irresponsibly.",
+        vi: "Tôi cho rằng chính sự minh bạch, chứ không chỉ là hạn chế pháp lý, mới thực sự ngăn các quan chức thực thi quyền lực chính trị một cách thiếu trách nhiệm." }
+    ]
+  },
+  {
+    id: "st300",
+    topic: "Chính phủ & Chính sách",
+    structure: "Address a pressing concern",
+    meaning: "giải quyết một mối quan tâm cấp bách",
+    equivalents: ["tackle an urgent issue", "respond to an urgent concern"],
+    examples: [
+      { en: "Compared with long-term challenges such as climate change, public health crises tend to address a pressing concern that demands immediate governmental response.",
+        vi: "So với các thách thức dài hạn như biến đổi khí hậu, các cuộc khủng hoảng y tế công cộng thường đại diện cho một mối quan tâm cấp bách đòi hỏi phản ứng ngay lập tức từ chính phủ." },
+      { en: "Setting up a dedicated task force would be an effective way to address a pressing concern before it escalates into a full-blown crisis.",
+        vi: "Thành lập một lực lượng chuyên trách sẽ là một cách hiệu quả để giải quyết một mối quan tâm cấp bách trước khi nó leo thang thành một cuộc khủng hoảng toàn diện." },
+      { en: "In my opinion, governments that fail to address a pressing concern promptly often end up paying a far higher price later on.",
+        vi: "Theo tôi, các chính phủ không giải quyết kịp thời một mối quan tâm cấp bách thường phải trả giá đắt hơn nhiều về sau." }
+    ]
+  },
+  {
+    id: "st301",
+    topic: "Chính phủ & Chính sách",
+    structure: "Strike a delicate balance",
+    meaning: "đạt được sự cân bằng tinh tế",
+    equivalents: ["find a fine balance", "achieve a careful equilibrium"],
+    examples: [
+      { en: "Whereas authoritarian regimes prioritise order over liberty, democratic governments must strike a delicate balance between the two.",
+        vi: "Trong khi các chế độ độc tài ưu tiên trật tự hơn tự do, các chính phủ dân chủ phải đạt được sự cân bằng tinh tế giữa hai yếu tố này." },
+      { en: "Involving both economists and environmental scientists in policy design could help strike a delicate balance between growth and sustainability.",
+        vi: "Việc để cả các nhà kinh tế học và các nhà khoa học môi trường cùng tham gia thiết kế chính sách có thể giúp đạt được sự cân bằng tinh tế giữa tăng trưởng và tính bền vững." },
+      { en: "I firmly believe that any government unwilling to strike a delicate balance between competing interests risks alienating a significant portion of society.",
+        vi: "Tôi tin chắc rằng bất kỳ chính phủ nào không sẵn sàng đạt được sự cân bằng tinh tế giữa các lợi ích đối lập đều có nguy cơ khiến một bộ phận đáng kể trong xã hội xa lánh." }
+    ]
+  },
+  {
+    id: "st302",
+    topic: "Chính phủ & Chính sách",
+    structure: "Administrative machinery",
+    meaning: "bộ máy hành chính",
+    equivalents: ["bureaucratic apparatus", "administrative system"],
+    examples: [
+      { en: "Unlike private companies, which can restructure quickly, public institutions often find their administrative machinery far slower to reform.",
+        vi: "Không giống như các công ty tư nhân có thể tái cấu trúc nhanh chóng, các tổ chức công thường thấy bộ máy hành chính của mình chậm hơn nhiều trong việc cải cách." },
+      { en: "Investing in digital systems would go a long way towards modernising administrative machinery that currently relies on outdated paperwork.",
+        vi: "Đầu tư vào các hệ thống số sẽ góp phần đáng kể vào việc hiện đại hóa bộ máy hành chính hiện vẫn đang phụ thuộc vào giấy tờ lỗi thời." },
+      { en: "In my view, no amount of new legislation will succeed unless the underlying administrative machinery responsible for enforcing it is reformed first.",
+        vi: "Theo tôi, không có bộ luật mới nào có thể thành công trừ khi bộ máy hành chính chịu trách nhiệm thực thi nó được cải cách trước tiên." }
+    ]
+  },
+  {
+    id: "st303",
+    topic: "Chính phủ & Chính sách",
+    structure: "Long-term strategic planning",
+    meaning: "hoạch định chiến lược dài hạn",
+    equivalents: ["long-range planning", "forward-looking strategy"],
+    examples: [
+      { en: "Whereas short-term policies aim to win immediate public approval, long-term strategic planning focuses on outcomes that may only materialise decades later.",
+        vi: "Trong khi các chính sách ngắn hạn nhằm giành được sự ủng hộ tức thời của công chúng, hoạch định chiến lược dài hạn tập trung vào những kết quả có thể chỉ xuất hiện sau nhiều thập kỷ." },
+      { en: "Establishing cross-party commissions could help ensure that long-term strategic planning survives changes in government.",
+        vi: "Việc thành lập các ủy ban liên đảng có thể giúp đảm bảo hoạch định chiến lược dài hạn không bị gián đoạn khi chính phủ thay đổi." },
+      { en: "I would argue that a lack of long-term strategic planning, rather than a shortage of resources, is the primary reason many national projects fail.",
+        vi: "Tôi cho rằng việc thiếu hoạch định chiến lược dài hạn, chứ không phải thiếu nguồn lực, mới là nguyên nhân chính khiến nhiều dự án quốc gia thất bại." }
+    ]
+  },
+  {
+    id: "st304",
+    topic: "Chính phủ & Chính sách",
+    structure: "Garner public support",
+    meaning: "nhận được sự ủng hộ của công chúng",
+    equivalents: ["win public backing", "gain popular support"],
+    examples: [
+      { en: "Compared with policies imposed without consultation, reforms that garner public support from the outset tend to be implemented far more smoothly.",
+        vi: "So với các chính sách được áp đặt mà không tham vấn, các cải cách nhận được sự ủng hộ của công chúng ngay từ đầu thường được triển khai suôn sẻ hơn nhiều." },
+      { en: "Launching a clear public awareness campaign is one effective way for governments to garner public support before introducing controversial legislation.",
+        vi: "Phát động một chiến dịch nâng cao nhận thức công khai rõ ràng là một cách hiệu quả để các chính phủ nhận được sự ủng hộ của công chúng trước khi ban hành các đạo luật gây tranh cãi." },
+      { en: "In my opinion, a policy that fails to garner public support, however well-intentioned, is unlikely to succeed in the long run.",
+        vi: "Theo tôi, một chính sách không nhận được sự ủng hộ của công chúng, dù có mục đích tốt đến đâu, khó có thể thành công về lâu dài." }
+    ]
+  },
+  {
+    id: "st305",
+    topic: "Chính phủ & Chính sách",
+    structure: "A matter of national importance",
+    meaning: "vấn đề quan trọng quốc gia",
+    equivalents: ["an issue of national significance", "a matter of national concern"],
+    examples: [
+      { en: "Unlike local issues that concern only a single community, cybersecurity has become a matter of national importance affecting every citizen.",
+        vi: "Không giống như các vấn đề địa phương chỉ liên quan đến một cộng đồng, an ninh mạng đã trở thành một vấn đề quan trọng quốc gia ảnh hưởng đến mọi công dân." },
+      { en: "Treating food security as a matter of national importance would justify greater investment in domestic agricultural resilience.",
+        vi: "Việc xem an ninh lương thực là một vấn đề quan trọng quốc gia sẽ biện minh cho việc đầu tư lớn hơn vào khả năng phục hồi của nông nghiệp trong nước." },
+      { en: "I would argue that education, no less than defence, deserves to be treated as a matter of national importance.",
+        vi: "Tôi cho rằng giáo dục, không kém gì quốc phòng, xứng đáng được xem là một vấn đề quan trọng quốc gia." }
+    ]
+  },
+  {
+    id: "st306",
+    topic: "Công việc và Kinh doanh",
+    structure: "Climb the corporate ladder",
+    meaning: "thăng tiến trong công ty",
+    equivalents: ["rise through the ranks", "move up the career ladder"],
+    examples: [
+      { en: "Unlike previous generations, who often stayed with one company for life in order to climb the corporate ladder, many young professionals today switch employers frequently.",
+        vi: "Không giống như các thế hệ trước, những người thường gắn bó với một công ty suốt đời để thăng tiến trong công ty, nhiều người trẻ chuyên nghiệp ngày nay thường xuyên đổi việc." },
+      { en: "Offering clear promotion pathways is one way companies could help employees climb the corporate ladder without feeling the need to seek opportunities elsewhere.",
+        vi: "Cung cấp lộ trình thăng tiến rõ ràng là một cách để công ty giúp nhân viên thăng tiến trong công ty mà không cảm thấy cần tìm cơ hội ở nơi khác." },
+      { en: "In my opinion, the desire to climb the corporate ladder should never come at the expense of an employee's mental health.",
+        vi: "Theo tôi, mong muốn thăng tiến trong công ty không bao giờ nên đánh đổi bằng sức khỏe tinh thần của nhân viên." }
+    ]
+  },
+  {
+    id: "st307",
+    topic: "Công việc và Kinh doanh",
+    structure: "Meet tight deadlines",
+    meaning: "đáp ứng thời hạn gấp rút",
+    equivalents: ["meet urgent deadlines", "keep to a tight schedule"],
+    examples: [
+      { en: "Compared with industries that operate on flexible timelines, sectors such as journalism regularly require staff to meet tight deadlines under considerable pressure.",
+        vi: "So với các ngành hoạt động theo thời gian biểu linh hoạt, các lĩnh vực như báo chí thường xuyên yêu cầu nhân viên đáp ứng thời hạn gấp rút dưới áp lực đáng kể." },
+      { en: "Adopting project management software could help teams meet tight deadlines more consistently without resorting to unpaid overtime.",
+        vi: "Áp dụng phần mềm quản lý dự án có thể giúp các nhóm đáp ứng thời hạn gấp rút một cách ổn định hơn mà không phải làm thêm giờ không lương." },
+      { en: "I would argue that employers who habitually expect staff to meet tight deadlines without adequate support ultimately harm productivity in the long run.",
+        vi: "Tôi cho rằng những nhà tuyển dụng thường xuyên kỳ vọng nhân viên đáp ứng thời hạn gấp rút mà không có sự hỗ trợ thích đáng cuối cùng sẽ làm giảm năng suất về lâu dài." }
+    ]
+  },
+  {
+    id: "st308",
+    topic: "Công việc và Kinh doanh",
+    structure: "Foster innovation",
+    meaning: "nuôi dưỡng sự đổi mới / sáng tạo",
+    equivalents: ["encourage creativity", "promote innovative thinking"],
+    examples: [
+      { en: "Unlike rigid hierarchical structures, flatter organisations tend to foster innovation more effectively by giving employees greater autonomy.",
+        vi: "Không giống như các cấu trúc phân cấp cứng nhắc, các tổ chức có cấu trúc phẳng hơn thường nuôi dưỡng sự đổi mới hiệu quả hơn bằng cách trao cho nhân viên nhiều quyền tự chủ hơn." },
+      { en: "Setting aside dedicated time each week for creative projects is one practical measure companies could adopt to foster innovation among staff.",
+        vi: "Dành riêng thời gian mỗi tuần cho các dự án sáng tạo là một biện pháp thực tế mà các công ty có thể áp dụng để nuôi dưỡng sự đổi mới trong nhân viên." },
+      { en: "In my view, organisations that genuinely wish to foster innovation must be willing to tolerate occasional failure.",
+        vi: "Theo tôi, các tổ chức thực sự muốn nuôi dưỡng sự đổi mới phải sẵn sàng chấp nhận những thất bại đôi khi xảy ra." }
+    ]
+  },
+  {
+    id: "st309",
+    topic: "Công việc và Kinh doanh",
+    structure: "A steep learning curve",
+    meaning: "đường cong học tập dốc (cần học nhiều)",
+    equivalents: ["a demanding adjustment period", "a challenging learning process"],
+    examples: [
+      { en: "Compared with entry-level positions, management roles typically involve a steep learning curve that demands considerably more adaptability.",
+        vi: "So với các vị trí cấp thấp, các vai trò quản lý thường liên quan đến một đường cong học tập dốc đòi hỏi khả năng thích ứng cao hơn nhiều." },
+      { en: "Pairing new employees with experienced mentors is an effective way to ease the steep learning curve faced during the first few months on the job.",
+        vi: "Ghép nhân viên mới với những người cố vấn giàu kinh nghiệm là một cách hiệu quả để giảm bớt đường cong học tập dốc trong vài tháng đầu làm việc." },
+      { en: "I would argue that a steep learning curve, though initially daunting, ultimately produces more resilient and capable professionals.",
+        vi: "Tôi cho rằng một đường cong học tập dốc, dù ban đầu gây nản lòng, cuối cùng lại tạo ra những người chuyên nghiệp bền bỉ và có năng lực hơn." }
+    ]
+  },
+  {
+    id: "st310",
+    topic: "Công việc và Kinh doanh",
+    structure: "Streamline operations",
+    meaning: "hợp lý hóa quy trình vận hành",
+    equivalents: ["simplify processes", "improve operational efficiency"],
+    examples: [
+      { en: "Whereas large corporations often struggle with bureaucratic inertia, start-ups tend to streamline operations far more readily owing to their smaller size.",
+        vi: "Trong khi các tập đoàn lớn thường gặp khó khăn với sự trì trệ quan liêu, các công ty khởi nghiệp thường dễ dàng hợp lý hóa quy trình vận hành hơn nhiều nhờ quy mô nhỏ hơn." },
+      { en: "Automating repetitive administrative tasks is one of the most effective ways for businesses to streamline operations and reduce overhead costs.",
+        vi: "Tự động hóa các công việc hành chính lặp đi lặp lại là một trong những cách hiệu quả nhất để doanh nghiệp hợp lý hóa quy trình vận hành và giảm chi phí quản lý." },
+      { en: "In my opinion, companies that fail to streamline operations regularly risk falling behind more agile competitors.",
+        vi: "Theo tôi, các công ty không thường xuyên hợp lý hóa quy trình vận hành có nguy cơ tụt hậu so với các đối thủ linh hoạt hơn." }
+    ]
+  },
+  {
+    id: "st311",
+    topic: "Công việc và Kinh doanh",
+    structure: "Generate substantial revenue",
+    meaning: "tạo ra doanh thu đáng kể",
+    equivalents: ["produce significant income", "bring in considerable profit"],
+    examples: [
+      { en: "Compared with traditional retail, e-commerce platforms have proven far more capable of generating substantial revenue with relatively low overhead costs.",
+        vi: "So với bán lẻ truyền thống, các nền tảng thương mại điện tử đã chứng tỏ khả năng tạo ra doanh thu đáng kể tốt hơn nhiều với chi phí quản lý tương đối thấp." },
+      { en: "Diversifying income streams is a prudent strategy for businesses seeking to generate substantial revenue without relying too heavily on a single market.",
+        vi: "Đa dạng hóa các nguồn thu là một chiến lược khôn ngoan đối với các doanh nghiệp muốn tạo ra doanh thu đáng kể mà không phụ thuộc quá nhiều vào một thị trường duy nhất." },
+      { en: "I would argue that a company's ability to generate substantial revenue should never be pursued at the expense of ethical business practices.",
+        vi: "Tôi cho rằng khả năng tạo ra doanh thu đáng kể của một công ty không bao giờ nên được theo đuổi bằng cách đánh đổi các thực hành kinh doanh có đạo đức." }
+    ]
+  },
+  {
+    id: "st312",
+    topic: "Công việc và Kinh doanh",
+    structure: "Bridge the skills gap",
+    meaning: "thu hẹp khoảng cách kỹ năng",
+    equivalents: ["close the skills gap", "address skill shortages"],
+    examples: [
+      { en: "Unlike traditional university degrees, which often lack practical application, apprenticeship schemes tend to bridge the skills gap far more directly.",
+        vi: "Không giống như các bằng cấp đại học truyền thống, vốn thường thiếu tính ứng dụng thực tế, các chương trình học nghề thường thu hẹp khoảng cách kỹ năng trực tiếp hơn nhiều." },
+      { en: "Encouraging closer collaboration between universities and employers is one effective way to bridge the skills gap in emerging industries.",
+        vi: "Khuyến khích sự hợp tác chặt chẽ hơn giữa các trường đại học và nhà tuyển dụng là một cách hiệu quả để thu hẹp khoảng cách kỹ năng trong các ngành mới nổi." },
+      { en: "In my opinion, governments have a responsibility to bridge the skills gap through publicly funded retraining programmes.",
+        vi: "Theo tôi, các chính phủ có trách nhiệm thu hẹp khoảng cách kỹ năng thông qua các chương trình đào tạo lại do nhà nước tài trợ." }
+    ]
+  },
+  {
+    id: "st313",
+    topic: "Công việc và Kinh doanh",
+    structure: "A highly competitive market",
+    meaning: "thị trường cạnh tranh khốc liệt",
+    equivalents: ["a fiercely competitive market", "a cut-throat industry"],
+    examples: [
+      { en: "Compared with regulated industries, technology remains a highly competitive market where companies must innovate constantly merely to survive.",
+        vi: "So với các ngành được quản lý chặt chẽ, công nghệ vẫn là một thị trường cạnh tranh khốc liệt, nơi các công ty phải liên tục đổi mới chỉ để tồn tại." },
+      { en: "Focusing on a clearly defined niche is one strategy small businesses can adopt to survive within a highly competitive market.",
+        vi: "Tập trung vào một phân khúc thị trường được xác định rõ ràng là một chiến lược mà các doanh nghiệp nhỏ có thể áp dụng để tồn tại trong một thị trường cạnh tranh khốc liệt." },
+      { en: "I would argue that operating in a highly competitive market ultimately benefits consumers by driving down prices and improving quality.",
+        vi: "Tôi cho rằng việc hoạt động trong một thị trường cạnh tranh khốc liệt cuối cùng lại mang lại lợi ích cho người tiêu dùng bằng cách giảm giá và nâng cao chất lượng." }
+    ]
+  },
+  {
+    id: "st314",
+    topic: "Công việc và Kinh doanh",
+    structure: "Retain top talent",
+    meaning: "giữ chân nhân tài hàng đầu",
+    equivalents: ["keep skilled employees", "hold on to key staff"],
+    examples: [
+      { en: "Unlike companies that compete purely on salary, those that invest in workplace culture tend to retain top talent far more successfully.",
+        vi: "Không giống như các công ty chỉ cạnh tranh bằng lương, những công ty đầu tư vào văn hóa nơi làm việc thường giữ chân nhân tài hàng đầu thành công hơn nhiều." },
+      { en: "Offering opportunities for professional development is one of the most effective ways for organisations to retain top talent.",
+        vi: "Cung cấp cơ hội phát triển chuyên môn là một trong những cách hiệu quả nhất để các tổ chức giữ chân nhân tài hàng đầu." },
+      { en: "In my opinion, no salary alone is sufficient to retain top talent if employees feel undervalued in other respects.",
+        vi: "Theo tôi, không mức lương nào là đủ để giữ chân nhân tài hàng đầu nếu nhân viên cảm thấy không được coi trọng ở những khía cạnh khác." }
+    ]
+  },
+  {
+    id: "st315",
+    topic: "Công việc và Kinh doanh",
+    structure: "Adapt to changing circumstances",
+    meaning: "thích ứng với hoàn cảnh thay đổi",
+    equivalents: ["adjust to new conditions", "respond flexibly to change"],
+    examples: [
+      { en: "Compared with rigid organisations bound by fixed procedures, flexible businesses tend to adapt to changing circumstances far more swiftly.",
+        vi: "So với các tổ chức cứng nhắc bị ràng buộc bởi quy trình cố định, các doanh nghiệp linh hoạt thường thích ứng với hoàn cảnh thay đổi nhanh hơn nhiều." },
+      { en: "Investing in continuous staff training would help organisations adapt to changing circumstances without being caught off guard by industry disruption.",
+        vi: "Đầu tư vào đào tạo nhân viên liên tục sẽ giúp các tổ chức thích ứng với hoàn cảnh thay đổi mà không bị bất ngờ trước những xáo trộn của ngành." },
+      { en: "I firmly believe that the ability to adapt to changing circumstances matters more for long-term survival than short-term profitability.",
+        vi: "Tôi tin chắc rằng khả năng thích ứng với hoàn cảnh thay đổi quan trọng hơn đối với sự tồn tại lâu dài so với lợi nhuận ngắn hạn." }
+    ]
+  },
+  {
+    id: "st316",
+    topic: "Công việc và Kinh doanh",
+    structure: "Entrepreneurial mindset",
+    meaning: "tư duy khởi nghiệp",
+    equivalents: ["a start-up mentality", "innovative business thinking"],
+    examples: [
+      { en: "Unlike employees who prefer clearly defined roles, those with an entrepreneurial mindset tend to thrive in ambiguous, fast-changing environments.",
+        vi: "Không giống như những nhân viên thích các vai trò được xác định rõ ràng, những người có tư duy khởi nghiệp thường phát triển tốt trong môi trường mơ hồ, thay đổi nhanh." },
+      { en: "Introducing business modules into school curricula could help students develop an entrepreneurial mindset from an early age.",
+        vi: "Đưa các học phần kinh doanh vào chương trình học ở trường có thể giúp học sinh phát triển tư duy khởi nghiệp từ khi còn nhỏ." },
+      { en: "In my opinion, an entrepreneurial mindset is a skill that can be cultivated through experience, rather than an innate trait some people simply lack.",
+        vi: "Theo tôi, tư duy khởi nghiệp là một kỹ năng có thể được rèn luyện qua kinh nghiệm, chứ không phải là một đặc điểm bẩm sinh mà một số người đơn giản là không có." }
+    ]
+  },
+  {
+    id: "st317",
+    topic: "Công việc và Kinh doanh",
+    structure: "Delegate responsibilities",
+    meaning: "phân công trách nhiệm",
+    equivalents: ["assign duties", "distribute tasks"],
+    examples: [
+      { en: "Unlike micromanagers who insist on overseeing every detail, effective leaders learn to delegate responsibilities and trust their teams.",
+        vi: "Không giống như những người quản lý vi mô khăng khăng giám sát từng chi tiết, các nhà lãnh đạo hiệu quả học cách phân công trách nhiệm và tin tưởng đội ngũ của mình." },
+      { en: "Providing clear guidelines and regular check-ins is one way managers can delegate responsibilities without losing oversight of quality.",
+        vi: "Cung cấp hướng dẫn rõ ràng và các buổi kiểm tra thường xuyên là một cách để nhà quản lý phân công trách nhiệm mà vẫn giữ được sự giám sát về chất lượng." },
+      { en: "I would argue that the reluctance to delegate responsibilities is often what limits a manager's own career progression.",
+        vi: "Tôi cho rằng sự miễn cưỡng trong việc phân công trách nhiệm thường chính là điều giới hạn sự thăng tiến sự nghiệp của chính người quản lý." }
+    ]
+  },
+  {
+    id: "st318",
+    topic: "Công việc và Kinh doanh",
+    structure: "A win-win situation",
+    meaning: "tình huống đôi bên cùng có lợi",
+    equivalents: ["a mutually beneficial outcome", "a situation that benefits both parties"],
+    examples: [
+      { en: "Compared with zero-sum negotiations, collaborative agreements are far more likely to result in a win-win situation for all parties involved.",
+        vi: "So với các cuộc đàm phán được-mất, các thỏa thuận hợp tác có nhiều khả năng dẫn đến tình huống đôi bên cùng có lợi cho tất cả các bên liên quan hơn." },
+      { en: "Encouraging open dialogue between management and staff can help transform workplace disputes into a win-win situation for both sides.",
+        vi: "Khuyến khích đối thoại cởi mở giữa ban quản lý và nhân viên có thể giúp biến các tranh chấp tại nơi làm việc thành một tình huống đôi bên cùng có lợi cho cả hai phía." },
+      { en: "In my opinion, business deals framed as a win-win situation are ultimately more sustainable than those that leave one party feeling short-changed.",
+        vi: "Theo tôi, các thỏa thuận kinh doanh được xây dựng như một tình huống đôi bên cùng có lợi cuối cùng bền vững hơn so với những thỏa thuận khiến một bên cảm thấy thiệt thòi." }
+    ]
+  },
+  {
+    id: "st319",
+    topic: "Đời sống Đô thị và Nông thôn",
+    structure: "Migrate to cities",
+    meaning: "di cư lên thành phố",
+    equivalents: ["move to urban areas", "relocate to the city"],
+    examples: [
+      { en: "Unlike previous generations, who largely remained in their birthplace, today's young people increasingly migrate to cities in pursuit of better career prospects.",
+        vi: "Không giống như các thế hệ trước, những người phần lớn ở lại nơi sinh ra, giới trẻ ngày nay ngày càng di cư lên thành phố để theo đuổi cơ hội nghề nghiệp tốt hơn." },
+      { en: "Creating more employment opportunities in rural areas could reduce the number of young people who feel compelled to migrate to cities.",
+        vi: "Tạo thêm nhiều cơ hội việc làm ở các vùng nông thôn có thể giảm số lượng người trẻ cảm thấy buộc phải di cư lên thành phố." },
+      { en: "In my opinion, the tendency of young people to migrate to cities reflects a genuine lack of opportunity in rural regions, rather than a rejection of rural life itself.",
+        vi: "Theo tôi, xu hướng người trẻ di cư lên thành phố phản ánh sự thiếu cơ hội thực sự ở các vùng nông thôn, chứ không phải là sự từ chối cuộc sống nông thôn." }
+    ]
+  },
+  {
+    id: "st320",
+    topic: "Đời sống Đô thị và Nông thôn",
+    structure: "A slower pace of existence",
+    meaning: "nhịp sống chậm hơn",
+    equivalents: ["a more relaxed way of life", "a tranquil lifestyle"],
+    examples: [
+      { en: "Compared with the relentless pace of city life, rural areas offer a slower pace of existence that many find conducive to better mental health.",
+        vi: "So với nhịp sống không ngừng nghỉ ở thành phố, các vùng nông thôn mang lại nhịp sống chậm hơn mà nhiều người thấy có lợi cho sức khỏe tinh thần." },
+      { en: "Promoting remote working policies could allow more people to enjoy a slower pace of existence without sacrificing career opportunities.",
+        vi: "Thúc đẩy các chính sách làm việc từ xa có thể cho phép nhiều người tận hưởng nhịp sống chậm hơn mà không phải hy sinh cơ hội nghề nghiệp." },
+      { en: "I would argue that a slower pace of existence, while appealing, should not be romanticised, since rural areas often lack essential services.",
+        vi: "Tôi cho rằng nhịp sống chậm hơn, dù hấp dẫn, không nên được lý tưởng hóa quá mức, vì các vùng nông thôn thường thiếu các dịch vụ thiết yếu." }
+    ]
+  },
+  {
+    id: "st321",
+    topic: "Đời sống Đô thị và Nông thôn",
+    structure: "Grapple with overcrowding",
+    meaning: "vật lộn với tình trạng quá tải dân số",
+    equivalents: ["struggle with overpopulation", "cope with congestion"],
+    examples: [
+      { en: "Unlike smaller towns with ample space to expand, major metropolitan areas must constantly grapple with overcrowding as populations continue to grow.",
+        vi: "Không giống như các thị trấn nhỏ hơn có nhiều không gian để mở rộng, các khu vực đô thị lớn phải liên tục vật lộn với tình trạng quá tải dân số khi dân số tiếp tục tăng." },
+      { en: "Expanding public transport networks is one of the most effective solutions to help cities grapple with overcrowding without resorting to further urban sprawl.",
+        vi: "Mở rộng mạng lưới giao thông công cộng là một trong những giải pháp hiệu quả nhất để giúp các thành phố vật lộn với tình trạng quá tải dân số mà không phải mở rộng đô thị hơn nữa." },
+      { en: "In my opinion, cities that fail to grapple with overcrowding proactively will inevitably see a decline in residents' quality of life.",
+        vi: "Theo tôi, các thành phố không chủ động vật lộn với tình trạng quá tải dân số chắc chắn sẽ chứng kiến chất lượng sống của cư dân suy giảm." }
+    ]
+  },
+  {
+    id: "st322",
+    topic: "Đời sống Đô thị và Nông thôn",
+    structure: "Maintain a sense of community",
+    meaning: "duy trì ý thức cộng đồng",
+    equivalents: ["preserve community spirit", "foster a sense of belonging"],
+    examples: [
+      { en: "Unlike anonymous city neighbourhoods, small rural villages tend to maintain a sense of community that fosters mutual support among residents.",
+        vi: "Không giống như các khu phố thành thị vô danh, các làng quê nhỏ thường duy trì ý thức cộng đồng thúc đẩy sự hỗ trợ lẫn nhau giữa các cư dân." },
+      { en: "Organising regular neighbourhood events is one practical way urban planners could help residents maintain a sense of community.",
+        vi: "Tổ chức các sự kiện khu phố định kỳ là một cách thực tế để các nhà quy hoạch đô thị giúp cư dân duy trì ý thức cộng đồng." },
+      { en: "I would argue that modern urban design, which prioritises efficiency over interaction, often makes it harder to maintain a sense of community.",
+        vi: "Tôi cho rằng thiết kế đô thị hiện đại, vốn ưu tiên hiệu quả hơn sự tương tác, thường khiến việc duy trì ý thức cộng đồng trở nên khó khăn hơn." }
+    ]
+  },
+  {
+    id: "st323",
+    topic: "Đời sống Đô thị và Nông thôn",
+    structure: "Rural exodus",
+    meaning: "làn sóng di cư khỏi nông thôn",
+    equivalents: ["mass migration from rural areas", "the depopulation of the countryside"],
+    examples: [
+      { en: "Whereas some countries have managed to slow the pace of rural exodus through targeted investment, others continue to see their villages emptied of young workers.",
+        vi: "Trong khi một số quốc gia đã kiểm soát được tốc độ của làn sóng di cư khỏi nông thôn nhờ đầu tư có mục tiêu, những nước khác vẫn tiếp tục chứng kiến làng quê của họ vắng bóng lao động trẻ." },
+      { en: "Subsidising local businesses and improving digital connectivity are two measures that could help reverse the rural exodus in the long run.",
+        vi: "Trợ cấp cho doanh nghiệp địa phương và cải thiện kết nối số là hai biện pháp có thể giúp đảo ngược làn sóng di cư khỏi nông thôn về lâu dài." },
+      { en: "In my opinion, the rural exodus will continue unless governments address the underlying lack of economic opportunity, rather than merely offering short-term incentives.",
+        vi: "Theo tôi, làn sóng di cư khỏi nông thôn sẽ tiếp diễn trừ khi các chính phủ giải quyết tận gốc sự thiếu cơ hội kinh tế, thay vì chỉ đưa ra các ưu đãi ngắn hạn." }
+    ]
+  },
+  {
+    id: "st324",
+    topic: "Đời sống Đô thị và Nông thôn",
+    structure: "Enjoy a tranquil setting",
+    meaning: "tận hưởng khung cảnh yên bình",
+    equivalents: ["experience a peaceful environment", "enjoy serene surroundings"],
+    examples: [
+      { en: "Compared with the constant noise of urban centres, coastal villages allow residents to enjoy a tranquil setting that many city dwellers can only experience on holiday.",
+        vi: "So với sự ồn ào không ngừng của các trung tâm đô thị, các làng ven biển cho phép cư dân tận hưởng khung cảnh yên bình mà nhiều người thành thị chỉ có thể trải nghiệm khi đi nghỉ." },
+      { en: "Establishing more green spaces within cities could allow residents to enjoy a tranquil setting without having to leave urban areas altogether.",
+        vi: "Xây dựng thêm nhiều không gian xanh trong thành phố có thể cho phép cư dân tận hưởng khung cảnh yên bình mà không phải rời khỏi khu vực đô thị hoàn toàn." },
+      { en: "I would argue that the ability to enjoy a tranquil setting close to home should be considered a basic component of urban wellbeing, not a luxury.",
+        vi: "Tôi cho rằng khả năng tận hưởng khung cảnh yên bình gần nhà nên được xem là một thành phần cơ bản của phúc lợi đô thị, chứ không phải một điều xa xỉ." }
+    ]
+  },
+  {
+    id: "st325",
+    topic: "Đời sống Đô thị và Nông thôn",
+    structure: "The encroachment of cities",
+    meaning: "sự lấn chiếm của đô thị",
+    equivalents: ["urban sprawl", "the expansion of cities into rural land"],
+    examples: [
+      { en: "Unlike regions with strict zoning laws, areas lacking such regulations tend to suffer far more severely from the encroachment of cities onto agricultural land.",
+        vi: "Không giống như các khu vực có luật quy hoạch nghiêm ngặt, các khu vực thiếu quy định như vậy thường chịu ảnh hưởng nặng nề hơn nhiều từ sự lấn chiếm của đô thị vào đất nông nghiệp." },
+      { en: "Enforcing stricter zoning laws is one solution that could help curb the encroachment of cities into surrounding countryside.",
+        vi: "Thực thi luật quy hoạch nghiêm ngặt hơn là một giải pháp có thể giúp kiểm soát sự lấn chiếm của đô thị vào vùng nông thôn xung quanh." },
+      { en: "In my opinion, the encroachment of cities should be managed through careful planning rather than left entirely to market forces.",
+        vi: "Theo tôi, sự lấn chiếm của đô thị nên được quản lý thông qua quy hoạch cẩn thận thay vì để hoàn toàn cho các lực lượng thị trường quyết định." }
+    ]
+  },
+  {
+    id: "st326",
+    topic: "Đời sống Đô thị và Nông thôn",
+    structure: "Invest in local infrastructure",
+    meaning: "đầu tư vào cơ sở hạ tầng địa phương",
+    equivalents: ["improve rural facilities", "develop local amenities"],
+    examples: [
+      { en: "Compared with regions that receive little government attention, areas where authorities invest in local infrastructure tend to retain their populations far more successfully.",
+        vi: "So với các khu vực ít nhận được sự quan tâm của chính phủ, những nơi chính quyền đầu tư vào cơ sở hạ tầng địa phương thường giữ được dân số thành công hơn nhiều." },
+      { en: "Prioritising rural broadband access is one way governments could invest in local infrastructure to attract businesses away from overcrowded cities.",
+        vi: "Ưu tiên khả năng tiếp cận internet băng thông rộng ở nông thôn là một cách để chính phủ đầu tư vào cơ sở hạ tầng địa phương nhằm thu hút doanh nghiệp rời khỏi các thành phố quá tải." },
+      { en: "I would argue that failing to invest in local infrastructure is a false economy, since the long-term costs of rural decline far outweigh the initial savings.",
+        vi: "Tôi cho rằng việc không đầu tư vào cơ sở hạ tầng địa phương là một sự tiết kiệm sai lầm, vì chi phí dài hạn của sự suy thoái nông thôn vượt xa khoản tiết kiệm ban đầu." }
+    ]
+  }
 
 ];
 
@@ -31967,21 +32689,56 @@ function synRecordWordStat(word, ok){
   if(ok) s[key].correct++; else s[key].wrong++;
   try{ localStorage.setItem(SYN_WORDSTATS_KEY, JSON.stringify(s)); }catch(e){}
 }
-/* Bảng thống kê hiện/ẩn được trong tab Đồng nghĩa: tổng quan độ chính
-   xác + danh sách từ hay sai nhất, để người dùng biết cần ôn lại từ nào. */
+/* Nhãn mô tả nguồn từ vựng đang chọn (Reading/Listening/Chủ đề cụ thể...) —
+   dùng để hiện rõ trong bảng thống kê là số liệu đang tính theo nguồn nào,
+   tránh gây hiểu nhầm khi so với tổng số câu làm trên TOÀN BỘ ứng dụng. */
+function synCurrentSourceLabel(){
+  if(SYN_SOURCE==='all') return '';
+  const base = SYN_SOURCES.find(s=>s.k===SYN_SOURCE);
+  let label = base ? base.t.replace(/^\S+\s*/,'') : '';
+  if(SYN_SOURCE==='reading'){
+    if(SYN_RD_ID){
+      const r = RD().find(x=>x.id===SYN_RD_ID);
+      if(r) label += ` — Cambridge ${r.book} · Test ${r.test} · Bài ${r.psg}`;
+    } else if(SYN_RD_BOOK){
+      label += ` — Cambridge ${SYN_RD_BOOK}`;
+    }
+  }
+  if(SYN_SOURCE==='topic' && SYN_TOPIC) label += ` — ${SYN_TOPIC}`;
+  return label;
+}
+/* Thống kê ĐÚNG THEO NGUỒN đang chọn ở thanh "Nguồn từ vựng" (thay vì gộp
+   toàn bộ lịch sử mọi nguồn), tính lại trực tiếp từ số liệu theo từng từ để
+   tổng số câu hiển thị luôn khớp với danh sách "Từ hay sai" bên dưới nó —
+   đây chính là chỗ trước đây bị lệch (Tổng số câu tính TOÀN BỘ lịch sử,
+   trong khi người dùng đang xem 1 nguồn cụ thể như 1 bài đọc). */
+function synStatsForCurrentSource(){
+  const poolWords = new Set(synPoolForCurrentSource().map(e=>e.word.toLowerCase()));
+  const ws = synLoadWordStats();
+  let total=0, correct=0, wrong=0;
+  const rows = [];
+  Object.values(ws).forEach(w=>{
+    const key = (w.word||'').toLowerCase();
+    if(!poolWords.has(key)) return; // từ này không thuộc nguồn đang chọn (hoặc đã bị xoá khỏi dữ liệu) -> bỏ qua
+    const t = (w.correct||0)+(w.wrong||0);
+    total += t; correct += (w.correct||0); wrong += (w.wrong||0);
+    if(w.wrong>0) rows.push(w);
+  });
+  rows.sort((a,b)=> b.wrong-a.wrong || (b.wrong/(b.wrong+b.correct)) - (a.wrong/(a.wrong+a.correct)));
+  return { total, correct, wrong, rows };
+}
 function synStatsPanelHTML(){
-  const agg = synLoadStats();
-  const acc = agg.total>0 ? Math.round(agg.correct/agg.total*100) : 0;
-  const rows = Object.values(synLoadWordStats())
-    .filter(w=>w.wrong>0)
-    .sort((a,b)=> b.wrong-a.wrong || (b.wrong/(b.wrong+b.correct)) - (a.wrong/(a.wrong+a.correct)))
-    .slice(0,10);
+  const scoped = synStatsForCurrentSource();
+  const acc = scoped.total>0 ? Math.round(scoped.correct/scoped.total*100) : 0;
+  const label = synCurrentSourceLabel();
+  const rows = scoped.rows.slice(0,10);
   return `
     <div class="syn-stats-panel">
+      <div class="syn-stats-scope">${label ? `📌 Theo nguồn đang chọn: <b>${esc(label)}</b>` : '📌 Tính trên tất cả các nguồn'}</div>
       <div class="syn-stats-summary">
-        <span>Tổng số câu: <b>${agg.total}</b></span>
-        <span>Đúng: <b class="ok">${agg.correct}</b></span>
-        <span>Sai: <b class="bad">${agg.wrong}</b></span>
+        <span>Tổng số câu: <b>${scoped.total}</b></span>
+        <span>Đúng: <b class="ok">${scoped.correct}</b></span>
+        <span>Sai: <b class="bad">${scoped.wrong}</b></span>
         <span>Độ chính xác: <b>${acc}%</b></span>
       </div>
       ${rows.length ? `
@@ -31995,7 +32752,9 @@ function synStatsPanelHTML(){
             <span class="ssr-nums">✓${w.correct} · ✗${w.wrong} <em>(${wacc}%)</em></span>
           </div>`;
         }).join('')}
-      </div>` : `<div class="empty" style="padding:8px 0">Chưa có dữ liệu từ hay sai — làm thêm vài câu nhé.</div>`}
+      </div>
+      <button type="button" class="btn primary syn-wrong-practice-btn" id="synWrongPracticeBtn">🔥 Luyện các câu hay sai (${scoped.rows.length})</button>
+      ` : `<div class="empty" style="padding:8px 0">Chưa có dữ liệu từ hay sai trong nguồn này — làm thêm vài câu nhé.</div>`}
     </div>`;
 }
 function buildSynonymPool(){
@@ -32113,6 +32872,30 @@ function setSynRdId(id){
 }
 
 let synI=0, synScore=0, synTotal=0, synQuizPool=[];
+/* ---------- Chế độ "Luyện các câu hay sai" ----------
+   Tạm thời thay nguồn câu hỏi bằng đúng tập các từ đang bị sai nhiều nhất
+   (theo đúng nguồn đang chọn ở thanh "Nguồn từ vựng"), trong khi các lựa
+   chọn nhiễu (distractor) vẫn lấy từ TOÀN BỘ kho từ đồng nghĩa để câu hỏi
+   đa dạng, không lặp lại y hệt vài từ hay sai đó làm phương án sai. */
+let SYN_PRACTICE_WRONG_MODE = false;
+let SYN_WRONG_POOL = [];
+function synStartWrongPractice(){
+  const scoped = synStatsForCurrentSource();
+  const wrongWords = new Set(scoped.rows.filter(r=>r.wrong>0).map(r=>(r.word||'').toLowerCase()));
+  if(!wrongWords.size){ toast('Chưa có câu nào bị sai trong nguồn này.'); return; }
+  const items = buildSynonymPool().filter(e=>wrongWords.has(e.word.toLowerCase()));
+  if(items.length<4){ toast('Cần ít nhất 4 từ hay sai để bắt đầu luyện tập.'); return; }
+  SYN_PRACTICE_WRONG_MODE = true;
+  SYN_WRONG_POOL = items;
+  synQuizPool = shuffle(items); synI = 0; synScore = 0; synTotal = 0;
+  nextSynQuiz();
+}
+function synExitWrongPractice(){
+  SYN_PRACTICE_WRONG_MODE = false;
+  SYN_WRONG_POOL = [];
+  synQuizPool = []; synI = 0; synScore = 0; synTotal = 0;
+  nextSynQuiz();
+}
 /* Câu trả lời sai -> chèn lại từ đó vào hàng đợi hiện tại ở 2 vị trí kế
    tiếp (cách nhau vài câu, không liền kề ngay để khỏi gây khó chịu),
    để nó chắc chắn xuất hiện lại ÍT NHẤT 2 LẦN nữa trong những câu sắp
@@ -32223,7 +33006,7 @@ function synAnswerDetailHTML(entry, ok){
 function nextSynQuiz(){
   const root = document.getElementById('synBox');
   if(!root) return;
-  const pool = synPoolForCurrentSource();
+  const pool = SYN_PRACTICE_WRONG_MODE ? SYN_WRONG_POOL : synPoolForCurrentSource();
   if(pool.length < 4){
     root.innerHTML = `
       ${synSourceBarHTML()}
@@ -32246,7 +33029,10 @@ function nextSynQuiz(){
   // Tập hợp các "câu trả lời hợp lệ" của câu hỏi này (để tránh distractor
   // vô tình trùng với chính đáp án hoặc các đồng nghĩa khác của từ đó).
   const forbidden = new Set([correct.word.toLowerCase(), ...correct.synonyms.map(s=>s.toLowerCase())]);
-  const others = shuffle(pool.filter(p=>p.word.toLowerCase()!==correct.word.toLowerCase()));
+  // Khi đang luyện câu hay sai, pool câu hỏi rất nhỏ (chỉ vài từ hay sai) nên
+  // lấy phương án nhiễu từ TOÀN BỘ kho từ đồng nghĩa để có đủ lựa chọn đa dạng.
+  const distractorPool = SYN_PRACTICE_WRONG_MODE ? buildSynonymPool() : pool;
+  const others = shuffle(distractorPool.filter(p=>p.word.toLowerCase()!==correct.word.toLowerCase()));
   const wrongs = []; const usedLower = new Set([answerText.toLowerCase()]);
   for(const o of others){
     if(wrongs.length>=3) break;
@@ -32265,7 +33051,13 @@ function nextSynQuiz(){
   ];
 
   root.innerHTML = `
-    ${synSourceBarHTML()}
+    ${SYN_PRACTICE_WRONG_MODE ? `
+    <div class="syn-source-panel syn-wrong-banner">
+      <div class="syn-source-panel-label">🔥 Đang luyện các câu hay sai (${SYN_WRONG_POOL.length} từ)</div>
+      <div class="syn-source-bar">
+        <button class="qm-btn" id="synExitWrongBtn">← Thoát, quay lại luyện thường</button>
+      </div>
+    </div>` : synSourceBarHTML()}
     <div class="quiz-modes">
       ${MODES.map(m=>`<button class="qm-btn ${SYN_QUIZ_MODE===m.k?'active':''}" onclick="setSynMode('${m.k}')">${m.t}</button>`).join('')}
       <button class="qm-btn" id="synStatsBtn">📊 Thống kê</button>
@@ -32288,14 +33080,23 @@ function nextSynQuiz(){
       <button class="btn" id="synSkip">Câu tiếp →</button>
     </div>
     <div id="synAnswerDetail"></div>`;
-  synSourceBarWire(root);
+  if(SYN_PRACTICE_WRONG_MODE){
+    const exitBtn = document.getElementById('synExitWrongBtn');
+    if(exitBtn) exitBtn.onclick = synExitWrongPractice;
+  } else {
+    synSourceBarWire(root);
+  }
   document.getElementById('synSpeakBtn').onclick = ()=> speak(promptText);
   const statsBtn = document.getElementById('synStatsBtn');
   statsBtn.onclick = ()=>{
     const panel = document.getElementById('synStatsPanel');
     const showing = panel.style.display !== 'none';
     if(showing){ panel.style.display='none'; panel.innerHTML=''; statsBtn.classList.remove('active'); }
-    else { panel.innerHTML = synStatsPanelHTML(); panel.style.display=''; statsBtn.classList.add('active'); }
+    else {
+      panel.innerHTML = synStatsPanelHTML(); panel.style.display=''; statsBtn.classList.add('active');
+      const wrongBtn = document.getElementById('synWrongPracticeBtn');
+      if(wrongBtn) wrongBtn.onclick = synStartWrongPractice;
+    }
   };
   const vnToggle = document.getElementById('synVnToggle');
   if(vnToggle){
@@ -33334,7 +34135,9 @@ function nextLearnCard(){
 
 /* Nhãn chủ đề dùng chung cho Học ngay / Trắc nghiệm / Gõ từ / Đồng nghĩa.
    Với từ lấy từ bài đọc, hiện thêm "Cambridge X - Test Y - Bài Z" trước
-   tên bài, để biết chính xác từ này thuộc đề nào. */
+   tên bài, để biết chính xác từ này thuộc đề nào. Nhãn này cũng có thể
+   bấm vào để nhảy thẳng sang đúng bài đọc (Passage) tương ứng trong tab
+   Reading. */
 function topicTagHTML(v){
   if(!v) return '';
   const isCamTest = CAM_TEST_TOPIC_RE.test(v.topic||'');
@@ -33343,7 +34146,22 @@ function topicTagHTML(v){
   const camLabel = v._fromReading ? readingCamLabelOf(v) : '';
   const camPart = camLabel
     ? `<span class="lq-topic-cam">${esc(camLabel)}</span><span class="lq-topic-sep">·</span>` : '';
-  return `<div class="lq-topic-tag${isCamTest?' is-camtest':''}" title="${isCamTest?'Đề Listening của từ này':'Chủ đề của từ này'}">${isCamTest?'🎧':'🏷️'} ${camPart}${esc(label)}</div>`;
+  const clickable = !!(v._fromReading && v._rid);
+  return `<div class="lq-topic-tag${isCamTest?' is-camtest':''}${clickable?' is-clickable':''}"` +
+    `${clickable?` role="button" tabindex="0" onclick="goToReadingPassage('${esc(v._rid)}')" onkeydown="if(event.key==='Enter')goToReadingPassage('${esc(v._rid)}')"`:''}` +
+    ` title="${clickable?'Bấm để mở bài đọc này trong Reading':(isCamTest?'Đề Listening của từ này':'Chủ đề của từ này')}">` +
+    `${isCamTest?'🎧':'🏷️'} ${camPart}${esc(label)}</div>`;
+}
+/* Chuyển sang tab Reading và mở đúng bài đọc (passage) chứa từ vựng đang học. */
+function goToReadingPassage(rid){
+  if(!rid) return;
+  const tabBtn = document.querySelector('.tab-btn[data-mode="reading"]');
+  if(!tabBtn) return;
+  if(!tabBtn.classList.contains('active')) tabBtn.click();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(!_rdInit){ renderReadingLib(); _rdInit = true; }
+    openReading(rid);
+  }));
 }
 
 /* Khung chung (thanh tiến độ + topbar) cho mọi bước */
@@ -38150,18 +38968,18 @@ function rdSelToNotebook(){
 const NOTEBOOK_KEY = 'vocab_notebook_v1';
 function loadNotebook(){ try{ return JSON.parse(localStorage.getItem(NOTEBOOK_KEY)) || {}; }catch(e){ return {}; } }
 function saveNotebook(nb){ try{ localStorage.setItem(NOTEBOOK_KEY, JSON.stringify(nb)); }catch(e){} }
-function notebookAddLine(text, note, source, readingId, hidden, manual, pinnedDefault){
-  if(!text) return;
+function notebookAddLine(text, note, source, readingId, hidden, manual, pinnedDefault, noteRich){
+  if(!text && !note) return;
   const nb = loadNotebook();
   const day = todayKey();
   if(!nb[day]) nb[day] = [];
   nb[day].unshift({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
     time: new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}),
-    text, note: note||'', noteRich:false, source: source||'', readingId: readingId||'', hidden: !!hidden, manual: !!manual,
+    text, note: note||'', noteRich: !!noteRich, source: source||'', readingId: readingId||'', hidden: !!hidden, manual: !!manual,
     /* Bản sao độc lập của ghi chú, dùng riêng cho bong bóng trong bài đọc — sửa ở Sổ ghi chú (note)
        hay sửa trực tiếp trong bài đọc (pnote) đều không ảnh hưởng lẫn nhau, chỉ đường link quay lại bài là dùng chung. */
-    pnote: note||'', pnoteRich:false,
+    pnote: note||'', pnoteRich: !!noteRich,
     pinned: !!pinnedDefault, color: pinnedDefault ? NB_COLORS[0] : '', noteLinked: true, pinPos: null,
     /* pinOnly: mục được ghim ngay từ lúc tạo (vd. bấm "Tạo ghi chú mới") sẽ chỉ hiện trong
        Bảng ghim, không hiện lại trong danh sách theo ngày bên dưới, cho tới khi người dùng tự bỏ ghim. */
@@ -38169,6 +38987,13 @@ function notebookAddLine(text, note, source, readingId, hidden, manual, pinnedDe
   });
   saveNotebook(nb);
   renderNotebook();
+}
+/* Tự động giãn chiều cao ô textarea theo nội dung đang gõ (kể cả khi xuống dòng do wrap
+   hay bấm Enter), tránh bị giới hạn chiều cao cố định gây khó nhìn khi nhập nhiều chữ. */
+function nbAutoGrowTextarea(el){
+  if(!el) return;
+  el.style.height = 'auto';
+  el.style.height = (el.scrollHeight + 2) + 'px';
 }
 /* Tạo ghi chú riêng, không lấy từ bài đọc */
 function notebookToggleNewForm(show){
@@ -38180,7 +39005,8 @@ function notebookToggleNewForm(show){
     const ta = document.getElementById('notebookNewTitle');
     const ca = document.getElementById('notebookNewContent');
     if(ta) ta.value='';
-    if(ca) ca.value='';
+    if(ca) ca.innerHTML='';
+    if(ta) ta.style.height = '';
     if(ta) setTimeout(()=>ta.focus(), 30);
   }
 }
@@ -38188,9 +39014,13 @@ function notebookSaveManual(){
   const ta = document.getElementById('notebookNewTitle');
   const ca = document.getElementById('notebookNewContent');
   const title = ta ? ta.value.trim() : '';
-  const content = ca ? ca.value.trim() : '';
-  if(!title && !content){ toast('Hãy nhập tiêu đề hoặc nội dung ghi chú'); return; }
-  notebookAddLine(title || content, content, 'Ghi chú tự tạo', '', false, true, true);
+  const contentText = ca ? ca.textContent.trim() : '';
+  const contentHtml = (ca && contentText) ? nbSanitizeHtml(ca.innerHTML.trim()) : '';
+  if(!title && !contentText){ toast('Hãy nhập tiêu đề hoặc nội dung ghi chú'); return; }
+  notebookAddLine(title, contentHtml, 'Ghi chú tự tạo', '', false, true, true, true);
+  /* Ghi chú mới luôn được ghim ngay từ đầu, nên tự sắp xếp lại Bảng ghim để nó hiện ra
+     ngay ở đầu, không bị các thẻ ghim khác che/chồng lên. */
+  nbPinAutoFit();
   toast('📌 Đã tạo ghi chú mới (đã ghim)');
   notebookToggleNewForm(false);
 }
@@ -38395,6 +39225,23 @@ function nbPinFitCard(day, id){
   }
   nbRecalcPinGridHeight(grid);
   if(typeof toast === 'function') toast('📏 Đã hiện đủ nội dung, không còn bị che chữ');
+}
+/* ---------- Tự fit toàn bộ ghi chú trong danh sách theo ngày (nút ở đầu danh sách) ---------- */
+/* Bỏ kích thước cố định (đã kéo tay trước đó, nếu có) của ô nội dung từng ghi chú, để nó quay về
+   mặc định: rộng hết chiều ngang của thẻ (100%) và cao tự nhiên vừa khít theo nội dung, không bị
+   giới hạn/che chữ. */
+function nbFitAllListNotes(){
+  const nb = loadNotebook();
+  let changed = false;
+  Object.keys(nb).forEach(function(day){
+    (nb[day]||[]).forEach(function(item){
+      if(item.hidden || item.pinOnly) return; /* chỉ áp dụng cho các ghi chú đang hiện trong danh sách theo ngày */
+      if(item.noteSize){ item.noteSize = null; changed = true; }
+    });
+  });
+  if(changed) saveNotebook(nb);
+  renderNotebook();
+  if(typeof toast === 'function') toast('📏 Đã vừa khít toàn bộ ghi chú (hết chiều ngang, đủ chiều cao)');
 }
 /* ---------- Kéo-thả tự do các ghi chú đã ghim (tránh chồng lên nhau) ---------- */
 /* Tự động sắp xếp lại toàn bộ thẻ ghim thành dạng lưới gọn gàng, vừa khít chiều rộng
@@ -38604,12 +39451,13 @@ function nbAttachResizeHandlers(root){
 }
 /* HTML của ô ghi chú — LUÔN ở dạng sửa trực tiếp (contenteditable), có sẵn thanh định dạng, tự lưu.
    ctx phân biệt 2 nơi hiển thị cùng 1 ghi chú (thẻ ghim 'pin' / dòng trong ngày 'line') để không trùng id DOM. */
-function nbNoteBoxHtml(day, item, ctx, compact){
+function nbNoteBoxHtml(day, item, ctx, compact, editing){
   const noteHtml = item.note ? (item.noteRich ? item.note : rdEsc(item.note)) : '';
   const domId = `nbNote_${ctx}_${item.id}`;
+  const showToolbar = editing && !compact;
   return `
     <div class="nb-note-wrap">
-      ${compact ? '' : `
+      ${showToolbar ? `
       <div class="nb-fmt-toolbar">
         <button type="button" title="Hoàn tác" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','undo')">↩️</button>
         <button type="button" title="Làm lại" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','redo')">↪️</button>
@@ -38629,17 +39477,24 @@ function nbNoteBoxHtml(day, item, ctx, compact){
         <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyCenter')">≡</button>
         <button type="button" title="Căn phải" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyRight')">⯈</button>
         <span class="nb-fmt-sep"></span>
-        <input type="color" class="nb-fmt-color" title="Màu chữ" value="#e11d48" onmousedown="event.preventDefault()" oninput="nbFmt('${domId}','foreColor',this.value)">
+        ${nbFmtSwatchesHtml(domId,'nbFmt')}
         <span class="nb-fmt-sep"></span>
         <button type="button" class="${item.noteLinked?'on':''}" title="${item.noteLinked?'Đang liên kết với ghi chú trong bài đọc — bấm để huỷ':'Liên kết 2 chiều với ghi chú trong bài đọc'}"
           onmousedown="event.preventDefault()" onclick="nbToggleLink('${day}','${item.id}')">🔗</button>
-      </div>`}
-      <div class="nb-note-editable nb-note-editable-note" contenteditable="true" id="${domId}" data-day="${day}" data-id="${item.id}"
+      </div>` : ''}
+      <div class="nb-note-editable nb-note-editable-note${editing?'':' nb-note-readonly'}" contenteditable="${editing?'true':'false'}" id="${domId}" data-day="${day}" data-id="${item.id}"
         style="${nbSizeStyleAttr(item.noteSize)}"
         data-placeholder="📝 Bấm vào đây để nhập ghi chú…" oninput="nbNoteAutosave(this)" onblur="nbNoteAutosave(this)">${noteHtml}</div>
     </div>`;
 }
 /* ---------- Ghim & màu sắc ---------- */
+/* Bảng màu chữ cố định dùng cho các thanh công cụ định dạng ghi chú (thay cho color-picker tự chọn) */
+const NB_FMT_TEXT_COLORS = ['#1f2937','#dc2626','#ea580c','#16a34a','#2563eb','#7c3aed','#db2777'];
+function nbFmtSwatchesHtml(domId, fn){
+  return `<span class="nb-fmt-swatches">${NB_FMT_TEXT_COLORS.map(c=>
+    `<button type="button" class="nb-fmt-swatch" style="background:${c}" title="${c}" onmousedown="event.preventDefault()" onclick="${fn}('${domId}','foreColor','${c}')"></button>`
+  ).join('')}</span>`;
+}
 const NB_COLORS = ['#fff4b8','#ffd6d6','#d7f5db','#d6e9ff','#efd9ff','#ffe3c2','#e4e4e4'];
 function notebookTogglePin(day, id){
   const nb = loadNotebook();
@@ -38770,6 +39625,7 @@ function renderNotebook(){
             ${allDays.map(d=>`<option value="${d}"${_nbDateFilter===d?' selected':''}>${notebookDayLabel(d)}</option>`).join('')}
           </select>
           <button type="button" class="nb-compact-toggle${_nbListCompact?' on':''}" title="${_nbListCompact?'Hiện đầy đủ (trích dẫn, thanh công cụ, thông tin ngày/giờ)':'Chỉ hiện nội dung ghi chú, ẩn trích dẫn, thanh công cụ và thông tin ngày/giờ'}" onclick="nbToggleCompact('list')">${_nbListCompact?'👁️':'🙈'} Chỉ hiện nội dung</button>
+          <button type="button" class="nb-compact-toggle" title="Vừa khít toàn bộ ghi chú trong danh sách: rộng hết chiều ngang, cao vừa đủ nội dung" onclick="nbFitAllListNotes()">📏 Vừa khít nội dung</button>
         </div>`;
     }
   }
@@ -38791,17 +39647,16 @@ function renderNotebook(){
               <div class="nb-pin-card" data-day="${day}" data-id="${item.id}" style="background:${item.color||NB_COLORS[0]};left:${pos.x}px;top:${pos.y}px;${nbSizeStyleAttr(item.pinSize)}">
                 <div class="nb-pin-drag" title="Kéo để di chuyển" onpointerdown="nbPinDragStart(event,'${day}','${item.id}')">⠿⠿</div>
                 <div class="nb-pin-actions">
-                  <button title="Vừa khít nội dung (hiện đủ chữ, không bị che/cắt)" onclick="nbPinFitCard('${day}','${item.id}')">📏</button>
                   ${editing ? '' : `<button title="Sửa" onclick="notebookStartEdit('${day}','${item.id}')">✏️</button>`}
                   <button title="Bỏ ghim" onclick="notebookTogglePin('${day}','${item.id}')">📌</button>
                   <button title="Xoá" onclick="notebookDeleteLine('${day}','${item.id}')">✕</button>
                 </div>
-                ${editing ? nbEditFormHtml(day, item) : (_nbPinCompact ? '' : `
+                ${editing ? nbEditFormHtml(day, item) : (_nbPinCompact || !item.text ? '' : `
                   ${item.manual
                     ? `<div class="nb-pin-text nb-manual">🖊️ ${rdEsc(item.text)}</div>`
                     : `<div class="nb-pin-text">"${rdEsc(item.text)}"</div>`}
                 `)}
-                ${nbNoteBoxHtml(day, item, 'pin', _nbPinCompact && !editing)}
+                ${nbNoteBoxHtml(day, item, 'pin', _nbPinCompact, editing)}
                 ${(editing || _nbPinCompact) ? '' : `
                   <div class="nb-pin-meta">${notebookDayLabel(day)}${item.time?' · '+item.time:''}${nbSourceHtml(item)}</div>
                   ${nbColorDotsHtml(day, item)}
@@ -38831,6 +39686,14 @@ function renderNotebook(){
       const gridEl = pinEl.querySelector('.nb-pin-grid');
       nbRecalcPinGridHeight(gridEl);
       nbWatchPinGridHeight(gridEl);
+      /* Nếu ghi chú đang sửa nằm trong Bảng ghim, tự sắp xếp lại để thẻ đó có thể giãn ra
+         hiển thị đủ nội dung đang sửa mà không bị các thẻ khác che lên, đồng thời đẩy
+         các thẻ còn lại xuống dưới cho gọn gàng, không chồng lấp. */
+      if(_nbEditKey){
+        const sep = _nbEditKey.indexOf('|');
+        const edDay = _nbEditKey.slice(0, sep), edId = _nbEditKey.slice(sep+1);
+        if(pinnedFlat.some(function(x){ return x.day===edDay && x.item.id===edId; })) nbPinAutoFit();
+      }
     }
   }
 
@@ -38854,12 +39717,12 @@ function renderNotebook(){
           return `
           <div class="nb-line">
             <div class="nb-line-main">
-              ${editing ? nbEditFormHtml(day, item) : (_nbListCompact ? '' : `
+              ${editing ? nbEditFormHtml(day, item) : (_nbListCompact || !item.text ? '' : `
                 ${item.manual
                   ? `<div class="nb-quote nb-manual">🖊️ ${rdEsc(item.text)}</div>`
                   : `<div class="nb-quote">"${rdEsc(item.text)}"</div>`}
               `)}
-              ${nbNoteBoxHtml(day, item, 'line', _nbListCompact && !editing)}
+              ${nbNoteBoxHtml(day, item, 'line', _nbListCompact, editing)}
               ${(editing || _nbListCompact) ? '' : `
                 <div class="nb-meta">${item.pinned?'<span class="nb-pin-badge">📌</span> ':''}${item.time||''}${nbSourceHtml(item)}</div>
               `}
@@ -38999,7 +39862,7 @@ function rdNoteBodyHtml(item){
         <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyCenter')">≡</button>
         <button type="button" title="Căn phải" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyRight')">⯈</button>
         <span class="nb-fmt-sep"></span>
-        <input type="color" class="nb-fmt-color" title="Màu chữ" value="#e11d48" onmousedown="event.preventDefault()" oninput="rdNoteFmt('${domId}','foreColor',this.value)">
+        ${nbFmtSwatchesHtml(domId,'rdNoteFmt')}
         <span class="nb-fmt-sep"></span>
         <button type="button" class="${item.noteLinked?'on':''}" title="${item.noteLinked?'Đang liên kết với Sổ ghi chú — bấm để huỷ':'Liên kết 2 chiều với Sổ ghi chú'}"
           onmousedown="event.preventDefault()" onclick="nbToggleLink('${item.day}','${item.id}')">🔗</button>
@@ -39194,13 +40057,18 @@ function rdPractice(id){
 
 /* Tự tính chiều cao header + thanh tab để thanh tìm kiếm nhanh trong bài đọc
    dính (sticky) đúng ngay bên dưới, không bị header/nav che mất — tính lại
-   mỗi khi kích thước 2 thanh đó đổi (đổi cỡ chữ, xoay màn hình, resize...). */
+   mỗi khi kích thước 2 thanh đó đổi (đổi cỡ chữ, xoay màn hình, resize...).
+   Đồng thời tính luôn vị trí dính cho thanh công cụ nhỏ (gạch chân/bản dịch/
+   edit/ghi chú) để nó luôn nằm sát ngay dưới thanh tìm kiếm khi cuộn xuống. */
 (function(){
   const header = document.querySelector('header');
   const nav = document.querySelector('nav.tabs');
+  const qsWrap = document.getElementById('rdQuickSearchWrap');
   function updateRdQsTop(){
     const h = (header?.offsetHeight||0) + (nav?.offsetHeight||0);
     if(h) document.documentElement.style.setProperty('--rd-qs-top', h+'px');
+    const qsH = qsWrap ? qsWrap.offsetHeight : 0;
+    if(h) document.documentElement.style.setProperty('--rd-tools-top', (h+qsH)+'px');
   }
   updateRdQsTop();
   window.addEventListener('resize', updateRdQsTop);
@@ -39208,6 +40076,7 @@ function rdPractice(id){
     const ro = new ResizeObserver(updateRdQsTop);
     if(header) ro.observe(header);
     if(nav) ro.observe(nav);
+    if(qsWrap) ro.observe(qsWrap);
   }
 })();
 
