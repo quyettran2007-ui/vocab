@@ -404,7 +404,7 @@ html[data-bg="plain"] body::before{
   --cc8:#fb7185; --cc9:#c084fc;
 }
 .vocab-card[data-color]{
-  border:1px solid var(--line); position:relative; overflow:hidden;
+  border:2px solid var(--line); position:relative; overflow:hidden;
   box-shadow:var(--shadow-sm); transition:.18s;
 }
 .vocab-card[data-color]:hover{ box-shadow:var(--shadow); transform:translateY(-2px); }
@@ -1844,29 +1844,34 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .te-macro-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr)); gap:11px; }
 .te-macro-card{
   border:2px solid var(--tp-c,var(--line-strong));
-  border-radius:14px; background:color-mix(in srgb,var(--tp-c,var(--line)) 28%,var(--card));
+  border-radius:14px; background:var(--card);
   overflow:hidden; transition:box-shadow .15s, transform .15s;
 }
-[data-theme="dark"] .te-macro-card{ background:color-mix(in srgb,var(--tp-c,var(--line)) 34%,var(--card)); }
+[data-theme="dark"] .te-macro-card{ background:var(--card); }
 .te-macro-card[data-color="0"]{ --tp-c:var(--cc0); } .te-macro-card[data-color="1"]{ --tp-c:var(--cc1); }
 .te-macro-card[data-color="2"]{ --tp-c:var(--cc2); } .te-macro-card[data-color="3"]{ --tp-c:var(--cc3); }
 .te-macro-card[data-color="4"]{ --tp-c:var(--cc4); } .te-macro-card[data-color="5"]{ --tp-c:var(--cc5); }
 .te-macro-card[data-color="6"]{ --tp-c:var(--cc6); } .te-macro-card[data-color="7"]{ --tp-c:var(--cc7); }
 .te-macro-card[data-color="8"]{ --tp-c:var(--cc8); } .te-macro-card[data-color="9"]{ --tp-c:var(--cc9); }
-.te-macro-card:hover{ box-shadow:var(--shadow-sm); }
-/* Nền chủ đề lớn dùng chung 1 phong cách gradient ấm — giống hệt nút
-   "❔ Hướng dẫn học" ở dashboard (xem .hero-guide-btn) — thay vì mỗi chủ
-   đề 1 màu nhạt như trước, để nhất quán và nổi bật hơn. */
+.te-macro-card:hover{ box-shadow:var(--shadow-sm); transform:translateY(-2px); }
+/* Tiêu đề mỗi thẻ chủ đề: nền gradient theo ĐÚNG màu riêng của thẻ đó
+   (biến --tp-c lấy từ data-color, mỗi chủ đề 1 màu trong bảng --cc0..--cc9
+   — bảng này giờ chỉ khai báo DUY NHẤT 1 lần ở đầu file nên không còn bị
+   đè lẫn lộn khiến mọi thẻ cùng ngả về 1 màu cam mặc định như trước).
+   Có dòng nền đặc (không dùng color-mix) đứng trước làm dự phòng — nếu
+   trình duyệt không hỗ trợ color-mix()/gradient thì vẫn còn màu nền đặc
+   đúng của thẻ đó, không bao giờ trắng trơn mất chữ. */
 .te-macro-head{
   width:100%; display:flex; align-items:center; gap:8px; cursor:pointer;
-  background:var(--ember-grad); border:none; padding:12px 13px 10px; text-align:left; font:inherit; color:#fff;
-  box-shadow:0 6px 16px -6px rgba(194,65,12,.5);
+  background:var(--tp-c,var(--accent));
+  background:linear-gradient(135deg,var(--tp-c,var(--accent)),color-mix(in srgb,var(--tp-c,var(--accent)) 62%,black));
+  border:none; padding:12px 13px 10px; text-align:left; font:inherit; color:#fff;
 }
 .te-macro-ico{ font-size:18px; flex-shrink:0; }
 .te-macro-name{ font-size:13px; font-weight:800; line-height:1.3; flex:1; color:#fff; }
 .te-macro-count{
   font-size:11px; font-weight:800; color:#fff; white-space:nowrap;
-  background:rgba(255,255,255,.26); border-radius:99px; padding:3px 9px;
+  background:rgba(255,255,255,.28); border-radius:99px; padding:3px 9px;
 }
 .te-macro-pos{ display:flex; flex-wrap:wrap; gap:4px; padding:0 13px 8px; margin-top:-4px; }
 .pos-badge{
@@ -1879,7 +1884,7 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   color:var(--tp-c,var(--accent)); background:color-mix(in srgb,var(--tp-c,var(--accent)) 16%,transparent);
   border-radius:5px; padding:0 4px; line-height:1.6;
 }
-.te-macro-progress{ padding:0 13px 10px; }
+.te-macro-progress{ padding:10px 13px 10px; }
 .te-macro-expand{
   width:100%; display:flex; align-items:center; justify-content:space-between; cursor:pointer;
   font-size:11.5px; font-weight:700; color:var(--muted); background:transparent;
@@ -1890,11 +1895,12 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .te-macro-expand.open .te-chev{ transform:rotate(180deg); }
 .te-sub-chips{ flex-wrap:wrap; gap:6px; padding:2px 13px 12px; }
 .te-sub-chip{
-  display:inline-flex; align-items:center; gap:5px; cursor:pointer;
+  display:inline-flex; align-items:center; gap:5px; cursor:pointer; max-width:230px;
   font-size:11.5px; font-weight:600; color:var(--ink-soft);
   background:color-mix(in srgb,var(--tp-c,var(--line)) 8%,var(--card)); border:1px solid var(--line); border-radius:9px; padding:5px 9px;
   transition:.15s;
 }
+.te-sub-chip > span:first-child, .te-sub-chip-label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .te-sub-chip:hover{ border-color:var(--tp-c,var(--accent)); color:var(--tp-c,var(--accent)); }
 .te-sub-chip em{ font-style:normal; font-weight:800; color:var(--muted); }
 .te-sub-chip:hover em{ color:inherit; }
@@ -1914,7 +1920,7 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 [data-theme="dark"] .lwc-group-head{ background:color-mix(in srgb,var(--tc,var(--accent)) 20%,var(--card-sunken)); }
 .lwc-group-head:hover{ border-color:var(--tc,var(--accent)); box-shadow:var(--shadow-xs); }
 .lwc-gico{ font-size:15px; flex-shrink:0; }
-.lwc-gname{ font-size:13.5px; font-weight:800; color:var(--ink); }
+.lwc-gname{ font-size:13.5px; font-weight:800; color:var(--ink); max-width:320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .lwc-gmacro{ font-size:10.5px; font-weight:700; color:var(--muted); }
 .lwc-gcount{
   margin-left:auto; font-size:11px; font-weight:800; color:var(--tc,var(--accent));
@@ -1922,9 +1928,8 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 }
 .lwc-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:9px; }
 .lwc-tile{
-  position:relative; border:1px solid color-mix(in srgb,var(--tc,var(--line-strong)) 22%,var(--line)); border-radius:12px; padding:10px 11px 9px;
+  position:relative; border:2px solid var(--line-strong); border-radius:12px; padding:10px 11px 9px;
   background:color-mix(in srgb,var(--tc,var(--line)) 8%,var(--card)); box-shadow:var(--shadow-xs); transition:.15s; cursor:pointer;
-  border-left:3px solid var(--tc,var(--line-strong));
 }
 [data-theme="dark"] .lwc-tile{ background:color-mix(in srgb,var(--tc,var(--line)) 15%,var(--card)); }
 .lwc-tile:hover{ box-shadow:var(--shadow-sm); transform:translateY(-2px); border-color:var(--tc,var(--accent)); }
@@ -4511,20 +4516,18 @@ nav.tabs{
 #dashRoot > .progress-card-wrap,
 #dashRoot > .topic-section{ margin:0 !important; }
 
-/* ---- bảng màu định danh chủ đề: trầm, hài hoà, không chói ---- */
+/* ---- các biến khác cho dashboard (màu --cc0..--cc9 dùng chung 1 bảng
+   duy nhất đã khai báo ở đầu file, KHÔNG định nghĩa lại ở đây nữa — trước
+   đây có 2 khối :root cùng khai báo --cc0..--cc9 với 2 bảng màu khác nhau,
+   khối sau đè khối trước khiến màu chủ đề đổi khác ở nơi này với nơi khác,
+   không đồng nhất) ---- */
 :root{
-  --cc0:#0d7d6b; --cc1:#2f6fb0; --cc2:#b3791f; --cc3:#b5486a;
-  --cc4:#6d5bad; --cc5:#57708a; --cc6:#b1552f; --cc7:#1f8fa3;
-  --cc8:#4f7a3c; --cc9:#8a4a8f;
   --dash-card-bg: var(--card);
   --dash-border: 1px solid var(--line-strong);
   --pf-grad-1:#0a5a4d; --pf-grad-2:#12897a;
 }
 [data-theme="dark"]{
   --pf-grad-1:#0e8f7a; --pf-grad-2:#4fd8bd;
-  --cc0:#4fd8bd; --cc1:#7ab8e8; --cc2:#e0ac4d; --cc3:#e08aa8;
-  --cc4:#ac9de0; --cc5:#9db3c7; --cc6:#e0916c; --cc7:#6fd4e3;
-  --cc8:#93c47a; --cc9:#cd93d1;
 }
 
 /* ---- nền trang ---- */
@@ -32351,6 +32354,20 @@ function topicColorIndex(topic){
   return TOPIC_COLORS[topic];
 }
 
+/* Cắt gọn tên chủ đề con quá dài (đặc biệt tên bài đọc Reading) —
+   chỉ giữ lại một số từ đầu rồi thêm "…", để các ô/chip cùng cấp luôn
+   đều nhau, không có ô dài loằng ngoằng phá vỡ bố cục lưới. Cắt tại
+   ranh giới khoảng trắng gần nhất (không cắt giữa từ) khi có thể. */
+function truncateTopicLabel(text, maxLen){
+  text = String(text||'');
+  maxLen = maxLen || 26;
+  if(text.length <= maxLen) return text;
+  let cut = text.slice(0, maxLen);
+  const lastSpace = cut.lastIndexOf(' ');
+  if(lastSpace > Math.floor(maxLen*0.4)) cut = cut.slice(0, lastSpace);
+  return cut.trim() + '…';
+}
+
 /* ---------- Voice engine ---------- */
 let VOICES = [];
 let chosenVoiceURI = null;
@@ -32964,15 +32981,16 @@ function computeTopicCatalog(){
       subs = g.subs.filter(s=>used.has(s)).map(s=>{
         const words = VOCAB.filter(v=>v._topic===s);
         const r = byTitle[s];
-        const label = r ? `C${r.book||'?'}-T${r.test||'?'}-P${r.psg||'?'}-${s}` : s;
-        return { name:label, count:words.length, words, go:s, posCounts:posBreakdown(words), _b:r?+r.book||0:0, _t:r?+r.test||0:0, _p:r?+r.psg||0:0 };
+        const prefix = r ? `C${r.book||'?'}-T${r.test||'?'}-P${r.psg||'?'}-` : '';
+        const label = prefix + truncateTopicLabel(s, 24);
+        return { name:label, fullName:(prefix+s), count:words.length, words, go:s, posCounts:posBreakdown(words), _b:r?+r.book||0:0, _t:r?+r.test||0:0, _p:r?+r.psg||0:0 };
       }).filter(s=>s.count>0)
         .sort((a,b)=> a._b-b._b || a._t-b._t || a._p-b._p);
       extraOwnWords = VOCAB.filter(v=>v._topic===g.key);
     } else {
       subs = g.subs.filter(s=>used.has(s)).map(s=>{
         const words = VOCAB.filter(v=>v._topic===s);
-        return { name:s, count:words.length, words, go:s, posCounts:posBreakdown(words) };
+        return { name:truncateTopicLabel(s, 26), fullName:s, count:words.length, words, go:s, posCounts:posBreakdown(words) };
       }).filter(s=>s.count>0);
       /* Các từ verb/adj/adv/cụm từ gắn thẳng vào chủ đề lớn (không thuộc
          chủ đề nhỏ danh từ nào) trước đây chỉ cộng vào ownCount chứ không
@@ -33080,6 +33098,39 @@ function teGoGroupSub(kind, go){
   else if(kind==='new') goNewDate(go);
   else teGoTopic(go);
 }
+let _teLastSig = null;
+/* Lấy màu HEX thật của --cc0..--cc9 bằng JS (đọc giá trị ĐÃ TÍNH TOÁN từ
+   CSS, tôn trọng theme sáng/tối hiện tại) rồi TÔ TRỰC TIẾP bằng inline
+   style ở dưới — thay vì chỉ đặt "--tp-c:var(--cc..)" trong CSS rồi hy
+   vọng chuỗi biến đó được tính đúng. Cách cũ từng bị 1 khối :root trùng
+   lặp ghi đè (đã dọn) nhưng để chắc chắn không tái diễn (do cache trình
+   duyệt cũ, do khung xem không áp hết CSS, v.v.) — tô màu thẳng vào style
+   là cách chắc ăn nhất, luôn ra đúng màu bất kể CSS bên ngoài thế nào. */
+let _teColorCache = null;
+function teColorHex(idx){
+  if(!_teColorCache){
+    _teColorCache = [];
+    const cs = getComputedStyle(document.documentElement);
+    for(let i=0;i<10;i++){
+      const v = cs.getPropertyValue('--cc'+i).trim();
+      _teColorCache.push(v || ['#7c3aed','#059669','#d97706','#db2777','#0d9488','#4f46e5','#ea580c','#0284c7','#e11d48','#9333ea'][i]);
+    }
+  }
+  return _teColorCache[((idx%10)+10)%10];
+}
+function teHexToRgb(hex){
+  hex = String(hex||'').trim();
+  if(hex[0]==='#') hex = hex.slice(1);
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const n = parseInt(hex,16);
+  if(hex.length!==6 || isNaN(n)) return {r:100,g:100,b:110};
+  return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+}
+/* factor<1 -> pha đen (làm tối), dùng cho vế 2 của gradient tiêu đề */
+function teShade(hex, factor){
+  const c = teHexToRgb(hex);
+  return `rgb(${Math.round(c.r*factor)},${Math.round(c.g*factor)},${Math.round(c.b*factor)})`;
+}
 function renderTopicExplorer(){
   const pillsEl = document.getElementById('tePills');
   const gridEl  = document.getElementById('teMacroGrid');
@@ -33087,19 +33138,27 @@ function renderTopicExplorer(){
   if(!pillsEl || !gridEl) return;
   const cat = computeTopicCatalog();
 
+  // Chữ ký gọn để biết có cần dựng lại HTML hay không: đổi khi số từ đổi,
+  // khi mở/đóng 1 chủ đề nhỏ, hoặc khi có tiến độ học mới (_srsVersion).
+  const sig = cat.grand+'|'+cat.macros.length+'|'+_srsVersion+'|'+[..._teExpanded].sort().join(',');
+  if(sig === _teLastSig){ syncTopicExplorerOpen(); return; }
+  _teLastSig = sig;
+
   pillsEl.innerHTML = `<button type="button" class="te-pill te-pill-all" onclick="clearAllFilters()">🗂️ Tất cả <b>${cat.grand}</b> từ</button>`;
 
   gridEl.innerHTML = cat.macros.map(g=>{
     const open = _teExpanded.has(g.key);
     const ci = topicColorIndex(g.key);
+    const baseColor = teColorHex(ci);
+    const darkColor = teShade(baseColor, 0.6);
     const P = topicProgress(g.words);
     const pctM = P.total ? Math.round(P.learned/P.total*100) : 0;
     const pctD = P.total ? Math.round(P.doing/P.total*100) : 0;
     const keyEsc = g.key.replace(/'/g,"\\'");
     const goEsc  = g.go.replace(/'/g,"\\'");
     return `
-    <div class="te-macro-card" data-color="${ci}">
-      <button type="button" class="te-macro-head" onclick="teGoGroupHead('${g.kind}','${goEsc}')" title="Xem tất cả ${g.total} từ trong ${esc(g.key)}">
+    <div class="te-macro-card" data-color="${ci}" style="border-color:${baseColor} !important">
+      <button type="button" class="te-macro-head" onclick="teGoGroupHead('${g.kind}','${goEsc}')" title="Xem tất cả ${g.total} từ trong ${esc(g.key)}" style="background:linear-gradient(135deg,${baseColor},${darkColor}) !important">
         <span class="te-macro-ico">${g.icon}</span>
         <span class="te-macro-name">${esc(g.key)}</span>
         <span class="te-macro-count">${g.total} từ</span>
@@ -33116,7 +33175,7 @@ function renderTopicExplorer(){
         <span>${g.subs.length} chủ đề nhỏ</span><span class="te-chev">▾</span>
       </button>
       <div class="te-sub-chips" style="display:${open?'flex':'none'}">
-        ${g.subs.map(s=>`<button type="button" class="te-sub-chip" onclick="event.stopPropagation();teGoGroupSub('${g.kind}','${String(s.go).replace(/'/g,"\\'")}')">${esc(s.name)} <em>${s.count}</em></button>`).join('')}
+        ${g.subs.map(s=>`<button type="button" class="te-sub-chip" title="${esc(s.fullName||s.name)}" onclick="event.stopPropagation();teGoGroupSub('${g.kind}','${String(s.go).replace(/'/g,"\\'")}')" style="border-color:color-mix(in srgb,${baseColor} 35%,var(--line))"><span class="te-sub-chip-label">${esc(s.name)}</span> <em>${s.count}</em></button>`).join('')}
       </div>` : ''}
     </div>`;
   }).join('');
@@ -34248,8 +34307,10 @@ function renderNeed(){
   const card = v=>{
     const colloc=(v.collocations||[]).map(normColloc);
     const ex=wordExample(v);
+    const ci = topicColorIndex(v._topic);
+    const baseColor = teColorHex(ci);
     return `
-    <div class="vocab-card" data-color="${topicColorIndex(v._topic)}">
+    <div class="vocab-card" data-color="${ci}" style="border-color:${baseColor} !important">
       <div class="vc-head">
         <span class="word">${esc(v.word)}</span>
         <button class="speak-btn" onclick="speak('${esc(v.word)}')">🔊</button>
@@ -34540,8 +34601,10 @@ function vocabCardHTML(v){
   const colloc = (v.collocations||[]).map(normColloc);
   const ex = wordExample(v);
   const forms = normForms(v.wordforms);
+  const ci = topicColorIndex(v._topic);
+  const baseColor = teColorHex(ci);
   return `
-  <div class="vocab-card" data-color="${topicColorIndex(v._topic)}" data-word="${esc(v.word)}">
+  <div class="vocab-card" data-color="${ci}" data-word="${esc(v.word)}" style="border-color:${baseColor} !important">
     <div class="vc-head">
       <span class="word">${esc(v.word)}</span>
       <button class="speak-btn" onclick="speak('${esc(v.word)}')">🔊</button>
@@ -34601,6 +34664,33 @@ function renderList(){
   return;
 }
 
+/* Chủ đề con dạng "CamX-TestY" = nhóm từ vựng Listening thô (đúng thứ tự
+   xuất hiện trong đề nghe) — KHÔNG sắp lại A-Z vì thứ tự này có ý nghĩa
+   (theo mạch nghe), sắp lại sẽ mất tác dụng khi luyện nghe.
+   (Dùng lại CAM_TEST_TOPIC_RE đã khai báo ở phần hợp nhất từ Reading.) */
+/* Sắp xếp danh sách từ trong 1 nhóm ở chế độ "Gọn theo chủ đề":
+   - Nhóm Listening (topic dạng CamX-TestY): giữ nguyên thứ tự gốc.
+   - Nhóm "V/Adj/Adv/Phrase" (topic con = chính topic lớn, tức các từ
+     verb/adj/adv/phrase gắn thẳng vào chủ đề lớn chứ không có chủ đề
+     con danh từ riêng): sắp lần lượt theo loại từ V -> Adj -> Adv ->
+     Phrase, rồi A-Z trong từng loại.
+   - Các nhóm còn lại: sắp A-Z bình thường. */
+const _COMPACT_POS_ORDER = { verb:0, adj:1, adv:2, phrase:3, 'phrasal verb':3, idiom:3 };
+function sortCompactGroupWords(topic, macro, words){
+  if(CAM_TEST_TOPIC_RE.test(topic)) return words;
+  const arr = words.slice();
+  if(macro && macro === topic){
+    arr.sort((a,b)=>{
+      const pa = _COMPACT_POS_ORDER[a.pos] ?? 4, pb = _COMPACT_POS_ORDER[b.pos] ?? 4;
+      if(pa !== pb) return pa - pb;
+      return a.word.toLowerCase().localeCompare(b.word.toLowerCase(),'vi');
+    });
+  } else {
+    arr.sort((a,b)=> a.word.toLowerCase().localeCompare(b.word.toLowerCase(),'vi'));
+  }
+  return arr;
+}
+
 /* Chế độ xem "🧩 Gọn theo chủ đề": gom các từ đang lọc theo _topic, mỗi
    từ chỉ còn 1 ô nhỏ (từ + loại từ + nghĩa) — bỏ IPA/forms/đồng nghĩa/
    collocation/ví dụ để lướt nhanh và ôn liền mạch theo từng chủ đề. */
@@ -34617,8 +34707,11 @@ function renderListCompact(){
     const ma = map[a][0]._macro || '', mb = map[b][0]._macro || '';
     return ma.localeCompare(mb,'vi') || a.localeCompare(b,'vi');
   });
-  const tileHTML = v=>`
-    <div class="lwc-tile" data-color="${topicColorIndex(v._topic)}" onclick="lwcShowDetail('${esc(v.word).replace(/'/g,"\\'")}')" title="Xem thẻ chi tiết của từ này">
+  const tileHTML = v=>{
+    const ci = topicColorIndex(v._topic);
+    const baseColor = teColorHex(ci);
+    return `
+    <div class="lwc-tile" data-color="${ci}" style="border-color:${baseColor} !important" onclick="lwcShowDetail('${esc(v.word).replace(/'/g,"\\'")}')" title="Xem thẻ chi tiết của từ này">
       <div class="lwc-top">
         <span class="lwc-word">${esc(v.word)}</span>
         <button class="lwc-speak" onclick="event.stopPropagation();speak('${esc(v.word)}')" title="Nghe phát âm">🔊</button>
@@ -34626,14 +34719,16 @@ function renderListCompact(){
       ${v.pos?`<span class="lwc-pos">${esc(v.pos)}</span>`:''}
       <div class="lwc-vn">${esc(v.vn||'')}</div>
     </div>`;
+  };
   const html = groups.map(topic=>{
-    const words = map[topic];
-    const macro = words[0]._macro;
+    const macro = map[topic][0]._macro;
+    const words = sortCompactGroupWords(topic, macro, map[topic]);
+    const dispName = truncateTopicLabel(topic, 34);
     return `
     <div class="lwc-group">
-      <button type="button" class="lwc-group-head" style="--tc:var(--cc${topicColorIndex(topic)})" onclick="goTopic('${topic.replace(/'/g,"\\'")}','list')" title="Chỉ lọc riêng chủ đề này">
+      <button type="button" class="lwc-group-head" style="--tc:var(--cc${topicColorIndex(topic)})" onclick="goTopic('${topic.replace(/'/g,"\\'")}','list')" title="${esc(topic)} — Chỉ lọc riêng chủ đề này">
         <span class="lwc-gico">${TOPIC_ICONS[topic]||'🗂️'}</span>
-        <span class="lwc-gname">${esc(topic)}</span>
+        <span class="lwc-gname">${esc(dispName)}</span>
         ${macro && macro!==topic ? `<span class="lwc-gmacro">— ${esc(macro)}</span>`:''}
         <span class="lwc-gcount">${words.length} từ</span>
       </button>
@@ -35866,6 +35961,10 @@ const MODE_WEIGHT = {
 };
 
 let SRS = {};
+/* Tăng mỗi khi tiến độ học (SRS) thay đổi thật sự — dùng để bộ duyệt chủ đề
+   (renderTopicExplorer) biết khi nào cần tính lại thanh tiến độ mastered/
+   learning, thay vì tính lại cho ~4700 từ mỗi lần render danh sách. */
+let _srsVersion = 0;
 
 function loadSRS(){
   try{ SRS = JSON.parse(localStorage.getItem(LS_SRS)) || {}; }catch(e){ SRS = {}; }
@@ -36052,6 +36151,7 @@ function srsReview(w, quality, mode){
   SRS[w] = r;
   saveSRS();
   recordStudied(w);                        // tính vào "đã học hôm nay"
+  _srsVersion++;                            // báo cho bộ duyệt chủ đề: tiến độ vừa đổi
 
   if(r.box >= SRS_MASTER_BOX && gateDone(w)){
     if(prevBox < SRS_MASTER_BOX) addGems(GEM_REWARD.mastered);   // vừa thuộc hẳn -> +10💎
