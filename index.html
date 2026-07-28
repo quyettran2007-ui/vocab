@@ -1208,6 +1208,17 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .hero-pick-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--glow,0 8px 20px -6px rgba(13,110,95,.6)); }
 .hero-pick-btn .hpb-arrow{ transition:transform .15s; }
 .hero-pick-btn:hover .hpb-arrow{ transform:translateX(3px); }
+.hero-pick-row{ display:flex; gap:8px; }
+.hero-pick-row .hero-pick-btn{ flex:1; }
+.hero-pick-row .hero-guide-btn{ flex:1; }
+.hero-guide-btn{
+  display:flex; align-items:center; justify-content:center; gap:8px; flex-shrink:0;
+  padding:10px 12px; border-radius:12px; border:none;
+  background:var(--ember-grad); color:#fff; font:inherit; font-weight:800;
+  font-size:12.5px; cursor:pointer; transition:.15s;
+  box-shadow:0 6px 16px -6px rgba(194,65,12,.5);
+}
+.hero-guide-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 8px 20px -6px rgba(194,65,12,.6); }
 .hero-stat{
   position:relative; text-align:left; overflow:hidden;
   border:1px solid var(--line); background:var(--card); border-radius:12px;
@@ -1791,6 +1802,176 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .lv-study-hint b{ color:var(--ink-soft); font-weight:700; }
 @media(max-width:600px){ .lv-actions{ margin-left:0; width:100%; } .lv-study-btn{ flex:1; justify-content:center; } }
 #dashRoot > .topic-section{ margin:0 !important; }
+
+/* ===== BỘ DUYỆT CHỦ ĐỀ Ở ĐẦU TAB DANH SÁCH =====
+   Giúp người dùng mới thấy ngay TOÀN BỘ các nhóm/chủ đề đang có và số từ
+   mỗi chủ đề, thay vì phải tự mò trong 2 ô <select> ẩn trong Bộ lọc. */
+.topic-explorer{
+  background:var(--card); border:1px solid var(--line); border-radius:16px;
+  margin-bottom:14px; overflow:hidden; box-shadow:var(--shadow-xs);
+}
+.te-toggle{
+  width:100%; display:flex; align-items:center; gap:9px; cursor:pointer;
+  font-family:var(--font-heading); font-size:14px; font-weight:700; color:var(--ink);
+  background:var(--card-sunken); border:none; padding:13px 16px; text-align:left;
+  transition:background .15s;
+}
+.te-toggle:hover{ background:var(--paper-2); }
+.te-toggle-ico{ font-size:16px; }
+.te-toggle-sum{ margin-left:auto; font-size:11.5px; font-weight:700; color:var(--muted); }
+.te-toggle-chev{ font-size:11px; color:var(--muted); transition:transform .18s; }
+.te-toggle.open .te-toggle-chev{ transform:rotate(180deg); }
+.te-body{ padding:14px 16px 16px; }
+
+.te-pills{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.te-pill{
+  display:inline-flex; align-items:center; gap:5px; cursor:pointer;
+  font-size:12.5px; font-weight:700; color:var(--ink-soft);
+  background:var(--card-sunken); border:1px solid var(--line); border-radius:99px;
+  padding:7px 13px; transition:.15s;
+}
+.te-pill:hover{ border-color:var(--accent); color:var(--accent); transform:translateY(-1px); }
+.te-pill b{ color:var(--accent); font-family:var(--font-heading); }
+.te-pill-all{ background:var(--accent-grad); color:#fff; border-color:transparent; }
+.te-pill-all b{ color:#fff; }
+.te-pill-all:hover{ color:#fff; filter:brightness(1.07); }
+.te-pill-static{
+  display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:700;
+  color:var(--muted); background:transparent; border:1px dashed var(--line); border-radius:99px; padding:7px 13px;
+}
+.te-pill-static b{ color:var(--ink-soft); }
+
+.te-macro-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr)); gap:11px; }
+.te-macro-card{
+  border:2px solid var(--tp-c,var(--line-strong));
+  border-radius:14px; background:color-mix(in srgb,var(--tp-c,var(--line)) 28%,var(--card));
+  overflow:hidden; transition:box-shadow .15s, transform .15s;
+}
+[data-theme="dark"] .te-macro-card{ background:color-mix(in srgb,var(--tp-c,var(--line)) 34%,var(--card)); }
+.te-macro-card[data-color="0"]{ --tp-c:var(--cc0); } .te-macro-card[data-color="1"]{ --tp-c:var(--cc1); }
+.te-macro-card[data-color="2"]{ --tp-c:var(--cc2); } .te-macro-card[data-color="3"]{ --tp-c:var(--cc3); }
+.te-macro-card[data-color="4"]{ --tp-c:var(--cc4); } .te-macro-card[data-color="5"]{ --tp-c:var(--cc5); }
+.te-macro-card[data-color="6"]{ --tp-c:var(--cc6); } .te-macro-card[data-color="7"]{ --tp-c:var(--cc7); }
+.te-macro-card[data-color="8"]{ --tp-c:var(--cc8); } .te-macro-card[data-color="9"]{ --tp-c:var(--cc9); }
+.te-macro-card:hover{ box-shadow:var(--shadow-sm); }
+/* Nền chủ đề lớn dùng chung 1 phong cách gradient ấm — giống hệt nút
+   "❔ Hướng dẫn học" ở dashboard (xem .hero-guide-btn) — thay vì mỗi chủ
+   đề 1 màu nhạt như trước, để nhất quán và nổi bật hơn. */
+.te-macro-head{
+  width:100%; display:flex; align-items:center; gap:8px; cursor:pointer;
+  background:var(--ember-grad); border:none; padding:12px 13px 10px; text-align:left; font:inherit; color:#fff;
+  box-shadow:0 6px 16px -6px rgba(194,65,12,.5);
+}
+.te-macro-ico{ font-size:18px; flex-shrink:0; }
+.te-macro-name{ font-size:13px; font-weight:800; line-height:1.3; flex:1; color:#fff; }
+.te-macro-count{
+  font-size:11px; font-weight:800; color:#fff; white-space:nowrap;
+  background:rgba(255,255,255,.26); border-radius:99px; padding:3px 9px;
+}
+.te-macro-pos{ display:flex; flex-wrap:wrap; gap:4px; padding:0 13px 8px; margin-top:-4px; }
+.pos-badge{
+  font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.2px;
+  color:var(--tp-c,var(--accent)); background:color-mix(in srgb,var(--tp-c,var(--accent)) 16%,transparent);
+  border-radius:5px; padding:1px 6px; line-height:1.6;
+}
+.te-sub-pos{
+  font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.2px; margin-left:3px;
+  color:var(--tp-c,var(--accent)); background:color-mix(in srgb,var(--tp-c,var(--accent)) 16%,transparent);
+  border-radius:5px; padding:0 4px; line-height:1.6;
+}
+.te-macro-progress{ padding:0 13px 10px; }
+.te-macro-expand{
+  width:100%; display:flex; align-items:center; justify-content:space-between; cursor:pointer;
+  font-size:11.5px; font-weight:700; color:var(--muted); background:transparent;
+  border:none; border-top:1px dashed var(--line); padding:8px 13px; font-family:inherit;
+}
+.te-macro-expand:hover{ color:var(--accent); }
+.te-macro-expand .te-chev{ font-size:10px; transition:transform .18s; }
+.te-macro-expand.open .te-chev{ transform:rotate(180deg); }
+.te-sub-chips{ flex-wrap:wrap; gap:6px; padding:2px 13px 12px; }
+.te-sub-chip{
+  display:inline-flex; align-items:center; gap:5px; cursor:pointer;
+  font-size:11.5px; font-weight:600; color:var(--ink-soft);
+  background:color-mix(in srgb,var(--tp-c,var(--line)) 8%,var(--card)); border:1px solid var(--line); border-radius:9px; padding:5px 9px;
+  transition:.15s;
+}
+.te-sub-chip:hover{ border-color:var(--tp-c,var(--accent)); color:var(--tp-c,var(--accent)); }
+.te-sub-chip em{ font-style:normal; font-weight:800; color:var(--muted); }
+.te-sub-chip:hover em{ color:inherit; }
+@media(max-width:600px){ .te-macro-grid{ grid-template-columns:1fr 1fr; } }
+@media(max-width:420px){ .te-macro-grid{ grid-template-columns:1fr; } }
+
+/* ===== CHẾ ĐỘ XEM "GỌN THEO CHỦ ĐỀ" Ở TAB DANH SÁCH =====
+   Mỗi từ chỉ còn 1 ô nhỏ: từ + loại từ + nghĩa — bỏ IPA/collocation/ví dụ
+   để lướt nhanh, gom theo từng chủ đề để dễ ôn theo mạch. */
+.lwc-group{ margin-bottom:20px; }
+.lwc-group-head{
+  width:100%; display:flex; align-items:center; gap:9px; cursor:pointer;
+  background:color-mix(in srgb,var(--tc,var(--accent)) 12%,var(--card-sunken)); border:1px solid color-mix(in srgb,var(--tc,var(--accent)) 30%,var(--line)); border-left:4px solid var(--tc,var(--accent));
+  border-radius:11px; padding:10px 14px; margin-bottom:10px; text-align:left; font:inherit;
+  transition:.15s;
+}
+[data-theme="dark"] .lwc-group-head{ background:color-mix(in srgb,var(--tc,var(--accent)) 20%,var(--card-sunken)); }
+.lwc-group-head:hover{ border-color:var(--tc,var(--accent)); box-shadow:var(--shadow-xs); }
+.lwc-gico{ font-size:15px; flex-shrink:0; }
+.lwc-gname{ font-size:13.5px; font-weight:800; color:var(--ink); }
+.lwc-gmacro{ font-size:10.5px; font-weight:700; color:var(--muted); }
+.lwc-gcount{
+  margin-left:auto; font-size:11px; font-weight:800; color:var(--tc,var(--accent));
+  background:color-mix(in srgb,var(--tc,var(--accent)) 14%,transparent); border-radius:99px; padding:3px 10px; flex-shrink:0;
+}
+.lwc-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:9px; }
+.lwc-tile{
+  position:relative; border:1px solid color-mix(in srgb,var(--tc,var(--line-strong)) 22%,var(--line)); border-radius:12px; padding:10px 11px 9px;
+  background:color-mix(in srgb,var(--tc,var(--line)) 8%,var(--card)); box-shadow:var(--shadow-xs); transition:.15s; cursor:pointer;
+  border-left:3px solid var(--tc,var(--line-strong));
+}
+[data-theme="dark"] .lwc-tile{ background:color-mix(in srgb,var(--tc,var(--line)) 15%,var(--card)); }
+.lwc-tile:hover{ box-shadow:var(--shadow-sm); transform:translateY(-2px); border-color:var(--tc,var(--accent)); }
+.lwc-tile[data-color="0"]{ --tc:var(--cc0); } .lwc-tile[data-color="1"]{ --tc:var(--cc1); }
+.lwc-tile[data-color="2"]{ --tc:var(--cc2); } .lwc-tile[data-color="3"]{ --tc:var(--cc3); }
+.lwc-tile[data-color="4"]{ --tc:var(--cc4); } .lwc-tile[data-color="5"]{ --tc:var(--cc5); }
+.lwc-tile[data-color="6"]{ --tc:var(--cc6); } .lwc-tile[data-color="7"]{ --tc:var(--cc7); }
+.lwc-tile[data-color="8"]{ --tc:var(--cc8); } .lwc-tile[data-color="9"]{ --tc:var(--cc9); }
+.lwc-top{ display:flex; align-items:flex-start; gap:5px; margin-bottom:3px; }
+.lwc-word{ font-weight:800; font-size:13.5px; color:var(--ink); flex:1; word-break:break-word; }
+.lwc-speak{
+  flex-shrink:0; width:22px; height:22px; border:none; background:transparent; color:var(--muted);
+  cursor:pointer; font-size:12px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+}
+.lwc-speak:hover{ background:var(--card-sunken); color:var(--accent); }
+.lwc-pos{
+  display:inline-block; font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.3px;
+  color:var(--tc,var(--muted)); background:color-mix(in srgb,var(--tc,var(--muted)) 15%,transparent);
+  border-radius:5px; padding:1px 6px; margin-bottom:5px;
+}
+.lwc-vn{ font-size:12.5px; color:var(--ink-soft); font-weight:600; line-height:1.4; }
+@media(max-width:600px){ .lwc-grid{ grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); } }
+
+/* Bấm 1 từ ở ô "Gọn theo chủ đề" -> hiện thẻ chi tiết NỔI LÊN ngay tại
+   chỗ (popup/overlay), giữ nguyên vị trí cuộn của danh sách phía sau,
+   có thể đóng lại bằng nút ✕, bấm ra ngoài, hoặc phím Esc. */
+.lwc-detail-overlay{
+  position:fixed; inset:0; z-index:1200; display:flex; align-items:flex-start; justify-content:center;
+  padding:6vh 16px 16px; overflow-y:auto;
+  background:rgba(10,12,16,.5); opacity:0; pointer-events:none; transition:opacity .18s;
+}
+.lwc-detail-overlay.show{ opacity:1; pointer-events:auto; }
+.lwc-detail-panel{
+  position:relative; width:100%; max-width:460px; margin:auto;
+  background:var(--card); border-radius:var(--radius);
+  transform:translateY(28px) scale(.97); opacity:0;
+  transition:transform .22s cubic-bezier(.22,1,.36,1), opacity .18s;
+}
+.lwc-detail-overlay.show .lwc-detail-panel{ transform:translateY(0) scale(1); opacity:1; }
+.lwc-detail-panel .vocab-card{ margin:0; content-visibility:visible; }
+.lwc-detail-close{
+  position:absolute; top:-14px; right:-14px; width:32px; height:32px; border-radius:50%;
+  border:1px solid var(--line); background:var(--card); color:var(--ink-soft);
+  font-size:14px; cursor:pointer; box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center;
+  z-index:1;
+}
+.lwc-detail-close:hover{ color:var(--ink); border-color:var(--accent); }
 
 /* ===== 3 TAB NHỎ Ở KHU CHỦ ĐỀ TRANG CHỦ =====
    Luôn nằm gọn trên 1 hàng (không cuộn ngang, không xuống dòng): mỗi tab
@@ -3446,6 +3627,12 @@ html { scroll-behavior:smooth; }
 .vocab-card:nth-child(n+17){ animation:none; }
 /* Thẻ nạp thêm khi cuộn: không animate -> không giật */
 .no-anim .vocab-card{ animation:none !important; }
+.vocab-card.vc-flash{ animation:vcFlash 1.6s ease; }
+@keyframes vcFlash{
+  0%{ box-shadow:0 0 0 3px var(--accent); }
+  70%{ box-shadow:0 0 0 3px var(--accent); }
+  100%{ box-shadow:none; }
+}
 
 /* Tôn trọng cài đặt "giảm chuyển động" của hệ điều hành */
 @media (prefers-reduced-motion:reduce){
@@ -4246,7 +4433,7 @@ nav.tabs{
   .fn-step:hover, .topic-card:hover, .opt:hover,
   .profile-card:hover, .hero-stat:hover, .cefr-chip:hover, .prog-stat:hover,
   .pf-avatar-wrap:hover, .hero-cta:hover, .hero-cta.secondary:hover,
-  .hero-pick-btn:hover{
+  .hero-pick-btn:hover, .hero-guide-btn:hover{
     transform:none; box-shadow:none; filter:none;
   }
   .profile-card:hover{ box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.12) inset; }
@@ -4463,6 +4650,7 @@ main{ padding-top:26px; }
 .hero-ring-num span{ font-size:13px; }
 .hero-ring-lbl{ font-size:9px; text-transform:uppercase; letter-spacing:.6px; font-weight:800; }
 .hero-pick-btn{ font-size:11.5px; padding:9px 10px; }
+.hero-guide-btn{ font-size:11.5px; padding:9px 10px; }
 .hero-nums{ flex:1; gap:8px; }
 .hero-stat{
   border-radius:11px; padding:8px 9px 8px 12px;
@@ -5433,7 +5621,24 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
   </section>
 
   <section class="panel" id="panel-list">
+    <div class="topic-explorer" id="topicExplorer">
+      <button type="button" class="te-toggle" id="teToggleBtn" onclick="toggleTopicExplorer()">
+        <span class="te-toggle-ico">🗂️</span>
+        <span class="te-toggle-text">Duyệt theo chủ đề</span>
+        <span class="te-toggle-sum" id="teToggleSum"></span>
+        <span class="te-toggle-chev" id="teToggleChev">▾</span>
+      </button>
+      <div class="te-body" id="teBody">
+        <div class="te-pills" id="tePills"></div>
+        <div class="te-macro-grid" id="teMacroGrid"></div>
+      </div>
+    </div>
+
     <div class="list-view-toggle">
+      <div class="lv-seg" id="lvViewSeg">
+        <button type="button" class="lv-toggle-btn" data-view="cards" onclick="setListViewMode('cards')">📇 Thẻ chi tiết</button>
+        <button type="button" class="lv-toggle-btn" data-view="compact" onclick="setListViewMode('compact')">🧩 Gọn theo chủ đề</button>
+      </div>
       <div class="lv-actions">
         <button class="lv-study-btn" onclick="goStudyThisTopic()" title="Học ngay đúng các từ đang hiển thị ở Danh sách từ">🎯 Học chủ đề này</button>
         <button type="button" class="lv-info-btn" id="lvInfoBtn" onclick="toggleLvHint()" title="Xem hướng dẫn">ⓘ</button>
@@ -5442,6 +5647,12 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
     </div>
     <div id="listWordsView">
       <div class="list-scroll"><div id="listContainer"></div></div>
+    </div>
+    <div class="lwc-detail-overlay" id="lwcDetailOverlay" onclick="if(event.target===this) lwcCloseDetail()">
+      <div class="lwc-detail-panel" id="lwcDetailPanel">
+        <button type="button" class="lwc-detail-close" onclick="lwcCloseDetail()" title="Đóng">✕</button>
+        <div id="lwcDetailContent"></div>
+      </div>
     </div>
   </section>
 
@@ -32619,7 +32830,7 @@ function applyFilter(){
     const okS = !starOnly || starred.has(v.word);
     const okPin = !_pinnedWord || v.word === _pinnedWord;   // khoá đúng 1 từ khi mở từ trang chủ
     const okStg = _stageFilter === 'all' || stageOf(v.word) === _stageFilter;   // bậc lộ trình
-    const okLs  = !_lsSetFilter || (v.listening && v.listening.includes(_lsSetFilter));   // bộ Listening Cam-Test
+    const okLs  = !_lsSetFilter || (_lsSetFilter==='*' ? !!(v.listening && v.listening.length) : (v.listening && v.listening.includes(_lsSetFilter)));   // bộ Listening Cam-Test ('*' = mọi từ có gắn Listening)
     let okSt = true;                                        // lọc theo trạng thái học
     if(_statusFilter !== 'all'){
       const st = srsState(v.word);
@@ -32703,6 +32914,233 @@ function topicProgress(words){
     else if(st==='learning'||st==='review') doing++;
   });
   return { total:words.length, learned, doing, newN: words.length-learned-doing };
+}
+
+/* ============================================================
+   BỘ DUYỆT CHỦ ĐỀ (Topic Explorer) — đầu tab Danh sách.
+   Mục tiêu: người dùng MỚI nhìn vào biết ngay đang có bao nhiêu nhóm/chủ đề,
+   mỗi chủ đề bao nhiêu từ — thay vì phải tự mò 2 ô <select> ẩn trong Bộ lọc.
+   ============================================================ */
+let _teCatalogCache = null, _teCatalogLen = -1;
+/* Đếm số từ theo từng loại từ (v/adj/adv/phrase) trong 1 danh sách từ —
+   dùng để hiện badge phân loại trên mỗi chip chủ đề nhỏ / thẻ chủ đề lớn,
+   giúp người dùng biết ngay chủ đề đó có bao nhiêu động từ, tính từ,
+   trạng từ, cụm từ… mà không cần mở ra xem từng từ. Danh từ (noun) không
+   hiện vì đó là loại mặc định, phổ biến nhất, hiện thêm sẽ rối mắt. */
+const POS_BADGE_DEFS = [
+  { key:'verb',   label:'V',     match:v=>/^verb/i.test(v) },
+  { key:'adj',    label:'Adj',   match:v=>/^adj/i.test(v) },
+  { key:'adv',    label:'Adv',   match:v=>/^adv/i.test(v) },
+  { key:'phrase', label:'Phr',   match:v=>/^phrase/i.test(v) },
+];
+function posBreakdown(words){
+  const counts = { verb:0, adj:0, adv:0, phrase:0 };
+  (words||[]).forEach(w=>{
+    const p = String(w.pos||'').toLowerCase();
+    const def = POS_BADGE_DEFS.find(d=>d.match(p));
+    if(def) counts[def.key]++;
+  });
+  return counts;
+}
+function posBreakdownHTML(counts, cls){
+  if(!counts) return '';
+  return POS_BADGE_DEFS.filter(d=>counts[d.key]>0)
+    .map(d=>`<span class="${cls||'pos-badge'}" data-pos="${d.key}">${d.label}·${counts[d.key]}</span>`).join('');
+}
+function computeTopicCatalog(){
+  if(_teCatalogCache && _teCatalogLen === VOCAB.length) return _teCatalogCache;
+  const used = new Set(VOCAB.map(v=>v._topic).filter(Boolean));
+  /* Mọi nhóm theo TOPIC_TREE — GỒM CẢ W&S và Reading — dùng chung 1 kiểu
+     thẻ có thể bấm mở ra xem chủ đề nhỏ. Trước đây 2 nhóm này bị loại
+     riêng ra thành pill phẳng không mở được, gây lệch giao diện và đúng
+     là lỗi "không hiện chủ đề con" khi vào Reading mà người dùng báo. */
+  const macros = TOPIC_TREE.map(g=>{
+    let subs;
+    let extraOwnWords = [];   // chỉ dùng cho RD_MACRO (không gộp vào subs)
+    if(g.key === RD_MACRO){
+      // Chủ đề nhỏ của "Từ vựng Reading" = tên bài đọc -> thêm tiền tố
+      // C{quyển}-T{test}-P{bài} và sắp xếp theo đúng thứ tự quyển/test/bài.
+      const byTitle = {}; RD().forEach(r=>{ byTitle[r.title] = r; });
+      subs = g.subs.filter(s=>used.has(s)).map(s=>{
+        const words = VOCAB.filter(v=>v._topic===s);
+        const r = byTitle[s];
+        const label = r ? `C${r.book||'?'}-T${r.test||'?'}-P${r.psg||'?'}-${s}` : s;
+        return { name:label, count:words.length, words, go:s, posCounts:posBreakdown(words), _b:r?+r.book||0:0, _t:r?+r.test||0:0, _p:r?+r.psg||0:0 };
+      }).filter(s=>s.count>0)
+        .sort((a,b)=> a._b-b._b || a._t-b._t || a._p-b._p);
+      extraOwnWords = VOCAB.filter(v=>v._topic===g.key);
+    } else {
+      subs = g.subs.filter(s=>used.has(s)).map(s=>{
+        const words = VOCAB.filter(v=>v._topic===s);
+        return { name:s, count:words.length, words, go:s, posCounts:posBreakdown(words) };
+      }).filter(s=>s.count>0);
+      /* Các từ verb/adj/adv/cụm từ gắn thẳng vào chủ đề lớn (không thuộc
+         chủ đề nhỏ danh từ nào) trước đây chỉ cộng vào ownCount chứ không
+         duyệt/bấm vào được — nay gom thành 1 "chủ đề con" ảo để hiện và
+         bấm vào xem/học như mọi chủ đề con danh từ khác. */
+      const ownWordsForSub = VOCAB.filter(v=>v._topic===g.key);
+      if(ownWordsForSub.length){
+        subs.push({ name:'V/Adj/Adv/Phrase', count:ownWordsForSub.length, words:ownWordsForSub, go:g.key, posCounts:posBreakdown(ownWordsForSub) });
+      }
+      // Mặc định sắp xếp các chủ đề con theo thứ tự A, B, C.
+      subs.sort((a,b)=> a.name.localeCompare(b.name,'vi'));
+    }
+    const words = extraOwnWords.concat(...subs.map(s=>s.words));
+    return { key:g.key, icon:g.icon||'🗂️', subs, ownCount:extraOwnWords.length, total:words.length, words, kind:'topic', go:'macro:'+g.key, posCounts:posBreakdown(words) };
+  }).filter(g=>g.total>0);
+
+  /* Nhóm Listening — không nằm trong TOPIC_TREE (gắn theo mảng .listening
+     riêng của từng từ chứ không theo _topic) nên gom thủ công ở đây,
+     nhưng vẫn hiển thị bằng ĐÚNG kiểu thẻ như các nhóm chủ đề khác. */
+  const lsMap = new Map();
+  VOCAB.forEach(v=>{ (v.listening||[]).forEach(k=>{ if(!lsMap.has(k)) lsMap.set(k,[]); lsMap.get(k).push(v); }); });
+  const lsWords = VOCAB.filter(v=>v.listening && v.listening.length);
+  if(lsWords.length){
+    const subs = [...lsMap.entries()].sort((a,b)=>a[0].localeCompare(b[0]))
+      .map(([k,words])=>({ name:k, count:words.length, words, go:k, posCounts:posBreakdown(words) }));
+    macros.push({ key:'Từ vựng Listening', icon:'🎧', subs, ownCount:0, total:lsWords.length, words:lsWords, kind:'listening', go:'*', posCounts:posBreakdown(lsWords) });
+  }
+
+  /* Nhóm "Mới thêm" — gom theo từng ngày thêm vào, cùng kiểu thẻ. */
+  const newWords = VOCAB.filter(v=>v._isNew);
+  if(newWords.length){
+    const dateMap = new Map();
+    newWords.forEach(v=>{ const d=v.date||''; if(!dateMap.has(d)) dateMap.set(d,[]); dateMap.get(d).push(v); });
+    const subs = [...dateMap.entries()].sort((a,b)=>b[0].localeCompare(a[0]))
+      .map(([d,words])=>{
+        const parts=(d||'').split('-');
+        const label = parts.length===3 ? `${+parts[2]}-${+parts[1]}-${parts[0]}` : (d||'?');
+        return { name:label, count:words.length, words, go:d, posCounts:posBreakdown(words) };
+      });
+    macros.push({ key:'Từ mới thêm', icon:'🆕', subs, ownCount:0, total:newWords.length, words:newWords, kind:'new', go:'*', posCounts:posBreakdown(newWords) });
+  }
+
+  // Ghim 3 nhóm quan trọng lên đầu: Cụm hay W&S, Từ vựng Reading, Từ vựng
+  // Listening — các nhóm còn lại giữ nguyên thứ tự tương đối ban đầu.
+  const PINNED_ORDER = [WS_MACRO, RD_MACRO, 'Từ vựng Listening'];
+  macros.sort((a,b)=>{
+    const ia = PINNED_ORDER.indexOf(a.key), ib = PINNED_ORDER.indexOf(b.key);
+    const pa = ia===-1 ? PINNED_ORDER.length : ia;
+    const pb = ib===-1 ? PINNED_ORDER.length : ib;
+    return pa - pb;
+  });
+
+  _teCatalogCache = { macros, grand:VOCAB.length };
+  _teCatalogLen = VOCAB.length;
+  return _teCatalogCache;
+}
+
+let _teOpen = localStorage.getItem('vocab_te_open') !== '0';   // mặc định mở lần đầu
+let _teExpanded = new Set();   // các nhóm chủ đề lớn đang mở rộng xem chủ đề nhỏ
+function toggleTopicExplorer(force){
+  _teOpen = typeof force === 'boolean' ? force : !_teOpen;
+  try{ localStorage.setItem('vocab_te_open', _teOpen ? '1' : '0'); }catch(e){}
+  syncTopicExplorerOpen();
+}
+function syncTopicExplorerOpen(){
+  const body = document.getElementById('teBody');
+  const btn  = document.getElementById('teToggleBtn');
+  if(!body || !btn) return;
+  body.style.display = _teOpen ? '' : 'none';
+  btn.classList.toggle('open', _teOpen);
+}
+function teToggleMacro(key, ev){
+  if(ev) ev.stopPropagation();
+  if(_teExpanded.has(key)) _teExpanded.delete(key); else _teExpanded.add(key);
+  renderTopicExplorer();
+}
+/* Sau khi lọc từ khu "Duyệt theo chủ đề", cuộn xuống thẳng phần danh sách
+   kết quả bên dưới thay vì để trang nhảy lên đầu (tab-click mặc định
+   cuộn top:0) — đợi qua vài khung hình để chắc chắn sau khi panel đã
+   chuyển + renderList đã dựng xong DOM rồi mới cuộn. */
+function teScrollToListSoon(){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const el = document.getElementById('listWordsView') || document.querySelector('.list-view-toggle');
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  })));
+}
+/* Bấm 1 nhóm/chủ đề (loại 'topic', gồm cả W&S và Reading) trong bộ duyệt
+   -> lọc đúng chủ đề đó và chuyển luôn sang chế độ xem "Gọn theo chủ đề"
+   vì đây đúng là mục đích của khu này. */
+function teGoTopic(value){
+  goTopic(value, 'list');
+  setListViewMode('compact');
+  teScrollToListSoon();
+}
+/* Bấm phần đầu 1 thẻ nhóm -> xem TẤT CẢ từ trong nhóm đó, tuỳ loại nhóm
+   mà dùng đúng cơ chế lọc tương ứng (chủ đề / bộ nghe / đợt mới thêm). */
+function teGoGroupHead(kind, go){
+  if(kind==='listening') goListening('*');
+  else if(kind==='new') goNewDate('*');
+  else teGoTopic(go);
+}
+/* Bấm 1 chip chủ đề nhỏ bên trong thẻ nhóm. */
+function teGoGroupSub(kind, go){
+  if(kind==='listening') goListening(go);
+  else if(kind==='new') goNewDate(go);
+  else teGoTopic(go);
+}
+function renderTopicExplorer(){
+  const pillsEl = document.getElementById('tePills');
+  const gridEl  = document.getElementById('teMacroGrid');
+  const sumEl   = document.getElementById('teToggleSum');
+  if(!pillsEl || !gridEl) return;
+  const cat = computeTopicCatalog();
+
+  pillsEl.innerHTML = `<button type="button" class="te-pill te-pill-all" onclick="clearAllFilters()">🗂️ Tất cả <b>${cat.grand}</b> từ</button>`;
+
+  gridEl.innerHTML = cat.macros.map(g=>{
+    const open = _teExpanded.has(g.key);
+    const ci = topicColorIndex(g.key);
+    const P = topicProgress(g.words);
+    const pctM = P.total ? Math.round(P.learned/P.total*100) : 0;
+    const pctD = P.total ? Math.round(P.doing/P.total*100) : 0;
+    const keyEsc = g.key.replace(/'/g,"\\'");
+    const goEsc  = g.go.replace(/'/g,"\\'");
+    return `
+    <div class="te-macro-card" data-color="${ci}">
+      <button type="button" class="te-macro-head" onclick="teGoGroupHead('${g.kind}','${goEsc}')" title="Xem tất cả ${g.total} từ trong ${esc(g.key)}">
+        <span class="te-macro-ico">${g.icon}</span>
+        <span class="te-macro-name">${esc(g.key)}</span>
+        <span class="te-macro-count">${g.total} từ</span>
+      </button>
+      <div class="te-macro-progress" title="${P.learned} đã thuộc · ${P.doing} đang học · ${P.newN} chưa học">
+        <div class="cl-topic-bar-track">
+          <span class="cl-topic-bar-seg mastered" style="width:${pctM}%"></span>
+          <span class="cl-topic-bar-seg learning" style="width:${pctD}%"></span>
+          <span class="cl-topic-bar-seg unseen" style="width:${Math.max(0,100-pctM-pctD)}%"></span>
+        </div>
+      </div>
+      ${g.subs.length ? `
+      <button type="button" class="te-macro-expand ${open?'open':''}" onclick="teToggleMacro('${keyEsc}',event)">
+        <span>${g.subs.length} chủ đề nhỏ</span><span class="te-chev">▾</span>
+      </button>
+      <div class="te-sub-chips" style="display:${open?'flex':'none'}">
+        ${g.subs.map(s=>`<button type="button" class="te-sub-chip" onclick="event.stopPropagation();teGoGroupSub('${g.kind}','${String(s.go).replace(/'/g,"\\'")}')">${esc(s.name)} <em>${s.count}</em></button>`).join('')}
+      </div>` : ''}
+    </div>`;
+  }).join('');
+
+  if(sumEl) sumEl.textContent = `${cat.macros.length} nhóm · ${cat.grand.toLocaleString('vi-VN')} từ`;
+  syncTopicExplorerOpen();
+}
+
+/* ============================================================
+   CHẾ ĐỘ XEM Ở TAB DANH SÁCH: "📇 Thẻ chi tiết" (đầy đủ IPA, ví dụ,
+   collocation…) hoặc "🧩 Gọn theo chủ đề" (mỗi từ 1 ô nhỏ: từ + loại
+   từ + nghĩa, gom theo từng chủ đề) — ghi nhớ lựa chọn qua localStorage.
+   ============================================================ */
+let _listViewMode = localStorage.getItem('vocab_list_view_mode') || 'cards';
+function setListViewMode(mode){
+  _listViewMode = mode;
+  try{ localStorage.setItem('vocab_list_view_mode', mode); }catch(e){}
+  syncListViewSeg();
+  renderList();
+}
+function syncListViewSeg(){
+  document.querySelectorAll('#lvViewSeg .lv-toggle-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.view === _listViewMode);
+  });
 }
 
 /* ====== ĐIỀU HƯỚNG TỪ DASHBOARD ====== */
@@ -32789,6 +33227,41 @@ function goDate(d, mode){
   fcIndex = 0; _shufCache = null;
   applyFilter();
   document.querySelector(`.tab-btn[data-mode="${mode||'flashcard'}"]`).click();
+}
+/* Mở Danh sách lọc đúng 1 bộ Listening (hoặc '*' = mọi từ có gắn Listening) —
+   dùng cho khu "Duyệt theo chủ đề" (nhóm 🎧 Từ vựng Listening). */
+function goListening(key){
+  _pinnedWord = null; _statusFilter = 'all'; _stageFilter = 'all'; _dateFilter = 'all';
+  const sf = document.getElementById('statusFilter'); if(sf) sf.value = 'all';
+  document.getElementById('topicFilter').value = 'all';
+  document.getElementById('posFilter').value = 'all';
+  document.getElementById('levelFilter').value = 'all';
+  document.getElementById('starFilter').value = 'all';
+  document.getElementById('searchBox').value = '';
+  _lsSetFilter = key || '*';
+  fcIndex = 0; _shufCache = null;
+  applyFilter();
+  document.querySelector('.tab-btn[data-mode="list"]').click();
+  setListViewMode('compact');
+  teScrollToListSoon();
+}
+/* Mở Danh sách lọc đúng 1 đợt "Mới thêm" theo ngày (hoặc '*' = mọi từ mới) —
+   dùng cho khu "Duyệt theo chủ đề" (nhóm 🆕 Từ mới thêm). */
+function goNewDate(d){
+  _pinnedWord = null; _statusFilter = 'all'; _stageFilter = 'all'; _lsSetFilter = null;
+  const sf = document.getElementById('statusFilter'); if(sf) sf.value = 'all';
+  document.getElementById('topicFilter').value = 'all';
+  document.getElementById('posFilter').value = 'all';
+  document.getElementById('levelFilter').value = 'all';
+  document.getElementById('starFilter').value = 'all';
+  document.getElementById('searchBox').value = '';
+  document.getElementById('sortOrder').value = 'newest';
+  _dateFilter = 'new:' + (d || '*');
+  fcIndex = 0; _shufCache = null;
+  applyFilter();
+  document.querySelector('.tab-btn[data-mode="list"]').click();
+  setListViewMode('compact');
+  teScrollToListSoon();
 }
 function goSRS(){ goLearnScope('path'); }   // nút chính -> Lộ trình
 function goCollocType(){
@@ -33172,9 +33645,12 @@ function renderDashboard(){
               <div class="hero-ring-lbl">đã thuộc</div>
             </div>
           </div>
-          <button class="hero-pick-btn" onclick="goPickTopic()">
-            <span>🗂️ Chọn chủ đề học</span><span class="hpb-arrow">→</span>
-          </button>
+          <div class="hero-pick-row">
+            <button class="hero-pick-btn" onclick="goPickTopic()">
+              <span>🗂️ Chọn chủ đề học</span><span class="hpb-arrow">→</span>
+            </button>
+            <button class="hero-guide-btn" onclick="openLearnGuide()" title="Xem hướng dẫn quy trình học">❔ Hướng dẫn học</button>
+          </div>
         </div>
         <div class="hero-nums">
           <button class="hero-stat learned" onclick="goStatus('mastered','list')" title="Xem ${S.learned} từ đã thuộc">
@@ -33259,6 +33735,52 @@ function renderDashboard(){
   bindDashSearch();
 }
 
+
+/* ---------- Nút "❔ Hướng dẫn" cạnh "Chọn chủ đề học": mở modal giải
+   thích quy trình 3 cửa + ôn ngắt quãng, và 7 chế độ trong Học ngay. ---- */
+function openLearnGuide(){
+  const overlay = document.createElement('div');
+  overlay.id = 'learnGuideOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  overlay.innerHTML = `
+    <div style="background:var(--card);color:var(--ink);max-width:560px;width:100%;max-height:86vh;overflow-y:auto;
+      border-radius:16px;padding:22px 22px 18px;box-shadow:0 12px 40px rgba(0,0,0,.35);font-size:13.5px;line-height:1.62;
+      border:1px solid var(--line);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <h3 style="margin:0;font-size:17px">📘 Hướng dẫn học</h3>
+        <button id="lgClose" style="border:none;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
+      </div>
+
+      <h4 style="margin:14px 0 6px;font-size:14px">🚀 Quy trình 1 từ đi qua</h4>
+      <p style="margin:0 0 8px">Mỗi từ phải vượt <b>đủ 3 cửa kỹ năng</b>, theo đúng thứ tự nợ cửa nào làm cửa đó:</p>
+      <ul style="margin:0 0 10px;padding-left:18px">
+        <li>🃏 <b>Flashcard</b> — nhìn mặt chữ, tự đánh giá thật lòng "nhớ hay không".</li>
+        <li>❓ <b>Trắc nghiệm</b> — chọn đúng nghĩa (khó đoán mò hơn vì phải qua cả 3 cửa).</li>
+        <li>⌨️ <b>Gõ từ</b> — viết đúng chính tả, không dùng gợi ý — bằng chứng mạnh nhất.</li>
+      </ul>
+      <p style="margin:0 0 8px">Trả lời <b>sai</b> ở cửa nào → cửa đó <b>khoá lại</b>, phải vượt lại từ đầu. Đủ cả 3 cửa rồi, từ chuyển sang giai đoạn <b>🔁 Ôn ngắt quãng</b> (khoảng cách ôn giãn dần: 1 → 3 → 7 → 16 → 35 ngày) — ôn đúng đủ 5 lượt giãn cách này mới chính thức <b>✅ Đã thuộc</b>.</p>
+      <p style="margin:0 0 10px">⭐ Từ bị đánh "Quên" sẽ tự động được đánh dấu sao vào "Cần học"; khi đã thuộc hẳn, dấu sao tự động được gỡ — không cần làm tay.</p>
+
+      <h4 style="margin:14px 0 6px;font-size:14px">🎛️ 7 chế độ trong "Học ngay"</h4>
+      <ul style="margin:0 0 10px;padding-left:18px">
+        <li><b>🚀 Lộ trình</b> (khuyên dùng) — đến hạn ôn → dở cửa → rồi mới đến từ mới (từ mới xáo trộn ngẫu nhiên, luôn ưu tiên thấp nhất).</li>
+        <li><b>🔁 Chỉ ôn theo lịch</b> — chỉ gồm từ đến hạn ôn thật sự, không ôn sớm.</li>
+        <li><b>🆕 Chỉ từ mới</b> — chỉ từ chưa từng học, lấy theo thứ tự trong kho từ (liền mạch theo chủ đề).</li>
+        <li><b>🔥 Từ hay quên</b> — ưu tiên từ hay sai / hay quên nhất.</li>
+        <li><b>🎲 Ôn ngẫu nhiên</b> — trộn đều mọi từ đã học để chống quên.</li>
+        <li><b>⭐ Cần học</b> — đúng các từ đang được đánh dấu sao.</li>
+        <li><b>🗂️ Theo bộ lọc</b> — theo bộ lọc chủ đề/trình độ/trạng thái đang bật ở tab Danh sách.</li>
+      </ul>
+      <p style="margin:0;color:var(--muted);font-size:12.5px">Mẹo: muốn học từ mới theo mạch chủ đề liên tục → dùng <b>🆕 Chỉ từ mới</b>. Muốn app tự xen kẽ cân bằng giữa ôn và học mới → dùng <b>🚀 Lộ trình</b>.</p>
+
+      <button id="lgOk" style="width:100%;margin-top:16px;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Đã hiểu</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const close = ()=> overlay.remove();
+  overlay.querySelector('#lgClose').onclick = close;
+  overlay.querySelector('#lgOk').onclick = close;
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) close(); });
+}
 
 /* ---------- Nút "Chọn chủ đề học" trên hàng tiến độ chính: nhảy sang tab
    Danh sách và mở sẵn Bộ lọc theo Chủ đề để chọn chủ đề muốn học. ---- */
@@ -33988,41 +34510,71 @@ document.addEventListener('keydown', e=>{
 });
 
 /* ---------- List ---------- */
+/* Bấm 1 từ ở ô "Gọn theo chủ đề" -> hiện thẻ chi tiết NỔI LÊN ngay tại
+   chỗ (popup), KHÔNG chuyển chế độ xem, KHÔNG mất vị trí cuộn hiện tại.
+   Có thể đóng lại bằng nút ✕, bấm ra ngoài popup, hoặc phím Esc. */
+/* Chuyển #lwcDetailOverlay ra làm con trực tiếp của <body>: .panel dùng
+   contain:layout style paint, theo chuẩn CSS điều này khiến mọi phần tử
+   con dùng position:fixed bên trong nó bị định vị theo khung của .panel
+   thay vì theo màn hình -> popup hiện sai vị trí (phải cuộn lên mới thấy)
+   và trông như trong suốt vì content-visibility:auto bỏ qua phần tử coi
+   như đang ở ngoài vùng nhìn thấy. Cùng nguyên nhân đã gặp với #rdPop. */
+(function(){ const p = document.getElementById('lwcDetailOverlay'); if(p) document.body.appendChild(p); })();
+function lwcShowDetail(word){
+  const v = VOCAB.find(x=>x.word===word);
+  if(!v) return;
+  const content = document.getElementById('lwcDetailContent');
+  const overlay = document.getElementById('lwcDetailOverlay');
+  if(!content || !overlay) return;
+  content.innerHTML = vocabCardHTML(v);
+  overlay.classList.add('show');
+  document.addEventListener('keydown', lwcEscHandler);
+}
+function lwcCloseDetail(){
+  const overlay = document.getElementById('lwcDetailOverlay');
+  if(overlay) overlay.classList.remove('show');
+  document.removeEventListener('keydown', lwcEscHandler);
+}
+function lwcEscHandler(e){ if(e.key === 'Escape') lwcCloseDetail(); }
+function vocabCardHTML(v){
+  const colloc = (v.collocations||[]).map(normColloc);
+  const ex = wordExample(v);
+  const forms = normForms(v.wordforms);
+  return `
+  <div class="vocab-card" data-color="${topicColorIndex(v._topic)}" data-word="${esc(v.word)}">
+    <div class="vc-head">
+      <span class="word">${esc(v.word)}</span>
+      <button class="speak-btn" onclick="speak('${esc(v.word)}')">🔊</button>
+      <button class="star-btn ${isStarred(v.word)?'on':''}" data-w="${esc(v.word)}" onclick="onStarClick(event,this)" title="Cần học">${isStarred(v.word)?'★':'☆'}</button>
+      ${v.ipa?`<span class="ipa">${esc(v.ipa)}</span>`:''}
+      ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
+      <span class="vc-meta">
+        ${gateChips(v.word, true)}
+        ${(v.altTopics&&v.altTopics.length)?`<span class="alt-topic" title="Từ này còn thuộc: ${esc(v.altTopics.join(', '))}">+${v.altTopics.length} chủ đề</span>`:''}
+        ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}
+        ${v.date?`<span class="vc-date">${fmtDateShort(v.date)}</span>`:''}
+      </span>
+    </div>
+    <button class="vc-topic" onclick="goTopic('${(v._topic||'').replace(/'/g,"\\'")}','list')" title="Xem tất cả từ thuộc chủ đề này">
+      <span>${TOPIC_ICONS[v._topic]||'🗂️'}</span>
+      ${v._macro && v._macro!==v._topic ? `<em>${esc(v._macro)}</em><i>›</i>` : ''}
+      <b>${esc(v._topic)}</b>
+    </button>
+    <div class="vc-vn">${esc(v.vn)}</div>
+    ${forms.length?`<div class="vc-row"><span class="label">Word form</span><div class="forms">${formsHTML(forms)}</div></div>`:''}
+    ${v.synonyms&&v.synonyms.length?`<div class="vc-row"><span class="label">Đồng nghĩa</span>${v.synonyms.map(s=>`<span class="chip">${esc(s)}</span>`).join('')}</div>`:''}
+    ${colloc.length?`<div class="vc-row"><span class="label">Collocation</span>${colloc.map(x=>`<div class="colloc-item"><span class="en">${esc(x.en)}</span>${x.vi?` — <span class="vi">${esc(x.vi)}</span>`:''}</div>`).join('')}</div>`:''}
+    ${ex?exListHTML(v,'vc-example'):''}
+  </div>`;
+}
 function renderList(){
+  renderTopicExplorer();
+  syncListViewSeg();
+  if(_listViewMode === 'compact'){ renderListCompact(); return; }
   const c = document.getElementById('listContainer');
   if(!filtered.length){ c.innerHTML='<div class="empty">Không có từ nào.</div>'; return; }
   const sort = document.getElementById('sortOrder').value;
-  const cardHTML = v=>{
-    const colloc = (v.collocations||[]).map(normColloc);
-    const ex = wordExample(v);
-    const forms = normForms(v.wordforms);
-    return `
-    <div class="vocab-card" data-color="${topicColorIndex(v._topic)}">
-      <div class="vc-head">
-        <span class="word">${esc(v.word)}</span>
-        <button class="speak-btn" onclick="speak('${esc(v.word)}')">🔊</button>
-        <button class="star-btn ${isStarred(v.word)?'on':''}" data-w="${esc(v.word)}" onclick="onStarClick(event,this)" title="Cần học">${isStarred(v.word)?'★':'☆'}</button>
-        ${v.ipa?`<span class="ipa">${esc(v.ipa)}</span>`:''}
-        ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
-        <span class="vc-meta">
-          ${gateChips(v.word, true)}
-          ${(v.altTopics&&v.altTopics.length)?`<span class="alt-topic" title="Từ này còn thuộc: ${esc(v.altTopics.join(', '))}">+${v.altTopics.length} chủ đề</span>`:''}
-          ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}
-          ${v.date?`<span class="vc-date">${fmtDateShort(v.date)}</span>`:''}
-        </span>
-      </div>
-      <button class="vc-topic" onclick="goTopic('${(v._topic||'').replace(/'/g,"\\'")}','list')" title="Xem tất cả từ thuộc chủ đề này">
-        <span>${TOPIC_ICONS[v._topic]||'🗂️'}</span>
-        ${v._macro && v._macro!==v._topic ? `<em>${esc(v._macro)}</em><i>›</i>` : ''}
-        <b>${esc(v._topic)}</b>
-      </button>
-      <div class="vc-vn">${esc(v.vn)}</div>
-      ${forms.length?`<div class="vc-row"><span class="label">Word form</span><div class="forms">${formsHTML(forms)}</div></div>`:''}
-      ${v.synonyms&&v.synonyms.length?`<div class="vc-row"><span class="label">Đồng nghĩa</span>${v.synonyms.map(s=>`<span class="chip">${esc(s)}</span>`).join('')}</div>`:''}
-      ${colloc.length?`<div class="vc-row"><span class="label">Collocation</span>${colloc.map(x=>`<div class="colloc-item"><span class="en">${esc(x.en)}</span>${x.vi?` — <span class="vi">${esc(x.vi)}</span>`:''}</div>`).join('')}</div>`:''}
-      ${ex?exListHTML(v,'vc-example'):''}
-    </div>`;
-  };
+  const cardHTML = vocabCardHTML;
   // ---- Render tăng dần + DỰNG HTML LƯỜI (lazy).
   // Trước đây map() dựng sẵn chuỗi HTML cho CẢ 3000+ thẻ ngay lần đầu (~700ms).
   // Giờ chỉ lưu THAM CHIẾU từ, HTML được dựng đúng lúc chèn vào DOM.
@@ -34047,6 +34599,51 @@ function renderList(){
   // các lô nạp thêm khi cuộn -> tắt animation cho mượt
   requestAnimationFrame(()=>c.classList.add('no-anim'));
   return;
+}
+
+/* Chế độ xem "🧩 Gọn theo chủ đề": gom các từ đang lọc theo _topic, mỗi
+   từ chỉ còn 1 ô nhỏ (từ + loại từ + nghĩa) — bỏ IPA/forms/đồng nghĩa/
+   collocation/ví dụ để lướt nhanh và ôn liền mạch theo từng chủ đề. */
+function renderListCompact(){
+  const c = document.getElementById('listContainer');
+  if(!filtered.length){ c.innerHTML='<div class="empty">Không có từ nào.</div>'; return; }
+  const groups = [], map = {};
+  filtered.forEach(v=>{
+    const key = v._topic || 'Tổng hợp';
+    if(!map[key]){ map[key]=[]; groups.push(key); }
+    map[key].push(v);
+  });
+  groups.sort((a,b)=>{
+    const ma = map[a][0]._macro || '', mb = map[b][0]._macro || '';
+    return ma.localeCompare(mb,'vi') || a.localeCompare(b,'vi');
+  });
+  const tileHTML = v=>`
+    <div class="lwc-tile" data-color="${topicColorIndex(v._topic)}" onclick="lwcShowDetail('${esc(v.word).replace(/'/g,"\\'")}')" title="Xem thẻ chi tiết của từ này">
+      <div class="lwc-top">
+        <span class="lwc-word">${esc(v.word)}</span>
+        <button class="lwc-speak" onclick="event.stopPropagation();speak('${esc(v.word)}')" title="Nghe phát âm">🔊</button>
+      </div>
+      ${v.pos?`<span class="lwc-pos">${esc(v.pos)}</span>`:''}
+      <div class="lwc-vn">${esc(v.vn||'')}</div>
+    </div>`;
+  const html = groups.map(topic=>{
+    const words = map[topic];
+    const macro = words[0]._macro;
+    return `
+    <div class="lwc-group">
+      <button type="button" class="lwc-group-head" style="--tc:var(--cc${topicColorIndex(topic)})" onclick="goTopic('${topic.replace(/'/g,"\\'")}','list')" title="Chỉ lọc riêng chủ đề này">
+        <span class="lwc-gico">${TOPIC_ICONS[topic]||'🗂️'}</span>
+        <span class="lwc-gname">${esc(topic)}</span>
+        ${macro && macro!==topic ? `<span class="lwc-gmacro">— ${esc(macro)}</span>`:''}
+        <span class="lwc-gcount">${words.length} từ</span>
+      </button>
+      <div class="lwc-grid">${words.map(tileHTML).join('')}</div>
+    </div>`;
+  }).join('');
+  c.innerHTML = html;
+  c.classList.add('no-anim');
+  // Chế độ gọn không dùng cơ chế nạp lười theo cuộn của chế độ Thẻ chi tiết.
+  _listBuild = null; _listPos = 0;
 }
 
 /* Streamed list rendering — appends chunks as the user scrolls. */
