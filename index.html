@@ -483,6 +483,18 @@ header {
   display:flex; align-items:center; justify-content:space-between;
   gap:14px;
   contain:layout paint;          /* header không kéo theo layout cả trang khi cuộn */
+  transform:translateY(0);
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+/* Cuộn xuống -> trượt thanh trên cùng ra khỏi màn hình để nhường chỗ đọc;
+   cuộn lên (hoặc đang ở đầu trang) -> hiện lại ngay. Thanh tab (nav.tabs)
+   không ẩn theo, chỉ "dịch" lên để lấp khoảng trống header để lại. */
+body.header-hidden header{ transform:translateY(-100%); }
+body.header-hidden nav.tabs{ top:0; }
+body.header-hidden{ --hdr-hide:1; }
+:root{ --hdr-hide:0; }
+@media (prefers-reduced-motion:reduce){
+  header{ transition:none; }
 }
 .brand { display:flex; align-items:center; gap:12px; }
 .brand-icon {
@@ -569,6 +581,10 @@ nav.tabs {
   overflow-x:auto; scrollbar-width:none;
   contain:layout paint;
   -webkit-overflow-scrolling:touch;
+  transition:top .28s cubic-bezier(.4,0,.2,1);
+}
+@media (prefers-reduced-motion:reduce){
+  nav.tabs{ transition:none; }
 }
 
 /* Máy cảm ứng / màn nhỏ: bỏ hẳn backdrop-blur (rất nặng khi cuộn) */
@@ -1204,6 +1220,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
   padding:10px 12px; border-radius:12px; border:none;
   background:var(--accent-grad,var(--accent)); color:#fff; font:inherit; font-weight:800;
   font-size:12.5px; cursor:pointer; transition:.15s; box-shadow:var(--glow,0 6px 16px -6px rgba(13,110,95,.5));
+  text-transform:uppercase; letter-spacing:.5px;
 }
 .hero-pick-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--glow,0 8px 20px -6px rgba(13,110,95,.6)); }
 .hero-pick-btn .hpb-arrow{ transition:transform .15s; }
@@ -1217,6 +1234,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
   background:var(--ember-grad); color:#fff; font:inherit; font-weight:800;
   font-size:12.5px; cursor:pointer; transition:.15s;
   box-shadow:0 6px 16px -6px rgba(194,65,12,.5);
+  text-transform:uppercase; letter-spacing:.5px;
 }
 .hero-guide-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 8px 20px -6px rgba(194,65,12,.6); }
 .hero-stat{
@@ -1288,10 +1306,10 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .streak-v2-day.is-today.has-data .sv2-bar-fill{background:linear-gradient(180deg,#fde68a,#f59e0b);box-shadow:0 -2px 8px -2px #f59e0b;}
 .hero-btn-row{margin-top:auto;display:flex;gap:8px;}
 .hero-cta.small{flex:1;padding:11px 8px;font-size:12px;margin-top:0;}
-.hero-cta.secondary{background:rgba(5,150,105,.12);color:#047857;box-shadow:none;border:1px solid rgba(5,150,105,.35);}
-.hero-cta.secondary:hover{background:rgba(5,150,105,.20);box-shadow:var(--shadow-xs);border-color:#059669;}
-[data-theme="dark"] .hero-cta.secondary{background:rgba(52,211,153,.16);color:#6ee7b7;border-color:rgba(52,211,153,.4);}
-[data-theme="dark"] .hero-cta.secondary:hover{background:rgba(52,211,153,.24);}
+.hero-cta.secondary{ background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; box-shadow:0 6px 16px -6px rgba(37,99,235,.5); border:none; }
+.hero-cta.secondary:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 8px 20px -6px rgba(37,99,235,.6); }
+[data-theme="dark"] .hero-cta.secondary{ background:linear-gradient(135deg,#3b82f6,#2563eb); color:#fff; box-shadow:0 6px 16px -6px rgba(59,130,246,.45); }
+[data-theme="dark"] .hero-cta.secondary:hover{ box-shadow:0 8px 20px -6px rgba(59,130,246,.55); }
 
 .dash-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
 .strip-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;}
@@ -2085,12 +2103,16 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .rd-search input:not(:placeholder-shown) ~ .rd-clear{ display:grid; }
 [data-theme="dark"] .rd-search .rd-clear{ background:var(--paper-2); }
 
-/* ---- Thanh tìm kiếm nhanh trong bài đọc — dính ở trên khi cuộn ---- */
+/* ---- Thanh tìm kiếm nhanh trong bài đọc — dính ở trên khi cuộn ----
+   Khi header trên cùng đang ẩn (cuộn xuống), --hdr-hide chuyển thành 1
+   -> trừ luôn đúng var(--header-h) khỏi khoảng cách dính, để thanh này
+   trượt lên khít ngay dưới thanh tab, không để lại khoảng hở. */
 .rd-quick-search-wrap{
-  position:sticky; top:var(--rd-qs-top,96px); z-index:30;
+  position:sticky; top:calc(var(--rd-qs-top,96px) - var(--hdr-hide,0) * var(--header-h)); z-index:30;
   background:none;
   padding:2px 0 12px; margin:0 0 14px;
   display:flex; flex-direction:column; align-items:center;
+  transition:top .28s cubic-bezier(.4,0,.2,1);
 }
 .rd-quick-search-wrap .rd-search{
   max-width:520px; width:100%;
@@ -2112,16 +2134,20 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 /* ---- Thanh công cụ nhỏ (gạch chân từ khoá / bản dịch / edit / ghi chú) —
    dính ngay dưới thanh tìm kiếm nhanh khi cuộn xuống, cỡ nhỏ gọn ---- */
 .rd-tools-pin{
-  position:sticky; top:var(--rd-tools-top,150px); z-index:25;
+  position:sticky; top:calc(var(--rd-tools-top,150px) - var(--hdr-hide,0) * var(--header-h)); z-index:25;
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
   background:rgba(255,255,255,.75); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
   border:1px solid var(--line); border-radius:9px;
   padding:5px 9px; margin-bottom:8px;
   font-size:12px;
+  transition:top .28s cubic-bezier(.4,0,.2,1);
 }
 [data-theme="dark"] .rd-tools-pin{ background:rgba(20,30,27,.72); }
 .rd-tools-pin label{ display:flex; align-items:center; gap:4px; font-size:12px; font-weight:600; }
 .rd-tools-pin .btn{ font-size:12px; padding:5px 9px; }
+@media (prefers-reduced-motion:reduce){
+  .rd-quick-search-wrap, .rd-tools-pin{ transition:none; }
+}
 
 .rd-filters{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;
   padding-bottom:14px; border-bottom:1px solid var(--paper-2); }
@@ -2856,6 +2882,7 @@ mark.ex-hl {
 .flashcard.dragging {
   transition:none !important;
   cursor:grabbing;
+  will-change:transform,opacity;
 }
 .flashcard.dragging .flash-inner { transition:none !important; }
 /* Spring back when the pull wasn't far enough (or hit the first/last card) */
@@ -4673,8 +4700,8 @@ main{ padding-top:26px; }
 .hero-ring-num{ font-size:23px; font-weight:900; }
 .hero-ring-num span{ font-size:13px; }
 .hero-ring-lbl{ font-size:9px; text-transform:uppercase; letter-spacing:.6px; font-weight:800; }
-.hero-pick-btn{ font-size:11.5px; padding:9px 10px; }
-.hero-guide-btn{ font-size:11.5px; padding:9px 10px; }
+.hero-pick-btn{ font-size:12px; padding:11px 8px; }
+.hero-guide-btn{ font-size:12px; padding:11px 8px; }
 .hero-nums{ flex:1; gap:8px; }
 .hero-stat{
   border-radius:11px; padding:8px 9px 8px 12px;
@@ -5006,7 +5033,7 @@ body{
 .cl-fc-card:active{ transform:scale(.992); }
 /* While the finger is down the card must track it with zero lag, so the
    easing transition is switched off for the duration (swipe-to-navigate). */
-.cl-fc-card.dragging{ transition:none !important; cursor:grabbing; }
+.cl-fc-card.dragging{ transition:none !important; cursor:grabbing; will-change:transform,opacity; }
 .cl-fc-card.dragging .cl-fc-inner{ transition:none !important; }
 .cl-fc-card.sw-bounce{ animation:clSwBounce .34s cubic-bezier(.34,1.4,.64,1); }
 @keyframes clSwBounce{ 0%{ transform:translateX(var(--sw-from,0)); } 100%{ transform:translateX(0); } }
@@ -32143,10 +32170,13 @@ function practicePool(list){
 
 /* ============================================================
    ÂM THANH PHẢN HỒI — tạo bằng Web Audio, không cần file ngoài
+   v2: mỗi hiệu ứng là 1 lớp âm riêng (osc chính + bồi âm/độ vang)
+   để tai phân biệt được ngay, không bị lẫn thành "tiếng bíp" chung.
    ============================================================ */
 const LS_SOUND = 'vocab_sound';
 let SOUND_ON = localStorage.getItem(LS_SOUND) !== '0';
 let _audioCtx = null;
+let _noiseBuf = null;
 function audioCtx(){
   if(!_audioCtx){
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -32156,10 +32186,22 @@ function audioCtx(){
   if(_audioCtx.state === 'suspended') _audioCtx.resume();
   return _audioCtx;
 }
+/* Bộ đệm nhiễu trắng dùng chung cho các tiếng "tách/gõ" có chất liệu
+   thay vì chỉ sóng sine thuần -> nghe thật hơn, đỡ giống chuông báo lỗi. */
+function noiseBuffer(ctx){
+  if(_noiseBuf) return _noiseBuf;
+  const len = ctx.sampleRate * 0.3;
+  const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i=0;i<len;i++) d[i] = Math.random()*2-1;
+  _noiseBuf = buf;
+  return buf;
+}
 /* Chơi một chuỗi nốt: [[tần số, thời điểm bắt đầu, độ dài], ...] */
-function tone(notes, type='sine', vol=0.16){
+function tone(notes, type='sine', vol=0.16, out){
   if(!SOUND_ON) return;
   const ctx = audioCtx(); if(!ctx) return;
+  const dest = out || ctx.destination;
   const t0 = ctx.currentTime;
   notes.forEach(([freq, at, dur])=>{
     const osc = ctx.createOscillator();
@@ -32170,21 +32212,69 @@ function tone(notes, type='sine', vol=0.16){
     g.gain.setValueAtTime(0, t0+at);
     g.gain.linearRampToValueAtTime(vol, t0+at+0.012);
     g.gain.exponentialRampToValueAtTime(0.0001, t0+at+dur);
-    osc.connect(g); g.connect(ctx.destination);
+    osc.connect(g); g.connect(dest);
     osc.start(t0+at); osc.stop(t0+at+dur+0.02);
   });
 }
+/* Một bồi âm (nốt cao hơn, rất nhỏ) chồng lên nốt chính -> nghe như
+   chuông/thuỷ tinh thay vì tiếng bíp máy tính trần trụi. */
+function shimmer(freq, at, dur, vol=0.05){
+  tone([[freq*2.01, at, dur*0.8]], 'sine', vol);
+}
+/* Quét cao độ liên tục (glissando) — dùng cho lật thẻ / vuốt, tạo cảm
+   giác chuyển động thay vì một nốt tĩnh. */
+function sweep(f0, f1, dur, type='sine', vol=0.12, at=0){
+  if(!SOUND_ON) return;
+  const ctx = audioCtx(); if(!ctx) return;
+  const t0 = ctx.currentTime + at;
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(f0, t0);
+  osc.frequency.exponentialRampToValueAtTime(Math.max(f1,1), t0+dur);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(vol, t0+dur*0.25);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  osc.connect(g); g.connect(ctx.destination);
+  osc.start(t0); osc.stop(t0+dur+0.02);
+}
+/* Một tiếng "gõ" ngắn từ nhiễu lọc qua bộ lọc thông dải -> giống tiếng
+   tách vật lý (bấm nút, chạm thẻ) hơn là tiếng điện tử. */
+function tick(freq=1800, dur=.045, vol=0.10){
+  if(!SOUND_ON) return;
+  const ctx = audioCtx(); if(!ctx) return;
+  const t0 = ctx.currentTime;
+  const src = ctx.createBufferSource();
+  src.buffer = noiseBuffer(ctx);
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = 1.1;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(vol, t0);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+  src.start(t0); src.stop(t0+dur+0.02);
+}
 const sfx = {
-  correct: ()=> tone([[880,0,.10],[1318.5,.09,.16]], 'sine', .15),          // đô-son đi lên, vui
-  wrong:   ()=> tone([[233.1,0,.14],[185,.11,.20]], 'triangle', .12),        // đi xuống, nhẹ
-  levelUp: ()=> tone([[523.3,0,.11],[659.3,.10,.11],[784,.20,.11],[1046.5,.30,.30]], 'sine', .16),
-  gem:     ()=> tone([[1568,0,.06],[2093,.05,.10]], 'sine', .10),
-  tab:     ()=> tone([[698.5,0,.05]], 'sine', .07),                         // tách nhẹ khi đổi tab
-  click:   ()=> tone([[880,0,.035]], 'sine', .06),                          // bấm nút nhẹ
-  flip:    ()=> tone([[600,0,.04],[900,.03,.05]], 'sine', .08),             // lật flashcard
-  add:     ()=> tone([[784,0,.06],[988,.06,.10]], 'sine', .12),             // thêm/lưu thành công
-  swipe:   ()=> tone([[520,0,.05]], 'triangle', .06),                        // vuốt/chuyển thẻ
-  key:     ()=> tone([[1500+Math.random()*400,0,.018]], 'square', .05)      // tách gõ phím, mỗi lần hơi khác tông cho tự nhiên
+  // Đô-mi-son đi lên + bồi âm thuỷ tinh ở nốt cuối -> vui, sáng, "đúng rồi!"
+  correct: ()=>{ tone([[880,0,.09],[1108.7,.08,.10],[1318.5,.16,.20]], 'sine', .15); shimmer(1318.5,.16,.20,.05); },
+  // Hợp âm giảm đi xuống + tiếng gõ trầm đệm dưới -> rõ ràng là sai, không chói tai
+  wrong:   ()=> { tone([[220,0,.16],[196,.12,.22]], 'triangle', .11); tick(320,.09,.05); },
+  // Fanfare 4 nốt đi lên, có bồi âm lấp lánh ở nốt chốt -> cảm giác "lên cấp"
+  levelUp: ()=>{ tone([[523.3,0,.11],[659.3,.10,.11],[784,.20,.12],[1046.5,.32,.34]], 'sine', .16); shimmer(1046.5,.32,.34,.07); },
+  // Twinkle 3 lớp cao dần, mỗi nốt có bồi âm riêng -> lấp lánh như viên kim cương
+  gem:     ()=>{ tone([[1568,0,.05],[1975.5,.04,.07],[2637,.08,.12]], 'sine', .09); shimmer(2637,.08,.12,.04); },
+  // Tiếng gõ ngắn + nốt cao rất nhẹ -> tách gọn, không bị lẫn với "click"
+  tab:     ()=>{ tick(1500,.035,.06); tone([[880,.005,.04]], 'sine', .05); },
+  // Tiếng gõ trầm gọn hơn "tab" -> phân biệt được bằng tai giữa bấm nút thường và đổi tab
+  click:   ()=> tick(2200,.03,.07),
+  // Quét cao độ đi lên rồi tiếng gõ nhẹ chốt lại -> mô phỏng thẻ lật trong không khí
+  flip:    ()=>{ sweep(520,1050,.14,'sine',.09); tick(2600,.03,.04); },
+  // Hai nốt ấm đi lên + bồi âm -> cảm giác "đã lưu" chắc chắn, dễ chịu
+  add:     ()=>{ tone([[784,0,.07],[988,.07,.13]], 'sine', .12); shimmer(988,.07,.13,.05); },
+  // Quét cao độ đi xuống nhanh ("whoosh") -> đúng cảm giác vuốt thẻ trôi đi
+  swipe:   ()=> sweep(900,340,.10,'triangle',.07),
+  // Tách gõ phím: nhiễu lọc dải cao, mỗi lần đổi nhẹ tần số cho tự nhiên
+  key:     ()=> tick(2600+Math.random()*900,.028,.045)
 };
 function toggleSound(){
   SOUND_ON = !SOUND_ON;
@@ -34144,6 +34234,7 @@ let _flipTimer=null;
 function fcFlip(){
   fcCard.classList.toggle('flipped');
   fcCard.classList.add('flipping');
+  sfx.flip();
   clearTimeout(_flipTimer);
   _flipTimer = setTimeout(()=>fcCard.classList.remove('flipping'), 640);
   if(fcCache[fcIndex]) speak(fcCache[fcIndex].word);
@@ -34208,6 +34299,7 @@ function swStart(x, y){
   _swX=x; _swY=y; _swDX=0; _swT0=performance.now();
   fcCard.classList.add('dragging');
 }
+let _swRAF = null;
 function swMove(x, y, ev){
   if(!_swDown) return;
   const dx = x - _swX, dy = y - _swY;
@@ -34227,14 +34319,23 @@ function swMove(x, y, ev){
   const atEnd   = fcIndex === fcCache.length-1 && dx < 0;
   _swDX = (atStart || atEnd) ? dx * 0.28 : dx;
 
-  const rot = _swDX * 0.02;                       // slight tilt as it follows the finger
-  const fade = Math.min(Math.abs(_swDX) / 260, .45);
-  fcCard.style.transform = `translateX(${_swDX}px) rotate(${rot}deg)`;
-  fcCard.style.opacity = String(1 - fade);
+  // Chỉ vẽ lại 1 lần/khung hình (rAF) thay vì mỗi lần touchmove bắn ra ->
+  // tránh việc trình duyệt phải ghi style nhiều lần hơn số khung hình nó
+  // thực sự vẽ được, giữ động tác kéo mượt tuyệt đối kể cả trên máy yếu.
+  if(_swRAF === null){
+    _swRAF = requestAnimationFrame(()=>{
+      _swRAF = null;
+      const rot = _swDX * 0.02;                       // slight tilt as it follows the finger
+      const fade = Math.min(Math.abs(_swDX) / 260, .45);
+      fcCard.style.transform = `translateX(${_swDX}px) rotate(${rot}deg)`;
+      fcCard.style.opacity = String(1 - fade);
+    });
+  }
 }
 function swEnd(){
   if(!_swDown) return;
   _swDown = false;
+  if(_swRAF !== null){ cancelAnimationFrame(_swRAF); _swRAF = null; }
   fcCard.classList.remove('dragging');
   fcCard.style.transform = '';
   fcCard.style.opacity = '';
@@ -34298,6 +34399,7 @@ function fcSlide(dir){
   const n = fcCache.length;
   if(!n || _fcSliding) return;          // chặn bấm dồn -> hết giật
   _fcSliding = true;
+  sfx.swipe();
   fcCard.style.transform=''; fcCard.style.opacity='';
   fcCard.classList.remove('flipped','flipping','sw-bounce');
   fcCard.classList.add(dir>0?'slide-out-left':'slide-out-right');
@@ -34524,6 +34626,19 @@ document.addEventListener('fullscreenchange', ()=>{
 });
 document.addEventListener('webkitfullscreenchange', syncFullBtn);
 
+/* ---------- Gộp sự kiện resize bằng requestAnimationFrame ----------
+   'resize' có thể bắn liên tục hàng chục lần/giây khi kéo cạnh cửa sổ
+   hoặc xoay màn hình. Gộp lại chỉ chạy 1 lần/khung hình -> đỡ tính lại
+   layout (getBoundingClientRect) thừa, cuộn/kéo mượt hơn hẳn. */
+function rafDebounce(fn){
+  let scheduled = false;
+  return function(...args){
+    if(scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(()=>{ scheduled = false; fn.apply(this, args); });
+  };
+}
+
 /* ---------- Đo chiều cao khả dụng cho thẻ flashcard ----------
    Thẻ sẽ giãn đúng phần trống còn lại (không thừa khoảng trắng, không phải
    cuộn để thấy nút điều hướng). --fc-top = khoảng cách từ đỉnh viewport
@@ -34534,7 +34649,7 @@ function measureFcTop(){
   const top = wrap.getBoundingClientRect().top + window.scrollY;
   document.documentElement.style.setProperty('--fc-top', top + 'px');
 }
-window.addEventListener('resize', measureFcTop);
+window.addEventListener('resize', rafDebounce(measureFcTop));
 window.addEventListener('orientationchange', ()=>setTimeout(measureFcTop,120));
 document.addEventListener('DOMContentLoaded', measureFcTop);
 setTimeout(measureFcTop, 60);
@@ -34561,7 +34676,7 @@ function snapFlashcardSize(){
     card.style.width  = w + 'px';
   });
 }
-window.addEventListener('resize', snapFlashcardSize);
+window.addEventListener('resize', rafDebounce(snapFlashcardSize));
 window.addEventListener('orientationchange', ()=>setTimeout(snapFlashcardSize,120));
 document.addEventListener('DOMContentLoaded', snapFlashcardSize);
 setTimeout(snapFlashcardSize, 60);
@@ -34856,6 +34971,31 @@ window.addEventListener('scroll', ()=>{
       stAllAppend(50);
       _stAllBusy = false;
     }
+  });
+}, {passive:true});
+
+/* ---------- Tự động ẩn thanh trên cùng (logo, trạng thái, nút tối/toàn
+   màn hình) khi cuộn xuống, hiện lại ngay khi cuộn lên ----------
+   - Ở gần đầu trang (< 40px) thì luôn hiện, không ẩn dù đang cuộn xuống,
+     để tránh nhấp nháy khi người dùng chỉ mới bắt đầu cuộn.
+   - Có ngưỡng lệch (6px) để bỏ qua rung lắc nhỏ (trackpad, bounce iOS)
+     thay vì ẩn/hiện liên tục theo từng pixel.
+   - Gộp qua requestAnimationFrame như listener ở trên, không đọc lại
+     layout nào -> không thêm chi phí khi cuộn. */
+let _hdrLastY = window.scrollY || 0;
+let _hdrTick = false;
+window.addEventListener('scroll', ()=>{
+  if(_hdrTick) return;
+  _hdrTick = true;
+  requestAnimationFrame(()=>{
+    _hdrTick = false;
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    const dy = y - _hdrLastY;
+    if(document.body.classList.contains('page-fs')){ _hdrLastY = y; return; }  // toàn màn hình đã tự thu gọn header, khỏi ẩn thêm
+    if(y < 40)          document.body.classList.remove('header-hidden');
+    else if(dy > 6)      document.body.classList.add('header-hidden');
+    else if(dy < -6)     document.body.classList.remove('header-hidden');
+    _hdrLastY = y;
   });
 }, {passive:true});
 
@@ -38992,12 +39132,13 @@ function clFlipCard(){
   if(_clFlipping) return;
   _clFlipped = !_clFlipped;
   _clFlipping = true;
+  sfx.flip();
   stRenderCollocFlashcard(document.getElementById('stRoot'));
   speak(_clDeck[_clCardIdx].phrase);
   setTimeout(()=>{ _clFlipping = false; }, 620);
 }
-function clNextCard(){ _clCardIdx = (_clCardIdx+1) % _clDeck.length; _clFlipped = false; stRenderCollocFlashcard(document.getElementById('stRoot')); }
-function clPrevCard(){ _clCardIdx = (_clCardIdx-1+_clDeck.length) % _clDeck.length; _clFlipped = false; stRenderCollocFlashcard(document.getElementById('stRoot')); }
+function clNextCard(){ sfx.swipe(); _clCardIdx = (_clCardIdx+1) % _clDeck.length; _clFlipped = false; stRenderCollocFlashcard(document.getElementById('stRoot')); }
+function clPrevCard(){ sfx.swipe(); _clCardIdx = (_clCardIdx-1+_clDeck.length) % _clDeck.length; _clFlipped = false; stRenderCollocFlashcard(document.getElementById('stRoot')); }
 function clShuffleDeck(){ _clDeck = shuffle(_clDeck.slice()); _clCardIdx = 0; _clFlipped = false; stRenderCollocFlashcard(document.getElementById('stRoot')); }
 
 function stRenderCollocFlashcard(root){
@@ -39106,6 +39247,7 @@ function clSwStart(el, x, y){
   _clSwX = x; _clSwY = y; _clSwDX = 0; _clSwT0 = performance.now();
   el.classList.add('dragging');
 }
+let _clSwRAF = null;
 function clSwMove(x, y, ev){
   if(!_clSwDown || !_clSwEl) return;
   const dx = x - _clSwX, dy = y - _clSwY;
@@ -39117,14 +39259,22 @@ function clSwMove(x, y, ev){
   if(ev && ev.cancelable) ev.preventDefault();
   _clSwMoved = true;
   _clSwDX = dx;
-  const rot = _clSwDX * 0.02;
-  const fade = Math.min(Math.abs(_clSwDX) / 260, .45);
-  _clSwEl.style.transform = `translateX(${_clSwDX}px) rotate(${rot}deg)`;
-  _clSwEl.style.opacity = String(1 - fade);
+  if(_clSwRAF === null){
+    const el = _clSwEl;
+    _clSwRAF = requestAnimationFrame(()=>{
+      _clSwRAF = null;
+      if(!el) return;
+      const rot = _clSwDX * 0.02;
+      const fade = Math.min(Math.abs(_clSwDX) / 260, .45);
+      el.style.transform = `translateX(${_clSwDX}px) rotate(${rot}deg)`;
+      el.style.opacity = String(1 - fade);
+    });
+  }
 }
 function clSwEnd(){
   if(!_clSwDown) return;
   _clSwDown = false;
+  if(_clSwRAF !== null){ cancelAnimationFrame(_clSwRAF); _clSwRAF = null; }
   const el = _clSwEl;
   if(el){ el.classList.remove('dragging'); el.style.transform = ''; el.style.opacity = ''; }
 
@@ -41235,7 +41385,7 @@ function rdHidePop(){ const p=document.getElementById('rdPop'); if(p) p.classLis
 /* Cuộn trang / đổi kích thước / nhấn Esc -> đóng popup (nếu không nó sẽ "treo" giữa màn hình) */
 window.addEventListener('scroll', ()=>{ const p=document.getElementById('rdPop');
   if(p && p.classList.contains('on')) rdHidePop(); }, {passive:true});
-window.addEventListener('resize', rdHidePop);
+window.addEventListener('resize', rafDebounce(rdHidePop));
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') rdHidePop(); });
 document.addEventListener('click', e=>{
   const pop = document.getElementById('rdPop');
@@ -41347,7 +41497,7 @@ document.addEventListener('click', e=>{
    chạm vào ô nhập để gõ sẽ làm bàn phím ảo trồi lên, kéo theo sự kiện resize/scroll
    của trình duyệt — nếu không chặn ở đây thì popup ghi chú sẽ biến mất ngay khi vừa mở. */
 window.addEventListener('scroll', ()=>{ if(!_rdSelTipLocked) rdHideSelTip(); }, {passive:true});
-window.addEventListener('resize', ()=>{ if(!_rdSelTipLocked) rdHideSelTip(); });
+window.addEventListener('resize', rafDebounce(()=>{ if(!_rdSelTipLocked) rdHideSelTip(); }));
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') rdHideSelTip(); });
 
 function rdSelCopyFallback(text){
@@ -42517,7 +42667,7 @@ function rdPractice(id){
     if(h) document.documentElement.style.setProperty('--rd-tools-top', (h+qsH)+'px');
   }
   updateRdQsTop();
-  window.addEventListener('resize', updateRdQsTop);
+  window.addEventListener('resize', rafDebounce(updateRdQsTop));
   if(window.ResizeObserver){
     const ro = new ResizeObserver(updateRdQsTop);
     if(header) ro.observe(header);
