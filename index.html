@@ -409,7 +409,7 @@ html[data-bg="plain"] body::before{
 }
 .vocab-card[data-color]:hover{ box-shadow:var(--shadow); transform:translateY(-2px); }
 .vocab-card[data-color]::before{
-  content:''; position:absolute; left:0; top:0; bottom:0; width:5px; border-radius:5px 0 0 5px;
+  display:none; /* đã bỏ dải màu 5px bên trái — viền 4 cạnh giờ đều nhau, dùng chung border-color set qua inline style */
 }
 .vocab-card[data-color="0"]::before{ background:var(--cc0); } .vocab-card[data-color="0"]{ background:color-mix(in srgb,var(--cc0) 7%,var(--card)); }
 .vocab-card[data-color="1"]::before{ background:var(--cc1); } .vocab-card[data-color="1"]{ background:color-mix(in srgb,var(--cc1) 7%,var(--card)); }
@@ -2387,21 +2387,42 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .ls-test-n{ font-size:10.5px; color:var(--muted); font-weight:700; width:46px; text-align:right; flex-shrink:0; font-family:var(--font-heading); }
 .ls-test.ls-test--empty{ opacity:.6; }
 .ls-test.ls-test--empty .ls-test-n{ color:var(--muted); font-weight:600; }
-.rd-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
-.rd-card{ background:var(--card); border:1px solid var(--line); border-radius:16px;
-  padding:16px 18px; cursor:pointer; text-align:left;
-  transition:transform .18s var(--ease-smooth), border-color .18s, box-shadow .18s;
-  display:flex; flex-direction:column; gap:9px; content-visibility:auto; contain-intrinsic-size:auto 170px; }
-.rd-card:hover{ transform:translateY(-3px); border-color:var(--accent); box-shadow:var(--shadow); }
-.rd-eyebrow{ font-size:10.5px; font-weight:800; letter-spacing:.7px; text-transform:uppercase;
-  color:var(--accent); }
-.rd-card h3{ font-family:var(--font-heading); font-size:16.5px; line-height:1.35; margin:0;
+.rd-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr)); gap:12px; }
+/* Thẻ bài đọc giờ dùng lại đúng phong cách thẻ chủ đề ở tab Danh sách
+   (.te-macro-card): viền + đầu thẻ đủ màu theo bảng --cc0..--cc9 (mỗi bài
+   1 màu cố định dựa trên id bài), có thanh tiến độ số từ đã thêm vào bộ
+   học, để toàn bộ các khu vực duyệt nội dung trong app nhìn đồng nhất. */
+.rd-card{
+  display:flex; flex-direction:column; align-items:stretch; text-align:left; cursor:pointer; padding:0;
+  width:100%; max-width:100%; box-sizing:border-box; appearance:none; -webkit-appearance:none;
+  border:2px solid var(--tp-c,var(--line-strong)); border-radius:14px; background:var(--card);
+  overflow:hidden; transition:box-shadow .15s, transform .15s;
+  content-visibility:auto; contain-intrinsic-size:auto 190px;
+}
+.rd-card:hover{ box-shadow:var(--shadow-sm); transform:translateY(-2px); }
+.rd-card[data-color="0"]{ --tp-c:var(--cc0); } .rd-card[data-color="1"]{ --tp-c:var(--cc1); }
+.rd-card[data-color="2"]{ --tp-c:var(--cc2); } .rd-card[data-color="3"]{ --tp-c:var(--cc3); }
+.rd-card[data-color="4"]{ --tp-c:var(--cc4); } .rd-card[data-color="5"]{ --tp-c:var(--cc5); }
+.rd-card[data-color="6"]{ --tp-c:var(--cc6); } .rd-card[data-color="7"]{ --tp-c:var(--cc7); }
+.rd-card[data-color="8"]{ --tp-c:var(--cc8); } .rd-card[data-color="9"]{ --tp-c:var(--cc9); }
+.rd-card-head{
+  display:flex; align-items:flex-start; gap:8px; padding:11px 13px 9px;
+  width:100%; box-sizing:border-box; flex:0 0 auto;
+  background:var(--tp-c,var(--accent));
+}
+.rd-eyebrow{ font-size:10px; font-weight:800; letter-spacing:.5px; text-transform:uppercase;
+  color:rgba(255,255,255,.92); flex:1; line-height:1.4; }
+.rd-card-count{ font-size:11px; font-weight:800; color:#fff; white-space:nowrap;
+  background:rgba(255,255,255,.28); border-radius:99px; padding:3px 9px; flex-shrink:0; }
+.rd-card-body{ padding:11px 13px 12px; display:flex; flex-direction:column; gap:9px; flex:1 1 auto; width:100%; box-sizing:border-box; }
+.rd-card h3{ font-family:var(--font-heading); font-size:15.5px; line-height:1.35; margin:0;
   letter-spacing:-.3px; color:var(--ink); }        /* PHẢI khai báo: button không kế thừa màu chữ */
-.rd-card{ color:var(--ink); }
-.rd-card:hover h3{ color:var(--accent); }
-.rd-card-foot{ display:flex; gap:7px; flex-wrap:wrap; margin-top:auto; padding-top:4px; }
-.rd-badge{ font-size:11px; font-weight:700; color:var(--ink-soft); background:var(--paper);
-  border:1px solid var(--line); border-radius:8px; padding:3px 8px; }
+.rd-card:hover h3{ color:var(--tp-c,var(--accent)); }
+.rd-progress-track{ width:100%; box-sizing:border-box; height:6px; border-radius:99px; background:var(--paper-2); border:1px solid var(--line); overflow:hidden; flex-shrink:0; }
+.rd-progress-fill{ height:100%; border-radius:99px; background:var(--tp-c,var(--green,#059669)); transition:width .5s; }
+.rd-card-foot{ display:flex; gap:7px; flex-wrap:wrap; margin-top:auto; }
+.rd-badge{ font-size:10.5px; font-weight:700; color:var(--ink-soft);
+  background:color-mix(in srgb,var(--tp-c,var(--line)) 10%,var(--card-sunken)); border:1px solid var(--line); border-radius:8px; padding:3px 8px; }
 
 /* Trình đọc */
 .rd-bar{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:16px; }
@@ -3374,10 +3395,10 @@ body.page-fs { overflow-x:hidden; }
 
 .cl-topic-bar-list{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px 14px; }
 @media (min-width:1400px){ .cl-topic-bar-list{ grid-template-columns:repeat(4,1fr); } }
-.cl-topic-bar-row{ display:block; width:100%; text-align:left; background:none; border:1px solid transparent;
-  border-left:3px solid var(--tc,var(--line)); border-radius:10px; padding:6px 8px 6px 10px; cursor:pointer; font:inherit; color:inherit; transition:background .15s,border-color .15s; }
+.cl-topic-bar-row{ display:block; width:100%; text-align:left; background:none; border:2px solid var(--tc,var(--line));
+  border-radius:10px; padding:6px 8px; cursor:pointer; font:inherit; color:inherit; transition:background .15s,border-color .15s; }
 .cl-topic-bar-row:hover{ background:var(--card-sunken); }
-.cl-topic-bar-row.active{ background:var(--accent-bg); border-color:var(--accent); border-left-color:var(--tc,var(--accent)); }
+.cl-topic-bar-row.active{ background:var(--accent-bg); border-color:var(--tc,var(--accent)); }
 .cl-topic-bar-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--tc,var(--accent)); margin-right:6px; vertical-align:middle; flex-shrink:0; }
 .cl-topic-bar-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:5px; }
 .cl-topic-bar-name{ font-size:13px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -32353,6 +32374,16 @@ function topicColorIndex(topic){
   if(TOPIC_COLORS[topic] === undefined) TOPIC_COLORS[topic] = _tci++ % 10;
   return TOPIC_COLORS[topic];
 }
+/* Bảng màu --cc0..--cc9 lặp lại y hệt giá trị khai báo trong CSS (:root /
+   [data-theme="dark"]) — dùng để in thẳng màu HEX vào inline style, làm
+   lưới dự phòng cho các nơi nền màu qua biến CSS (--tp-c) lỡ không lên
+   màu được (ví dụ trình duyệt/nơi xem không áp dụng đúng thứ tự cascade). */
+const CC_HEX_LIGHT = ['#7c3aed','#059669','#d97706','#db2777','#0d9488','#4f46e5','#ea580c','#0284c7','#e11d48','#9333ea'];
+const CC_HEX_DARK  = ['#a78bfa','#34d399','#fbbf24','#f472b6','#2dd4bf','#818cf8','#fb923c','#38bdf8','#fb7185','#c084fc'];
+function ccHex(i){
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  return (dark ? CC_HEX_DARK : CC_HEX_LIGHT)[((i%10)+10)%10];
+}
 
 /* Cắt gọn tên chủ đề con quá dài (đặc biệt tên bài đọc Reading) —
    chỉ giữ lại một số từ đầu rồi thêm "…", để các ô/chip cùng cấp luôn
@@ -33796,22 +33827,23 @@ function renderDashboard(){
 
 
 /* ---------- Nút "❔ Hướng dẫn" cạnh "Chọn chủ đề học": mở modal giải
-   thích quy trình 3 cửa + ôn ngắt quãng, và 7 chế độ trong Học ngay. ---- */
+   thích ĐẦY ĐỦ mọi chức năng học của app (không chỉ quy trình 3 cửa) —
+   từng tab dùng để làm gì, khi nào nên dùng, và gợi ý lịch học hàng ngày. ---- */
 function openLearnGuide(){
   const overlay = document.createElement('div');
   overlay.id = 'learnGuideOverlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
   overlay.innerHTML = `
-    <div style="background:var(--card);color:var(--ink);max-width:560px;width:100%;max-height:86vh;overflow-y:auto;
+    <div style="background:var(--card);color:var(--ink);max-width:620px;width:100%;max-height:88vh;overflow-y:auto;
       border-radius:16px;padding:22px 22px 18px;box-shadow:0 12px 40px rgba(0,0,0,.35);font-size:13.5px;line-height:1.62;
       border:1px solid var(--line);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <h3 style="margin:0;font-size:17px">📘 Hướng dẫn học</h3>
+        <h3 style="margin:0;font-size:17px">📘 Hướng dẫn học — toàn bộ tính năng</h3>
         <button id="lgClose" style="border:none;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
       </div>
 
       <h4 style="margin:14px 0 6px;font-size:14px">🚀 Quy trình 1 từ đi qua</h4>
-      <p style="margin:0 0 8px">Mỗi từ phải vượt <b>đủ 3 cửa kỹ năng</b>, theo đúng thứ tự nợ cửa nào làm cửa đó:</p>
+      <p style="margin:0 0 8px">Mỗi từ phải vượt <b>đủ 3 cửa kỹ năng</b>, theo đúng thứ tự — nợ cửa nào làm cửa đó:</p>
       <ul style="margin:0 0 10px;padding-left:18px">
         <li>🃏 <b>Flashcard</b> — nhìn mặt chữ, tự đánh giá thật lòng "nhớ hay không".</li>
         <li>❓ <b>Trắc nghiệm</b> — chọn đúng nghĩa (khó đoán mò hơn vì phải qua cả 3 cửa).</li>
@@ -33819,6 +33851,27 @@ function openLearnGuide(){
       </ul>
       <p style="margin:0 0 8px">Trả lời <b>sai</b> ở cửa nào → cửa đó <b>khoá lại</b>, phải vượt lại từ đầu. Đủ cả 3 cửa rồi, từ chuyển sang giai đoạn <b>🔁 Ôn ngắt quãng</b> (khoảng cách ôn giãn dần: 1 → 3 → 7 → 16 → 35 ngày) — ôn đúng đủ 5 lượt giãn cách này mới chính thức <b>✅ Đã thuộc</b>.</p>
       <p style="margin:0 0 10px">⭐ Từ bị đánh "Quên" sẽ tự động được đánh dấu sao vào "Cần học"; khi đã thuộc hẳn, dấu sao tự động được gỡ — không cần làm tay.</p>
+
+      <h4 style="margin:16px 0 6px;font-size:14px">🧭 Từng tab dùng để làm gì</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+        ${[
+          {m:'list',   ic:'📖', name:'Danh sách',   desc:'Duyệt toàn bộ kho từ theo chủ đề (dạng thẻ đủ màu hoặc ô gọn), lọc theo trình độ/trạng thái, tìm từ, xem nghĩa & collocation chi tiết. Dùng để <b>khám phá</b> và chọn phạm vi muốn học, chưa phải để ghi nhớ.'},
+          {m:'flashcard', ic:'🃏', name:'① Flashcard', desc:'Cửa 1 của quy trình. Lật thẻ, tự chấm "nhớ / không nhớ". Phù hợp làm quen từ mới hoặc ôn nhanh trước khi vào Trắc nghiệm.'},
+          {m:'quiz',   ic:'❓', name:'② Trắc nghiệm', desc:'Cửa 2. Chọn đúng nghĩa trong 4 đáp án — kiểm tra xem đã hiểu nghĩa thật sự hay chỉ quen mặt chữ.'},
+          {m:'typing', ic:'⌨️', name:'③ Gõ từ',      desc:'Cửa 3, khó nhất. Gõ đúng chính tả từ nghĩa tiếng Việt, không gợi ý — buộc não nhớ chủ động thay vì nhận diện thụ động.'},
+          {m:'synonym',ic:'🔤', name:'Đồng nghĩa',   desc:'Luyện phản xạ tìm từ đồng nghĩa/thay thế — rất cần cho IELTS Writing & Reading (paraphrase). Không nằm trong 3 cửa bắt buộc, nên tập thêm song song để câu văn đa dạng hơn.'},
+          {m:'learn',  ic:'🚀', name:'Học ngay',     desc:'Cửa vào chính để ôn tập mỗi ngày — gộp cả 3 cửa + ôn ngắt quãng vào 1 phiên duy nhất, có 7 chế độ chọn phạm vi từ (xem mục dưới).'},
+          {m:'need',   ic:'⭐', name:'Cần học',      desc:'Danh sách từ đang bị đánh dấu sao (do trả lời sai/hay quên, hoặc tự đánh dấu tay) — nơi dồn sức ôn lại những từ yếu nhất.'},
+          {m:'reading',ic:'📕', name:'Reading',      desc:'Đọc bài đọc IELTS thật (Cambridge 15–21), từ vựng trong bài được gạch chân, bấm vào xem nghĩa ngay trong ngữ cảnh câu — nhớ lâu hơn học từ rời rạc. Mục con <b>"Từ vựng Listening"</b> trong tab này gom riêng từ vựng theo từng đề Cam-Test để luyện nghe.'},
+          {m:'structures', ic:'✍️', name:'Writing',  desc:'Luyện cấu trúc câu & collocation hay dùng trong IELTS Writing/Speaking, có phần dịch Anh–Việt và trắc nghiệm riêng — nơi biến từ vựng đã học thành câu văn thật.'},
+        ].map(t=>`
+        <button onclick="lgGo('${t.m}')" style="display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;
+          background:var(--paper-2,rgba(127,127,127,.08));border:1px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer;color:inherit;font:inherit">
+          <span style="font-size:17px;line-height:1.3">${t.ic}</span>
+          <span style="flex:1"><b>${t.name}</b><br><span style="color:var(--ink-soft,var(--muted));font-size:12.5px">${t.desc}</span></span>
+          <span style="color:var(--muted);font-size:13px;padding-top:2px">→</span>
+        </button>`).join('')}
+      </div>
 
       <h4 style="margin:14px 0 6px;font-size:14px">🎛️ 7 chế độ trong "Học ngay"</h4>
       <ul style="margin:0 0 10px;padding-left:18px">
@@ -33830,15 +33883,30 @@ function openLearnGuide(){
         <li><b>⭐ Cần học</b> — đúng các từ đang được đánh dấu sao.</li>
         <li><b>🗂️ Theo bộ lọc</b> — theo bộ lọc chủ đề/trình độ/trạng thái đang bật ở tab Danh sách.</li>
       </ul>
-      <p style="margin:0;color:var(--muted);font-size:12.5px">Mẹo: muốn học từ mới theo mạch chủ đề liên tục → dùng <b>🆕 Chỉ từ mới</b>. Muốn app tự xen kẽ cân bằng giữa ôn và học mới → dùng <b>🚀 Lộ trình</b>.</p>
+      <p style="margin:0 0 14px;color:var(--muted);font-size:12.5px">Mẹo: muốn học từ mới theo mạch chủ đề liên tục → dùng <b>🆕 Chỉ từ mới</b>. Muốn app tự xen kẽ cân bằng giữa ôn và học mới → dùng <b>🚀 Lộ trình</b>.</p>
 
-      <button id="lgOk" style="width:100%;margin-top:16px;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Đã hiểu</button>
+      <h4 style="margin:14px 0 6px;font-size:14px">📅 Gợi ý lịch học 1 buổi (~20-30 phút)</h4>
+      <ol style="margin:0 0 10px;padding-left:18px">
+        <li><b>Học ngay → Lộ trình</b> (10-15p): ôn từ đến hạn + học từ mới trong cùng 1 phiên.</li>
+        <li><b>Đồng nghĩa</b> hoặc <b>Reading</b> (5-10p): mở rộng cách diễn đạt / gặp lại từ trong ngữ cảnh thật.</li>
+        <li><b>Writing</b> (5-10p, vài lần/tuần): ghép từ & collocation vừa học vào câu, luyện dịch.</li>
+        <li>Cuối tuần: dọn <b>⭐ Cần học</b> — ôn dứt điểm các từ hay quên còn tồn đọng.</li>
+      </ol>
+
+      <button id="lgOk" style="width:100%;margin-top:6px;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Đã hiểu</button>
     </div>`;
   document.body.appendChild(overlay);
   const close = ()=> overlay.remove();
   overlay.querySelector('#lgClose').onclick = close;
   overlay.querySelector('#lgOk').onclick = close;
   overlay.addEventListener('click', e=>{ if(e.target===overlay) close(); });
+}
+/* Bấm 1 mục trong "Từng tab dùng để làm gì" -> đóng modal, nhảy thẳng tới tab đó */
+function lgGo(mode){
+  const ov = document.getElementById('learnGuideOverlay');
+  if(ov) ov.remove();
+  const btn = document.querySelector(`.tab-btn[data-mode="${mode}"]`);
+  if(btn) btn.click();
 }
 
 /* ---------- Nút "Chọn chủ đề học" trên hàng tiến độ chính: nhảy sang tab
@@ -40962,17 +41030,25 @@ function renderReadingLib(){
     // từ vựng trong bài khớp với từ khoá -> hiện ra để biết vì sao bài này xuất hiện
     const vh = q ? r.V.filter(v => (v[0]||'').toLowerCase().includes(q) || (v[3]||'').toLowerCase().includes(q)) : [];
     const added = r.V.filter(v => inDeck(v[0])).length;
+    const pct = r.V.length ? Math.round(added/r.V.length*100) : 0;
     return `
-    <button class="rd-card" onclick="openReading('${r.id}')">
-      <div class="rd-eyebrow">${r.book?`Cambridge ${r.book}`:''}${r.test?` · Test ${r.test}`:''}${r.psg?` · Passage ${r.psg}`:''}</div>
-      <h3>${mk(r.title)}</h3>
-      ${vh.length ? `<div class="rd-hits">${vh.slice(0,4).map(v=>
-          `<span class="rd-hit">${mk(v[0])} <i>${mk(v[3])}</i></span>`).join('')}
-          ${vh.length>4?`<span class="rd-hit more">+${vh.length-4} từ nữa</span>`:''}</div>` : ''}
-      <div class="rd-card-foot">
-        <span class="rd-badge">📝 ${r.V.length} từ</span>
-        <span class="rd-badge">📄 ${r.P.length} đoạn</span>
-        ${added ? `<span class="rd-badge ok">✓ ${added} trong bộ học</span>` : ''}
+    <button class="rd-card" data-color="${topicColorIndex(r.id)}" onclick="openReading('${r.id}')">
+      <div class="rd-card-head" style="background:var(--tp-c, ${ccHex(topicColorIndex(r.id))})">
+        <span class="rd-eyebrow">${r.book?`Cambridge ${r.book}`:''}${r.test?` · Test ${r.test}`:''}${r.psg?` · Passage ${r.psg}`:''}</span>
+        <span class="rd-card-count">${r.V.length} từ</span>
+      </div>
+      <div class="rd-card-body">
+        <h3>${mk(r.title)}</h3>
+        ${vh.length ? `<div class="rd-hits">${vh.slice(0,4).map(v=>
+            `<span class="rd-hit">${mk(v[0])} <i>${mk(v[3])}</i></span>`).join('')}
+            ${vh.length>4?`<span class="rd-hit more">+${vh.length-4} từ nữa</span>`:''}</div>` : ''}
+        <div class="rd-progress-track" title="${added}/${r.V.length} từ đã thêm vào bộ học">
+          <div class="rd-progress-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="rd-card-foot">
+          <span class="rd-badge">📄 ${r.P.length} đoạn</span>
+          ${added ? `<span class="rd-badge ok">✓ ${added} trong bộ học</span>` : ''}
+        </div>
       </div>
     </button>`;}).join('')
     : `<div class="rd-empty">Không tìm thấy bài nào khớp “${rdEsc(_rdQuery)}”.</div>`;
