@@ -114,6 +114,74 @@
   --header-h: 58px;
 }
 
+/* ============================================================
+   NÚT GHI CHÚ NHANH NỔI
+   ------------------------------------------------------------
+   Cho phép gõ ghi chú từ vựng ở bất kỳ đâu, bất kỳ lúc nào, không
+   cần rời khỏi tab đang học. Mỗi ngày dồn chung vào ĐÚNG 1 ghi
+   chú (đã ghim sẵn) trong 📒 Sổ ghi chú ở tab ⚙️ Setting.
+   Nút nằm đúng vị trí nút 🌙 chế độ tối trước đây (nút đó cùng
+   nút ⛶ được đẩy sang trái nhường chỗ — xem .qc-slot trong
+   header-actions). Nút dùng position:fixed nên luôn nổi, không
+   biến mất khi header tự trượt ẩn lúc cuộn trang xuống. Vị trí
+   được đồng bộ bằng JS (căn theo .qc-slot) để khớp mọi kích cỡ
+   màn hình mà không cần đoán lại từng breakpoint của header. */
+.qc-slot{ visibility:hidden; }
+.qc-widget{ position:fixed; top:14px; right:14px; z-index:5000; }
+.qc-toggle-btn{
+  width:40px; height:40px; border-radius:13px; border:1px solid rgba(255,255,255,.35);
+  background:var(--accent-grad); color:#fff; font-size:17px; cursor:pointer; padding:0;
+  box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .15s ease;
+}
+.qc-toggle-btn:hover{ transform:rotate(-10deg) scale(1.07); box-shadow:var(--shadow-lg); }
+.qc-toggle-btn:active{ transform:scale(.94); }
+.qc-toggle-btn.on{ box-shadow:0 0 0 3px var(--accent-bg), var(--shadow); }
+@media (max-width:640px){
+  .qc-toggle-btn{ width:32px; height:32px; font-size:14px; border-radius:11px; }
+}
+
+/* ---- Cửa sổ ghi chú nhanh: modal chiếm khoảng nửa diện tích màn hình ---- */
+.qc-overlay{
+  position:fixed; inset:0; z-index:5001;
+  display:grid; place-items:center; padding:20px;
+  background:rgba(15,23,42,.55); backdrop-filter:blur(4px);
+  opacity:0; transition:opacity .25s;
+}
+.qc-overlay.show{ opacity:1; }
+.qc-modal{
+  width:50vw; height:50vh; min-width:320px; min-height:280px;
+  max-width:calc(100vw - 32px); max-height:calc(100vh - 32px);
+  background:var(--card); border:1px solid var(--line); border-radius:20px;
+  box-shadow:0 24px 60px rgba(0,0,0,.3); padding:18px 20px;
+  display:flex; flex-direction:column; gap:10px;
+  transform:scale(.94); transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.qc-overlay.show .qc-modal{ transform:scale(1); }
+.qc-panel-head{ display:flex; align-items:center; justify-content:space-between; font-size:15px; font-weight:800; color:var(--ink); flex-shrink:0; }
+.qc-close-btn{ background:none; border:none; cursor:pointer; color:var(--muted); font-size:17px; padding:2px 4px; line-height:1; }
+.qc-close-btn:hover{ color:var(--ink); }
+.qc-modal .nb-fmt-toolbar{ flex-shrink:0; margin-bottom:0; }
+/* #qcInput dùng ID để chắc chắn thắng các thuộc tính mặc định của .nb-note-editable
+   (min-height/resize/border) bất kể thứ tự khai báo trong file, vì ô này cần lấp đầy
+   phần còn lại của modal thay vì co theo nội dung như ô ghi chú thường. */
+#qcInput{
+  flex:1 1 auto; min-height:0; width:100%; box-sizing:border-box;
+  font-size:14px; line-height:1.6; padding:12px 14px; border-radius:var(--radius-sm);
+  resize:none; overflow-y:auto;
+}
+#qcInput:focus{ outline:none; box-shadow:0 0 0 2px var(--accent) inset; border-color:var(--accent); }
+.qc-panel-actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-shrink:0; flex-wrap:wrap; }
+.qc-panel-actions-left{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.qc-panel-actions .btn{ font-size:12.5px; padding:7px 14px; }
+.qc-panel-actions .qc-save-btn{ font-size:13px; padding:8px 18px; }
+.qc-panel-hint{ font-size:11.5px; color:var(--muted); line-height:1.4; flex-shrink:0; }
+@media (max-width:640px){
+  .qc-modal{ width:100%; height:70vh; }
+  .qc-panel-actions{ flex-wrap:wrap; }
+  .qc-panel-actions-left{ width:100%; }
+}
+
 /* ===== TỐI ===== */
 [data-theme="dark"] {
   --ink: #e8f0ec;
@@ -5479,6 +5547,43 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
 .nw-chip{ background:var(--card); border:1px solid var(--line); font-weight:600; }
 </style>
 <body>
+<!-- ===== NÚT GHI CHÚ NHANH NỔI — vị trí đồng bộ bằng JS theo .qc-slot trong header ===== -->
+<div id="qcWidget" class="qc-widget">
+  <button type="button" id="qcToggleBtn" class="qc-toggle-btn" onclick="qcToggle()" title="Ghi chú từ vựng nhanh">📝</button>
+</div>
+<div id="qcOverlay" class="qc-overlay" style="display:none" onclick="qcOverlayClick(event)">
+  <div class="qc-modal" id="qcModal">
+    <div class="qc-panel-head">
+      <span>📝 Ghi chú nhanh hôm nay</span>
+      <button type="button" class="qc-close-btn" onclick="qcClose()" title="Đóng">✕</button>
+    </div>
+    <div class="nb-fmt-toolbar">
+      <button type="button" title="In đậm" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','bold')"><b>B</b></button>
+      <button type="button" title="In nghiêng" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','italic')"><i>I</i></button>
+      <button type="button" title="Gạch chân" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','underline')"><u>U</u></button>
+      <button type="button" title="Gạch đầu dòng" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','insertUnorderedList')">• ≡</button>
+      <span class="nb-fmt-sep"></span>
+      <span class="nb-fmt-swatches">
+        <button type="button" class="nb-fmt-swatch" style="background:#1f2937" title="#1f2937" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','foreColor','#1f2937')"></button>
+        <button type="button" class="nb-fmt-swatch" style="background:#dc2626" title="#dc2626" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','foreColor','#dc2626')"></button>
+        <button type="button" class="nb-fmt-swatch" style="background:#ea580c" title="#ea580c" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','foreColor','#ea580c')"></button>
+        <button type="button" class="nb-fmt-swatch" style="background:#16a34a" title="#16a34a" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','foreColor','#16a34a')"></button>
+        <button type="button" class="nb-fmt-swatch" style="background:#2563eb" title="#2563eb" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','foreColor','#2563eb')"></button>
+        <button type="button" class="nb-fmt-swatch" style="background:#7c3aed" title="#7c3aed" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','foreColor','#7c3aed')"></button>
+      </span>
+    </div>
+    <div id="qcInput" class="nb-note-editable" contenteditable="true" data-placeholder="Gõ từ vựng / ý cần nhớ… (Ctrl+Enter để lưu)" onkeydown="qcHandleKey(event)"></div>
+    <div class="qc-panel-actions">
+      <div class="qc-panel-actions-left">
+        <button type="button" class="btn" onclick="qcClearInput()" title="Xoá nội dung đang gõ (chưa lưu)">🗑️ Xoá</button>
+        <button type="button" class="btn" onclick="qcOpenNotebook()" title="Mở toàn bộ Sổ ghi chú ở tab Setting">📒 Xem toàn bộ ghi chú</button>
+      </div>
+      <button type="button" class="btn primary qc-save-btn" onclick="qcSave()">💾 Lưu</button>
+    </div>
+    <div class="qc-panel-hint">Tự lưu vào 1 ghi chú ghim/ngày, xem ở ⚙️ Setting → 📒 Sổ ghi chú.</div>
+  </div>
+</div>
+
 <header>
   <div class="brand">
     <div class="brand-icon" aria-hidden="true">
@@ -5528,6 +5633,9 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
     </button>
     <button class="theme-toggle" id="pageFull" title="Toàn màn hình (F11)">⛶</button>
     <button class="theme-toggle" id="themeToggle" title="Chuyển sáng/tối">🌙</button>
+    <!-- Ô giữ chỗ vô hình: cùng cỡ & responsive như nút theme-toggle, đẩy 2 nút
+         ⛶ / 🌙 phía trên sang trái, nhường đúng vị trí này cho nút 📝 nổi. -->
+    <div class="theme-toggle qc-slot" id="qcSlot" aria-hidden="true"></div>
   </div>
 </header>
 
@@ -41621,6 +41729,142 @@ function notebookAddLine(text, note, source, readingId, hidden, manual, pinnedDe
   saveNotebook(nb);
   renderNotebook();
 }
+/* ============================================================
+   NÚT GHI CHÚ NHANH NỔI
+   ------------------------------------------------------------
+   Dùng chung dữ liệu với Sổ ghi chú (NOTEBOOK_KEY) ở tab Setting.
+   Mỗi ngày (todayKey) chỉ có ĐÚNG 1 mục đánh dấu quickCapture:true
+   — mọi dòng ghi chú nhanh trong ngày đó được dồn (append) vào
+   cùng 1 mục này, và mục này luôn ở trạng thái đã ghim (pinned)
+   để hiện ngay trong Bảng ghim của Sổ ghi chú. Nội dung lưu chỉ
+   gồm đúng phần chữ người dùng gõ, không kèm giờ lưu.
+   ============================================================ */
+function qcToggle(){
+  const overlay = document.getElementById('qcOverlay');
+  const btn = document.getElementById('qcToggleBtn');
+  if(!overlay) return;
+  const willShow = overlay.style.display === 'none' || !overlay.style.display;
+  if(willShow){
+    overlay.style.display = 'grid';
+    requestAnimationFrame(()=>overlay.classList.add('show'));
+    if(btn) btn.classList.add('on');
+    const ta = document.getElementById('qcInput');
+    if(ta && !ta.innerHTML.trim()) qcApplyDefaultFormat();
+    if(ta) setTimeout(()=>ta.focus(), 200);
+  } else {
+    qcClose();
+  }
+}
+function qcClose(){
+  const overlay = document.getElementById('qcOverlay');
+  const btn = document.getElementById('qcToggleBtn');
+  if(!overlay) return;
+  overlay.classList.remove('show');
+  if(btn) btn.classList.remove('on');
+  setTimeout(()=>{ if(!overlay.classList.contains('show')) overlay.style.display = 'none'; }, 250);
+}
+function qcOverlayClick(e){
+  if(e.target && e.target.id === 'qcOverlay') qcClose();
+}
+function qcHandleKey(e){
+  if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){ e.preventDefault(); qcSave(); }
+  else if(e.key === 'Escape'){ qcClose(); }
+}
+/* Nội dung thật sự đã gõ, bỏ qua ký tự khoảng trắng-không-độ-rộng dùng để giữ
+   chỗ đặt con trỏ trong định dạng mặc định (bullet + đậm + đỏ) lúc ô còn trống. */
+function qcInputText(el){ return (el && el.textContent || '').replace(/\u200b/g,'').trim(); }
+/* Đặt sẵn 1 gạch đầu dòng, chữ đậm, màu đỏ làm định dạng mặc định mỗi khi ô
+   ghi chú nhanh đang trống — người dùng gõ vào là có ngay, không cần tự bấm
+   3 nút định dạng mỗi lần mở. */
+function qcApplyDefaultFormat(){
+  const el = document.getElementById('qcInput');
+  if(!el) return;
+  el.innerHTML = '<ul><li><b><font color="#dc2626">\u200b</font></b></li></ul>';
+  el.focus();
+  try{
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }catch(e){}
+}
+/* Xoá nhanh nội dung đang gõ nhưng CHƯA lưu (không đụng tới các ghi chú đã lưu trước đó),
+   rồi đưa ô về lại định dạng mặc định (bullet + đậm + đỏ) sẵn sàng gõ tiếp. */
+function qcClearInput(){
+  const el = document.getElementById('qcInput');
+  if(!el) return;
+  if(!qcInputText(el)){ return; }
+  qcApplyDefaultFormat();
+  toast('🗑️ Đã xoá nội dung đang gõ');
+}
+/* Nhảy thẳng tới 📒 Sổ ghi chú trong tab ⚙️ Setting để xem/quản lý toàn bộ ghi chú */
+function qcOpenNotebook(){
+  qcClose();
+  document.querySelector('.tab-btn[data-mode="guide"]').click();
+  setTimeout(()=>{
+    if(typeof showSettingsGroup === 'function') showSettingsGroup('notebook');
+    const box = document.getElementById('notebookBox');
+    if(box) box.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 120);
+}
+function qcSave(){
+  const el = document.getElementById('qcInput');
+  const text = qcInputText(el);
+  if(!text){ toast('Hãy nhập nội dung ghi chú'); return; }
+  const html = nbSanitizeHtml(el.innerHTML.trim());
+  const day = todayKey();
+  const nb = loadNotebook();
+  if(!nb[day]) nb[day] = [];
+  let item = nb[day].find(x=>x.quickCapture);
+  const lineHtml = '<div>' + html + '</div>';
+  if(item){
+    item.note = (item.note || '') + lineHtml;
+    item.noteRich = true;
+    item.hidden = false;
+    item.pinned = true;
+    if(!item.color) item.color = NB_COLORS[0];
+  } else {
+    item = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+      time: new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}),
+      text: '📝 Ghi chú nhanh', note: lineHtml, noteRich: true,
+      source: 'Ghi chú nhanh (nút nổi)', readingId: '', hidden: false, manual: true,
+      pnote: '', pnoteRich: false,
+      pinned: true, color: NB_COLORS[0], noteLinked: false, pinPos: null,
+      pinOnly: false, quickCapture: true
+    };
+    nb[day].unshift(item);
+  }
+  saveNotebook(nb);
+  renderNotebook();
+  if(typeof nbPinAutoFit === 'function') nbPinAutoFit();
+  qcApplyDefaultFormat();
+  toast('📌 Đã lưu vào ghi chú nhanh hôm nay');
+  qcClose();
+}
+/* Căn nút 📝 nổi đúng vào vị trí ô giữ chỗ .qc-slot (nằm cuối header-actions,
+   ngay sau nút 🌙) — tính lại mỗi khi tải trang / đổi cỡ màn hình để khớp
+   với mọi breakpoint của header, mà không cần lặp lại các mốc responsive
+   của header ở một nơi khác. Dùng position:fixed nên nút vẫn nổi cố định
+   trên màn hình kể cả khi header tự trượt ẩn lúc cuộn trang xuống. */
+function qcSyncPosition(){
+  const slot = document.getElementById('qcSlot');
+  const widget = document.getElementById('qcWidget');
+  if(!slot || !widget) return;
+  const r = slot.getBoundingClientRect();
+  if(!r.width) return; /* slot chưa render (vd. đang display:none) */
+  widget.style.top = Math.round(r.top) + 'px';
+  widget.style.left = Math.round(r.left) + 'px';
+  widget.style.right = 'auto';
+  const btn = document.getElementById('qcToggleBtn');
+  if(btn){ btn.style.width = r.width + 'px'; btn.style.height = r.height + 'px'; }
+}
+window.addEventListener('load', qcSyncPosition);
+window.addEventListener('resize', ()=>{ clearTimeout(window._qcResizeT); window._qcResizeT = setTimeout(qcSyncPosition, 120); });
+document.addEventListener('DOMContentLoaded', qcSyncPosition);
+qcSyncPosition();
 /* Tự động giãn chiều cao ô textarea theo nội dung đang gõ (kể cả khi xuống dòng do wrap
    hay bấm Enter), tránh bị giới hạn chiều cao cố định gây khó nhìn khi nhập nhiều chữ. */
 function nbAutoGrowTextarea(el){
@@ -41785,7 +42029,7 @@ function nbNoteAutosave(el){
 }
 /* Lọc HTML từ execCommand: chỉ giữ các thẻ/định dạng an toàn (đậm, nghiêng, màu chữ, căn lề) */
 function nbSanitizeHtml(html){
-  const allowedTags = {B:1, STRONG:1, I:1, EM:1, SPAN:1, DIV:1, BR:1, FONT:1, P:1, UL:1, OL:1, LI:1};
+  const allowedTags = {B:1, STRONG:1, I:1, EM:1, U:1, SPAN:1, DIV:1, BR:1, FONT:1, P:1, UL:1, OL:1, LI:1};
   const tmp = document.createElement('div');
   tmp.innerHTML = html;
   (function walk(node){
