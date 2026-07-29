@@ -1075,6 +1075,18 @@ select:focus, .search-box:focus {
 .trday-stat b{display:block;font-family:var(--font-heading);font-size:19px;font-weight:900;color:var(--accent);line-height:1.1;}
 .trday-stat span{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:3px;display:block;}
 .trday-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.trday-gates{background:var(--card-sunken);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;}
+.trg-title{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:9px;}
+.trg-title span{font-weight:600;color:var(--muted);}
+.trg-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;}
+.trg-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:99px;font-size:12px;font-weight:800;
+  background:var(--card);border:1.5px solid var(--line);color:var(--ink);}
+.trg-chip i{font-style:normal;font-weight:600;color:var(--muted);}
+.trg-chip.g3{border-color:var(--green);color:var(--green);}
+.trg-chip.g2{border-color:var(--accent);color:var(--accent);}
+.trg-chip.g1{border-color:var(--gold);color:var(--gold);}
+.trg-chip.g0{border-color:var(--line-strong);color:var(--muted);}
+.trg-done{font-size:12.5px;font-weight:700;color:var(--green);}
 @media(max-width:640px){ .trday-stats{grid-template-columns:1fr 1fr;} }
 .need-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px;}
 .need-more{text-align:center;padding:16px;color:var(--muted);font-size:12.5px;}
@@ -34225,6 +34237,20 @@ function starAllDay(dayKey){
   toast(`⭐ Đã thêm ${words.length} từ vào Cần học`);
 }
 
+/* "🚪 Học cho đủ cửa" — mở phiên Học ngay chỉ gồm đúng những từ ĐÃ học
+   trong ngày đang xem nhưng CHƯA vượt đủ 3 cửa (Flashcard/Trắc nghiệm/
+   Gõ từ), để học tiếp cho xong thay vì phải lọc thủ công. */
+let _gateCatchupWords = null;
+function startGateCatchup(dayKey){
+  const { words } = _dayReviewData(dayKey);
+  const todo = words.filter(v=>!gateDone(v.word));
+  if(!todo.length){ toast('Các từ hôm nay đã đủ 3 cửa hết rồi 🎉'); return; }
+  _gateCatchupWords = todo;
+  learnState = null;
+  document.querySelector('.tab-btn[data-mode="learn"]').click();
+  setTimeout(()=>startLearn('gate-today'), 60);
+}
+
 /* Vẽ toàn bộ nội dung pane "Đã học hôm nay" — gọi từ bên trong renderNeed() */
 function renderTodayPaneHTML(){
   const dayKeys = _last14DayKeys();
@@ -34249,6 +34275,23 @@ function renderTodayPaneHTML(){
       <div class="trday-stat"><b>${acc===null?'—':acc+'%'}</b><span>✅ Độ chính xác</span></div>
     </div>`;
 
+  /* Phân loại số từ hôm nay theo SỐ CỬA đã vượt (0/1/2/3 — xem GATES) +
+     nút bấm học tiếp đúng những từ còn nợ cửa của riêng ngày này. */
+  const gb = {0:0,1:0,2:0,3:0};
+  words.forEach(v=> gb[gateCount(v.word)]++ );
+  const gateTodo = gb[0]+gb[1]+gb[2];
+  const gatesRow = words.length ? `
+    <div class="trday-gates">
+      <div class="trg-title">🚪 Phân loại theo số cửa đã học <span>(trong ${words.length} từ hôm nay)</span></div>
+      <div class="trg-row">
+        <span class="trg-chip g0" title="Chưa vượt cửa nào">⬜ ${gb[0]} <i>chưa qua cửa</i></span>
+        <span class="trg-chip g1" title="Mới vượt 1/3 cửa">🃏 ${gb[1]} <i>qua 1 cửa</i></span>
+        <span class="trg-chip g2" title="Đã vượt 2/3 cửa">❓ ${gb[2]} <i>qua 2 cửa</i></span>
+        <span class="trg-chip g3" title="Đã vượt đủ 3 cửa">✅ ${gb[3]} <i>đủ 3 cửa</i></span>
+      </div>
+      ${gateTodo ? `<button class="btn primary" onclick="startGateCatchup('${_needDayKey}')">🚪 Học cho đủ cửa (${gateTodo} từ)</button>` : `<div class="trg-done">🎉 Cả ${words.length} từ hôm nay đã đủ 3 cửa!</div>`}
+    </div>` : '';
+
   if(!total){
     return `
       <div class="trday-daybar">${chips}</div>
@@ -34263,9 +34306,11 @@ function renderTodayPaneHTML(){
   return `
     <div class="trday-daybar">${chips}</div>
     ${statsRow}
+    ${gatesRow}
     <div class="trday-actions">
-      <button class="btn primary" onclick="startDayReviewQuiz('${_needDayKey}')">🔁 Trắc nghiệm ôn lại (${total} câu)</button>
+      <button class="btn primary" onclick="startDayReviewQuiz('${_needDayKey}')">🔁 Trắc nghiệm ôn lại (${total} câu · Anh–Việt &amp; Việt–Anh)</button>
       ${words.length ? `<button class="btn" onclick="startDayReviewTyping('${_needDayKey}')">⌨️ Gõ từ ôn lại (${words.length} từ)</button>` : ''}
+      ${collocs.length ? `<button class="btn" onclick="startDayReviewTypingColloc('${_needDayKey}')">✍️ Gõ lại collocation (${collocs.length} cụm · dạng rút gọn)</button>` : ''}
       ${words.length ? `<button class="btn" onclick="starAllDay('${_needDayKey}')">⭐ Đánh dấu cả ngày vào Cần học</button>` : ''}
     </div>
     <div class="need-tabs">
@@ -34282,23 +34327,53 @@ function renderTodayPaneHTML(){
 }
 
 /* ---- Ôn lại (Trắc nghiệm 4-đáp-án) toàn bộ từ vựng + collocation của 1
-   ngày, không đụng vào SRS/điểm số chính — chỉ để ôn nhanh, xem lại. ---- */
+   ngày, không đụng vào SRS/điểm số chính — chỉ để ôn nhanh, xem lại.
+   Mỗi câu random 1 trong các dạng:
+   - Từ vựng: Anh→Việt (xem từ, chọn nghĩa) HOẶC Việt→Anh (xem nghĩa, chọn từ)
+   - Collocation: Chọn nghĩa (như cũ) HOẶC dạng RÚT GỌN — cụm bị khuyết
+     1 từ, chọn đúng từ còn thiếu (ngắn gọn, dễ làm hơn gõ cả cụm). ---- */
+/* Khuyết 1 từ "nội dung" (bỏ qua mạo từ/giới từ ngắn) trong 1 cụm
+   collocation -> dùng chung cho cả trắc nghiệm dạng rút gọn LẪN bài
+   gõ lại collocation (startDayReviewTypingColloc). */
+const _COLLOC_STOP = new Set(['a','an','the','to','of','in','on','at','for','with','and','or','is','are','be','your','my','it','its','their','his','her','our']);
+function collocBlank(phrase){
+  const words = String(phrase||'').split(' ');
+  let idx = words.findIndex((w,i)=> !_COLLOC_STOP.has(w.toLowerCase().replace(/[.,!?]/g,'')) && w.length>2);
+  if(idx<0) idx = words.length>1 ? words.length-1 : 0;
+  const answer = words[idx].replace(/[.,!?]/g,'');
+  const blanked = words.map((w,i)=> i===idx ? '_____' : w).join(' ');
+  return { blanked, answer };
+}
 let _trQuiz = null;
 function startDayReviewQuiz(dayKey){
   const { words, collocs } = _dayReviewData(dayKey);
   const pool = shuffle([
-    ...words.map(v=>({type:'vocab', q:v.word, ipa:v.ipa||'', a:v.vn})),
-    ...collocs.map(c=>({type:'colloc', q:c.phrase, ipa:c.ipa||'', a:c.meaning}))
+    ...words.map(v=>{
+      if(Math.random()<0.5){
+        return { kind:'vocab', dir:'vi-en', label:'📖 Từ vựng · Việt→Anh', q:v.vn, ipa:'', a:v.word };
+      }
+      return { kind:'vocab', dir:'en-vi', label:'📖 Từ vựng · Anh→Việt', q:v.word, ipa:v.ipa||'', a:v.vn };
+    }),
+    ...collocs.map(c=>{
+      if(Math.random()<0.5){
+        const {blanked, answer} = collocBlank(c.phrase);
+        return { kind:'colloc', dir:'blank', label:'🔗 Collocation · Điền từ (rút gọn)', q:blanked, ipa:c.meaning?`nghĩa: ${c.meaning}`:'', a:answer, _phrase:c.phrase };
+      }
+      return { kind:'colloc', dir:'meaning', label:'🔗 Collocation · Chọn nghĩa', q:c.phrase, ipa:c.ipa||'', a:c.meaning };
+    })
   ]);
   if(!pool.length){ toast('Chưa có gì để ôn lại ngày này 👀'); return; }
   _trQuiz = { pool, i:0, score:0 };
   renderDayReviewQuiz();
 }
 function _trWrongOptions(item, need){
-  const sameType = item.type==='vocab'
-    ? VOCAB.filter(v=>v.word!==item.q).map(v=>v.vn)
-    : COLLOCATIONS.filter(c=>c.phrase!==item.q).map(c=>c.meaning);
-  return shuffle(sameType.filter(Boolean)).slice(0, need);
+  let pool;
+  if(item.kind==='vocab' && item.dir==='vi-en')      pool = VOCAB.filter(v=>v.word!==item.a).map(v=>v.word);
+  else if(item.kind==='vocab')                        pool = VOCAB.filter(v=>v.vn!==item.a).map(v=>v.vn);
+  else if(item.kind==='colloc' && item.dir==='blank')  pool = COLLOCATIONS.filter(c=>c.phrase!==item._phrase).map(c=>collocBlank(c.phrase).answer);
+  else                                                 pool = COLLOCATIONS.filter(c=>c.meaning!==item.a).map(c=>c.meaning);
+  const uniq = [...new Set(pool.filter(Boolean))].filter(x=>x.toLowerCase()!==String(item.a).toLowerCase());
+  return shuffle(uniq).slice(0, need);
 }
 function renderDayReviewQuiz(){
   const st = _trQuiz;
@@ -34330,7 +34405,7 @@ function renderDayReviewQuiz(){
       box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
       <button id="trqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px">
-        <span>${item.type==='vocab'?'📖 Từ vựng':'🔗 Collocation'} · Câu ${st.i+1}/${st.pool.length}</span>
+        <span>${item.label} · Câu ${st.i+1}/${st.pool.length}</span>
         <span>✅ ${st.score}</span>
       </div>
       <div style="text-align:center;margin-bottom:18px">
@@ -34452,7 +34527,91 @@ function renderDayReviewTyping(){
   input.onkeydown = e=>{ if(e.key==='Enter') submit(); };
 }
 
-/* Card từ vựng gọn cho pane "Đã học hôm nay" — bấm mở Flashcard chi tiết */
+/* ---- Gõ lại COLLOCATION riêng, TÁCH khỏi bài gõ từ vựng ở trên — mỗi
+   cụm bị khuyết đúng 1 từ (dạng RÚT GỌN qua collocBlank(), xem định
+   nghĩa cùng ngay bên dưới câu hỏi), chỉ cần gõ đúng từ còn thiếu thay
+   vì cả cụm dài. Cùng cơ chế hàng đợi: gõ sai -> dồn xuống cuối, gõ
+   đúng mới tính là xong. Không đụng SRS/typing chính của collocation. */
+let _trTypeColloc = null;
+function startDayReviewTypingColloc(dayKey){
+  const { collocs } = _dayReviewData(dayKey);
+  if(!collocs.length){ toast('Chưa có collocation nào để gõ ôn lại 👀'); return; }
+  _trTypeColloc = { pool: shuffle(collocs), total: collocs.length, mistakes: 0 };
+  renderDayReviewTypingColloc();
+}
+function renderDayReviewTypingColloc(){
+  const st = _trTypeColloc;
+  const overlay = document.createElement('div');
+  overlay.id = 'trTypeCollocOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+
+  if(!st.pool.length){
+    const attempts = st.total + st.mistakes;
+    const pct = attempts ? Math.round(st.total/attempts*100) : 100;
+    overlay.innerHTML = `
+      <div style="position:relative;background:var(--card);color:var(--ink);max-width:420px;width:100%;border-radius:16px;padding:26px 22px;
+        text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
+        <div style="font-size:38px;margin-bottom:8px">${pct>=80?'🎉':pct>=50?'👍':'💪'}</div>
+        <h3 style="margin:0 0 6px;font-size:18px">Hoàn thành gõ lại collocation!</h3>
+        <p style="margin:0 0 18px;color:var(--muted)">Đã gõ đúng cả <b>${st.total}</b> cụm${st.mistakes?` · gõ sai <b>${st.mistakes}</b> lượt`:''} (độ chính xác ${pct}%)</p>
+        <button id="tcqDone" style="width:100%;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Đóng</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#tcqDone').onclick = ()=> overlay.remove();
+    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
+    return;
+  }
+
+  const c = st.pool[0];
+  const { blanked, answer } = collocBlank(c.phrase);
+  const doneCount = st.total - st.pool.length;
+  overlay.innerHTML = `
+    <div style="position:relative;background:var(--card);color:var(--ink);max-width:460px;width:100%;border-radius:16px;padding:22px;
+      box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
+      <button id="tcqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px">
+        <span>✍️ Gõ lại collocation (rút gọn) · Cụm ${doneCount+1}/${st.total}</span>
+        <span>✅ ${doneCount}${st.mistakes?` · ❌ ${st.mistakes}`:''}</span>
+      </div>
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:17px;font-weight:800;letter-spacing:.2px">${esc(blanked)}</div>
+        ${c.meaning?`<div style="color:var(--muted);font-size:12.5px;margin-top:6px">${esc(c.meaning)}</div>`:''}
+      </div>
+      <input id="tcqInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+        placeholder="Gõ đúng từ còn thiếu..."
+        style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);
+        background:var(--paper-2,rgba(127,127,127,.08));color:inherit;font:inherit;font-size:15px;text-align:center;outline:none">
+      <div id="tcqFeedback" style="min-height:22px;text-align:center;margin-top:10px;font-size:13px;font-weight:700"></div>
+      <button id="tcqSubmit" style="width:100%;margin-top:8px;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Kiểm tra</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#tcqClose').onclick = ()=> overlay.remove();
+
+  const input = overlay.querySelector('#tcqInput');
+  const fb = overlay.querySelector('#tcqFeedback');
+  const submitBtn = overlay.querySelector('#tcqSubmit');
+  input.focus();
+  let answered = false;
+  const submit = ()=>{
+    if(answered) return;
+    answered = true;
+    const ok = input.value.trim().toLowerCase() === answer.trim().toLowerCase();
+    if(ok){
+      fb.style.color='#16a34a'; fb.textContent = '✅ Chính xác!'; input.style.borderColor='#16a34a';
+      st.pool.shift();                       // gõ đúng -> tính là xong, bỏ khỏi hàng đợi
+    } else {
+      fb.style.color='#dc2626'; fb.textContent = `❌ Chưa đúng (đáp án: ${answer}) — cụm này sẽ quay lại ở cuối lượt`;
+      input.style.borderColor='#dc2626';
+      st.mistakes++;
+      st.pool.push(st.pool.shift());         // gõ sai -> dồn xuống cuối hàng đợi, gõ đúng mới tính
+    }
+    input.disabled = true;
+    submitBtn.textContent = 'Tiếp theo →';
+    setTimeout(()=>{ overlay.remove(); renderDayReviewTypingColloc(); }, ok?700:1400);
+  };
+  submitBtn.onclick = submit;
+  input.onkeydown = e=>{ if(e.key==='Enter') submit(); };
+}
 function needCardHTML(v){
   const colloc = (v.collocations||[]).map(normColloc);
   const ci = topicColorIndex(v._topic);
@@ -37143,7 +37302,8 @@ function clRecordAnswer(correct, collocId){
    ============================================================ */
 const SCOPE_LABEL = {
   path:'🚀 Lộ trình (khuyên dùng)', srs:'🔁 Ôn theo lịch', random:'🎲 Ôn ngẫu nhiên',
-  weak:'🔥 Từ hay quên', star:'⭐ Cần học', filtered:'🗂️ Theo bộ lọc', new:'🆕 Chỉ từ mới'
+  weak:'🔥 Từ hay quên', star:'⭐ Cần học', filtered:'🗂️ Theo bộ lọc', new:'🆕 Chỉ từ mới',
+  gate:'🚪 Học cho đủ cửa', 'gate-today':'🚪 Học cho đủ cửa (hôm nay)'
 };
 
 let learnState = null;
@@ -37173,6 +37333,8 @@ function buildLearnWords(scope){
   if(scope==='weak')   return weakQueue();
   if(scope==='new')    return newWordsQueue();
   if(scope==='star')   return cut(VOCAB.filter(v=>starred.has(v.word)));
+  if(scope==='gate')   return cut(VOCAB.filter(v=>SRS[v.word] && !gateDone(v.word)));
+  if(scope==='gate-today') return cut(_gateCatchupWords || []);
   return cut(filtered.slice());
 }
 
