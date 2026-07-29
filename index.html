@@ -127,7 +127,7 @@
    được đồng bộ bằng JS (căn theo .qc-slot) để khớp mọi kích cỡ
    màn hình mà không cần đoán lại từng breakpoint của header. */
 .qc-slot{ visibility:hidden; }
-.qc-widget{ position:fixed; top:14px; right:14px; z-index:5000; }
+.qc-widget{ position:fixed; top:50%; right:14px; transform:translateY(-50%); z-index:5000; }
 .qc-toggle-btn{
   width:40px; height:40px; border-radius:13px; border:1px solid rgba(255,255,255,.35);
   background:var(--accent-grad); color:#fff; font-size:17px; cursor:pointer; padding:0;
@@ -5558,10 +5558,10 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
       <button type="button" class="qc-close-btn" onclick="qcClose()" title="Đóng">✕</button>
     </div>
     <div class="nb-fmt-toolbar">
-      <button type="button" title="In đậm" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','bold')"><b>B</b></button>
-      <button type="button" title="In nghiêng" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','italic')"><i>I</i></button>
-      <button type="button" title="Gạch chân" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','underline')"><u>U</u></button>
-      <button type="button" title="Gạch đầu dòng" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','insertUnorderedList')">• ≡</button>
+      <button type="button" class="qc-fmt-btn" data-cmd="bold" title="In đậm" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','bold')"><b>B</b></button>
+      <button type="button" class="qc-fmt-btn" data-cmd="italic" title="In nghiêng" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','italic')"><i>I</i></button>
+      <button type="button" class="qc-fmt-btn" data-cmd="underline" title="Gạch chân" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','underline')"><u>U</u></button>
+      <button type="button" class="qc-fmt-btn" data-cmd="insertUnorderedList" title="Gạch đầu dòng" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','insertUnorderedList')">• ≡</button>
       <span class="nb-fmt-sep"></span>
       <span class="nb-fmt-swatches">
         <button type="button" class="nb-fmt-swatch" style="background:#1f2937" title="#1f2937" onmousedown="event.preventDefault()" onclick="nbFmt('qcInput','foreColor','#1f2937')"></button>
@@ -41844,27 +41844,12 @@ function qcSave(){
   toast('📌 Đã lưu vào ghi chú nhanh hôm nay');
   qcClose();
 }
-/* Căn nút 📝 nổi đúng vào vị trí ô giữ chỗ .qc-slot (nằm cuối header-actions,
-   ngay sau nút 🌙) — tính lại mỗi khi tải trang / đổi cỡ màn hình để khớp
-   với mọi breakpoint của header, mà không cần lặp lại các mốc responsive
-   của header ở một nơi khác. Dùng position:fixed nên nút vẫn nổi cố định
-   trên màn hình kể cả khi header tự trượt ẩn lúc cuộn trang xuống. */
-function qcSyncPosition(){
-  const slot = document.getElementById('qcSlot');
-  const widget = document.getElementById('qcWidget');
-  if(!slot || !widget) return;
-  const r = slot.getBoundingClientRect();
-  if(!r.width) return; /* slot chưa render (vd. đang display:none) */
-  widget.style.top = Math.round(r.top) + 'px';
-  widget.style.left = Math.round(r.left) + 'px';
-  widget.style.right = 'auto';
-  const btn = document.getElementById('qcToggleBtn');
-  if(btn){ btn.style.width = r.width + 'px'; btn.style.height = r.height + 'px'; }
-}
-window.addEventListener('load', qcSyncPosition);
-window.addEventListener('resize', ()=>{ clearTimeout(window._qcResizeT); window._qcResizeT = setTimeout(qcSyncPosition, 120); });
-document.addEventListener('DOMContentLoaded', qcSyncPosition);
-qcSyncPosition();
+/* Nút 📝 nổi giờ luôn cố định ở mép phải, canh giữa theo chiều dọc màn
+   hình (xem .qc-widget trong CSS) — không còn bám theo vị trí ô .qc-slot
+   trong header như trước, nên không cần tính lại top/left theo slot mỗi
+   khi tải trang / đổi cỡ màn hình nữa. Giữ hàm rỗng để tương thích ngược
+   phòng khi có chỗ khác còn gọi qcSyncPosition(). */
+function qcSyncPosition(){}
 /* Tự động giãn chiều cao ô textarea theo nội dung đang gõ (kể cả khi xuống dòng do wrap
    hay bấm Enter), tránh bị giới hạn chiều cao cố định gây khó nhìn khi nhập nhiều chữ. */
 function nbAutoGrowTextarea(el){
@@ -41969,7 +41954,31 @@ function nbFmt(domId, cmd, value){
   el.focus();
   try{ document.execCommand(cmd, false, value || null); }catch(e){}
   nbNoteAutosave(el);
+  if(domId === 'qcInput') qcUpdateToolbarState();
 }
+/* Cập nhật trạng thái "đang bật" (nổi bật) cho các nút B/I/U/Bullet trong
+   toolbar Ghi chú nhanh, dựa vào định dạng tại vị trí con trỏ/vùng chọn
+   hiện tại, để người dùng thấy rõ định dạng nào đang áp dụng. */
+function qcUpdateToolbarState(){
+  const editor = document.getElementById('qcInput');
+  const toolbar = editor ? editor.previousElementSibling : null;
+  if(!toolbar || !toolbar.classList.contains('nb-fmt-toolbar')) return;
+  toolbar.querySelectorAll('.qc-fmt-btn[data-cmd]').forEach(function(btn){
+    let state = false;
+    try{ state = document.queryCommandState(btn.getAttribute('data-cmd')); }catch(e){}
+    btn.classList.toggle('on', state);
+  });
+}
+(function(){
+  const editor = document.getElementById('qcInput');
+  if(!editor) return;
+  ['keyup','mouseup','input','focus'].forEach(function(evt){
+    editor.addEventListener(evt, qcUpdateToolbarState);
+  });
+  document.addEventListener('selectionchange', function(){
+    if(document.activeElement === editor) qcUpdateToolbarState();
+  });
+})();
 /* Đổi cỡ chữ — dùng chung cho cả 2 nơi (Sổ ghi chú & bài đọc), tự nhận biết
    nơi lưu đúng dựa vào tiền tố id của ô đang sửa. */
 function nbFmtFontSize(domId, px){
