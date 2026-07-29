@@ -1350,7 +1350,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 /* Đồng bộ chiều cao với 2 nút "Học từ mới / Gõ từ Collocation" bên ô
    streak: cùng padding/font, khoá 1 dòng bằng nowrap+ellipsis để không
    bao giờ bị xuống dòng làm lệch chiều cao giữa các nút. */
-.hero-cta.small,.hero-pick-btn,.hero-guide-btn{ min-height:38px; box-sizing:border-box; }
+.hero-cta.small,.hero-pick-btn,.hero-guide-btn{ min-height:38px; min-width:0; box-sizing:border-box; }
 .hero-pick-btn .btn-label,.hero-guide-btn .btn-label{
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
 }
@@ -1396,6 +1396,13 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
   .hero-ring-num span{ font-size:9px; }
   .hero-ring-lbl{ font-size:7px; letter-spacing:.2px; }
   .hero-today{ width:auto; flex:1; min-width:0; padding:8px 10px; }
+  .hero-pick-row{ flex-wrap:wrap; row-gap:8px; }
+  .hero-pick-row > button:nth-child(1),
+  .hero-pick-row > button:nth-child(2){ flex:1 1 calc(50% - 4px); }
+  .hero-pick-row > button:nth-child(3){ flex:1 1 100%; }
+  .hero-pick-btn .btn-label,.hero-guide-btn .btn-label{ font-size:11.5px; }
+  .hero-btn-row{ gap:6px; }
+  .hero-cta.small{ font-size:11px; padding:11px 6px; }
 }
 @media(max-width:360px){
   .hero-ring-wrap{ width:58px; height:58px; }
@@ -1471,7 +1478,8 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .streak-v2-day.is-today .sv2-bar-track{box-shadow:0 0 0 1.5px var(--accent);}
 .streak-v2-day.is-today.has-data .sv2-bar-fill{background:linear-gradient(180deg,#fde68a,#f59e0b);box-shadow:0 -2px 8px -2px #f59e0b;}
 .hero-btn-row{margin-top:auto;display:flex;gap:8px;}
-.hero-cta.small{flex:1;padding:11px 8px;font-size:12px;margin-top:0;}
+.hero-cta.small{flex:1;min-width:0;padding:11px 8px;font-size:12px;margin-top:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
 .hero-cta.secondary{ background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; box-shadow:0 6px 16px -6px rgba(37,99,235,.5); border:none; }
 .hero-cta.secondary:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 8px 20px -6px rgba(37,99,235,.6); }
 [data-theme="dark"] .hero-cta.secondary{ background:linear-gradient(135deg,#3b82f6,#2563eb); color:#fff; box-shadow:0 6px 16px -6px rgba(59,130,246,.45); }
