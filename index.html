@@ -1333,7 +1333,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .hero-pick-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--glow,0 8px 20px -6px rgba(13,110,95,.6)); }
 .hero-pick-btn .hpb-arrow{ transition:transform .15s; }
 .hero-pick-btn:hover .hpb-arrow{ transform:translateX(3px); }
-.hero-pick-row{ display:flex; gap:8px; width:100%; max-width:440px; margin:0 auto; }
+.hero-pick-row{ display:flex; gap:8px; width:100%; max-width:440px; margin:0 auto; margin-top:auto; }
 .hero-pick-row .hero-pick-btn{ flex:1; }
 .hero-pick-row .hero-guide-btn{ flex:1; }
 .hero-guide-btn{
@@ -1345,6 +1345,53 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
   text-transform:uppercase; letter-spacing:.5px;
 }
 .hero-guide-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 8px 20px -6px rgba(194,65,12,.6); }
+.hero-guide-btn.today-btn{ background:linear-gradient(135deg,#2563eb,#0891b2); box-shadow:0 6px 16px -6px rgba(37,99,235,.5); }
+.hero-guide-btn.today-btn:hover{ box-shadow:0 8px 20px -6px rgba(37,99,235,.6); }
+/* Đồng bộ chiều cao với 2 nút "Học từ mới / Gõ từ Collocation" bên ô
+   streak: cùng padding/font, khoá 1 dòng bằng nowrap+ellipsis để không
+   bao giờ bị xuống dòng làm lệch chiều cao giữa các nút. */
+.hero-cta.small,.hero-pick-btn,.hero-guide-btn{ min-height:38px; box-sizing:border-box; }
+.hero-pick-btn .btn-label,.hero-guide-btn .btn-label{
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
+}
+/* Hàng trên của ô bên phải: vòng tròn % ở lề trái + panel "từ mới hôm nay"
+   chiếm phần diện tích trống còn lại bên phải, thay vì để trống. */
+.hero-top{ display:flex; align-items:center; gap:16px; width:100%; }
+.hero-today{
+  flex:1; min-width:0; display:flex; flex-direction:column; gap:6px;
+  text-align:left; background:var(--card-sunken); border:1px solid var(--line);
+  border-radius:12px; padding:10px 12px;
+}
+[data-theme="dark"] .hero-today{ background:var(--paper-2); }
+.ht-title{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); }
+.ht-title-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.ht-shuffle{
+  flex-shrink:0; width:22px; height:22px; border-radius:7px; border:1px solid var(--line);
+  background:var(--card); color:var(--accent); font-size:11px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; padding:0; box-shadow:var(--shadow-xs);
+  transition:background .15s, color .15s, transform .15s;
+}
+.ht-shuffle:hover{ background:var(--accent); color:#fff; border-color:var(--accent); }
+.ht-shuffle:active{ transform:scale(.9); }
+.ht-shuffle.spin{ animation:htShuffleSpin .4s ease; }
+@keyframes htShuffleSpin{ from{ transform:rotate(0); } to{ transform:rotate(180deg); } }
+.ht-item{
+  display:flex; align-items:baseline; flex-wrap:wrap; gap:6px; width:100%;
+  background:none; border:none; padding:5px 0 0; margin:0; cursor:pointer; text-align:left; font:inherit;
+}
+.ht-item + .ht-item{ border-top:1px dashed var(--line); padding-top:7px; margin-top:1px; }
+.ht-item:hover .ht-word{ text-decoration:underline; }
+.ht-pos{
+  flex-shrink:0; font-size:9.5px; font-weight:800; text-transform:uppercase; color:#fff;
+  background:var(--accent); padding:2px 6px; border-radius:6px; line-height:1.4;
+}
+.ht-pos.ht-pos-cl{ background:var(--ember,#c2410c); }
+.ht-word{ font-weight:800; color:var(--ink); font-family:var(--font-word); font-size:13px; }
+.ht-mean{ color:var(--ink-soft); font-size:12.5px; width:100%; }
+@media(max-width:480px){
+  .hero-top{ flex-direction:column; }
+  .hero-today{ width:100%; }
+}
 .hero-stat{
   position:relative; text-align:left; overflow:hidden;
   border:1px solid var(--line); background:var(--card); border-radius:12px;
@@ -33899,6 +33946,11 @@ function renderDashboard(){
   const pctLearned = Math.round(S.learned / Math.max(1,S.total) * 100);
   const pctDoing   = Math.round(S.inProgress / Math.max(1,S.total) * 100);
 
+  /* ---- Từ mới hôm nay: 1 từ vựng + 1 collocation ngẫu nhiên — đổi mới
+     mỗi lần mở/tải lại Dashboard, không cần bấm nút 🔀 mới thấy từ khác ---- */
+  const dailyWord   = VOCAB.length ? VOCAB[Math.floor(Math.random()*VOCAB.length)] : null;
+  const dailyColloc = COLLOCATIONS.length ? COLLOCATIONS[Math.floor(Math.random()*COLLOCATIONS.length)] : null;
+
   /* ---- Weekly chart ---- */
   const dayLabels = ['CN','T2','T3','T4','T5','T6','T7'];
   let weekBars = '', maxAns = 1, weekTotal = 0;
@@ -33982,21 +34034,7 @@ function renderDashboard(){
     <!-- HÀNG 1: tiến độ học (thay cho 'từ mới hôm nay') -->
     <div class="dash-hero">
       <div class="hero-main">
-        <div class="hero-nums">
-          <button class="hero-stat learned" onclick="goStatus('mastered','list')" title="Xem ${S.learned} từ đã thuộc">
-            <div class="hs-num">${S.learned}</div><div class="hs-lbl">✅ Đã học thuộc</div>
-          </button>
-          <button class="hero-stat doing" onclick="goStatus('learning','list')" title="Xem ${S.inProgress} từ đang học dở">
-            <div class="hs-num">${S.inProgress}</div><div class="hs-lbl">📗 Đang học dở</div>
-          </button>
-          <button class="hero-stat due" onclick="goStatus('due','list')" title="Xem ${S.due} từ đến hạn ôn">
-            <div class="hs-num">${S.due}</div><div class="hs-lbl">🔔 Cần ôn hôm nay</div>
-          </button>
-          <button class="hero-stat new" onclick="goStatus('new','list')" title="Xem ${S.new} từ chưa học">
-            <div class="hs-num">${S.new}</div><div class="hs-lbl">⬜ Chưa học</div>
-          </button>
-        </div>
-        <div class="hero-left">
+        <div class="hero-top">
           <div class="hero-ring-wrap">
             <svg class="hero-ring-svg" viewBox="0 0 120 120">
               <circle class="hero-ring-track" cx="60" cy="60" r="51" fill="none" stroke-width="11"/>
@@ -34016,13 +34054,20 @@ function renderDashboard(){
               <div class="hero-ring-lbl">đã thuộc</div>
             </div>
           </div>
-          <div class="hero-pick-row">
-            <button class="hero-pick-btn" onclick="goPickTopic()">
-              <span>🗂️ Chọn chủ đề học</span><span class="hpb-arrow">→</span>
-            </button>
-            <button class="hero-guide-btn" onclick="openLearnGuide()" title="Xem hướng dẫn quy trình học">❔ Hướng dẫn học</button>
-            <button class="hero-guide-btn" onclick="goTodayLearnedTab()" title="Xem lại từ vựng & collocation đã học hôm nay">📅 Đã học hôm nay</button>
+          <div class="hero-today">
+            <div class="ht-title-row">
+              <span class="ht-title">📝 Từ mới hôm nay</span>
+              <button id="heroTodayShuffleBtn" class="ht-shuffle" onclick="shuffleDailyWords()" title="Xem từ khác">🔀</button>
+            </div>
+            <div id="heroTodayItems">${renderHeroTodayItems(dailyWord, dailyColloc)}</div>
           </div>
+        </div>
+        <div class="hero-pick-row">
+          <button class="hero-pick-btn" onclick="goPickTopic()">
+            <span class="btn-label">🗂️ Chọn chủ đề học</span><span class="hpb-arrow">→</span>
+          </button>
+          <button class="hero-guide-btn" onclick="openLearnGuide()" title="Xem hướng dẫn quy trình học"><span class="btn-label">❔ Hướng dẫn học</span></button>
+          <button class="hero-guide-btn today-btn" onclick="goTodayLearnedTab()" title="Xem lại từ vựng & collocation đã học hôm nay"><span class="btn-label">📅 Đã học hôm nay</span></button>
         </div>
       </div>
       <div class="hero-side">
@@ -34177,6 +34222,85 @@ function lgGo(mode){
   if(btn) btn.click();
 }
 
+/* ---- Popup xem nhanh 1 từ NGAY TẠI CHỖ (dùng cho "Từ mới hôm nay" ở
+   Dashboard) — không chuyển tab/nhảy sang Flashcard như openWord(). Hiện
+   ĐẦY ĐỦ như mặt sau Flashcard: word form, đồng nghĩa, collocation, ví dụ
+   + dịch. Có nút "Mở Flashcard đầy đủ" cho ai muốn học tiếp từ đây. */
+function openWordPopup(wordStr){
+  const v = VOCAB.find(x=>x.word===wordStr);
+  if(!v) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'wordPopupOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  const colloc = (v.collocations||[]).map(normColloc);
+  const forms = normForms(v.wordforms);
+  const exList = normExampleList(v);
+  const sec = t => `<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:16px 0 7px">${t}</div>`;
+  overlay.innerHTML = `
+    <div style="background:var(--card);color:var(--ink);max-width:480px;width:100%;max-height:88vh;overflow-y:auto;
+      border-radius:16px;padding:20px 20px 18px;box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px">
+        <div>
+          <div style="font-size:23px;font-weight:900;font-family:var(--font-word)">${esc(v.word)}</div>
+          ${v.ipa?`<div style="color:var(--muted);font-family:var(--font-mono);font-size:13px;margin-top:2px">${esc(v.ipa)}</div>`:''}
+        </div>
+        <button id="wpClose" style="border:none;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+        ${v.pos?`<span style="background:var(--accent-bg);color:var(--accent);font-size:11px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:6px">${esc(v.pos)}</span>`:''}
+        ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}
+      </div>
+      <div style="font-size:16px;font-weight:700;color:var(--vn-color);margin-bottom:4px">${esc(v.vn)}</div>
+
+      ${forms.length?`${sec('Word form')}<div class="forms">${formsHTML(forms)}</div>`:''}
+      ${(v.synonyms&&v.synonyms.length)?`${sec('Đồng nghĩa')}<div>${v.synonyms.map(s=>`<span class="chip">${esc(s)}</span>`).join('')}</div>`:''}
+      ${colloc.length?`${sec('Collocation')}<div>${colloc.map(c=>`<div class="colloc-item"><span class="en">${esc(c.en)}</span>${c.vi?` — <span class="vi">${esc(c.vi)}</span>`:''}</div>`).join('')}</div>`:''}
+      ${exList.length?`${sec('Ví dụ')}${exList.map(e=>`<div class="fb-example">${e.tag?`<div class="ex-tag">${esc(e.tag)}</div>`:''}<div class="example-en">${exHL(e.en, v.word)}</div>${e.vi?`<div class="example-vi">${esc(e.vi)}</div>`:''}</div>`).join('')}` : ''}
+
+      <button id="wpFull" style="width:100%;margin-top:16px;padding:11px;border:none;border-radius:10px;background:var(--accent-grad,var(--accent));color:#fff;font-weight:700;font-size:13.5px;cursor:pointer">🃏 Mở Flashcard đầy đủ</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const close = ()=> overlay.remove();
+  overlay.querySelector('#wpClose').onclick = close;
+  overlay.querySelector('#wpFull').onclick = ()=>{ close(); openWord(v.word); };
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) close(); });
+}
+/* Popup xem nhanh 1 collocation, tương tự openWordPopup() — hiện đầy đủ
+   nghĩa, cách nói khác (đồng nghĩa) và 1 câu ví dụ + dịch (tìm qua
+   clFindExampleSentence(), dùng chung với tab Writing). */
+function openCollocPopup(id){
+  const c = COLLOCATIONS.find(x=>x.id===id);
+  if(!c) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'collocPopupOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  const ex = (typeof clFindExampleSentence === 'function') ? clFindExampleSentence(c) : null;
+  const sec = t => `<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:16px 0 7px">${t}</div>`;
+  overlay.innerHTML = `
+    <div style="background:var(--card);color:var(--ink);max-width:480px;width:100%;max-height:88vh;overflow-y:auto;
+      border-radius:16px;padding:20px 20px 18px;box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px">
+        <div style="font-size:20px;font-weight:900;font-family:var(--font-word)">${esc(c.phrase)}</div>
+        <button id="cpClose" style="border:none;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+        <span style="background:var(--ember-bg,#fdeee2);color:var(--ember,#c2410c);font-size:11px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:6px">collocation</span>
+        ${c.topic?`<span style="color:var(--muted);font-size:12px">${esc(c.topic)}</span>`:''}
+      </div>
+      <div style="font-size:16px;font-weight:700;color:var(--vn-color);margin-bottom:4px">${esc(c.meaning||'')}</div>
+
+      ${(c.synonyms&&c.synonyms.length)?`${sec('Đồng nghĩa / cách nói khác')}<div>${c.synonyms.map(s=>`<span class="chip">${esc(s)}</span>`).join('')}</div>`:''}
+      ${ex&&ex.en?`${sec('Ví dụ')}<div class="fb-example"><div class="example-en">${exHL(ex.en, c.phrase)}</div>${ex.vi?`<div class="example-vi">${esc(ex.vi)}</div>`:''}</div>`:''}
+
+      <button id="cpFull" style="width:100%;margin-top:16px;padding:11px;border:none;border-radius:10px;background:linear-gradient(135deg,#2563eb,#0891b2);color:#fff;font-weight:700;font-size:13.5px;cursor:pointer">🧩 Mở Gõ từ Collocation</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const close = ()=> overlay.remove();
+  overlay.querySelector('#cpClose').onclick = close;
+  overlay.querySelector('#cpFull').onclick = ()=>{ close(); goCollocType(); };
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) close(); });
+}
+
 /* =========================================================================
    "📅 Đã học hôm nay" — nay là 1 trang con NGAY TRONG TAB "⭐ Cần học",
    cạnh nút "✅ Đã thuộc" (xem renderNeed() + TABS bên dưới), thay cho modal
@@ -34215,6 +34339,30 @@ function _dayReviewData(dayKey){
   const correct  = (stat.correct||0)  + (stat.collocCorrect||0);
   const acc = answered ? Math.round(correct/answered*100) : null;
   return { stat, words, collocs, answered, acc };
+}
+
+/* ---- Lưu các mục đã ÔN ĐÚNG trong từng ngày, theo từng chế độ ôn lại
+   (Trắc nghiệm ôn lại / Gõ từ ôn lại / Gõ lại collocation) — để khi bấm
+   lại ĐÚNG chế độ đó trong CÙNG NGÀY, các mục đã ôn đúng sẽ KHÔNG hiện
+   lại nữa (chỉ còn lại các mục chưa ôn / vừa ôn sai). Độc lập với SRS
+   chính và độc lập giữa 3 chế độ (đúng ở Trắc nghiệm không tính là đúng
+   ở Gõ từ, vì đây là 2 kỹ năng khác nhau). */
+const LS_DAYREVIEW_DONE = 'vocab_dayreview_done_v1';
+function _loadDayReviewDone(){
+  try{ return JSON.parse(localStorage.getItem(LS_DAYREVIEW_DONE)) || {}; }catch(e){ return {}; }
+}
+function _saveDayReviewDone(d){ try{ localStorage.setItem(LS_DAYREVIEW_DONE, JSON.stringify(d)); }catch(e){} }
+function _dayReviewDoneSet(dayKey, mode){
+  const all = _loadDayReviewDone();
+  return new Set((all[dayKey] && all[dayKey][mode]) || []);
+}
+function _markDayReviewDone(dayKey, mode, key){
+  if(!dayKey || !key) return;
+  const all = _loadDayReviewDone();
+  if(!all[dayKey]) all[dayKey] = {};
+  if(!all[dayKey][mode]) all[dayKey][mode] = [];
+  if(!all[dayKey][mode].includes(key)) all[dayKey][mode].push(key);
+  _saveDayReviewDone(all);
 }
 
 /* Nút "📅 Đã học hôm nay" trên Dashboard -> nhảy thẳng sang tab Cần học,
@@ -34347,23 +34495,29 @@ function collocBlank(phrase){
 let _trQuiz = null;
 function startDayReviewQuiz(dayKey){
   const { words, collocs } = _dayReviewData(dayKey);
+  const doneSet = _dayReviewDoneSet(dayKey, 'quiz');
+  const wordsLeft   = words.filter(v=>!doneSet.has('v:'+v.word));
+  const collocsLeft = collocs.filter(c=>!doneSet.has('c:'+c.id));
   const pool = shuffle([
-    ...words.map(v=>{
+    ...wordsLeft.map(v=>{
       if(Math.random()<0.5){
-        return { kind:'vocab', dir:'vi-en', label:'📖 Từ vựng · Việt→Anh', q:v.vn, ipa:'', a:v.word };
+        return { kind:'vocab', dir:'vi-en', label:'📖 Từ vựng · Việt→Anh', q:v.vn, ipa:'', a:v.word, _doneKey:'v:'+v.word };
       }
-      return { kind:'vocab', dir:'en-vi', label:'📖 Từ vựng · Anh→Việt', q:v.word, ipa:v.ipa||'', a:v.vn };
+      return { kind:'vocab', dir:'en-vi', label:'📖 Từ vựng · Anh→Việt', q:v.word, ipa:v.ipa||'', a:v.vn, _doneKey:'v:'+v.word };
     }),
-    ...collocs.map(c=>{
+    ...collocsLeft.map(c=>{
       if(Math.random()<0.5){
         const {blanked, answer} = collocBlank(c.phrase);
-        return { kind:'colloc', dir:'blank', label:'🔗 Collocation · Điền từ (rút gọn)', q:blanked, ipa:c.meaning?`nghĩa: ${c.meaning}`:'', a:answer, _phrase:c.phrase };
+        return { kind:'colloc', dir:'blank', label:'🔗 Collocation · Điền từ (rút gọn)', q:blanked, ipa:c.meaning?`nghĩa: ${c.meaning}`:'', a:answer, _phrase:c.phrase, _doneKey:'c:'+c.id };
       }
-      return { kind:'colloc', dir:'meaning', label:'🔗 Collocation · Chọn nghĩa', q:c.phrase, ipa:c.ipa||'', a:c.meaning };
+      return { kind:'colloc', dir:'meaning', label:'🔗 Collocation · Chọn nghĩa', q:c.phrase, ipa:c.ipa||'', a:c.meaning, _doneKey:'c:'+c.id };
     })
   ]);
-  if(!pool.length){ toast('Chưa có gì để ôn lại ngày này 👀'); return; }
-  _trQuiz = { pool, i:0, score:0 };
+  if(!pool.length){
+    toast((words.length+collocs.length) ? 'Bạn đã ôn đúng hết mọi mục hôm nay rồi 🎉' : 'Chưa có gì để ôn lại ngày này 👀');
+    return;
+  }
+  _trQuiz = { pool, i:0, score:0, dayKey };
   renderDayReviewQuiz();
 }
 function _trWrongOptions(item, need){
@@ -34428,7 +34582,7 @@ function renderDayReviewQuiz(){
       if(answered) return;
       answered = true;
       const ok = opt === item.a;
-      if(ok){ st.score++; b.style.background='#16a34a'; b.style.color='#fff'; b.style.borderColor='#16a34a'; }
+      if(ok){ st.score++; b.style.background='#16a34a'; b.style.color='#fff'; b.style.borderColor='#16a34a'; _markDayReviewDone(st.dayKey, 'quiz', item._doneKey); }
       else{
         b.style.background='#dc2626'; b.style.color='#fff'; b.style.borderColor='#dc2626';
         [...optsBox.children].find(c=>c.textContent===item.a).style.cssText += ';background:#16a34a;color:#fff;border-color:#16a34a';
@@ -34448,10 +34602,20 @@ function renderDayReviewQuiz(){
    định số từ ban đầu để hiển thị tiến độ; st.mistakes đếm tổng số lượt
    gõ sai (không quy đổi qua "đã học được"). */
 let _trType = null;
+/* Sinh chuỗi gạch dưới thay cho từ/cụm cần gõ, GIỮ NGUYÊN khoảng trắng
+   giữa các tiếng — dùng làm gợi ý số chữ cái cho người học. */
+function _typeHintBlanks(word){
+  return String(word||'').split(' ').map(part => part.split('').map(()=>'_').join(' ')).join('   ');
+}
 function startDayReviewTyping(dayKey){
   const { words } = _dayReviewData(dayKey);
-  if(!words.length){ toast('Chưa có từ vựng nào để gõ ôn lại 👀'); return; }
-  _trType = { pool: shuffle(words), total: words.length, mistakes: 0 };
+  const doneSet = _dayReviewDoneSet(dayKey, 'typing');
+  const wordsLeft = words.filter(v=>!doneSet.has(v.word));
+  if(!wordsLeft.length){
+    toast(words.length ? 'Bạn đã gõ đúng hết từ hôm nay rồi 🎉' : 'Chưa có từ vựng nào để gõ ôn lại 👀');
+    return;
+  }
+  _trType = { pool: shuffle(wordsLeft), total: wordsLeft.length, mistakes: 0, dayKey };
   renderDayReviewTyping();
 }
 function renderDayReviewTyping(){
@@ -34490,6 +34654,8 @@ function renderDayReviewTyping(){
       <div style="text-align:center;margin-bottom:16px">
         <div style="font-size:17px;font-weight:700">${esc(v.vn||'')}</div>
         ${v.pos?`<div style="color:var(--muted);font-size:12px;margin-top:3px">(${esc(v.pos)})</div>`:''}
+        <div style="font-family:var(--font-mono);letter-spacing:3px;color:var(--muted);font-size:16px;margin-top:8px">${_typeHintBlanks(v.word)}
+          <span style="opacity:.65;font-family:var(--font-body);letter-spacing:normal;font-size:12px">(${v.word.replace(/\s/g,'').length} chữ cái)</span></div>
       </div>
       <input id="ttqInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
         placeholder="Gõ từ tiếng Anh..."
@@ -34513,6 +34679,7 @@ function renderDayReviewTyping(){
     if(ok){
       fb.style.color='#16a34a'; fb.textContent = '✅ Chính xác!'; input.style.borderColor='#16a34a';
       st.pool.shift();                       // gõ đúng -> tính là xong, bỏ khỏi hàng đợi
+      _markDayReviewDone(st.dayKey, 'typing', v.word);
       speak(v.word);                         // đọc to từ khi gõ đúng
     } else {
       fb.style.color='#dc2626'; fb.textContent = `❌ Chưa đúng (đáp án: ${v.word}) — từ này sẽ quay lại ở cuối lượt`;
@@ -34536,8 +34703,13 @@ function renderDayReviewTyping(){
 let _trTypeColloc = null;
 function startDayReviewTypingColloc(dayKey){
   const { collocs } = _dayReviewData(dayKey);
-  if(!collocs.length){ toast('Chưa có collocation nào để gõ ôn lại 👀'); return; }
-  _trTypeColloc = { pool: shuffle(collocs), total: collocs.length, mistakes: 0 };
+  const doneSet = _dayReviewDoneSet(dayKey, 'typingColloc');
+  const collocsLeft = collocs.filter(c=>!doneSet.has(c.id));
+  if(!collocsLeft.length){
+    toast(collocs.length ? 'Bạn đã gõ đúng hết collocation hôm nay rồi 🎉' : 'Chưa có collocation nào để gõ ôn lại 👀');
+    return;
+  }
+  _trTypeColloc = { pool: shuffle(collocsLeft), total: collocsLeft.length, mistakes: 0, dayKey };
   renderDayReviewTypingColloc();
 }
 function renderDayReviewTypingColloc(){
@@ -34577,6 +34749,8 @@ function renderDayReviewTypingColloc(){
       <div style="text-align:center;margin-bottom:16px">
         <div style="font-size:17px;font-weight:800;letter-spacing:.2px">${esc(blanked)}</div>
         ${c.meaning?`<div style="color:var(--muted);font-size:12.5px;margin-top:6px">${esc(c.meaning)}</div>`:''}
+        <div style="font-family:var(--font-mono);letter-spacing:3px;color:var(--muted);font-size:16px;margin-top:8px">${_typeHintBlanks(answer)}
+          <span style="opacity:.65;font-family:var(--font-body);letter-spacing:normal;font-size:12px">(${answer.replace(/\s/g,'').length} chữ cái)</span></div>
       </div>
       <input id="tcqInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
         placeholder="Gõ đúng từ còn thiếu..."
@@ -34600,6 +34774,7 @@ function renderDayReviewTypingColloc(){
     if(ok){
       fb.style.color='#16a34a'; fb.textContent = '✅ Chính xác!'; input.style.borderColor='#16a34a';
       st.pool.shift();                       // gõ đúng -> tính là xong, bỏ khỏi hàng đợi
+      _markDayReviewDone(st.dayKey, 'typingColloc', c.id);
       speak(c.phrase);                       // đọc to cả cụm khi gõ đúng
     } else {
       fb.style.color='#dc2626'; fb.textContent = `❌ Chưa đúng (đáp án: ${answer}) — cụm này sẽ quay lại ở cuối lượt`;
@@ -37262,6 +37437,44 @@ function toast(msg){
 const LS_KEY = 'vocab_learn_v1';
 
 function todayKey(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+/* Băm chuỗi thành 1 số nguyên không âm rồi lấy phần dư — dùng để chọn
+   "ngẫu nhiên nhưng ổn định" (vd: từ mới hôm nay không đổi khi tải lại trang). */
+function seededIndex(seedStr, mod){
+  if(!mod) return 0;
+  let h = 0;
+  for(let i=0;i<seedStr.length;i++){ h = (h*31 + seedStr.charCodeAt(i)) >>> 0; }
+  return h % mod;
+}
+/* HTML cho 2 thẻ trong panel "Từ mới hôm nay" — tách riêng để vừa dùng lúc
+   render lần đầu, vừa dùng lại khi bấm nút 🔀 xáo từ khác. */
+function renderHeroTodayItems(dailyWord, dailyColloc){
+  let html = '';
+  if(dailyWord){
+    html += `
+    <button class="ht-item" onclick="openWordPopup('${esc(dailyWord.word).replace(/'/g,"\\'")}')">
+      <span class="ht-pos">${esc(dailyWord.pos||'từ')}</span>
+      <span class="ht-word">${esc(dailyWord.word)}</span>
+      <span class="ht-mean">${esc(dailyWord.vn||'')}</span>
+    </button>`;
+  }
+  if(dailyColloc){
+    html += `
+    <button class="ht-item" onclick="openCollocPopup('${esc(dailyColloc.id).replace(/'/g,"\\'")}')">
+      <span class="ht-pos ht-pos-cl">colloc.</span>
+      <span class="ht-word">${esc(dailyColloc.phrase)}</span>
+      <span class="ht-mean">${esc(dailyColloc.meaning||'')}</span>
+    </button>`;
+  }
+  return html;
+}
+function shuffleDailyWords(){
+  const w = VOCAB.length ? VOCAB[Math.floor(Math.random()*VOCAB.length)] : null;
+  const c = COLLOCATIONS.length ? COLLOCATIONS[Math.floor(Math.random()*COLLOCATIONS.length)] : null;
+  const el = document.getElementById('heroTodayItems');
+  if(el) el.innerHTML = renderHeroTodayItems(w, c);
+  const btn = document.getElementById('heroTodayShuffleBtn');
+  if(btn){ btn.classList.remove('spin'); void btn.offsetWidth; btn.classList.add('spin'); }
+}
 function loadLearnData(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e){ return {}; } }
 function saveLearnData(d){ try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch(e){} _dashStale = true; }
 function getTodayStats(){
