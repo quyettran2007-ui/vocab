@@ -33975,6 +33975,7 @@ function renderDashboard(){
               <span>🗂️ Chọn chủ đề học</span><span class="hpb-arrow">→</span>
             </button>
             <button class="hero-guide-btn" onclick="openLearnGuide()" title="Xem hướng dẫn quy trình học">❔ Hướng dẫn học</button>
+            <button class="hero-guide-btn" onclick="openTodayReview()" title="Xem lại từ vựng & collocation đã học hôm nay">📅 Đã học hôm nay</button>
           </div>
         </div>
         <div class="hero-nums">
@@ -34142,6 +34143,178 @@ function lgGo(mode){
   if(ov) ov.remove();
   const btn = document.querySelector(`.tab-btn[data-mode="${mode}"]`);
   if(btn) btn.click();
+}
+
+/* =========================================================================
+   "📅 Đã học hôm nay" — nút cạnh "❔ Hướng dẫn học" trên Dashboard.
+   Mở modal xem lại toàn bộ TỪ VỰNG + COLLOCATION đã luyện trong ngày hôm nay
+   (lấy từ stat.studied / stat.collocStudied trong LS_KEY theo-ngày), có 2 tab
+   để duyệt danh sách, và 1 nút "🔁 Trắc nghiệm ôn lại" mở phiên trắc nghiệm
+   4-đáp-án gộp cả từ vựng lẫn collocation của riêng hôm nay để ôn ngay. ---- */
+function _todayReviewData(){
+  const { stat } = getTodayStats();
+  const words = (stat.studied||[]).map(w=>vocabByWord(w)).filter(Boolean);
+  const collocs = (stat.collocStudied||[]).map(id=>COLLOCATIONS.find(c=>c.id===id)).filter(Boolean);
+  return { words, collocs };
+}
+
+function openTodayReview(){
+  const { words, collocs } = _todayReviewData();
+  const total = words.length + collocs.length;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'todayReviewOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+
+  const wordRow = v => `
+    <div class="ds-item" style="margin-bottom:8px">
+      <div class="ds-top">
+        <button class="ds-word" onclick="openWord('${v.word.replace(/'/g,"\\'")}')" title="Mở Flashcard từ này">${esc(v.word)}</button>
+        <button class="speak-btn" onclick="speak('${esc(v.word)}')">🔊</button>
+        ${v.ipa?`<span class="ds-ipa">${esc(v.ipa)}</span>`:''}
+        ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
+      </div>
+      <div style="margin-top:4px;color:var(--ink-soft,var(--muted));font-size:13px">${esc(v.vn||'')}</div>
+    </div>`;
+
+  const collocRow = c => `
+    <div class="ds-item" style="margin-bottom:8px">
+      <div class="ds-top">
+        <button class="ds-word" style="cursor:default" title="${esc(c.phrase)}">${esc(c.phrase)}</button>
+        <button class="speak-btn" onclick="speak('${esc(c.phrase)}')">🔊</button>
+        ${c.ipa?`<span class="ds-ipa">${esc(c.ipa)}</span>`:''}
+      </div>
+      <div style="margin-top:4px;color:var(--ink-soft,var(--muted));font-size:13px">${esc(c.meaning||'')}</div>
+    </div>`;
+
+  overlay.innerHTML = `
+    <div style="background:var(--card);color:var(--ink);max-width:620px;width:100%;max-height:88vh;overflow-y:auto;
+      border-radius:16px;padding:22px 22px 18px;box-shadow:0 12px 40px rgba(0,0,0,.35);font-size:13.5px;line-height:1.62;
+      border:1px solid var(--line);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <h3 style="margin:0;font-size:17px">📅 Đã học hôm nay${total?` <span style="color:var(--muted);font-weight:500;font-size:13px">(${total} mục)</span>`:''}</h3>
+        <button id="trClose" style="border:none;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
+      </div>
+
+      ${!total ? `
+        <p style="margin:16px 0 4px;color:var(--muted)">Hôm nay bạn chưa luyện từ vựng hay collocation nào. Bấm <b>🎯 Học từ mới</b> ở Dashboard để bắt đầu nhé!</p>
+      ` : `
+        <div style="display:flex;gap:8px;margin:14px 0 12px">
+          <button id="trTabWord" class="hero-guide-btn" style="flex:1;justify-content:center;background:var(--accent);color:#fff;border-color:var(--accent)">📖 Từ vựng (${words.length})</button>
+          <button id="trTabColloc" class="hero-guide-btn" style="flex:1;justify-content:center">🔗 Collocation (${collocs.length})</button>
+        </div>
+        <div id="trPaneWord">
+          ${words.length ? words.map(wordRow).join('') : `<p style="color:var(--muted)">Chưa có từ vựng nào được luyện hôm nay.</p>`}
+        </div>
+        <div id="trPaneColloc" style="display:none">
+          ${collocs.length ? collocs.map(collocRow).join('') : `<p style="color:var(--muted)">Chưa có collocation nào được luyện hôm nay.</p>`}
+        </div>
+        <button id="trQuizBtn" style="width:100%;margin-top:10px;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">🔁 Trắc nghiệm ôn lại (${total} câu)</button>
+      `}
+    </div>`;
+  document.body.appendChild(overlay);
+  const close = ()=> overlay.remove();
+  overlay.querySelector('#trClose').onclick = close;
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) close(); });
+
+  if(total){
+    const tabW = overlay.querySelector('#trTabWord'), tabC = overlay.querySelector('#trTabColloc');
+    const paneW = overlay.querySelector('#trPaneWord'), paneC = overlay.querySelector('#trPaneColloc');
+    tabW.onclick = ()=>{
+      paneW.style.display=''; paneC.style.display='none';
+      tabW.style.background='var(--accent)'; tabW.style.color='#fff'; tabW.style.borderColor='var(--accent)';
+      tabC.style.background=''; tabC.style.color=''; tabC.style.borderColor='';
+    };
+    tabC.onclick = ()=>{
+      paneW.style.display='none'; paneC.style.display='';
+      tabC.style.background='var(--accent)'; tabC.style.color='#fff'; tabC.style.borderColor='var(--accent)';
+      tabW.style.background=''; tabW.style.color=''; tabW.style.borderColor='';
+    };
+    overlay.querySelector('#trQuizBtn').onclick = ()=>{ close(); startTodayReviewQuiz(); };
+  }
+}
+
+/* ---- Trắc nghiệm ôn lại riêng cho những gì đã học hôm nay: gộp từ vựng
+   (word -> nghĩa) và collocation (phrase -> nghĩa) thành 1 bộ câu hỏi
+   4-đáp-án, không đụng vào SRS/điểm số chính của app — chỉ để ôn nhanh. ---- */
+let _trQuiz = null;
+function startTodayReviewQuiz(){
+  const { words, collocs } = _todayReviewData();
+  const pool = shuffle([
+    ...words.map(v=>({type:'vocab', q:v.word, ipa:v.ipa||'', a:v.vn})),
+    ...collocs.map(c=>({type:'colloc', q:c.phrase, ipa:c.ipa||'', a:c.meaning}))
+  ]);
+  if(!pool.length){ toast('Chưa có gì để ôn lại hôm nay 👀'); return; }
+  _trQuiz = { pool, i:0, score:0 };
+  renderTodayReviewQuiz();
+}
+
+function _trWrongOptions(item, need){
+  const sameType = item.type==='vocab'
+    ? VOCAB.filter(v=>v.word!==item.q).map(v=>v.vn)
+    : COLLOCATIONS.filter(c=>c.phrase!==item.q).map(c=>c.meaning);
+  return shuffle(sameType.filter(Boolean)).slice(0, need);
+}
+
+function renderTodayReviewQuiz(){
+  const st = _trQuiz;
+  const overlay = document.createElement('div');
+  overlay.id = 'trQuizOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+
+  if(st.i >= st.pool.length){
+    const pct = Math.round(st.score/st.pool.length*100);
+    overlay.innerHTML = `
+      <div style="background:var(--card);color:var(--ink);max-width:420px;width:100%;border-radius:16px;padding:26px 22px;
+        text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
+        <div style="font-size:38px;margin-bottom:8px">${pct>=80?'🎉':pct>=50?'👍':'💪'}</div>
+        <h3 style="margin:0 0 6px;font-size:18px">Hoàn thành ôn tập hôm nay!</h3>
+        <p style="margin:0 0 18px;color:var(--muted)">Đúng <b>${st.score}/${st.pool.length}</b> câu (${pct}%)</p>
+        <button id="trqDone" style="width:100%;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Đóng</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#trqDone').onclick = ()=> overlay.remove();
+    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
+    return;
+  }
+
+  const item = st.pool[st.i];
+  const opts = shuffle([item.a, ..._trWrongOptions(item, 3)]);
+
+  overlay.innerHTML = `
+    <div style="background:var(--card);color:var(--ink);max-width:480px;width:100%;border-radius:16px;padding:22px;
+      box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px">
+        <span>${item.type==='vocab'?'📖 Từ vựng':'🔗 Collocation'} · Câu ${st.i+1}/${st.pool.length}</span>
+        <span>✅ ${st.score}</span>
+      </div>
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="font-size:22px;font-weight:800">${esc(item.q)}</div>
+        ${item.ipa?`<div style="color:var(--muted);font-size:13px;margin-top:2px">${esc(item.ipa)}</div>`:''}
+      </div>
+      <div id="trqOpts" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const optsBox = overlay.querySelector('#trqOpts');
+  let answered = false;
+  opts.forEach(opt=>{
+    const b = document.createElement('button');
+    b.textContent = opt;
+    b.style.cssText = 'text-align:left;padding:11px 13px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2,rgba(127,127,127,.08));color:inherit;font:inherit;cursor:pointer';
+    b.onclick = ()=>{
+      if(answered) return;
+      answered = true;
+      const ok = opt === item.a;
+      if(ok){ st.score++; b.style.background='#16a34a'; b.style.color='#fff'; b.style.borderColor='#16a34a'; }
+      else{
+        b.style.background='#dc2626'; b.style.color='#fff'; b.style.borderColor='#dc2626';
+        [...optsBox.children].find(c=>c.textContent===item.a).style.cssText += ';background:#16a34a;color:#fff;border-color:#16a34a';
+      }
+      setTimeout(()=>{ overlay.remove(); st.i++; renderTodayReviewQuiz(); }, 900);
+    };
+    optsBox.appendChild(b);
+  });
 }
 
 /* ---------- Nút "Chọn chủ đề học" trên hàng tiến độ chính: nhảy sang tab
