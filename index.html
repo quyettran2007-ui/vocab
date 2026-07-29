@@ -1108,6 +1108,8 @@ select:focus, .search-box:focus {
   font-size:12.5px; font-weight:900; font-family:var(--font-heading);
 }
 .milestone-group[data-box="0"] .mg-ic{ background:var(--gold-bg,rgba(217,168,45,.14)); color:var(--gold); }
+.milestone-group[data-temp="1"] .mg-ic{ background:var(--teal-bg,rgba(13,148,136,.14)); color:var(--teal,#0d9488); }
+.milestone-group[data-temp="1"] .milestone-head{ border-bottom-color:var(--teal,#0d9488); }
 .mg-label{ font-size:13.5px; font-weight:800; color:var(--ink); transition:.15s; }
 .mg-sub{ font-size:11.5px; color:var(--muted); font-weight:600; }
 .mg-count{
@@ -34239,7 +34241,7 @@ function openLearnGuide(){
           </span>${!isLast?'<span style="color:var(--muted)">→</span>':''}`;
         }).join('')}
       </div>
-      <p style="margin:0 0 10px;color:var(--muted);font-size:12.5px">Đi hết ${SRS_STEPS.length-1} bậc này (tới mốc <b>${SRS_STEPS[SRS_STEPS.length-1]} ngày</b>) mới chính thức <b>✅ Đã thuộc</b>. Sang tab <b>⭐ Cần học</b>, các từ đang ôn ngắt quãng được tự động xếp theo đúng các mốc này để dễ theo dõi mình đang "kẹt" nhiều nhất ở bậc nào.</p>
+      <p style="margin:0 0 10px;color:var(--muted);font-size:12.5px">Đi hết ${SRS_STEPS.length-1} bậc này (tới mốc <b>${SRS_STEPS[SRS_STEPS.length-1]} ngày</b>) mới chính thức <b>✅ Đã thuộc</b>. Riêng mốc <b>14 ngày</b> được đặt tên là <b>🌤️ Nhớ tạm thời</b> — coi như từ đã đủ chắc để dùng cho kỳ thi, dù chưa đạt chuẩn ghi nhớ dài hạn đầy đủ. Sang tab <b>⭐ Cần học</b>, có riêng mục <b>🌤️ Nhớ tạm thời</b> gom các từ đã đạt mốc này, và các danh sách khác cũng tự động xếp theo đúng các mốc ngắt quãng để dễ theo dõi mình đang "kẹt" nhiều nhất ở bậc nào.</p>
       <p style="margin:0 0 10px">⭐ Từ bị đánh "Quên" sẽ tự động được đánh dấu sao vào "Cần học"; khi đã thuộc hẳn, dấu sao tự động được gỡ — không cần làm tay.</p>
 
       <h4 style="margin:16px 0 6px;font-size:14px">🧭 Từng tab dùng để làm gì</h4>
@@ -34251,7 +34253,7 @@ function openLearnGuide(){
           {m:'typing', ic:'⌨️', name:'③ Gõ từ',      desc:'Cửa 3, khó nhất. Gõ đúng chính tả từ nghĩa tiếng Việt, không gợi ý — buộc não nhớ chủ động thay vì nhận diện thụ động.'},
           {m:'synonym',ic:'🔤', name:'Đồng nghĩa',   desc:'Luyện phản xạ tìm từ đồng nghĩa/thay thế — rất cần cho IELTS Writing & Reading (paraphrase). Không nằm trong 3 cửa bắt buộc, nên tập thêm song song để câu văn đa dạng hơn.'},
           {m:'learn',  ic:'🚀', name:'Học ngay',     desc:'Cửa vào chính để ôn tập mỗi ngày — gộp cả 3 cửa + ôn ngắt quãng vào 1 phiên duy nhất, có 7 chế độ chọn phạm vi từ (xem mục dưới).'},
-          {m:'need',   ic:'⭐', name:'Cần học',      desc:'Trung tâm theo dõi ôn tập: từ đến hạn, đã lên lịch và bị đánh sao — mỗi danh sách tự xếp theo <b>mốc ngắt quãng</b> (1/3/5/7/10/14/21/35 ngày) để biết mình đang "kẹt" nhiều nhất ở bậc nào.'},
+          {m:'need',   ic:'⭐', name:'Cần học',      desc:'Trung tâm theo dõi ôn tập: từ đến hạn, đã lên lịch, bị đánh sao, và <b>🌤️ Nhớ tạm thời</b> (đã giữ được ≥14 ngày, sắp Đã thuộc) — mỗi danh sách tự xếp theo <b>mốc ngắt quãng</b> để biết mình đang "kẹt" nhiều nhất ở bậc nào.'},
           {m:'reading',ic:'📕', name:'Reading',      desc:'Đọc bài đọc IELTS thật (Cambridge 15–21), từ vựng trong bài được gạch chân, bấm vào xem nghĩa ngay trong ngữ cảnh câu — nhớ lâu hơn học từ rời rạc. Mục con <b>"Từ vựng Listening"</b> trong tab này gom riêng từ vựng theo từng đề Cam-Test để luyện nghe.'},
           {m:'structures', ic:'✍️', name:'Writing',  desc:'Luyện cấu trúc câu & collocation hay dùng trong IELTS Writing/Speaking, có phần dịch Anh–Việt và trắc nghiệm riêng — nơi biến từ vựng đã học thành câu văn thật.'},
         ].map(t=>`
@@ -35339,12 +35341,16 @@ document.getElementById('fcStar').onclick = (e)=>{
    từ chưa/đang khởi động (chưa qua đủ 3 cửa nên chưa vào chu kỳ ngắt
    quãng dài hạn) — hẹn ôn lại trong vài phút cùng phiên. */
 const MILESTONE_ICONS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨'];
+const TEMP_RETAIN_BOX = SRS_STEPS.indexOf(14);   // bậc ứng với mốc 14 ngày (= 6)
 function milestoneMeta(box){
   box = box||0;
   if(box<=0) return { box:0, ic:'🆕', label:'Mới bắt đầu', sub:'Đang khởi động — chưa vào ngắt quãng' };
   const days = SRS_STEPS[Math.min(box, SRS_STEPS.length-1)];
-  const ic = MILESTONE_ICONS[box-1] || `#${box}`;
-  return { box, ic, label:`Mốc ${days} ngày`, sub:`Bậc ${box}/${SRS_MASTER_BOX-1}` };
+  const isTemp = box >= TEMP_RETAIN_BOX;   // đã giữ được ≥14 ngày -> coi là "Nhớ tạm thời"
+  const ic = isTemp ? '🌤️' : (MILESTONE_ICONS[box-1] || `#${box}`);
+  const label = isTemp ? `🌤️ Nhớ tạm thời — ${days} ngày` : `Mốc ${days} ngày`;
+  const sub = isTemp ? `Bậc ${box}/${SRS_MASTER_BOX-1} · đã giữ được ≥14 ngày, sắp Đã thuộc` : `Bậc ${box}/${SRS_MASTER_BOX-1}`;
+  return { box, ic, label, sub, isTemp };
 }
 /* Gom 1 danh sách từ vựng thành các nhóm theo mốc ngắt quãng hiện tại,
    sắp theo box tăng dần (mốc gần trước, mốc xa sau). */
@@ -35371,7 +35377,7 @@ function milestoneGroupsHTML(list, cardFn, viewMode){
   return groups.map(g=>{
     const collapsed = _needCollapsed.has(g.meta.box);
     return `
-    <div class="milestone-group${collapsed?' collapsed':''}" data-box="${g.meta.box}">
+    <div class="milestone-group${collapsed?' collapsed':''}" data-box="${g.meta.box}"${g.meta.isTemp?' data-temp="1"':''}>
       <div class="milestone-head" onclick="toggleMilestone(${g.meta.box})">
         <span class="mg-ic">${g.meta.ic}</span>
         <span class="mg-label">${g.meta.label}</span>
@@ -35401,7 +35407,7 @@ function renderNeed(){
   const S = srsStats();
 
   // Phân loại TOÀN BỘ từ theo trạng thái SRS
-  const due=[], learning=[], soon=[], done=[], star=[];
+  const due=[], learning=[], soon=[], done=[], star=[], temp=[];
   VOCAB.forEach(v=>{
     const st = srsState(v.word);
     if(starred.has(v.word)) star.push(v);
@@ -35409,6 +35415,8 @@ function renderNeed(){
     if(srsIsDue(v.word, now)) due.push(v);
     else if(st==='learning' || st==='review') soon.push(v);
     if(st==='learning') learning.push(v);
+    const r = SRS[v.word];
+    if(r && (r.box||0) >= TEMP_RETAIN_BOX) temp.push(v);   // đã giữ được ≥14 ngày, chưa Đã thuộc hẳn
   });
   // sắp xếp: quá hạn lâu nhất trước / sắp đến hạn gần nhất trước
   due.sort((a,b)=>SRS[a.word].due - SRS[b.word].due);
@@ -35417,6 +35425,7 @@ function renderNeed(){
     const ra=SRS[a.word], rb=SRS[b.word];
     return (ra?ra.due:Infinity) - (rb?rb.due:Infinity);
   });
+  temp.sort((a,b)=>(SRS[b.word].box||0)-(SRS[a.word].box||0));
   done.sort((a,b)=>(SRS[b.word].last||0)-(SRS[a.word].last||0));
 
   const todayCount = (()=>{ const d=_dayReviewData(todayKey()); return d.words.length + d.collocs.length; })();
@@ -35424,6 +35433,7 @@ function renderNeed(){
     {k:'due',      ic:'🔔', t:'Đến hạn ôn',  arr:due,      d:'Ôn ngay hôm nay'},
     {k:'soon',     ic:'⏳', t:'Đã lên lịch', arr:soon,     d:'Đang chờ tới ngày ôn'},
     {k:'star',     ic:'⭐', t:'Cần học',     arr:star,     d:'Từ bạn đánh dấu sao'},
+    {k:'temp',     ic:'🌤️', t:'Nhớ tạm thời', arr:temp,    d:'Đã giữ được ≥14 ngày — sắp Đã thuộc hẳn'},
     {k:'today',    ic:'📅', t:'Đã học hôm nay', arr:new Array(todayCount), d:'Xem & ôn lại theo từng ngày'},
     {k:'done',     ic:'✅', t:'Đã thuộc',    arr:done,     d:'Hoàn thành bậc 5'}
   ];
@@ -35461,6 +35471,7 @@ function renderNeed(){
     due:  ['🎉','Không còn từ nào đến hạn','Bạn đã ôn hết hôm nay! Thử <b>Ôn ngẫu nhiên</b> để củng cố.'],
     soon: ['⏳','Chưa có từ nào lên lịch','Học vài từ để hệ thống bắt đầu hẹn lịch ôn.'],
     star: ['⭐','Chưa đánh dấu từ nào','Bấm ☆ trên Flashcard hoặc Danh sách để thêm.'],
+    temp: ['🌤️','Chưa có từ nào đạt mốc này','Ôn đều để từ tiến dần lên mốc 14 ngày (🌤️ Nhớ tạm thời) trở lên.'],
     done: ['✅','Chưa có từ nào thuộc','Đúng liên tiếp tới bậc 5 là từ được tính đã thuộc.']
   };
 
@@ -35509,13 +35520,13 @@ function renderNeed(){
           ${cur.k==='soon' ? `<button class="btn" onclick="goLearnScope('weak')">🔥 Ôn từ hay quên →</button>` : ''}
         </span>
       </div>
-      ${(cur.k==='due'||cur.k==='soon'||cur.k==='star') ? `
+      ${(cur.k==='due'||cur.k==='soon'||cur.k==='star'||cur.k==='temp') ? `
       <div class="milestone-legend">
         <b>🔁 Mốc ngắt quãng:</b> khoảng ôn giãn dần theo từng bậc —
-        ${SRS_STEPS.slice(1,-1).map((d,i)=>`<span class="ml-step"><span class="mg-ic">${MILESTONE_ICONS[i]}</span>${d} ngày</span>`).join('')}
+        ${SRS_STEPS.slice(1,-1).map((d,i)=>`<span class="ml-step"><span class="mg-ic">${d>=14?'🌤️':MILESTONE_ICONS[i]}</span>${d} ngày${d===14?' (Nhớ tạm thời)':''}</span>`).join('')}
         <span class="ml-step"><span class="mg-ic">🆕</span>mới bắt đầu</span>
       </div>` : ''}
-      <div>${(cur.k==='due'||cur.k==='soon'||cur.k==='star')
+      <div>${(cur.k==='due'||cur.k==='soon'||cur.k==='star'||cur.k==='temp')
           ? milestoneGroupsHTML(list.slice(0,150), _needViewMode==='compact'?lwcTileHTML:card, _needViewMode)
           : `<div class="${_needViewMode==='compact'?'lwc-grid':'need-grid'}">${list.slice(0,150).map(_needViewMode==='compact'?lwcTileHTML:card).join('')}</div>`}</div>
       ${list.length>150?`<div class="need-more">Hiện 150 / ${list.length} từ</div>`:''}
