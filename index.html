@@ -1389,8 +1389,19 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .ht-word{ font-weight:800; color:var(--ink); font-family:var(--font-word); font-size:13px; }
 .ht-mean{ color:var(--ink-soft); font-size:12.5px; width:100%; }
 @media(max-width:480px){
-  .hero-top{ flex-direction:column; }
-  .hero-today{ width:100%; }
+  .hero-top{ flex-direction:row; align-items:center; gap:10px; }
+  .hero-ring-wrap{ width:70px; height:70px; }
+  .hero-ring-in{ inset:9px; }
+  .hero-ring-num{ font-size:15px; }
+  .hero-ring-num span{ font-size:9px; }
+  .hero-ring-lbl{ font-size:7px; letter-spacing:.2px; }
+  .hero-today{ width:auto; flex:1; min-width:0; padding:8px 10px; }
+}
+@media(max-width:360px){
+  .hero-ring-wrap{ width:58px; height:58px; }
+  .hero-ring-in{ inset:7px; }
+  .hero-ring-num{ font-size:13px; }
+  .hero-ring-lbl{ font-size:6px; }
 }
 .hero-stat{
   position:relative; text-align:left; overflow:hidden;
@@ -4877,7 +4888,7 @@ main{ padding-top:26px; }
 .hs-lbl{ font-size:9.5px; text-transform:uppercase; letter-spacing:.3px; font-weight:800; color:var(--muted); }
 
 .hero-side{
-  border-radius:var(--radius-xl); padding:16px 18px; gap:2px;
+  border-radius:var(--radius-xl); padding:16px 18px 20px; gap:2px;
   border:var(--dash-border); box-shadow:var(--shadow-sm); background:var(--card);
   display:flex; flex-direction:column;
 }
