@@ -34274,9 +34274,9 @@ function renderTodayPaneHTML(){
       <button class="need-tab ${_needDaySub==='colloc'?'active':''}" onclick="setNeedDaySub('colloc')">
         <span class="nt-ic">🔗</span><span class="nt-t">Collocation</span><span class="nt-n">${collocs.length}</span></button>
     </div>
-    <div class="need-grid">
+    <div class="${_needDaySub==='word' && _needViewMode==='compact' ? 'lwc-grid' : 'need-grid'}">
       ${_needDaySub==='word'
-        ? (words.length ? words.map(needCardHTML).join('') : `<div class="empty" style="grid-column:1/-1"><div style="font-size:13px">Ngày này chưa luyện từ vựng nào.</div></div>`)
+        ? (words.length ? words.map(_needViewMode==='compact'?lwcTileHTML:needCardHTML).join('') : `<div class="empty" style="grid-column:1/-1"><div style="font-size:13px">Ngày này chưa luyện từ vựng nào.</div></div>`)
         : (collocs.length ? collocs.map(c=>clCardHTML(c)).join('') : `<div class="empty" style="grid-column:1/-1"><div style="font-size:13px">Ngày này chưa luyện collocation nào.</div></div>`)}
     </div>`;
 }
@@ -34326,8 +34326,9 @@ function renderDayReviewQuiz(){
   const opts = shuffle([item.a, ..._trWrongOptions(item, 3)]);
 
   overlay.innerHTML = `
-    <div style="background:var(--card);color:var(--ink);max-width:480px;width:100%;border-radius:16px;padding:22px;
+    <div style="position:relative;background:var(--card);color:var(--ink);max-width:480px;width:100%;border-radius:16px;padding:22px;
       box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
+      <button id="trqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px">
         <span>${item.type==='vocab'?'📖 Từ vựng':'🔗 Collocation'} · Câu ${st.i+1}/${st.pool.length}</span>
         <span>✅ ${st.score}</span>
@@ -34339,6 +34340,8 @@ function renderDayReviewQuiz(){
       <div id="trqOpts" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>`;
   document.body.appendChild(overlay);
+  overlay.querySelector('#trqClose').onclick = ()=> overlay.remove();
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
 
   const optsBox = overlay.querySelector('#trqOpts');
   let answered = false;
@@ -34364,11 +34367,16 @@ function renderDayReviewQuiz(){
 /* ---- Ôn lại kiểu "Gõ từ": cho xem nghĩa tiếng Việt, gõ đúng chính tả từ
    tiếng Anh — chỉ áp dụng cho TỪ VỰNG (collocation thường dài, không hợp
    gõ tay từng ký tự). Không dùng gợi ý, không đụng SRS chính. ---- */
+/* _trType.pool là 1 HÀNG ĐỢI: gõ đúng -> bỏ từ đầu hàng đợi (tính là
+   xong); gõ sai -> đưa từ đó xuống CUỐI hàng đợi để gõ lại sau, KHÔNG
+   tính là xong (chỉ khi nào gõ đúng mới được tính). st.total giữ cố
+   định số từ ban đầu để hiển thị tiến độ; st.mistakes đếm tổng số lượt
+   gõ sai (không quy đổi qua "đã học được"). */
 let _trType = null;
 function startDayReviewTyping(dayKey){
   const { words } = _dayReviewData(dayKey);
   if(!words.length){ toast('Chưa có từ vựng nào để gõ ôn lại 👀'); return; }
-  _trType = { pool: shuffle(words), i:0, score:0 };
+  _trType = { pool: shuffle(words), total: words.length, mistakes: 0 };
   renderDayReviewTyping();
 }
 function renderDayReviewTyping(){
@@ -34377,14 +34385,15 @@ function renderDayReviewTyping(){
   overlay.id = 'trTypeOverlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
 
-  if(st.i >= st.pool.length){
-    const pct = Math.round(st.score/st.pool.length*100);
+  if(!st.pool.length){
+    const attempts = st.total + st.mistakes;
+    const pct = attempts ? Math.round(st.total/attempts*100) : 100;
     overlay.innerHTML = `
-      <div style="background:var(--card);color:var(--ink);max-width:420px;width:100%;border-radius:16px;padding:26px 22px;
+      <div style="position:relative;background:var(--card);color:var(--ink);max-width:420px;width:100%;border-radius:16px;padding:26px 22px;
         text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
         <div style="font-size:38px;margin-bottom:8px">${pct>=80?'🎉':pct>=50?'👍':'💪'}</div>
         <h3 style="margin:0 0 6px;font-size:18px">Hoàn thành gõ ôn lại!</h3>
-        <p style="margin:0 0 18px;color:var(--muted)">Đúng <b>${st.score}/${st.pool.length}</b> từ (${pct}%)</p>
+        <p style="margin:0 0 18px;color:var(--muted)">Đã gõ đúng cả <b>${st.total}</b> từ${st.mistakes?` · gõ sai <b>${st.mistakes}</b> lượt`:''} (độ chính xác ${pct}%)</p>
         <button id="ttqDone" style="width:100%;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Đóng</button>
       </div>`;
     document.body.appendChild(overlay);
@@ -34393,13 +34402,15 @@ function renderDayReviewTyping(){
     return;
   }
 
-  const v = st.pool[st.i];
+  const v = st.pool[0];
+  const doneCount = st.total - st.pool.length;
   overlay.innerHTML = `
-    <div style="background:var(--card);color:var(--ink);max-width:440px;width:100%;border-radius:16px;padding:22px;
+    <div style="position:relative;background:var(--card);color:var(--ink);max-width:440px;width:100%;border-radius:16px;padding:22px;
       box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
+      <button id="ttqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px">
-        <span>⌨️ Gõ từ · Câu ${st.i+1}/${st.pool.length}</span>
-        <span>✅ ${st.score}</span>
+        <span>⌨️ Gõ từ · Từ ${doneCount+1}/${st.total}</span>
+        <span>✅ ${doneCount}${st.mistakes?` · ❌ ${st.mistakes}`:''}</span>
       </div>
       <div style="text-align:center;margin-bottom:16px">
         <div style="font-size:17px;font-weight:700">${esc(v.vn||'')}</div>
@@ -34413,6 +34424,7 @@ function renderDayReviewTyping(){
       <button id="ttqSubmit" style="width:100%;margin-top:8px;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Kiểm tra</button>
     </div>`;
   document.body.appendChild(overlay);
+  overlay.querySelector('#ttqClose').onclick = ()=> overlay.remove();
 
   const input = overlay.querySelector('#ttqInput');
   const fb = overlay.querySelector('#ttqFeedback');
@@ -34423,11 +34435,18 @@ function renderDayReviewTyping(){
     if(answered) return;
     answered = true;
     const ok = input.value.trim().toLowerCase() === (v.word||'').trim().toLowerCase();
-    if(ok){ st.score++; fb.style.color='#16a34a'; fb.textContent = '✅ Chính xác!'; input.style.borderColor='#16a34a'; }
-    else{ fb.style.color='#dc2626'; fb.textContent = `❌ Đáp án đúng: ${v.word}`; input.style.borderColor='#dc2626'; }
+    if(ok){
+      fb.style.color='#16a34a'; fb.textContent = '✅ Chính xác!'; input.style.borderColor='#16a34a';
+      st.pool.shift();                       // gõ đúng -> tính là xong, bỏ khỏi hàng đợi
+    } else {
+      fb.style.color='#dc2626'; fb.textContent = `❌ Chưa đúng (đáp án: ${v.word}) — từ này sẽ quay lại ở cuối lượt`;
+      input.style.borderColor='#dc2626';
+      st.mistakes++;
+      st.pool.push(st.pool.shift());         // gõ sai -> dồn xuống cuối hàng đợi, gõ đúng mới tính
+    }
     input.disabled = true;
     submitBtn.textContent = 'Tiếp theo →';
-    setTimeout(()=>{ overlay.remove(); st.i++; renderDayReviewTyping(); }, ok?700:1400);
+    setTimeout(()=>{ overlay.remove(); renderDayReviewTyping(); }, ok?700:1400);
   };
   submitBtn.onclick = submit;
   input.onkeydown = e=>{ if(e.key==='Enter') submit(); };
@@ -34902,6 +34921,15 @@ document.getElementById('fcStar').onclick = (e)=>{
 
 /* ---------- "Cần học" panel ---------- */
 let _needTab = 'due';   // due | learning | star | soon | done
+/* Chế độ xem danh sách từ vựng trong tab Cần học: "cards" (thẻ chi tiết,
+   như trước) hoặc "compact" (ô gọn theo kiểu tab Danh sách — bấm vào 1 ô
+   sẽ mở popup thẻ chi tiết đầy đủ ngay tại chỗ qua lwcShowDetail()). */
+let _needViewMode = localStorage.getItem('vocab_need_view_mode') || 'cards';
+function setNeedViewMode(mode){
+  _needViewMode = mode;
+  try{ localStorage.setItem('vocab_need_view_mode', mode); }catch(e){}
+  renderNeed();
+}
 function renderNeed(){
   const root = document.getElementById('needRoot');
   const now = Date.now();
@@ -34998,6 +35026,13 @@ function renderNeed(){
         </button>`).join('')}
     </div>
 
+    <div class="list-view-toggle">
+      <div class="lv-seg" id="needViewSeg">
+        <button type="button" class="lv-toggle-btn ${_needViewMode==='cards'?'active':''}" data-view="cards" onclick="setNeedViewMode('cards')">📇 Thẻ chi tiết</button>
+        <button type="button" class="lv-toggle-btn ${_needViewMode==='compact'?'active':''}" data-view="compact" onclick="setNeedViewMode('compact')">🧩 Thu gọn</button>
+      </div>
+    </div>
+
     ${cur.k==='today' ? renderTodayPaneHTML() : (list.length ? `
       <div class="need-bar">
         <span>${cur.ic} ${cur.t} — ${cur.d} · <b>${list.length}</b> từ</span>
@@ -35009,7 +35044,7 @@ function renderNeed(){
           ${cur.k==='soon' ? `<button class="btn" onclick="goLearnScope('weak')">🔥 Ôn từ hay quên →</button>` : ''}
         </span>
       </div>
-      <div class="need-grid">${list.slice(0,150).map(card).join('')}</div>
+      <div class="${_needViewMode==='compact'?'lwc-grid':'need-grid'}">${list.slice(0,150).map(_needViewMode==='compact'?lwcTileHTML:card).join('')}</div>
       ${list.length>150?`<div class="need-more">Hiện 150 / ${list.length} từ</div>`:''}
     ` : `
       <div class="empty">
@@ -35276,6 +35311,22 @@ function vocabCardHTML(v){
     ${ex?exListHTML(v,'vc-example'):''}
   </div>`;
 }
+/* Ô "gọn" cho 1 từ (dùng chung ở chế độ Gọn theo chủ đề của tab Danh sách
+   VÀ chế độ Gọn của tab Cần học) — bấm vào mở popup thẻ chi tiết ngay
+   tại chỗ qua lwcShowDetail(). */
+function lwcTileHTML(v){
+  const ci = topicColorIndex(v._topic);
+  const baseColor = teColorHex(ci);
+  return `
+  <div class="lwc-tile" data-color="${ci}" style="border-color:${baseColor} !important" onclick="lwcShowDetail('${esc(v.word).replace(/'/g,"\\'")}')" title="Xem thẻ chi tiết của từ này">
+    <div class="lwc-top">
+      <span class="lwc-word">${esc(v.word)}</span>
+      <button class="lwc-speak" onclick="event.stopPropagation();speak('${esc(v.word)}')" title="Nghe phát âm">🔊</button>
+    </div>
+    ${v.pos?`<span class="lwc-pos">${esc(v.pos)}</span>`:''}
+    <div class="lwc-vn">${esc(v.vn||'')}</div>
+  </div>`;
+}
 function renderList(){
   renderTopicExplorer();
   syncListViewSeg();
@@ -35353,19 +35404,7 @@ function renderListCompact(){
     const ma = map[a][0]._macro || '', mb = map[b][0]._macro || '';
     return ma.localeCompare(mb,'vi') || a.localeCompare(b,'vi');
   });
-  const tileHTML = v=>{
-    const ci = topicColorIndex(v._topic);
-    const baseColor = teColorHex(ci);
-    return `
-    <div class="lwc-tile" data-color="${ci}" style="border-color:${baseColor} !important" onclick="lwcShowDetail('${esc(v.word).replace(/'/g,"\\'")}')" title="Xem thẻ chi tiết của từ này">
-      <div class="lwc-top">
-        <span class="lwc-word">${esc(v.word)}</span>
-        <button class="lwc-speak" onclick="event.stopPropagation();speak('${esc(v.word)}')" title="Nghe phát âm">🔊</button>
-      </div>
-      ${v.pos?`<span class="lwc-pos">${esc(v.pos)}</span>`:''}
-      <div class="lwc-vn">${esc(v.vn||'')}</div>
-    </div>`;
-  };
+  const tileHTML = lwcTileHTML;
   const html = groups.map(topic=>{
     const macro = map[topic][0]._macro;
     const words = sortCompactGroupWords(topic, macro, map[topic]);
