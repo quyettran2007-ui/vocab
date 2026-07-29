@@ -36626,7 +36626,7 @@ function nextType(){
   box.innerHTML = `
     <div class="tp-head">
       <div class="tp-gate">${gateChips(v.word)} <span class="tp-gate-txt">${
-        g.tp ? 'Ôn lại cửa ③ để nhớ bền' : 'Vượt cửa ③ — gõ đúng là <b>thuộc</b>'
+        g.tp >= 3 ? 'Ôn lại cửa ③ để nhớ bền' : `Cửa ③ — cần gõ đúng <b>${3-Math.min(3,g.tp)}</b> lần nữa`
       }</span></div>
       <span class="tp-score">Đúng <b>${typeScore}</b>/${typeTotal}</span>
     </div>
@@ -36770,7 +36770,7 @@ function nextType(){
           <span>${just
             ? '🏆 Đủ 3 cửa + ôn đủ lâu — <b>ĐÃ THUỘC</b>!'
             : (nextGate(v.word)
-                ? `Còn cửa ${nextGate(v.word).ic} <b>${nextGate(v.word).name}</b> nữa là thuộc`
+                ? `Còn cửa ${nextGate(v.word).ic} <b>${nextGate(v.word).name}</b> — cần đúng thêm <b>${nextGate(v.word).req-nextGate(v.word).have}</b> lần`
                 : `Đủ 3 cửa ✓ — ${fmtDue(v.word)}`)}</span>
         </div>
 
@@ -37000,8 +37000,8 @@ const MASTERY_TARGET = 2;   // (giữ cho tương thích ngược)
    ============================================================ */
 const LS_SRS = 'vocab_srs_v1';
 /* Khoảng cách ôn tập theo box (ngày) — chuẩn Leitner/SM-2 rút gọn */
-const SRS_STEPS = [0, 1, 3, 7, 16, 35];
-const SRS_MASTER_BOX = 5;   // đạt box 5 = đã thuộc
+const SRS_STEPS = [0, 1, 3, 5, 7, 10, 14, 21, 35, 50];
+const SRS_MASTER_BOX = SRS_STEPS.length - 1;   // đạt box cuối (50 ngày) = đã thuộc
 const DAY = 86400000;
 
 /* ---- Cỡ phiên ôn: người dùng tự chọn (không còn cứng 30) ---- */
@@ -37039,28 +37039,36 @@ function saveSRS(){
   _dashStale = true;                 // tiến độ đổi -> lần sau mở Dashboard mới vẽ lại
 }
 /* ============================================================
-   LỘ TRÌNH THUỘC TỪ (Mastery Pipeline) — 3 CỬA KỸ NĂNG
+   LỘ TRÌNH THUỘC TỪ (Mastery Pipeline) — 3 CỬA KỸ NĂNG (KHỞI ĐỘNG)
    ------------------------------------------------------------
-   Một từ CHỈ được tính "ĐÃ THUỘC" khi vượt đủ CẢ 3 CỬA:
+   Trước khi một từ được "cho ngủ đông" (đưa vào lịch ôn ngắt quãng
+   dài hạn 1-3-5-7-10-14-21-35-50 ngày), từ đó phải trả lời ĐÚNG SẠCH
+   (quality >= 2, không dùng gợi ý) đủ số lần yêu cầu ở CẢ 3 CỬA:
 
-     ① 🃏 Flashcard   — nhìn mặt chữ, tự đánh giá "Nhớ / Dễ"
-     ② ❓ Trắc nghiệm — chọn đúng nghĩa (nhận biết thụ động)
-     ③ ⌨️ Gõ từ       — viết đúng chính tả, KHÔNG dùng gợi ý  (chủ động)
+     ① 🃏 Flashcard   — đúng 1 lần   (req=1) — nhìn mặt chữ, tự đánh giá
+     ② ❓ Trắc nghiệm — đúng 2 lần   (req=2) — nhận biết thụ động
+     ③ ⌨️ Gõ từ       — đúng 3 lần   (req=3) — viết đúng chính tả, chủ động
 
-   ...VÀ box SRS đạt mức tối đa (đã ôn ngắt quãng đủ lâu để nhớ bền).
+   Vì sao số lần tăng dần theo cửa? Trắc nghiệm/gõ từ dễ đoán mò hoặc
+   quên nhanh hơn flashcard, nên cần lặp lại nhiều lần hơn mới coi là
+   chắc chắn nhớ, tránh tình trạng "mới qua 3 cửa 1 lần" đã lên lịch dài
+   ngày khiến hàng đợi "đến hạn" dồn cục vào ngày hôm sau.
 
-   Vì sao thứ tự này?  Nhận diện → Nhận biết → Tái tạo là thang
-   độ khó tăng dần trong nghiên cứu ghi nhớ từ vựng. Gõ đúng được
-   từ mà không gợi ý là bằng chứng mạnh nhất cho việc đã thuộc.
+   Trong lúc CHƯA đủ số lần trên (gateDone=false), từ được xếp ôn lại
+   sau ~10 phút trong cùng phiên (không tính vào box/khoảng cách dài hạn)
+   — xem srsReview(). Chỉ khi gateDone=true, từ mới "ngủ đông": bắt đầu
+   box=1 (mai ôn lại), rồi tăng dần theo SRS_STEPS.
 
-   Nếu quên (trả lời sai) ở cửa nào → cửa đó bị KHOÁ LẠI, phải
-   vượt lại. Box cũng bị chặn ở mức 4/5 cho tới khi đủ 3 cửa, nên
-   từ chưa gõ được sẽ không bao giờ "trốn" khỏi hàng đợi ôn tập.
+   Nếu trả lời SAI (quality=0) ở cửa nào → cửa đó bị KHOÁ LẠI (reset về
+   0), phải vượt lại đủ số lần yêu cầu. Nếu từ đã "ngủ đông" mà sau đó
+   trả lời sai lại (ví dụ quên khi ôn ngắt quãng), cửa tương ứng cũng bị
+   khoá lại và từ tự động rời khỏi trạng thái "ngủ đông", quay về khởi
+   động lại (xem srsReview()).
    ============================================================ */
 const GATES = [
-  { k:'fc', mode:'flashcard', ic:'🃏', name:'Flashcard',   tab:'flashcard', desc:'Nhận diện mặt chữ' },
-  { k:'qz', mode:'quiz',      ic:'❓', name:'Trắc nghiệm', tab:'quiz',      desc:'Nhớ đúng nghĩa'    },
-  { k:'tp', mode:'typing',    ic:'⌨️', name:'Gõ từ',       tab:'typing',    desc:'Viết đúng chính tả'}
+  { k:'fc', mode:'flashcard', ic:'🃏', name:'Flashcard',   tab:'flashcard', desc:'Nhận diện mặt chữ',  req:1 },
+  { k:'qz', mode:'quiz',      ic:'❓', name:'Trắc nghiệm', tab:'quiz',      desc:'Nhớ đúng nghĩa',     req:2 },
+  { k:'tp', mode:'typing',    ic:'⌨️', name:'Gõ từ',       tab:'typing',    desc:'Viết đúng chính tả', req:3 }
 ];
 const MODE2GATE = { flashcard:'fc', quiz:'qz', typing:'tp' };
 
@@ -37068,10 +37076,22 @@ function gateOf(w){
   const g = (SRS[w] && SRS[w].gate) || {};
   return { fc:g.fc|0, qz:g.qz|0, tp:g.tp|0 };
 }
-function gateDone(w){ const g = gateOf(w); return g.fc>0 && g.qz>0 && g.tp>0; }
-function gateCount(w){ const g = gateOf(w); return (g.fc>0?1:0)+(g.qz>0?1:0)+(g.tp>0?1:0); }
-/* Cửa kỹ năng KẾ TIẾP mà từ này còn nợ (null = đã đủ 3 cửa) */
-function nextGate(w){ const g = gateOf(w); return GATES.find(x=>!g[x.k]) || null; }
+/* Đủ điều kiện "ngủ đông" khi CẢ 3 cửa đạt đủ số lần yêu cầu (req) */
+function gateDone(w){
+  const g = gateOf(w);
+  return GATES.every(x => g[x.k] >= x.req);
+}
+/* Số cửa đã ĐẠT ĐỦ yêu cầu (0..3) — dùng để hiển thị lộ trình/stage */
+function gateCount(w){
+  const g = gateOf(w);
+  return GATES.reduce((n,x)=> n + (g[x.k] >= x.req ? 1 : 0), 0);
+}
+/* Cửa kỹ năng KẾ TIẾP mà từ này còn nợ, kèm số lần đã đạt/cần (null = đã đủ 3 cửa) */
+function nextGate(w){
+  const g = gateOf(w);
+  const x = GATES.find(x => g[x.k] < x.req);
+  return x ? { ...x, have:g[x.k]||0 } : null;
+}
 
 /* Giai đoạn 0..5 — dùng để hiển thị lộ trình */
 const STAGES = [
@@ -37093,9 +37113,12 @@ function stageOf(w){
 /* Chip hiển thị 3 cửa của 1 từ (dùng trong danh sách, Cần học, flashcard) */
 function gateChips(w, small){
   const g = gateOf(w);
-  return `<span class="gates ${small?'sm':''}">` + GATES.map(x =>
-    `<i class="gate ${g[x.k] ? 'on' : ''}" title="${x.ic} ${x.name} — ${g[x.k] ? 'đã vượt' : 'chưa vượt'} (${x.desc})">${x.ic}</i>`
-  ).join('') + `</span>`;
+  return `<span class="gates ${small?'sm':''}">` + GATES.map(x =>{
+    const have = Math.min(g[x.k]||0, x.req);
+    const on = have >= x.req;
+    const prog = x.req>1 ? ` (${have}/${x.req})` : '';
+    return `<i class="gate ${on ? 'on' : ''}" title="${x.ic} ${x.name} — ${on ? 'đã vượt' : 'chưa vượt'}${prog} (${x.desc})">${x.ic}</i>`;
+  }).join('') + `</span>`;
 }
 
 /* Thống kê phễu lộ trình toàn bộ kho từ */
@@ -37174,6 +37197,7 @@ function srsReview(w, quality, mode){
   let r = SRS[w] || { box:0, ease:2.5, due:now, reps:0, lapses:0, last:0, first:now, hist:{} };
   if(!r.hist) r.hist = {};
   const prevBox = r.box;
+  const wasGateDone = gateDone(w);          // trạng thái "ngủ đông" TRƯỚC lần trả lời này
   r.reps++;
   r.last = now;
   // lưu số lần đúng/sai theo từng chế độ -> biết từ này yếu ở kỹ năng nào
@@ -37182,9 +37206,9 @@ function srsReview(w, quality, mode){
   quality === 0 ? r.hist[m].no++ : r.hist[m].ok++;
 
   /* ---- CỬA KỸ NĂNG ----
-     Chỉ trả lời ĐÚNG SẠCH (quality >= 2) mới được tính là VƯỢT CỬA.
-     Trả lời sai / hiện đáp án (quality 0) -> KHOÁ LẠI cửa đó, phải vượt lại.
-     Gõ có dùng gợi ý -> quality 1 -> không mở cửa, nhưng cũng không khoá. */
+     Chỉ trả lời ĐÚNG SẠCH (quality >= 2) mới được cộng dồn vào cửa.
+     Trả lời sai / hiện đáp án (quality 0) -> KHOÁ LẠI cửa đó (về 0), phải
+     vượt lại từ đầu. Gõ có dùng gợi ý -> quality 1 -> không cộng, không khoá. */
   if(!r.gate) r.gate = { fc:0, qz:0, tp:0 };
   const _gk = MODE2GATE[m];
   if(_gk){
@@ -37192,12 +37216,29 @@ function srsReview(w, quality, mode){
     else if(quality === 0) r.gate[_gk] = 0;
   }
   SRS[w] = r;   // ghi sớm để gateDone(w) bên dưới đọc được trạng thái mới
+  const isGateDoneNow = gateDone(w);
 
-  if(quality === 0){                       // Quên -> về box 0
+  if(!isGateDoneNow){
+    /* ---- GIAI ĐOẠN KHỞI ĐỘNG: chưa đủ số lần ở cả 3 cửa ----
+       KHÔNG tính box / KHÔNG lên lịch ngắt quãng dài hạn. Chỉ hẹn ôn lại
+       sau ít phút trong cùng phiên để lặp lại đủ số lần yêu cầu. Nếu vừa
+       trả lời sai (quality 0) và từ này TRƯỚC ĐÓ đã từng "ngủ đông" (tức
+       đang ôn dài hạn mà quên) thì coi như phải khởi động lại: reset box
+       và số lần lặp về 0 cho đúng nghĩa "quay lại luyện từ đầu". */
+    if(quality === 0){
+      r.lapses++;
+      r.box = 0;
+      r.ease = Math.max(1.3, r.ease - 0.20);
+    }
+    r.due = now + 10*60*1000;              // ôn lại ngay trong phiên (10 phút)
+  } else if(quality === 0){
+    /* Quên khi ĐÃ đang ngủ đông (ôn ngắt quãng dài hạn) -> về lại khởi
+       động: cửa vừa sai đã bị khoá lại ở trên, từ tự rời "ngủ đông" và
+       phải luyện lại đủ số lần mới được lên lịch dài hạn tiếp. */
     r.lapses++;
     r.box = 0;
     r.ease = Math.max(1.3, r.ease - 0.20);
-    r.due = now + 10*60*1000;              // ôn lại ngay trong phiên (10 phút)
+    r.due = now + 10*60*1000;
   } else if(quality === 1){                // Khó -> giữ box, rút ngắn
     r.ease = Math.max(1.3, r.ease - 0.15);
     r.box = Math.max(1, r.box);
@@ -37205,10 +37246,13 @@ function srsReview(w, quality, mode){
     r.due = now + Math.max(1, Math.round(base * 0.5 * wgt)) * DAY;
   } else {                                 // Đúng / Dễ -> lên box
     if(quality === 3) r.ease = Math.min(3.0, r.ease + 0.15);
-    /* CHẶN TRẦN: chưa đủ 3 cửa thì box tối đa chỉ 4/5 -> từ chưa gõ được
-       sẽ KHÔNG BAO GIỜ tự thoát khỏi hàng đợi ôn tập. */
-    const _cap = gateDone(w) ? SRS_MASTER_BOX : (SRS_MASTER_BOX - 1);
-    r.box = Math.min(_cap, r.box + 1);
+    if(!wasGateDone && isGateDoneNow){
+      /* Vừa đạt đủ 3 cửa lần này -> chính thức "cho ngủ đông", bắt đầu
+         chu kỳ ngắt quãng dài hạn từ bước đầu tiên (1 ngày). */
+      r.box = 1;
+    } else {
+      r.box = Math.min(SRS_MASTER_BOX, r.box + 1);
+    }
     const base = SRS_STEPS[Math.min(r.box, SRS_STEPS.length-1)] || 1;
     const mult = (quality === 3 ? 1.3 : 1) * wgt;   // gõ đúng -> giãn cách dài hơn
     r.due = now + Math.max(1, Math.round(base * (r.ease/2.5) * mult)) * DAY;
@@ -37662,8 +37706,10 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
       ${GATES.map(x=>{
         const g = gateOf(v.word);
         const cur = stepIc === x.ic;
-        return `<span class="step ${g[x.k]?'ok':''} ${cur?'cur':''}">
-          <i>${x.ic}</i><em>${x.name}</em></span>`;
+        const have = g[x.k]||0;
+        const okDone = have >= x.req;
+        return `<span class="step ${okDone?'ok':''} ${cur?'cur':''}">
+          <i>${x.ic}</i><em>${x.name}${x.req>1?` ${Math.min(have,x.req)}/${x.req}`:''}</em></span>`;
       }).join('<span class="step-arrow">→</span>')}
       <span class="step-arrow">→</span>
       <span class="step ${stageOf(v.word)===5?'ok cur':''}"><i>✅</i><em>Thuộc</em></span>
@@ -38015,7 +38061,7 @@ function typeReviewPanel(box, v, opt){
       ${syn.length?`<div class="tpr-syn">≈ ${synTagsHTML(syn)}</div>`:''}
       <div class="tpr-gate">${gateChips(v.word)}
         <span>${just ? '🏆 <b>ĐÃ THUỘC</b> — đủ 3 cửa & ôn đủ lâu!'
-                     : ng ? `Còn cửa ${ng.ic} <b>${ng.name}</b>`
+                     : ng ? `Còn cửa ${ng.ic} <b>${ng.name}</b> — cần đúng thêm <b>${ng.req-ng.have}</b> lần`
                           : `Đủ 3 cửa ✓ — ${fmtDue(v.word)}`}</span>
       </div>
       <div class="tpr-foot">
