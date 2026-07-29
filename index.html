@@ -34403,8 +34403,8 @@ function renderDayReviewQuiz(){
   overlay.innerHTML = `
     <div style="position:relative;background:var(--card);color:var(--ink);max-width:480px;width:100%;border-radius:16px;padding:22px;
       box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
-      <button id="trqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px">
+      <button id="trqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2">✕</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-right:34px;color:var(--muted);font-size:12.5px">
         <span>${item.label} · Câu ${st.i+1}/${st.pool.length}</span>
         <span>✅ ${st.score}</span>
       </div>
@@ -34482,8 +34482,8 @@ function renderDayReviewTyping(){
   overlay.innerHTML = `
     <div style="position:relative;background:var(--card);color:var(--ink);max-width:440px;width:100%;border-radius:16px;padding:22px;
       box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
-      <button id="ttqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px">
+      <button id="ttqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2">✕</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-right:34px;color:var(--muted);font-size:12.5px">
         <span>⌨️ Gõ từ · Từ ${doneCount+1}/${st.total}</span>
         <span>✅ ${doneCount}${st.mistakes?` · ❌ ${st.mistakes}`:''}</span>
       </div>
@@ -34513,6 +34513,7 @@ function renderDayReviewTyping(){
     if(ok){
       fb.style.color='#16a34a'; fb.textContent = '✅ Chính xác!'; input.style.borderColor='#16a34a';
       st.pool.shift();                       // gõ đúng -> tính là xong, bỏ khỏi hàng đợi
+      speak(v.word);                         // đọc to từ khi gõ đúng
     } else {
       fb.style.color='#dc2626'; fb.textContent = `❌ Chưa đúng (đáp án: ${v.word}) — từ này sẽ quay lại ở cuối lượt`;
       input.style.borderColor='#dc2626';
@@ -34521,7 +34522,7 @@ function renderDayReviewTyping(){
     }
     input.disabled = true;
     submitBtn.textContent = 'Tiếp theo →';
-    setTimeout(()=>{ overlay.remove(); renderDayReviewTyping(); }, ok?700:1400);
+    setTimeout(()=>{ overlay.remove(); renderDayReviewTyping(); }, ok?700:3400);
   };
   submitBtn.onclick = submit;
   input.onkeydown = e=>{ if(e.key==='Enter') submit(); };
@@ -34568,8 +34569,8 @@ function renderDayReviewTypingColloc(){
   overlay.innerHTML = `
     <div style="position:relative;background:var(--card);color:var(--ink);max-width:460px;width:100%;border-radius:16px;padding:22px;
       box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
-      <button id="tcqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px">
+      <button id="tcqClose" title="Đóng — thoát khi đang làm dở" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border:none;border-radius:50%;background:var(--paper-2,rgba(127,127,127,.12));color:var(--ink);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2">✕</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-right:34px;color:var(--muted);font-size:12.5px">
         <span>✍️ Gõ lại collocation (rút gọn) · Cụm ${doneCount+1}/${st.total}</span>
         <span>✅ ${doneCount}${st.mistakes?` · ❌ ${st.mistakes}`:''}</span>
       </div>
@@ -34599,6 +34600,7 @@ function renderDayReviewTypingColloc(){
     if(ok){
       fb.style.color='#16a34a'; fb.textContent = '✅ Chính xác!'; input.style.borderColor='#16a34a';
       st.pool.shift();                       // gõ đúng -> tính là xong, bỏ khỏi hàng đợi
+      speak(c.phrase);                       // đọc to cả cụm khi gõ đúng
     } else {
       fb.style.color='#dc2626'; fb.textContent = `❌ Chưa đúng (đáp án: ${answer}) — cụm này sẽ quay lại ở cuối lượt`;
       input.style.borderColor='#dc2626';
@@ -34607,7 +34609,7 @@ function renderDayReviewTypingColloc(){
     }
     input.disabled = true;
     submitBtn.textContent = 'Tiếp theo →';
-    setTimeout(()=>{ overlay.remove(); renderDayReviewTypingColloc(); }, ok?700:1400);
+    setTimeout(()=>{ overlay.remove(); renderDayReviewTypingColloc(); }, ok?700:3400);
   };
   submitBtn.onclick = submit;
   input.onkeydown = e=>{ if(e.key==='Enter') submit(); };
