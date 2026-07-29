@@ -1058,6 +1058,24 @@ select:focus, .search-box:focus {
 .need-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
   padding:10px 14px;border-radius:11px;background:var(--card-sunken);border:1px solid var(--line);
   margin-bottom:14px;font-size:12.5px;color:var(--ink-soft);}
+
+/* ===== "Đã học hôm nay" — pane duyệt lịch sử học theo từng ngày ===== */
+.trday-daybar{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px;scrollbar-width:thin;}
+.trday-chip{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:52px;
+  padding:8px 6px;border-radius:11px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;
+  font:inherit;color:var(--ink-soft);transition:.15s;}
+.trday-chip:hover{border-color:var(--accent);transform:translateY(-1px);}
+.trday-chip.active{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);}
+.trday-chip.has-data:not(.active){border-color:var(--line-strong);}
+.trday-chip-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;}
+.trday-chip-n{font-family:var(--font-heading);font-weight:900;font-size:15px;color:var(--ink);}
+.trday-chip.active .trday-chip-n{color:var(--accent);}
+.trday-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px;}
+.trday-stat{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 8px;text-align:center;}
+.trday-stat b{display:block;font-family:var(--font-heading);font-size:19px;font-weight:900;color:var(--accent);line-height:1.1;}
+.trday-stat span{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:3px;display:block;}
+.trday-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+@media(max-width:640px){ .trday-stats{grid-template-columns:1fr 1fr;} }
 .need-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px;}
 .need-more{text-align:center;padding:16px;color:var(--muted);font-size:12.5px;}
 
@@ -1277,10 +1295,10 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 /* ===== DASHBOARD v2 ===== */
 .dash-hero{display:grid;grid-template-columns:1fr 260px;gap:14px;margin-bottom:14px;}
 .hero-main{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;
-  display:flex;align-items:stretch;gap:20px;box-shadow:var(--shadow,0 2px 10px rgba(0,0,0,.05));}
-/* Cột trái: vòng tròn % + nút "Chọn chủ đề học" xếp dọc.
-   Cột phải: lưới 4 ô thống kê. Hai cột rộng bằng nhau (flex:1 mỗi bên). */
-.hero-left{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+  display:flex;flex-direction:column;align-items:stretch;gap:18px;box-shadow:var(--shadow,0 2px 10px rgba(0,0,0,.05));}
+/* Hàng trên: lưới 4 ô thống kê trải full-width. Hàng dưới: vòng tròn %
+   + nút "Chọn chủ đề học" xếp dọc, căn giữa. */
+.hero-left{width:100%;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
 .hero-ring-wrap{position:relative;width:126px;height:126px;flex-shrink:0;}
 .hero-ring-svg{width:100%;height:100%;display:block;transform:rotate(0);filter:drop-shadow(0 2px 6px rgba(13,110,95,.18));}
 .hero-ring-track{stroke:var(--paper-2);}
@@ -1291,7 +1309,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .hero-ring-num{font-size:28px;font-weight:900;font-family:var(--font-heading);color:var(--accent);line-height:1;}
 .hero-ring-num span{font-size:16px;font-weight:800;margin-left:1px;}
 .hero-ring-lbl{font-size:11px;color:var(--muted);margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
-.hero-nums{flex:1;min-width:0;display:grid;grid-template-columns:1fr 1fr;gap:9px;align-content:center;}
+.hero-nums{width:100%;min-width:0;display:grid;grid-template-columns:repeat(4,1fr);gap:9px;align-content:center;}
 .hero-pick-btn{
   width:100%; box-sizing:border-box;
   display:flex; align-items:center; justify-content:center; gap:8px;
@@ -1303,7 +1321,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .hero-pick-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--glow,0 8px 20px -6px rgba(13,110,95,.6)); }
 .hero-pick-btn .hpb-arrow{ transition:transform .15s; }
 .hero-pick-btn:hover .hpb-arrow{ transform:translateX(3px); }
-.hero-pick-row{ display:flex; gap:8px; }
+.hero-pick-row{ display:flex; gap:8px; width:100%; max-width:440px; margin:0 auto; }
 .hero-pick-row .hero-pick-btn{ flex:1; }
 .hero-pick-row .hero-guide-btn{ flex:1; }
 .hero-guide-btn{
@@ -4760,18 +4778,19 @@ main{ padding-top:26px; }
   .pf-lv-dot{ min-width:19px; height:19px; font-size:9.5px; }
 }
 
-/* ================= HÀNG TIẾN ĐỘ CHÍNH: 2 cột đều nhau =================
-   Trái: vòng tròn % thuộc + nút "Chọn chủ đề học" xếp dọc bên dưới.
-   Phải: lưới 2×2 gồm 4 ô thống kê, đã thu gọn kích thước. */
+/* ================= HÀNG TIẾN ĐỘ CHÍNH: stats lên trên, ring+nút bên dưới =================
+   Trên: lưới 4 ô thống kê trải hết chiều ngang.
+   Dưới: vòng tròn % thuộc + nút "Chọn chủ đề học" xếp dọc, căn giữa,
+   cùng cỡ với 2 nút "Học từ mới / Gõ từ Collocation" ở cột bên. */
 .dash-hero{ grid-template-columns:1fr 1.4fr; gap:14px; }
 .hero-side{ order:1; }
 .hero-main{
   order:2;
-  border-radius:var(--radius-xl); padding:20px 22px; gap:20px;
+  border-radius:var(--radius-xl); padding:20px 22px; gap:18px;
   border:var(--dash-border); box-shadow:var(--shadow-sm); background:var(--card);
   align-items:stretch;
 }
-.hero-left{ flex:1; gap:11px; }
+.hero-left{ width:100%; gap:11px; }
 .hero-ring-wrap{ width:112px; height:112px; }
 .hero-ring-svg{ filter:drop-shadow(0 2px 6px rgba(0,0,0,.12)); }
 .hero-ring-in{ inset:13px; box-shadow:var(--shadow-xs), inset 0 0 0 1px var(--line); }
@@ -4780,7 +4799,7 @@ main{ padding-top:26px; }
 .hero-ring-lbl{ font-size:9px; text-transform:uppercase; letter-spacing:.6px; font-weight:800; }
 .hero-pick-btn{ font-size:12px; padding:11px 8px; }
 .hero-guide-btn{ font-size:12px; padding:11px 8px; }
-.hero-nums{ flex:1; gap:8px; }
+.hero-nums{ width:100%; gap:8px; grid-template-columns:repeat(4,1fr); }
 .hero-stat{
   border-radius:11px; padding:8px 9px 8px 12px;
   background:var(--card); border:var(--dash-border);
@@ -4809,11 +4828,12 @@ main{ padding-top:26px; }
   margin-top:12px; border-radius:12px; padding:14px 12px; font-size:12.5px;
   text-transform:uppercase; letter-spacing:.5px; box-shadow:var(--shadow);
 }
-@media(max-width:900px){ .dash-hero{ grid-template-columns:1fr; } .hero-main{ flex-direction:row; } }
+@media(max-width:900px){ .dash-hero{ grid-template-columns:1fr; } }
+@media(max-width:760px){ .hero-nums{ grid-template-columns:1fr 1fr; } }
 @media(max-width:640px){
-  .hero-main{ flex-direction:column; padding:18px 16px; }
+  .hero-main{ padding:18px 16px; }
   .hero-left,.hero-nums{ width:100%; }
-  .hero-nums{ grid-template-columns:1fr 1fr; }
+  .hero-pick-row{ max-width:none; }
 }
 
 /* ================= LỘ TRÌNH THUỘC TỪ — bậc thang nối liền ================= */
@@ -33950,6 +33970,20 @@ function renderDashboard(){
     <!-- HÀNG 1: tiến độ học (thay cho 'từ mới hôm nay') -->
     <div class="dash-hero">
       <div class="hero-main">
+        <div class="hero-nums">
+          <button class="hero-stat learned" onclick="goStatus('mastered','list')" title="Xem ${S.learned} từ đã thuộc">
+            <div class="hs-num">${S.learned}</div><div class="hs-lbl">✅ Đã học thuộc</div>
+          </button>
+          <button class="hero-stat doing" onclick="goStatus('learning','list')" title="Xem ${S.inProgress} từ đang học dở">
+            <div class="hs-num">${S.inProgress}</div><div class="hs-lbl">📗 Đang học dở</div>
+          </button>
+          <button class="hero-stat due" onclick="goStatus('due','list')" title="Xem ${S.due} từ đến hạn ôn">
+            <div class="hs-num">${S.due}</div><div class="hs-lbl">🔔 Cần ôn hôm nay</div>
+          </button>
+          <button class="hero-stat new" onclick="goStatus('new','list')" title="Xem ${S.new} từ chưa học">
+            <div class="hs-num">${S.new}</div><div class="hs-lbl">⬜ Chưa học</div>
+          </button>
+        </div>
         <div class="hero-left">
           <div class="hero-ring-wrap">
             <svg class="hero-ring-svg" viewBox="0 0 120 120">
@@ -33975,22 +34009,8 @@ function renderDashboard(){
               <span>🗂️ Chọn chủ đề học</span><span class="hpb-arrow">→</span>
             </button>
             <button class="hero-guide-btn" onclick="openLearnGuide()" title="Xem hướng dẫn quy trình học">❔ Hướng dẫn học</button>
-            <button class="hero-guide-btn" onclick="openTodayReview()" title="Xem lại từ vựng & collocation đã học hôm nay">📅 Đã học hôm nay</button>
+            <button class="hero-guide-btn" onclick="goTodayLearnedTab()" title="Xem lại từ vựng & collocation đã học hôm nay">📅 Đã học hôm nay</button>
           </div>
-        </div>
-        <div class="hero-nums">
-          <button class="hero-stat learned" onclick="goStatus('mastered','list')" title="Xem ${S.learned} từ đã thuộc">
-            <div class="hs-num">${S.learned}</div><div class="hs-lbl">✅ Đã học thuộc</div>
-          </button>
-          <button class="hero-stat doing" onclick="goStatus('learning','list')" title="Xem ${S.inProgress} từ đang học dở">
-            <div class="hs-num">${S.inProgress}</div><div class="hs-lbl">📗 Đang học dở</div>
-          </button>
-          <button class="hero-stat due" onclick="goStatus('due','list')" title="Xem ${S.due} từ đến hạn ôn">
-            <div class="hs-num">${S.due}</div><div class="hs-lbl">🔔 Cần ôn hôm nay</div>
-          </button>
-          <button class="hero-stat new" onclick="goStatus('new','list')" title="Xem ${S.new} từ chưa học">
-            <div class="hs-num">${S.new}</div><div class="hs-lbl">⬜ Chưa học</div>
-          </button>
         </div>
       </div>
       <div class="hero-side">
@@ -34146,117 +34166,141 @@ function lgGo(mode){
 }
 
 /* =========================================================================
-   "📅 Đã học hôm nay" — nút cạnh "❔ Hướng dẫn học" trên Dashboard.
-   Mở modal xem lại toàn bộ TỪ VỰNG + COLLOCATION đã luyện trong ngày hôm nay
-   (lấy từ stat.studied / stat.collocStudied trong LS_KEY theo-ngày), có 2 tab
-   để duyệt danh sách, và 1 nút "🔁 Trắc nghiệm ôn lại" mở phiên trắc nghiệm
-   4-đáp-án gộp cả từ vựng lẫn collocation của riêng hôm nay để ôn ngay. ---- */
-function _todayReviewData(){
-  const { stat } = getTodayStats();
+   "📅 Đã học hôm nay" — nay là 1 trang con NGAY TRONG TAB "⭐ Cần học",
+   cạnh nút "✅ Đã thuộc" (xem renderNeed() + TABS bên dưới), thay cho modal
+   cũ. Cho phép duyệt lại LỊCH SỬ HỌC THEO TỪNG NGÀY (14 ngày gần nhất):
+   xem thống kê, danh sách từ vựng/collocation đã luyện, và ôn lại ngay
+   bằng Trắc nghiệm hoặc Gõ từ — không đụng vào SRS/điểm số chính. --------- */
+let _needDayKey = todayKey();   // ngày đang xem trong pane "Đã học hôm nay"
+let _needDaySub = 'word';       // 'word' | 'colloc' — tab con đang mở trong pane
+
+/* 14 ngày gần nhất (kể cả ngày trống) để vẽ thanh chọn ngày, cũ->mới */
+function _last14DayKeys(){
+  const arr = [];
+  for(let i=13;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    arr.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+  }
+  return arr;
+}
+function _dayShortLabel(k){
+  const todayK = todayKey();
+  const yd = new Date(); yd.setDate(yd.getDate()-1);
+  const ydK = `${yd.getFullYear()}-${String(yd.getMonth()+1).padStart(2,'0')}-${String(yd.getDate()).padStart(2,'0')}`;
+  if(k===todayK) return 'Hôm nay';
+  if(k===ydK) return 'Hôm qua';
+  const [y,m,d] = k.split('-').map(Number);
+  const wd = ['CN','T2','T3','T4','T5','T6','T7'][new Date(y,m-1,d).getDay()];
+  return `${wd} ${d}/${m}`;
+}
+/* Dữ liệu học của 1 ngày cụ thể: từ vựng + collocation đã luyện + thống kê lượt/độ chính xác */
+function _dayReviewData(dayKey){
+  const all = loadLearnData();
+  const stat = all[dayKey] || { studied:[], collocStudied:[], answered:0, correct:0, wrong:0, collocAnswered:0, collocCorrect:0, collocWrong:0 };
   const words = (stat.studied||[]).map(w=>vocabByWord(w)).filter(Boolean);
   const collocs = (stat.collocStudied||[]).map(id=>COLLOCATIONS.find(c=>c.id===id)).filter(Boolean);
-  return { words, collocs };
+  const answered = (stat.answered||0) + (stat.collocAnswered||0);
+  const correct  = (stat.correct||0)  + (stat.collocCorrect||0);
+  const acc = answered ? Math.round(correct/answered*100) : null;
+  return { stat, words, collocs, answered, acc };
 }
 
-function openTodayReview(){
-  const { words, collocs } = _todayReviewData();
+/* Nút "📅 Đã học hôm nay" trên Dashboard -> nhảy thẳng sang tab Cần học,
+   mở đúng pane này với ngày hôm nay đang chọn sẵn. */
+function goTodayLearnedTab(){
+  _needTab = 'today'; _needDayKey = todayKey(); _needDaySub = 'word';
+  document.querySelector('.tab-btn[data-mode="need"]').click();
+}
+function setNeedDay(k){ _needDayKey = k; renderNeed(); }
+function setNeedDaySub(s){ _needDaySub = s; renderNeed(); }
+
+/* Đánh dấu sao (⭐ Cần học) toàn bộ từ vựng đã luyện trong 1 ngày, để dồn
+   ôn lại cùng lúc với các từ hay quên khác — tiện khi 1 ngày học nhiều từ
+   mới muốn ôn kỹ thêm ngoài lịch SRS thông thường. */
+function starAllDay(dayKey){
+  const { words } = _dayReviewData(dayKey);
+  if(!words.length) return;
+  words.forEach(v=> starred.add(v.word));
+  saveStarred(); refreshStarUI(); renderNeed();
+  toast(`⭐ Đã thêm ${words.length} từ vào Cần học`);
+}
+
+/* Vẽ toàn bộ nội dung pane "Đã học hôm nay" — gọi từ bên trong renderNeed() */
+function renderTodayPaneHTML(){
+  const dayKeys = _last14DayKeys();
+  if(!dayKeys.includes(_needDayKey)) _needDayKey = todayKey();
+  const { words, collocs, answered, acc } = _dayReviewData(_needDayKey);
   const total = words.length + collocs.length;
 
-  const overlay = document.createElement('div');
-  overlay.id = 'todayReviewOverlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  const chips = dayKeys.map(k=>{
+    const { words:w2, collocs:c2 } = _dayReviewData(k);
+    const n = w2.length + c2.length;
+    return `<button class="trday-chip ${k===_needDayKey?'active':''} ${n?'has-data':''}" onclick="setNeedDay('${k}')" title="${_dayShortLabel(k)}">
+      <span class="trday-chip-lbl">${_dayShortLabel(k)}</span>
+      <span class="trday-chip-n">${n||'–'}</span>
+    </button>`;
+  }).join('');
 
-  const wordRow = v => `
-    <div class="ds-item" style="margin-bottom:8px">
-      <div class="ds-top">
-        <button class="ds-word" onclick="openWord('${v.word.replace(/'/g,"\\'")}')" title="Mở Flashcard từ này">${esc(v.word)}</button>
-        <button class="speak-btn" onclick="speak('${esc(v.word)}')">🔊</button>
-        ${v.ipa?`<span class="ds-ipa">${esc(v.ipa)}</span>`:''}
-        ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
-      </div>
-      <div style="margin-top:4px;color:var(--ink-soft,var(--muted));font-size:13px">${esc(v.vn||'')}</div>
+  const statsRow = `
+    <div class="trday-stats">
+      <div class="trday-stat"><b>${words.length}</b><span>📖 Từ vựng</span></div>
+      <div class="trday-stat"><b>${collocs.length}</b><span>🔗 Collocation</span></div>
+      <div class="trday-stat"><b>${answered}</b><span>🎯 Lượt luyện</span></div>
+      <div class="trday-stat"><b>${acc===null?'—':acc+'%'}</b><span>✅ Độ chính xác</span></div>
     </div>`;
 
-  const collocRow = c => `
-    <div class="ds-item" style="margin-bottom:8px">
-      <div class="ds-top">
-        <button class="ds-word" style="cursor:default" title="${esc(c.phrase)}">${esc(c.phrase)}</button>
-        <button class="speak-btn" onclick="speak('${esc(c.phrase)}')">🔊</button>
-        ${c.ipa?`<span class="ds-ipa">${esc(c.ipa)}</span>`:''}
-      </div>
-      <div style="margin-top:4px;color:var(--ink-soft,var(--muted));font-size:13px">${esc(c.meaning||'')}</div>
-    </div>`;
-
-  overlay.innerHTML = `
-    <div style="background:var(--card);color:var(--ink);max-width:620px;width:100%;max-height:88vh;overflow-y:auto;
-      border-radius:16px;padding:22px 22px 18px;box-shadow:0 12px 40px rgba(0,0,0,.35);font-size:13.5px;line-height:1.62;
-      border:1px solid var(--line);">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <h3 style="margin:0;font-size:17px">📅 Đã học hôm nay${total?` <span style="color:var(--muted);font-weight:500;font-size:13px">(${total} mục)</span>`:''}</h3>
-        <button id="trClose" style="border:none;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
-      </div>
-
-      ${!total ? `
-        <p style="margin:16px 0 4px;color:var(--muted)">Hôm nay bạn chưa luyện từ vựng hay collocation nào. Bấm <b>🎯 Học từ mới</b> ở Dashboard để bắt đầu nhé!</p>
-      ` : `
-        <div style="display:flex;gap:8px;margin:14px 0 12px">
-          <button id="trTabWord" class="hero-guide-btn" style="flex:1;justify-content:center;background:var(--accent);color:#fff;border-color:var(--accent)">📖 Từ vựng (${words.length})</button>
-          <button id="trTabColloc" class="hero-guide-btn" style="flex:1;justify-content:center">🔗 Collocation (${collocs.length})</button>
-        </div>
-        <div id="trPaneWord">
-          ${words.length ? words.map(wordRow).join('') : `<p style="color:var(--muted)">Chưa có từ vựng nào được luyện hôm nay.</p>`}
-        </div>
-        <div id="trPaneColloc" style="display:none">
-          ${collocs.length ? collocs.map(collocRow).join('') : `<p style="color:var(--muted)">Chưa có collocation nào được luyện hôm nay.</p>`}
-        </div>
-        <button id="trQuizBtn" style="width:100%;margin-top:10px;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">🔁 Trắc nghiệm ôn lại (${total} câu)</button>
-      `}
-    </div>`;
-  document.body.appendChild(overlay);
-  const close = ()=> overlay.remove();
-  overlay.querySelector('#trClose').onclick = close;
-  overlay.addEventListener('click', e=>{ if(e.target===overlay) close(); });
-
-  if(total){
-    const tabW = overlay.querySelector('#trTabWord'), tabC = overlay.querySelector('#trTabColloc');
-    const paneW = overlay.querySelector('#trPaneWord'), paneC = overlay.querySelector('#trPaneColloc');
-    tabW.onclick = ()=>{
-      paneW.style.display=''; paneC.style.display='none';
-      tabW.style.background='var(--accent)'; tabW.style.color='#fff'; tabW.style.borderColor='var(--accent)';
-      tabC.style.background=''; tabC.style.color=''; tabC.style.borderColor='';
-    };
-    tabC.onclick = ()=>{
-      paneW.style.display='none'; paneC.style.display='';
-      tabC.style.background='var(--accent)'; tabC.style.color='#fff'; tabC.style.borderColor='var(--accent)';
-      tabW.style.background=''; tabW.style.color=''; tabW.style.borderColor='';
-    };
-    overlay.querySelector('#trQuizBtn').onclick = ()=>{ close(); startTodayReviewQuiz(); };
+  if(!total){
+    return `
+      <div class="trday-daybar">${chips}</div>
+      ${statsRow}
+      <div class="empty">
+        <div style="font-size:42px;margin-bottom:10px">🌱</div>
+        <div style="font-size:15px;color:var(--ink);font-weight:700;margin-bottom:6px">${_needDayKey===todayKey()?'Hôm nay chưa học gì':'Ngày này chưa học gì'}</div>
+        <div style="font-size:13px">Bấm <b>🎯 Học từ mới</b> ở Dashboard để bắt đầu, mọi từ/collocation luyện qua Flashcard, Trắc nghiệm, Gõ từ... đều tự động ghi lại ở đây.</div>
+      </div>`;
   }
+
+  return `
+    <div class="trday-daybar">${chips}</div>
+    ${statsRow}
+    <div class="trday-actions">
+      <button class="btn primary" onclick="startDayReviewQuiz('${_needDayKey}')">🔁 Trắc nghiệm ôn lại (${total} câu)</button>
+      ${words.length ? `<button class="btn" onclick="startDayReviewTyping('${_needDayKey}')">⌨️ Gõ từ ôn lại (${words.length} từ)</button>` : ''}
+      ${words.length ? `<button class="btn" onclick="starAllDay('${_needDayKey}')">⭐ Đánh dấu cả ngày vào Cần học</button>` : ''}
+    </div>
+    <div class="need-tabs">
+      <button class="need-tab ${_needDaySub==='word'?'active':''}" onclick="setNeedDaySub('word')">
+        <span class="nt-ic">📖</span><span class="nt-t">Từ vựng</span><span class="nt-n">${words.length}</span></button>
+      <button class="need-tab ${_needDaySub==='colloc'?'active':''}" onclick="setNeedDaySub('colloc')">
+        <span class="nt-ic">🔗</span><span class="nt-t">Collocation</span><span class="nt-n">${collocs.length}</span></button>
+    </div>
+    <div class="need-grid">
+      ${_needDaySub==='word'
+        ? (words.length ? words.map(needCardHTML).join('') : `<div class="empty" style="grid-column:1/-1"><div style="font-size:13px">Ngày này chưa luyện từ vựng nào.</div></div>`)
+        : (collocs.length ? collocs.map(c=>clCardHTML(c)).join('') : `<div class="empty" style="grid-column:1/-1"><div style="font-size:13px">Ngày này chưa luyện collocation nào.</div></div>`)}
+    </div>`;
 }
 
-/* ---- Trắc nghiệm ôn lại riêng cho những gì đã học hôm nay: gộp từ vựng
-   (word -> nghĩa) và collocation (phrase -> nghĩa) thành 1 bộ câu hỏi
-   4-đáp-án, không đụng vào SRS/điểm số chính của app — chỉ để ôn nhanh. ---- */
+/* ---- Ôn lại (Trắc nghiệm 4-đáp-án) toàn bộ từ vựng + collocation của 1
+   ngày, không đụng vào SRS/điểm số chính — chỉ để ôn nhanh, xem lại. ---- */
 let _trQuiz = null;
-function startTodayReviewQuiz(){
-  const { words, collocs } = _todayReviewData();
+function startDayReviewQuiz(dayKey){
+  const { words, collocs } = _dayReviewData(dayKey);
   const pool = shuffle([
     ...words.map(v=>({type:'vocab', q:v.word, ipa:v.ipa||'', a:v.vn})),
     ...collocs.map(c=>({type:'colloc', q:c.phrase, ipa:c.ipa||'', a:c.meaning}))
   ]);
-  if(!pool.length){ toast('Chưa có gì để ôn lại hôm nay 👀'); return; }
+  if(!pool.length){ toast('Chưa có gì để ôn lại ngày này 👀'); return; }
   _trQuiz = { pool, i:0, score:0 };
-  renderTodayReviewQuiz();
+  renderDayReviewQuiz();
 }
-
 function _trWrongOptions(item, need){
   const sameType = item.type==='vocab'
     ? VOCAB.filter(v=>v.word!==item.q).map(v=>v.vn)
     : COLLOCATIONS.filter(c=>c.phrase!==item.q).map(c=>c.meaning);
   return shuffle(sameType.filter(Boolean)).slice(0, need);
 }
-
-function renderTodayReviewQuiz(){
+function renderDayReviewQuiz(){
   const st = _trQuiz;
   const overlay = document.createElement('div');
   overlay.id = 'trQuizOverlay';
@@ -34268,7 +34312,7 @@ function renderTodayReviewQuiz(){
       <div style="background:var(--card);color:var(--ink);max-width:420px;width:100%;border-radius:16px;padding:26px 22px;
         text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
         <div style="font-size:38px;margin-bottom:8px">${pct>=80?'🎉':pct>=50?'👍':'💪'}</div>
-        <h3 style="margin:0 0 6px;font-size:18px">Hoàn thành ôn tập hôm nay!</h3>
+        <h3 style="margin:0 0 6px;font-size:18px">Hoàn thành ôn tập!</h3>
         <p style="margin:0 0 18px;color:var(--muted)">Đúng <b>${st.score}/${st.pool.length}</b> câu (${pct}%)</p>
         <button id="trqDone" style="width:100%;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Đóng</button>
       </div>`;
@@ -34311,10 +34355,109 @@ function renderTodayReviewQuiz(){
         b.style.background='#dc2626'; b.style.color='#fff'; b.style.borderColor='#dc2626';
         [...optsBox.children].find(c=>c.textContent===item.a).style.cssText += ';background:#16a34a;color:#fff;border-color:#16a34a';
       }
-      setTimeout(()=>{ overlay.remove(); st.i++; renderTodayReviewQuiz(); }, 900);
+      setTimeout(()=>{ overlay.remove(); st.i++; renderDayReviewQuiz(); }, 900);
     };
     optsBox.appendChild(b);
   });
+}
+
+/* ---- Ôn lại kiểu "Gõ từ": cho xem nghĩa tiếng Việt, gõ đúng chính tả từ
+   tiếng Anh — chỉ áp dụng cho TỪ VỰNG (collocation thường dài, không hợp
+   gõ tay từng ký tự). Không dùng gợi ý, không đụng SRS chính. ---- */
+let _trType = null;
+function startDayReviewTyping(dayKey){
+  const { words } = _dayReviewData(dayKey);
+  if(!words.length){ toast('Chưa có từ vựng nào để gõ ôn lại 👀'); return; }
+  _trType = { pool: shuffle(words), i:0, score:0 };
+  renderDayReviewTyping();
+}
+function renderDayReviewTyping(){
+  const st = _trType;
+  const overlay = document.createElement('div');
+  overlay.id = 'trTypeOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+
+  if(st.i >= st.pool.length){
+    const pct = Math.round(st.score/st.pool.length*100);
+    overlay.innerHTML = `
+      <div style="background:var(--card);color:var(--ink);max-width:420px;width:100%;border-radius:16px;padding:26px 22px;
+        text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
+        <div style="font-size:38px;margin-bottom:8px">${pct>=80?'🎉':pct>=50?'👍':'💪'}</div>
+        <h3 style="margin:0 0 6px;font-size:18px">Hoàn thành gõ ôn lại!</h3>
+        <p style="margin:0 0 18px;color:var(--muted)">Đúng <b>${st.score}/${st.pool.length}</b> từ (${pct}%)</p>
+        <button id="ttqDone" style="width:100%;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Đóng</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#ttqDone').onclick = ()=> overlay.remove();
+    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
+    return;
+  }
+
+  const v = st.pool[st.i];
+  overlay.innerHTML = `
+    <div style="background:var(--card);color:var(--ink);max-width:440px;width:100%;border-radius:16px;padding:22px;
+      box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px">
+        <span>⌨️ Gõ từ · Câu ${st.i+1}/${st.pool.length}</span>
+        <span>✅ ${st.score}</span>
+      </div>
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:17px;font-weight:700">${esc(v.vn||'')}</div>
+        ${v.pos?`<div style="color:var(--muted);font-size:12px;margin-top:3px">(${esc(v.pos)})</div>`:''}
+      </div>
+      <input id="ttqInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+        placeholder="Gõ từ tiếng Anh..."
+        style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);
+        background:var(--paper-2,rgba(127,127,127,.08));color:inherit;font:inherit;font-size:15px;text-align:center;outline:none">
+      <div id="ttqFeedback" style="min-height:22px;text-align:center;margin-top:10px;font-size:13px;font-weight:700"></div>
+      <button id="ttqSubmit" style="width:100%;margin-top:8px;padding:11px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer">Kiểm tra</button>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const input = overlay.querySelector('#ttqInput');
+  const fb = overlay.querySelector('#ttqFeedback');
+  const submitBtn = overlay.querySelector('#ttqSubmit');
+  input.focus();
+  let answered = false;
+  const submit = ()=>{
+    if(answered) return;
+    answered = true;
+    const ok = input.value.trim().toLowerCase() === (v.word||'').trim().toLowerCase();
+    if(ok){ st.score++; fb.style.color='#16a34a'; fb.textContent = '✅ Chính xác!'; input.style.borderColor='#16a34a'; }
+    else{ fb.style.color='#dc2626'; fb.textContent = `❌ Đáp án đúng: ${v.word}`; input.style.borderColor='#dc2626'; }
+    input.disabled = true;
+    submitBtn.textContent = 'Tiếp theo →';
+    setTimeout(()=>{ overlay.remove(); st.i++; renderDayReviewTyping(); }, ok?700:1400);
+  };
+  submitBtn.onclick = submit;
+  input.onkeydown = e=>{ if(e.key==='Enter') submit(); };
+}
+
+/* Card từ vựng gọn cho pane "Đã học hôm nay" — bấm mở Flashcard chi tiết */
+function needCardHTML(v){
+  const colloc = (v.collocations||[]).map(normColloc);
+  const ci = topicColorIndex(v._topic);
+  const baseColor = teColorHex(ci);
+  return `
+  <div class="vocab-card" data-color="${ci}" style="border-color:${baseColor} !important">
+    <div class="vc-head">
+      <span class="word">${esc(v.word)}</span>
+      <button class="speak-btn" onclick="speak('${esc(v.word)}')">🔊</button>
+      <button class="star-btn ${isStarred(v.word)?'on':''}" data-w="${esc(v.word)}" onclick="onStarClick(event,this)" title="Cần học">${isStarred(v.word)?'★':'☆'}</button>
+      ${v.ipa?`<span class="ipa">${esc(v.ipa)}</span>`:''}
+      ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
+      <span class="vc-meta">${gateChips(v.word, true)} ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}</span>
+    </div>
+    ${srsBadge(v.word)}
+    <button class="vc-topic" onclick="goTopic('${(v._topic||'').replace(/'/g,"\\'")}','list')">
+      <span>${TOPIC_ICONS[v._topic]||'🗂️'}</span>
+      ${v._macro && v._macro!==v._topic ? `<em>${esc(v._macro)}</em><i>›</i>` : ''}
+      <b>${esc(v._topic)}</b>
+    </button>
+    <div class="vc-vn">${esc(v.vn)}</div>
+    ${colloc.length?`<div class="vc-row"><span class="label">Collocation</span>${colloc.slice(0,2).map(x=>`<div class="colloc-item"><span class="en">${esc(x.en)}</span>${x.vi?` — <span class="vi">${esc(x.vi)}</span>`:''}</div>`).join('')}</div>`:''}
+    ${wordExample(v)?exListHTML(v,'vc-example'):''}
+  </div>`;
 }
 
 /* ---------- Nút "Chọn chủ đề học" trên hàng tiến độ chính: nhảy sang tab
@@ -34783,10 +34926,12 @@ function renderNeed(){
   });
   done.sort((a,b)=>(SRS[b.word].last||0)-(SRS[a.word].last||0));
 
+  const todayCount = (()=>{ const d=_dayReviewData(todayKey()); return d.words.length + d.collocs.length; })();
   const TABS = [
     {k:'due',      ic:'🔔', t:'Đến hạn ôn',  arr:due,      d:'Ôn ngay hôm nay'},
     {k:'soon',     ic:'⏳', t:'Đã lên lịch', arr:soon,     d:'Đang chờ tới ngày ôn'},
     {k:'star',     ic:'⭐', t:'Cần học',     arr:star,     d:'Từ bạn đánh dấu sao'},
+    {k:'today',    ic:'📅', t:'Đã học hôm nay', arr:new Array(todayCount), d:'Xem & ôn lại theo từng ngày'},
     {k:'done',     ic:'✅', t:'Đã thuộc',    arr:done,     d:'Hoàn thành bậc 5'}
   ];
   const cur = TABS.find(t=>t.k===_needTab) || TABS[0];
@@ -34853,7 +34998,7 @@ function renderNeed(){
         </button>`).join('')}
     </div>
 
-    ${list.length ? `
+    ${cur.k==='today' ? renderTodayPaneHTML() : (list.length ? `
       <div class="need-bar">
         <span>${cur.ic} ${cur.t} — ${cur.d} · <b>${list.length}</b> từ</span>
         <span class="nb-acts">
@@ -34871,7 +35016,7 @@ function renderNeed(){
         <div style="font-size:42px;margin-bottom:10px">${empties[cur.k][0]}</div>
         <div style="font-size:15px;color:var(--ink);font-weight:700;margin-bottom:6px">${empties[cur.k][1]}</div>
         <div style="font-size:13px">${empties[cur.k][2]}</div>
-      </div>`}
+      </div>`)}
   `;
 }
 function setNeedTab(k){ _needTab = k; renderNeed(); }
