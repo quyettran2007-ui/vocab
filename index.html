@@ -2997,8 +2997,17 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-note-readonly{ cursor:default; }
 /* list-style-position:inside — chỉ thêm ký hiệu bullet ngay đầu dòng, KHÔNG đẩy
    cả dòng thụt vào phải như list-style-position:outside (mặc định trước đây). */
-.nb-note-editable ul, .nb-note-editable ol{ margin:4px 0; padding:0; list-style-position:inside; }
-.nb-note-editable li{ margin:2px 0; }
+/* list-style-position:inside — chỉ thêm ký hiệu bullet ngay đầu dòng, KHÔNG đẩy
+   cả dòng thụt vào phải như list-style-position:outside (mặc định trước đây).
+   Thêm !important + reset cả padding/margin-inline-start để chắc chắn thắng mọi
+   style mặc định của trình duyệt (khi gõ Gạch đầu dòng, trình duyệt hay tự chèn
+   margin/padding riêng cho <ul>), giúp bullet luôn sát lề trái tuyệt đối. */
+.nb-note-editable ul, .nb-note-editable ol{
+  margin:4px 0 !important; padding:0 !important;
+  margin-inline-start:0 !important; padding-inline-start:0 !important;
+  list-style-position:inside !important;
+}
+.nb-note-editable li{ margin:2px 0; padding-left:0; }
 
 /* Bảng ghim: các ô ghi chú nổi, có thể tùy chỉnh màu */
 .nb-pinboard{ margin-bottom:22px; }
@@ -39493,7 +39502,7 @@ function showSettingsGroup(sg){
   document.querySelectorAll('.settings-nav-btn').forEach(btn=>{
     btn.classList.toggle('active', btn.dataset.sg === sg);
   });
-  if(sg === 'notebook' && typeof renderNotebook === 'function') renderNotebook();
+  if(sg === 'notebook' && typeof nbAutoFitAll === 'function') nbAutoFitAll();
   const scroll = document.querySelector('#panel-guide .guide-scroll');
   if(scroll) scroll.scrollTo({top:0, behavior:'auto'});
 }
@@ -43403,7 +43412,15 @@ function nbToggleCompact(scope){
     _nbListCompact = !_nbListCompact;
     try{ localStorage.setItem(NB_LIST_COMPACT_KEY, _nbListCompact ? '1' : '0'); }catch(e){}
   }
-  renderNotebook();
+  nbAutoFitAll();
+}
+/* Tự fit toàn bộ ghi chú (cả Bảng ghim lẫn danh sách theo ngày) mà KHÔNG cần bấm nút —
+   dùng mỗi khi bật/tắt "chỉ hiện nội dung" hoặc khi vừa mở/tải lại tab Sổ ghi chú,
+   để nội dung luôn hiện đủ, không bị che chữ hay dư khoảng trống. Chạy âm thầm
+   (không hiện toast) vì đây là hành động tự động, không phải người dùng chủ động bấm. */
+function nbAutoFitAll(){
+  nbFitAllListNotes(true);
+  requestAnimationFrame(function(){ nbPinAutoFit(true); });
 }
 /* ---------- Sửa ghi chú ---------- */
 let _nbEditKey = null; /* "day|id" của mục đang sửa, chỉ 1 mục tại 1 thời điểm */
@@ -43612,7 +43629,7 @@ function nbPinFitCard(day, id){
 /* Bỏ kích thước cố định (đã kéo tay trước đó, nếu có) của ô nội dung từng ghi chú, để nó quay về
    mặc định: rộng hết chiều ngang của thẻ (100%) và cao tự nhiên vừa khít theo nội dung, không bị
    giới hạn/che chữ. */
-function nbFitAllListNotes(){
+function nbFitAllListNotes(silent){
   const nb = loadNotebook();
   let changed = false;
   Object.keys(nb).forEach(function(day){
@@ -43623,7 +43640,7 @@ function nbFitAllListNotes(){
   });
   if(changed) saveNotebook(nb);
   renderNotebook();
-  if(typeof toast === 'function') toast('📏 Đã vừa khít toàn bộ ghi chú (hết chiều ngang, đủ chiều cao)');
+  if(!silent && typeof toast === 'function') toast('📏 Đã vừa khít toàn bộ ghi chú (hết chiều ngang, đủ chiều cao)');
 }
 /* ---------- Kéo-thả tự do các ghi chú đã ghim (tránh chồng lên nhau) ---------- */
 /* Tự động sắp xếp lại toàn bộ thẻ ghim thành dạng lưới gọn gàng, vừa khít chiều rộng
@@ -43652,7 +43669,7 @@ function nbSetPinCols(n){
    thừa như kiểu xếp "tham lam" theo hàng trước đây). Thẻ được xếp kiểu masonry —
    luôn thả vào cột đang thấp nhất — và chiều cao mỗi thẻ được đo lại theo đúng nội
    dung thực tế ở chiều rộng cột mới, để không thẻ nào bị cắt/che chữ. */
-function nbPinAutoFit(){
+function nbPinAutoFit(silent){
   const pinEl = document.getElementById('notebookPinboard');
   const gridEl = pinEl && pinEl.querySelector('.nb-pin-grid');
   if(!gridEl) return;
@@ -43687,7 +43704,7 @@ function nbPinAutoFit(){
   });
   saveNotebook(nb);
   nbRecalcPinGridHeight(gridEl);
-  if(typeof toast === 'function') toast('📐 Đã sắp xếp lại '+cols+' cột, vừa màn hình, không dư khoảng trống');
+  if(!silent && typeof toast === 'function') toast('📐 Đã sắp xếp lại '+cols+' cột, vừa màn hình, không dư khoảng trống');
 }
 /* Đo chiều cao THỰC TẾ (offsetHeight) của tất cả thẻ ghim đang hiển thị và đặt lại
    min-height của vùng ghim sao cho vừa đủ ôm hết đáy của thẻ thấp nhất + khoảng đệm.
@@ -43836,7 +43853,9 @@ function nbAttachResizeHandlers(root){
 function nbNoteBoxHtml(day, item, ctx, compact, editing){
   const noteHtml = item.note ? (item.noteRich ? item.note : rdEsc(item.note)) : '';
   const domId = `nbNote_${ctx}_${item.id}`;
-  const showToolbar = editing && !compact;
+  /* Khi đang sửa (editing) luôn hiện thanh công cụ định dạng, kể cả đang bật chế độ
+     "chỉ hiện nội dung" (compact) — compact chỉ ẩn thanh công cụ ở trạng thái ĐỌC. */
+  const showToolbar = editing;
   return `
     <div class="nb-note-wrap">
       ${showToolbar ? `
