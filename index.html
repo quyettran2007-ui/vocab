@@ -2937,25 +2937,28 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   margin-bottom:8px; }
 
 /* Sổ ghi chú (tab Setting) */
-.nb-day{ margin-bottom:16px; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--paper); }
+.nb-day{ margin-bottom:16px; border:.5px solid var(--line); border-radius:14px; overflow:hidden; background:var(--paper); }
 .nb-day-head{ display:flex; justify-content:space-between; align-items:center; padding:10px 14px;
-  background:var(--card); border-bottom:1px solid var(--line); font-size:13.5px; gap:10px; }
+  background:var(--card); border-bottom:.5px solid var(--line); font-size:13.5px; gap:10px; }
 .nb-day-head span{ font-size:12px; color:var(--muted); font-weight:600; }
 .nb-day-head .nb-day-acts{ display:flex; align-items:center; gap:10px; margin-left:auto; }
 .nb-copyall{ font-size:11.5px; font-weight:700; cursor:pointer; white-space:nowrap;
-  background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:5px 10px; color:var(--ink-soft); }
+  background:var(--paper); border:.5px solid var(--line); border-radius:8px; padding:5px 10px; color:var(--ink-soft); }
 .nb-copyall:hover{ border-color:var(--accent); color:var(--accent); }
 .nb-lines{ padding:12px 14px; display:flex; flex-direction:column; gap:10px; }
-.nb-line{ display:flex; gap:10px; align-items:flex-start; padding-bottom:10px; border-bottom:1px dashed var(--line); }
-.nb-line:last-child{ border-bottom:none; padding-bottom:0; }
+/* Mỗi ghi chú chưa ghim giờ hiển thị như 1 thẻ màu nhỏ (cùng bảng màu với thẻ ghim),
+   thay cho nền xám/kẻ gạch chân như trước — viền mỏng nhất có thể (.5px). */
+.nb-line{ display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border-radius:10px;
+  border:.5px solid rgba(0,0,0,.10); color:#2b2b2b; }
+[data-theme="dark"] .nb-line{ border-color:rgba(0,0,0,.18); }
 .nb-line-main{ flex:1; min-width:0; }
-.nb-quote{ font-size:13.5px; font-style:italic; color:var(--ink); line-height:1.6; }
+.nb-quote{ font-size:13.5px; font-style:italic; line-height:1.6; }
 .nb-quote.nb-manual{ font-style:normal; font-weight:600; }
 .nb-note{ margin-top:5px; font-size:13px; color:var(--ink-soft); background:var(--card);
   border-left:3px solid var(--accent); padding:6px 9px; border-radius:0 8px 8px 0; line-height:1.55; }
-.nb-meta{ margin-top:5px; font-size:11.5px; color:var(--muted); }
+.nb-meta{ margin-top:5px; font-size:11.5px; color:rgba(0,0,0,.55); }
 .nb-line-acts{ display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
-.nb-copy1, .nb-del, .nb-edit1, .nb-pin1{ background:none; border:none; cursor:pointer; color:var(--muted); font-size:14px; padding:2px 4px; }
+.nb-copy1, .nb-del, .nb-edit1, .nb-pin1{ background:none; border:none; cursor:pointer; color:rgba(0,0,0,.5); font-size:14px; padding:2px 4px; }
 .nb-copy1:hover, .nb-edit1:hover{ color:var(--accent); }
 .nb-del:hover{ color:#ef4444; }
 .nb-pin1:hover{ color:#eab308; }
@@ -2987,12 +2990,14 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-fmt-size{ height:24px; border-radius:6px; border:1px solid var(--line); background:var(--card); color:var(--ink);
   font-size:11.5px; padding:0 3px; cursor:pointer; }
 .nb-note-editable{ width:100%; box-sizing:border-box; font-size:13px; color:var(--ink-soft); background:var(--card);
-  border:1px solid var(--line); border-left:3px solid var(--accent); padding:6px 9px; border-radius:0 8px 8px 0;
+  border:.5px solid var(--line); border-left:3px solid var(--accent); padding:6px 9px; border-radius:0 8px 8px 0;
   line-height:1.55; min-height:32px; resize:both; overflow:auto; max-width:100%; outline:none; cursor:text; white-space:pre-wrap; }
 .nb-note-editable:empty:before{ content:attr(data-placeholder); color:var(--muted); }
 .nb-note-editable:focus{ box-shadow:0 0 0 2px var(--accent) inset; border-color:var(--accent); }
 .nb-note-readonly{ cursor:default; }
-.nb-note-editable ul, .nb-note-editable ol{ margin:4px 0 4px 20px; padding:0; }
+/* list-style-position:inside — chỉ thêm ký hiệu bullet ngay đầu dòng, KHÔNG đẩy
+   cả dòng thụt vào phải như list-style-position:outside (mặc định trước đây). */
+.nb-note-editable ul, .nb-note-editable ol{ margin:4px 0; padding:0; list-style-position:inside; }
 .nb-note-editable li{ margin:2px 0; }
 
 /* Bảng ghim: các ô ghi chú nổi, có thể tùy chỉnh màu */
@@ -3000,27 +3005,23 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin-head{ font-size:14.5px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:6px; color:var(--ink); }
 .nb-pin-grid{ position:relative; }
 .nb-pin-card{ position:absolute; border-radius:12px; padding:12px 12px 10px; box-shadow:0 5px 14px rgba(0,0,0,.10);
-  border:1px solid rgba(0,0,0,.07); display:flex; flex-direction:column; gap:7px; min-height:120px; color:#2b2b2b;
+  border:.5px solid rgba(0,0,0,.07); display:flex; flex-direction:column; gap:7px; min-height:120px; color:#2b2b2b;
   resize:both; overflow:auto; box-sizing:border-box; width:220px; }
 [data-theme="dark"] .nb-pin-card{ box-shadow:0 6px 18px rgba(0,0,0,.4); border-color:rgba(0,0,0,.15); }
-.nb-pin-drag{ position:absolute; top:7px; left:7px; cursor:move; touch-action:none; user-select:none;
-  font-size:12px; line-height:1; color:rgba(0,0,0,.4); background:rgba(255,255,255,.65); border-radius:6px;
-  padding:3px 5px; z-index:2; }
-.nb-pin-drag:hover{ color:#333; background:rgba(255,255,255,.9); }
 .nb-pin-actions{ position:absolute; top:7px; right:7px; display:flex; gap:4px; }
 .nb-pin-actions button{ background:rgba(255,255,255,.75); border:none; border-radius:6px; width:22px; height:22px;
   font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#333; }
 .nb-pin-actions button:hover{ background:#fff; }
-.nb-pin-text{ font-size:13.5px; font-style:italic; line-height:1.5; padding-right:80px; padding-left:26px; }
+.nb-pin-text{ font-size:13.5px; font-style:italic; line-height:1.5; padding-right:80px; }
 .nb-pin-text.nb-manual{ font-style:normal; font-weight:700; }
 .nb-pin-meta{ font-size:11px; color:rgba(0,0,0,.55); margin-top:auto; }
 .nb-pin-colors{ display:flex; gap:5px; flex-wrap:wrap; margin-top:2px; }
 .nb-color-dot{ width:16px; height:16px; border-radius:50%; cursor:pointer; border:2px solid rgba(0,0,0,.15); flex-shrink:0; padding:0; }
 .nb-color-dot.active{ border-color:#333; box-shadow:0 0 0 2px #fff inset; }
-.nb-pin-card .nb-edit-box textarea{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
-.nb-pin-card .nb-note-editable{ background:rgba(255,255,255,.55); border-color:rgba(0,0,0,.18); border-left-color:rgba(0,0,0,.3); color:#2b2b2b; }
-.nb-pin-card .nb-fmt-toolbar button{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
-.nb-pin-card .nb-source-link{ color:#2b2b2b; text-decoration-color:rgba(0,0,0,.4); }
+.nb-pin-card .nb-edit-box textarea, .nb-line .nb-edit-box textarea{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
+.nb-pin-card .nb-note-editable, .nb-line .nb-note-editable{ background:rgba(255,255,255,.55); border-color:rgba(0,0,0,.18); border-left-color:rgba(0,0,0,.3); color:#2b2b2b; }
+.nb-pin-card .nb-fmt-toolbar button, .nb-line .nb-fmt-toolbar button{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
+.nb-pin-card .nb-source-link, .nb-line .nb-source-link{ color:#2b2b2b; text-decoration-color:rgba(0,0,0,.4); }
 /* Cố định viền trong theo viền ngoài: bên trong ô ghi chú luôn lấp đầy phần còn lại của
    thẻ ghim, không tự resize riêng nữa — chỉ cần kéo giãn thẻ ghim (viền ngoài) là đủ. */
 .nb-pin-card .nb-note-wrap{ display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
@@ -3042,6 +3043,14 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   color:var(--ink-soft); cursor:pointer; font-size:12px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; }
 .nb-pin-col-btn:hover{ border-color:var(--accent); color:var(--accent); }
 .nb-pin-col-btn.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
+
+/* Tràn 2 viền bên ra ngoài viền của trang (main padding 26px + backup-box padding
+   20px = 46px mỗi bên) để tận dụng tối đa chiều ngang cho khu vực ghi chú (Bảng ghim
+   & danh sách theo ngày), thay vì bị bó hẹp trong khung 2 lớp padding lồng nhau. */
+#notebookPinboard, #notebookList{
+  width:calc(100% + 92px); margin-left:-46px; margin-right:-46px;
+  padding-left:16px; padding-right:16px; box-sizing:border-box;
+}
 
 
 .settings-nav{
@@ -6476,6 +6485,7 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
               <option value="16">Lớn</option>
               <option value="20">Rất lớn</option>
             </select>
+            <button type="button" title="Đồng bộ cỡ chữ (đưa toàn bộ chữ trong ô về cùng 1 cỡ mặc định)" onmousedown="event.preventDefault()" onclick="nbFmtSyncSize('notebookNewContent')">🔡</button>
             <span class="nb-fmt-sep"></span>
             <button type="button" title="Căn trái" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','justifyLeft')">⯇</button>
             <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="nbFmt('notebookNewContent','justifyCenter')">≡</button>
@@ -43464,6 +43474,21 @@ function nbFmtFontSize(domId, px){
   });
   if(domId.indexOf('rdNote_') === 0) rdNoteAutosave(el); else nbNoteAutosave(el);
 }
+/* Đồng bộ cỡ chữ: xoá mọi font-size tuỳ chỉnh (do nbFmtFontSize gán trước đó) trong toàn bộ
+   ô ghi chú, đưa hết chữ về cỡ mặc định của ô (13px, theo .nb-note-editable). */
+function nbFmtSyncSize(domId){
+  const el = document.getElementById(domId);
+  if(!el) return;
+  el.focus();
+  el.querySelectorAll('*').forEach(function(node){
+    if(node.style && node.style.fontSize){
+      node.style.removeProperty('font-size');
+      if(node.getAttribute('style') === '') node.removeAttribute('style');
+    }
+  });
+  if(domId.indexOf('rdNote_') === 0) rdNoteAutosave(el); else nbNoteAutosave(el);
+  toast('🔡 Đã đồng bộ cỡ chữ về mặc định');
+}
 /* Bật/tắt liên kết 2 chiều giữa ghi chú trong Sổ ghi chú (note) và ghi chú
    trong bài đọc (pnote). Khi bật, sửa 1 trong 2 chỗ sẽ cập nhật luôn chỗ kia. */
 function nbToggleLink(day, id){
@@ -43829,6 +43854,7 @@ function nbNoteBoxHtml(day, item, ctx, compact, editing){
           <option value="16">Lớn</option>
           <option value="20">Rất lớn</option>
         </select>
+        <button type="button" title="Đồng bộ cỡ chữ (đưa toàn bộ chữ trong ô về cùng 1 cỡ mặc định)" onmousedown="event.preventDefault()" onclick="nbFmtSyncSize('${domId}')">🔡</button>
         <span class="nb-fmt-sep"></span>
         <button type="button" title="Căn trái" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyLeft')">⯇</button>
         <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="nbFmt('${domId}','justifyCenter')">≡</button>
@@ -44002,7 +44028,6 @@ function renderNotebook(){
         canvasH = Math.max(canvasH, pos.y + h + 30);
         return `
               <div class="nb-pin-card" data-day="${day}" data-id="${item.id}" style="background:${item.color||NB_COLORS[0]};left:${pos.x}px;top:${pos.y}px;${nbSizeStyleAttr(item.pinSize)}">
-                <div class="nb-pin-drag" title="Kéo để di chuyển" onpointerdown="nbPinDragStart(event,'${day}','${item.id}')">⠿⠿</div>
                 <div class="nb-pin-actions">
                   ${editing ? '' : `<button title="Sửa" onclick="notebookStartEdit('${day}','${item.id}')">✏️</button>`}
                   <button title="Bỏ ghim" onclick="notebookTogglePin('${day}','${item.id}')">📌</button>
@@ -44022,7 +44047,7 @@ function renderNotebook(){
       }).join('');
       pinEl.innerHTML = `
         <div class="nb-pinboard">
-          <div class="nb-pin-head">📌 Ghi chú đã ghim <span style="font-weight:400;font-size:11.5px;color:var(--muted)">(kéo ⠿⠿ để sắp xếp tự do, không chồng lên nhau)</span>
+          <div class="nb-pin-head">📌 Ghi chú đã ghim <span style="font-weight:400;font-size:11.5px;color:var(--muted)">(dùng "📐 Tự fit màn hình" hoặc kéo góc để đổi kích thước)</span>
             <div class="nb-pin-head-actions">
               <div class="nb-pin-cols" title="Số cột khi bấm Tự fit màn hình">
                 <span class="nb-pin-cols-label">Cột:</span>
@@ -44072,7 +44097,7 @@ function renderNotebook(){
         ${visible[day].map(item => {
           const editing = _nbEditKey === (day+'|'+item.id);
           return `
-          <div class="nb-line">
+          <div class="nb-line" style="background:${item.color||NB_COLORS[0]}">
             <div class="nb-line-main">
               ${editing ? nbEditFormHtml(day, item) : (_nbListCompact || !item.text ? '' : `
                 ${item.manual
@@ -44214,6 +44239,7 @@ function rdNoteBodyHtml(item){
           <option value="16">Lớn</option>
           <option value="20">Rất lớn</option>
         </select>
+        <button type="button" title="Đồng bộ cỡ chữ (đưa toàn bộ chữ trong ô về cùng 1 cỡ mặc định)" onmousedown="event.preventDefault()" onclick="nbFmtSyncSize('${domId}')">🔡</button>
         <span class="nb-fmt-sep"></span>
         <button type="button" title="Căn trái" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyLeft')">⯇</button>
         <button type="button" title="Căn giữa" onmousedown="event.preventDefault()" onclick="rdNoteFmt('${domId}','justifyCenter')">≡</button>
