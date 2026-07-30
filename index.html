@@ -420,6 +420,20 @@
 .bg-swatch-label{ font-size:11.5px; font-weight:700; color:var(--ink); }
 .bg-swatch-btn.active .bg-swatch-label{ color:var(--accent); }
 
+/* ---- Concept giao diện dựng sẵn ---- */
+.concept-swatch-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-top:10px; }
+.concept-swatch-btn{
+  display:flex; flex-direction:column; align-items:stretch; gap:8px;
+  padding:10px; border-radius:var(--radius); border:2px solid var(--line);
+  background:var(--card); cursor:pointer; transition:.15s; text-align:left;
+}
+.concept-swatch-btn:hover{ border-color:var(--line-strong); transform:translateY(-2px); box-shadow:var(--shadow-sm); }
+.concept-swatch-btn.active{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
+.concept-swatch-preview{ width:100%; height:56px; border-radius:10px; border:1px solid var(--line); position:relative; overflow:hidden; }
+.concept-swatch-accent{ position:absolute; right:6px; bottom:6px; width:22px; height:22px; border-radius:50%; box-shadow:0 0 0 2px rgba(255,255,255,.5); }
+.concept-swatch-name{ font-size:12.5px; font-weight:700; color:var(--ink); }
+.concept-swatch-btn.active .concept-swatch-name{ color:var(--accent); }
+
 .bg-preview-default{ background:linear-gradient(135deg,rgba(124,58,237,.16),rgba(14,165,233,.13)); }
 .bg-preview-dots{ background-image:radial-gradient(var(--line-strong) 1.6px, transparent 1.6px); background-size:10px 10px; }
 .bg-preview-grid{ background-image:linear-gradient(var(--line-strong) 1px, transparent 1px),linear-gradient(90deg,var(--line-strong) 1px, transparent 1px); background-size:12px 12px; }
@@ -1151,6 +1165,11 @@ select:focus, .search-box:focus {
 .sb-dots{display:flex;gap:3px;}
 .sb-dot{width:6px;height:6px;border-radius:50%;background:var(--paper-2);border:1px solid var(--line);display:inline-block;}
 .sb-dot.on{background:var(--green);border-color:var(--green);}
+.sb-box{
+  font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;white-space:nowrap;
+  background:var(--accent-bg);color:var(--accent);
+}
+.sb-box.temp{ background:var(--temp-retain-bg); color:var(--temp-retain); }
 .sb-cd{font-size:10.5px;font-weight:700;color:var(--muted);white-space:nowrap;}
 .sb-cd.hot{color:#f59e0b;}
 .sb-lapse{font-size:10px;font-weight:800;color:var(--coral);}
@@ -1835,6 +1854,10 @@ body:has(#panel-flashcard.active) main {
 @keyframes wordIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
 .flash-front .pos { font-size:11.5px; color:var(--accent); text-transform:uppercase; letter-spacing:3px; margin-top:16px; font-weight:800; }
 .flash-front .ipa { color:var(--muted); font-size:20px; margin-top:10px; font-weight:500; font-style:normal; }
+.fc-srs{ margin-top:14px; }
+.fc-srs .srs-badge{ justify-content:center; margin:0; }
+.fc-srs .sb-state{ font-size:11.5px; padding:4px 11px; }
+.fc-srs .sb-box, .fc-srs .sb-cd{ font-size:11px; }
 .flash-front .lvl { position:absolute; top:20px; right:20px; z-index:2; }
 .flash-front .hint {
   position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
@@ -2182,6 +2205,7 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .lwc-tile[data-color="8"]{ --tc:var(--cc8); } .lwc-tile[data-color="9"]{ --tc:var(--cc9); }
 .lwc-top{ display:flex; align-items:flex-start; gap:5px; margin-bottom:3px; }
 .lwc-word{ font-weight:800; font-size:13.5px; color:var(--ink); flex:1; word-break:break-word; }
+.lwc-top-right{ display:flex; flex-direction:column; align-items:center; gap:2px; flex-shrink:0; }
 .lwc-speak{
   flex-shrink:0; width:22px; height:22px; border:none; background:transparent; color:var(--muted);
   cursor:pointer; font-size:12px; border-radius:6px; display:flex; align-items:center; justify-content:center;
@@ -2193,6 +2217,12 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   border-radius:5px; padding:1px 6px; margin-bottom:5px;
 }
 .lwc-vn{ font-size:12.5px; color:var(--ink-soft); font-weight:600; line-height:1.4; }
+.lwc-box{
+  font-size:8.5px; font-weight:800; white-space:nowrap; line-height:1.3;
+  padding:1px 6px; border-radius:99px; background:var(--accent-bg); color:var(--accent);
+}
+.lwc-box.temp{ background:var(--temp-retain-bg); color:var(--temp-retain); }
+.lwc-box.done{ background:var(--green-bg); color:var(--green); }
 @media(max-width:600px){ .lwc-grid{ grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); } }
 
 /* Bấm 1 từ ở ô "Gọn theo chủ đề" -> hiện thẻ chi tiết NỔI LÊN ngay tại
@@ -4610,6 +4640,8 @@ nav.tabs{
   font-size:12px; font-weight:600; padding:4px 10px; border-radius:99px;
   background:var(--accent-bg); color:var(--accent); border:1px solid transparent; cursor:help;
 }
+.tpr-forms{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:12px; }
+.tpr-collocs{ margin:12px auto 0; max-width:640px; text-align:left; }
 .tpr-syn{ margin-top:8px; font-size:12.5px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center; color:var(--muted); }
 .syn-tag{
   display:inline-block; padding:2px 9px; border-radius:99px; font-weight:600;
@@ -5465,6 +5497,51 @@ html[data-bg="desert"] body::before{
   background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
 }
 
+/* ---- 8 hình nền bổ sung ---- */
+.bg-preview-ocean{ background:linear-gradient(180deg,#0ea5e9 0%,#0369a1 55%,#0c4a6e 100%); }
+.bg-preview-meadow{ background:linear-gradient(180deg,#bae6fd 0%,#bbf7d0 55%,#4ade80 100%); }
+.bg-preview-coffee{ background:linear-gradient(180deg,#fef3c7 0%,#d6a06d 55%,#78350f 100%); }
+.bg-preview-volcano{ background:linear-gradient(180deg,#1c1917 0%,#7c2d12 55%,#f97316 100%); }
+.bg-preview-neon{ background:radial-gradient(circle at 20% 80%, #ec4899 0%, transparent 55%),radial-gradient(circle at 80% 20%, #22d3ee 0%, transparent 55%),linear-gradient(180deg,#0f172a,#1e1b4b); }
+.bg-preview-rainbow{ background:linear-gradient(90deg,#fecaca,#fed7aa,#fef08a,#bbf7d0,#bae6fd,#ddd6fe,#fbcfe8); }
+.bg-preview-marble{ background:linear-gradient(135deg,#f1f5f9,#e2e8f0 40%,#cbd5e1 60%,#f8fafc); }
+.bg-preview-bamboo{ background:repeating-linear-gradient(90deg,#166534 0 10px,#22c55e 10px 16px,#f0fdf4 16px 38px); }
+
+html[data-bg="ocean"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='oc' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%230ea5e9'/%3E%3Cstop offset='.5' stop-color='%230369a1'/%3E%3Cstop offset='1' stop-color='%23082f49'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23oc)'/%3E%3Ccircle cx='1250' cy='150' r='55' fill='%23e0f2fe' opacity='.5'/%3E%3Cg fill='%23e0f2fe' opacity='.45'%3E%3Ccircle cx='200' cy='700' r='10'/%3E%3Ccircle cx='260' cy='620' r='7'/%3E%3Ccircle cx='320' cy='760' r='12'/%3E%3Ccircle cx='900' cy='680' r='9'/%3E%3Ccircle cx='960' cy='600' r='6'/%3E%3Ccircle cx='1400' cy='740' r='11'/%3E%3Ccircle cx='1460' cy='650' r='8'/%3E%3C/g%3E%3Cpath d='M0 780 Q200 730 400 780 T800 780 T1200 770 T1600 780 V900 H0 Z' fill='%23164e63' opacity='.65'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
+}
+html[data-bg="meadow"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='me' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23bae6fd'/%3E%3Cstop offset='.55' stop-color='%23bbf7d0'/%3E%3Cstop offset='1' stop-color='%234ade80'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23me)'/%3E%3Ccircle cx='260' cy='170' r='60' fill='%23fef9c3' opacity='.9'/%3E%3Cpath d='M0 560 Q300 480 600 560 T1200 560 T1600 540 V900 H0 Z' fill='%2322c55e' opacity='.5'/%3E%3Cg fill='%23fbcfe8' opacity='.8'%3E%3Ccircle cx='220' cy='740' r='7'/%3E%3Ccircle cx='420' cy='800' r='6'/%3E%3Ccircle cx='680' cy='730' r='7'/%3E%3Ccircle cx='980' cy='790' r='6'/%3E%3Ccircle cx='1240' cy='740' r='7'/%3E%3Ccircle cx='1460' cy='800' r='6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="coffee"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='cf' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fef3c7'/%3E%3Cstop offset='.55' stop-color='%23d6a06d'/%3E%3Cstop offset='1' stop-color='%2378350f'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23cf)'/%3E%3Cellipse cx='800' cy='620' rx='260' ry='90' fill='%234b2e13' opacity='.5'/%3E%3Cpath d='M780 560 C820 500 760 460 800 400' stroke='%23f5e6c8' stroke-width='10' fill='none' opacity='.5' stroke-linecap='round'/%3E%3Cpath d='M860 560 C900 510 840 470 880 410' stroke='%23f5e6c8' stroke-width='10' fill='none' opacity='.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="volcano"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='vo' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%231c1917'/%3E%3Cstop offset='.55' stop-color='%237c2d12'/%3E%3Cstop offset='1' stop-color='%23f97316'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23vo)'/%3E%3Cpolygon points='500,850 900,300 1300,850' fill='%23292524' opacity='.8'/%3E%3Cpolygon points='860,340 900,300 940,340 900,420' fill='%23f97316' opacity='.85'/%3E%3Cg fill='%23fca5a5' opacity='.35'%3E%3Ccircle cx='900' cy='260' r='22'/%3E%3Ccircle cx='950' cy='220' r='16'/%3E%3Ccircle cx='860' cy='210' r='14'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
+}
+html[data-bg="neon"] body::before{
+  background:
+    radial-gradient(700px 500px at 15% 85%, rgba(236,72,153,.16), transparent 60%),
+    radial-gradient(700px 500px at 85% 15%, rgba(34,211,238,.16), transparent 60%),
+    linear-gradient(180deg, rgba(15,23,42,.06), transparent);
+}
+html[data-bg="rainbow"] body::before{
+  background: linear-gradient(90deg, rgba(254,202,202,.16),rgba(254,215,170,.16),rgba(254,240,138,.16),rgba(187,247,208,.16),rgba(186,230,253,.16),rgba(221,214,254,.16),rgba(251,207,232,.16));
+}
+html[data-bg="marble"] body::before{
+  background:
+    linear-gradient(135deg, rgba(148,163,184,.10), transparent 45%),
+    radial-gradient(ellipse 480px 260px at 25% 20%, rgba(203,213,225,.16), transparent 55%),
+    radial-gradient(ellipse 520px 300px at 75% 80%, rgba(226,232,240,.16), transparent 55%);
+}
+html[data-bg="bamboo"] body::before{
+  background-image: repeating-linear-gradient(90deg, rgba(34,197,94,.14) 0 8px, transparent 8px 34px);
+}
+
 /* ============================================================
    TÙY CHỈNH GIAO DIỆN NÂNG CAO — cỡ chữ, kiểu chữ, độ bo góc,
    mật độ bố cục. Đặt ở cuối để luôn thắng các quy tắc phía trên
@@ -5905,6 +5982,7 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
             <div class="word" id="fcWord">—</div>
             <div class="pos" id="fcPos"></div>
             <div class="ipa" id="fcIpa"></div>
+            <div class="fc-srs" id="fcSrs"></div>
             <!-- Tự đánh giá: nằm ngay trên mặt trước, thay cho gợi ý "Nhấn để lật" -->
             <div class="fc-rate" id="fcRate">
               <span class="fcr-hint">Bạn nhớ từ này thế nào?</span>
@@ -6102,6 +6180,12 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
         <div class="backup-actions">
           <button class="btn primary" onclick="installPWA()">⬇️ Cài đặt ngay</button>
         </div>
+      </div>
+
+      <div class="backup-box" id="conceptBox">
+        <h3 style="margin-top:0">✨ Concept giao diện dựng sẵn</h3>
+        <p>Bộ phối màu nhấn + hình nền đã chọn lọc sẵn cho hài hoà — bấm 1 lần để áp dụng cả bộ, khỏi cần tự phối riêng từng phần bên dưới.</p>
+        <div class="concept-swatch-grid" id="conceptSwatchGrid"></div>
       </div>
 
       <div class="backup-box" id="themeBox">
@@ -33851,17 +33935,21 @@ function renderProgressCard(){
       <i class="status-dot seg-${s.k}"></i><span>${s.ic} ${s.lbl}</span><b>${s.n}</b>
     </button>`).join('');
 
-  /* ---- Cụm 2: trình độ từ (CEFR) ---- */
+  /* ---- Cụm 2: trình độ từ (CEFR) ----
+     Tính theo số từ ĐÃ HỌC (đã bắt đầu luyện = mastered + learning/review),
+     không yêu cầu phải THUỘC hẳn, để phản ánh đúng khối lượng đã động tới
+     ở mỗi trình độ thay vì chỉ những từ đã hoàn thành trọn vẹn. */
   const lvlBars = WB.levels.map(l=>{
-    const pct = l.total ? Math.round(l.mastered/l.total*100) : 0;
+    const studied = l.mastered + l.learning;
+    const pct = l.total ? Math.round(studied/l.total*100) : 0;
     const known = LEVEL_ORDER.includes(l.level);
     const cls = known ? 'lv-'+l.level : 'lv-unk';
     const tag = `<span class="lvl-bar-tag">${l.level}</span>
       <span class="lvl-bar-track"><span class="lvl-bar-fill" style="width:${pct}%"></span></span>
-      <span class="lvl-bar-n">${l.mastered}<i>/${l.total}</i></span>`;
+      <span class="lvl-bar-n">${studied}<i>/${l.total}</i></span>`;
     return known
-      ? `<button class="lvl-bar-row ${cls}" onclick="goLevel('${l.level}')" title="${l.level}: ${l.total} từ — ${l.mastered} đã thuộc (${pct}%)">${tag}</button>`
-      : `<div class="lvl-bar-row ${cls}" title="Chưa gán trình độ: ${l.total} từ — ${l.mastered} đã thuộc (${pct}%)">${tag}</div>`;
+      ? `<button class="lvl-bar-row ${cls}" onclick="goLevel('${l.level}')" title="${l.level}: ${l.total} từ — ${studied} đã học (${pct}%)">${tag}</button>`
+      : `<div class="lvl-bar-row ${cls}" title="Chưa gán trình độ: ${l.total} từ — ${studied} đã học (${pct}%)">${tag}</div>`;
   }).join('');
 
   /* ---- Cụm 3: loại từ (POS) — biểu đồ tròn (donut) ---- */
@@ -35089,6 +35177,7 @@ function renderFlashcard(){
     document.getElementById('fcWord').textContent='—';
     const t0=document.getElementById('fcTopic'); if(t0) t0.innerHTML='';
     document.getElementById('fcPos').textContent=''; document.getElementById('fcIpa').textContent='';
+    const s0=document.getElementById('fcSrs'); if(s0) s0.innerHTML='';
     document.getElementById('fcBack').innerHTML=''; lvlEl.style.display='none';
     document.getElementById('fcProgress').textContent='0 / 0';
     return;
@@ -35106,6 +35195,8 @@ function renderFlashcard(){
   }
   document.getElementById('fcPos').textContent = v.pos||'';
   document.getElementById('fcIpa').textContent = v.ipa||'';
+  const sEl = document.getElementById('fcSrs');
+  if(sEl) sEl.innerHTML = srsBadge(v.word);
   if(v.level){ lvlEl.style.display=''; lvlEl.className='lvl '+lvlClass(v.level); lvlEl.textContent=v.level; }
   else lvlEl.style.display='none';
   const colloc = (v.collocations||[]).map(normColloc);
@@ -35371,20 +35462,35 @@ function groupByMilestone(list){
   });
   return [...map.keys()].sort((a,b)=>a-b).map(box=>({ meta:milestoneMeta(box), items:map.get(box) }));
 }
-let _needCollapsed = new Set();  // các mốc đang bị thu gọn (theo box)
+let _needExpanded = new Set();   // các mốc (box) đang MỞ ra xem chi tiết — mặc định TẤT CẢ đều thu gọn
+let _needGroupsCache = null;     // {groups, cardFn, gridCls} của lần milestoneGroupsHTML() gần nhất —
+                                  // để mở/đóng 1 mốc chỉ cần dựng HTML đúng nhóm đó, không phải vẽ lại cả trang
 function toggleMilestone(box){
-  _needCollapsed.has(box) ? _needCollapsed.delete(box) : _needCollapsed.add(box);
-  document.querySelector(`.milestone-group[data-box="${box}"]`)?.classList.toggle('collapsed');
+  const nowExpanded = !_needExpanded.has(box);
+  nowExpanded ? _needExpanded.add(box) : _needExpanded.delete(box);
+  const el = document.querySelector(`.milestone-group[data-box="${box}"]`);
+  if(!el || !_needGroupsCache) return;
+  el.classList.toggle('collapsed', !nowExpanded);
+  const grid = el.querySelector(`.${_needGroupsCache.gridCls}`);
+  if(grid && nowExpanded && !grid.dataset.built){
+    const g = _needGroupsCache.groups.find(x=>x.meta.box===box);
+    if(g){ grid.innerHTML = g.items.map(_needGroupsCache.cardFn).join(''); grid.dataset.built = '1'; }
+  }
 }
 /* Render danh sách đã nhóm theo mốc; dùng chung cho cả 2 chế độ xem
-   (thẻ chi tiết / thu gọn). cardFn là hàm render 1 thẻ (card hoặc lwcTileHTML). */
+   (thẻ chi tiết / thu gọn). cardFn là hàm render 1 thẻ (card hoặc lwcTileHTML).
+   Mặc định MỌI mốc đều thu gọn (chỉ hiện tiêu đề + số lượng) — HTML thẻ chi
+   tiết của 1 mốc chỉ được dựng khi người dùng bấm mở mốc đó (xem
+   toggleMilestone). Nhờ vậy có thể hiện đủ TOÀN BỘ danh sách (không cần cắt
+   bớt 150 từ) mà vẫn nhẹ, vì phần lớn các mốc không được render nội dung. */
 function milestoneGroupsHTML(list, cardFn, viewMode){
   const groups = groupByMilestone(list);
   const gridCls = viewMode==='compact' ? 'lwc-grid' : 'need-grid';
+  _needGroupsCache = { groups, cardFn, gridCls };
   return groups.map(g=>{
-    const collapsed = _needCollapsed.has(g.meta.box);
+    const expanded = _needExpanded.has(g.meta.box);
     return `
-    <div class="milestone-group${collapsed?' collapsed':''}${g.meta.temp?' temp-retain':''}" data-box="${g.meta.box}">
+    <div class="milestone-group${expanded?'':' collapsed'}${g.meta.temp?' temp-retain':''}" data-box="${g.meta.box}">
       <div class="milestone-head" onclick="toggleMilestone(${g.meta.box})">
         <span class="mg-ic">${g.meta.ic}</span>
         <span class="mg-label">${g.meta.label}</span>
@@ -35392,7 +35498,7 @@ function milestoneGroupsHTML(list, cardFn, viewMode){
         <span class="mg-count">${g.items.length} từ</span>
         <span class="mg-chevron">▾</span>
       </div>
-      <div class="${gridCls}">${g.items.map(cardFn).join('')}</div>
+      <div class="${gridCls}"${expanded?' data-built="1"':''}>${expanded ? g.items.map(cardFn).join('') : ''}</div>
     </div>`;
   }).join('');
 }
@@ -35536,9 +35642,9 @@ function renderNeed(){
         <span class="ml-step"><span class="mg-ic">🆕</span>mới bắt đầu</span>
       </div>` : ''}
       <div>${(cur.k==='due'||cur.k==='soon'||cur.k==='star'||cur.k==='temp')
-          ? milestoneGroupsHTML(list.slice(0,150), _needViewMode==='compact'?lwcTileHTML:card, _needViewMode)
+          ? milestoneGroupsHTML(list, _needViewMode==='compact'?lwcTileHTML:card, _needViewMode)
           : `<div class="${_needViewMode==='compact'?'lwc-grid':'need-grid'}">${list.slice(0,150).map(_needViewMode==='compact'?lwcTileHTML:card).join('')}</div>`}</div>
-      ${list.length>150?`<div class="need-more">Hiện 150 / ${list.length} từ</div>`:''}
+      ${(cur.k!=='due'&&cur.k!=='soon'&&cur.k!=='star'&&cur.k!=='temp'&&list.length>150)?`<div class="need-more">Hiện 150 / ${list.length} từ</div>`:''}
     ` : `
       <div class="empty">
         <div style="font-size:42px;margin-bottom:10px">${empties[cur.k][0]}</div>
@@ -35792,6 +35898,7 @@ function vocabCardHTML(v){
         ${v.date?`<span class="vc-date">${fmtDateShort(v.date)}</span>`:''}
       </span>
     </div>
+    ${srsBadge(v.word)}
     <button class="vc-topic" onclick="goTopic('${(v._topic||'').replace(/'/g,"\\'")}','list')" title="Xem tất cả từ thuộc chủ đề này">
       <span>${TOPIC_ICONS[v._topic]||'🗂️'}</span>
       ${v._macro && v._macro!==v._topic ? `<em>${esc(v._macro)}</em><i>›</i>` : ''}
@@ -35810,11 +35917,22 @@ function vocabCardHTML(v){
 function lwcTileHTML(v){
   const ci = topicColorIndex(v._topic);
   const baseColor = teColorHex(ci);
+  const st = srsState(v.word);
+  const r = SRS[v.word];
+  const box = r ? r.box : 0;
+  const denom = SRS_MASTER_BOX-1;   // khớp mẫu số dùng ở milestoneMeta() và srsBadge()
+  const isTemp = box>=TEMP_RETAIN_BOX && box<SRS_MASTER_BOX;
+  const boxBadge = (st==='learning'||st==='review')
+    ? `<span class="lwc-box${isTemp?' temp':''}">${isTemp?'🌤️ ':''}Bậc ${box}/${denom}</span>`
+    : (st==='mastered' ? `<span class="lwc-box done">✅ Đã thuộc</span>` : '');
   return `
   <div class="lwc-tile" data-color="${ci}" style="border-color:${baseColor} !important" onclick="lwcShowDetail('${esc(v.word).replace(/'/g,"\\'")}')" title="Xem thẻ chi tiết của từ này">
     <div class="lwc-top">
       <span class="lwc-word">${esc(v.word)}</span>
-      <button class="lwc-speak" onclick="event.stopPropagation();speak('${esc(v.word)}')" title="Nghe phát âm">🔊</button>
+      <div class="lwc-top-right">
+        <button class="lwc-speak" onclick="event.stopPropagation();speak('${esc(v.word)}')" title="Nghe phát âm">🔊</button>
+        ${boxBadge}
+      </div>
     </div>
     ${v.pos?`<span class="lwc-pos">${esc(v.pos)}</span>`:''}
     <div class="lwc-vn">${esc(v.vn||'')}</div>
@@ -36878,6 +36996,7 @@ function nextType(){
     clearTypeTimers();
     const cols = (v.collocations||[]).slice(0,3).map(normColloc);
     const syn  = (v.synonyms||[]).slice(0,4);
+    const forms = normForms(v.wordforms);
     const just = gateDone(v.word) && stageOf(v.word) === 5;
 
     box.innerHTML = `
@@ -36900,8 +37019,8 @@ function nextType(){
           ${wordExample(v).vi?`<div class="tpr-ex-vi">${esc(wordExample(v).vi)}</div>`:''}
         </div>` : ''}
 
-        ${cols.length?`<div class="tpr-chips">${cols.map(c=>
-          `<span class="tpr-chip" title="${esc(c.vi)}">${esc(c.en)}</span>`).join('')}</div>`:''}
+        ${forms.length?`<div class="tpr-forms">${formsHTML(forms)}</div>`:''}
+        ${cols.length?`<div class="tpr-collocs">${cols.map(c=>`<div class="colloc-item"><span class="en">${esc(c.en)}</span>${c.vi?` — <span class="vi">${esc(c.vi)}</span>`:''}</div>`).join('')}</div>`:''}
         ${syn.length?`<div class="tpr-syn">≈ ${synTagsHTML(syn)}</div>`:''}
 
         <div class="tpr-gate">${gateChips(v.word)}
@@ -37570,12 +37689,15 @@ function srsBadge(w){
   };
   const [ic,lb,cls] = MAP[st];
   const box = r ? r.box : 0;
+  const denom = SRS_MASTER_BOX-1;   // số bậc ngắt quãng tối đa trước khi "Đã thuộc" (khớp với milestoneMeta)
+  const isTemp = box>=TEMP_RETAIN_BOX && box<SRS_MASTER_BOX;
   const dots = Array.from({length:SRS_MASTER_BOX},(_,i)=>
     `<i class="sb-dot ${i<box?'on':''}"></i>`).join('');
   const due = srsIsDue(w);
   return `<div class="srs-badge">
     <span class="sb-state ${cls}">${ic} ${lb}</span>
     ${st!=='new' ? `<span class="sb-dots" title="Bậc ghi nhớ ${box}/${SRS_MASTER_BOX}">${dots}</span>` : ''}
+    ${(st==='learning' || st==='review') ? `<span class="sb-box${isTemp?' temp':''}">${isTemp?'🌤️ ':''}Bậc ${box}/${denom}</span>` : ''}
     ${st!=='mastered' && st!=='new'
       ? `<span class="sb-cd ${due?'hot':''}">${due?'🔔':'⏳'} ${cd.txt}${!due&&nextReviewDate(w)?` · ${nextReviewDate(w)}`:''}</span>`
       : ''}
@@ -38180,6 +38302,7 @@ function typeReviewPanel(box, v, opt){
   clearTypeTimers();
   const cols = (v.collocations||[]).slice(0,3).map(normColloc);
   const syn  = (v.synonyms||[]).slice(0,4);
+  const forms = normForms(v.wordforms);
   const ex   = wordExample(v);
   const just = stageOf(v.word) === 5;
   const ng   = nextGate(v.word);
@@ -38196,7 +38319,8 @@ function typeReviewPanel(box, v, opt){
       </div>
       <div class="tpr-vn">${esc(v.vn)}</div>
       ${ex?`<div class="tpr-ex"><div class="tpr-ex-en">${exHL(ex.en, v.word)}</div>${ex.vi?`<div class="tpr-ex-vi">${esc(ex.vi)}</div>`:''}</div>`:''}
-      ${cols.length?`<div class="tpr-chips">${cols.map(c=>`<span class="tpr-chip" title="${esc(c.vi)}">${esc(c.en)}</span>`).join('')}</div>`:''}
+      ${forms.length?`<div class="tpr-forms">${formsHTML(forms)}</div>`:''}
+      ${cols.length?`<div class="tpr-collocs">${cols.map(c=>`<div class="colloc-item"><span class="en">${esc(c.en)}</span>${c.vi?` — <span class="vi">${esc(c.vi)}</span>`:''}</div>`).join('')}</div>`:''}
       ${syn.length?`<div class="tpr-syn">≈ ${synTagsHTML(syn)}</div>`:''}
       <div class="tpr-gate">${gateChips(v.word)}
         <span>${just ? '🏆 <b>ĐÃ THUỘC</b> — đủ 3 cửa & ôn đủ lâu!'
@@ -44009,7 +44133,7 @@ const ACCENT_THEMES = [
   { key:'slate',   name:'Xám xanh', color:'#475569', grad:'linear-gradient(135deg,#475569,#64748b)' }
 ];
 (function initAccentTheme(){
-  const saved = localStorage.getItem('vocab_accent_theme') || 'teal';
+  const saved = localStorage.getItem('vocab_accent_theme') || 'green';
   applyAccentTheme(saved);
   renderThemeSwatches();
 })();
@@ -44022,11 +44146,12 @@ function applyAccentTheme(key){
 function setAccentTheme(key){
   applyAccentTheme(key);
   renderThemeSwatches();
+  renderConceptSwatches();
 }
 function renderThemeSwatches(){
   const grid = document.getElementById('themeSwatchGrid');
   if(!grid) return;
-  const cur = localStorage.getItem('vocab_accent_theme') || 'teal';
+  const cur = localStorage.getItem('vocab_accent_theme') || 'green';
   grid.innerHTML = ACCENT_THEMES.map(t=>`
     <button class="theme-swatch-btn ${cur===t.key?'active':''}" style="--ts-color:${t.color};--ts-grad:${t.grad}" onclick="setAccentTheme('${t.key}')">
       <span class="theme-swatch-dot"></span>
@@ -44057,12 +44182,43 @@ const BG_THEMES = [
   { key:'autumn',  name:'🍁 Mùa thu',       cls:'bg-preview-autumn' },
   { key:'snow',    name:'❄️ Tuyết',         cls:'bg-preview-snow' },
   { key:'desert',  name:'🏜️ Sa mạc',        cls:'bg-preview-desert' },
+  { key:'ocean',   name:'🌊 Đại dương sâu',  cls:'bg-preview-ocean' },
+  { key:'meadow',  name:'🌼 Đồng cỏ xuân',   cls:'bg-preview-meadow' },
+  { key:'coffee',  name:'☕ Cà phê ấm',      cls:'bg-preview-coffee' },
+  { key:'volcano', name:'🌋 Núi lửa',        cls:'bg-preview-volcano' },
+  { key:'neon',    name:'🌆 Neon đô thị',    cls:'bg-preview-neon' },
+  { key:'rainbow', name:'🌈 Cầu vồng pastel',cls:'bg-preview-rainbow' },
+  { key:'marble',  name:'🤍 Đá cẩm thạch',   cls:'bg-preview-marble' },
+  { key:'bamboo',  name:'🎋 Rừng trúc',      cls:'bg-preview-bamboo' },
   { key:'plain',   name:'Trơn',      cls:'bg-preview-plain' }
 ];
+/* ============================================================
+   CONCEPT GIAO DIỆN — bộ phối sẵn (màu nhấn + hình nền) được
+   chọn lọc để hài hoà với nhau, bấm 1 lần là áp dụng cả bộ,
+   thay vì phải tự chọn màu nhấn rồi chọn nền riêng lẻ.
+   Khai báo TRƯỚC initBgTheme() bên dưới vì initBgTheme gọi
+   renderConceptSwatches() ngay khi trang tải — nếu để mảng này
+   ở dưới sẽ dính lỗi "temporal dead zone" (const chưa được gán).
+   ============================================================ */
+const UI_CONCEPTS = [
+  { key:'ocean_breeze',   name:'Làn gió đại dương', icon:'🌊', accent:'cyan',    bg:'ocean',   desc:'Xanh cyan mát mẻ + nền biển sâu' },
+  { key:'sakura_dream',   name:'Giấc mơ anh đào',   icon:'🌸', accent:'rose',    bg:'sakura',  desc:'Hồng đỏ dịu + hoa anh đào rơi' },
+  { key:'midnight_galaxy',name:'Ngân hà nửa đêm',    icon:'🌌', accent:'indigo',  bg:'galaxy',  desc:'Chàm sâu + thiên hà lấp lánh' },
+  { key:'autumn_cafe',    name:'Quán cà phê mùa thu',icon:'☕', accent:'brown',   bg:'coffee',  desc:'Nâu cà phê ấm + hương cà phê' },
+  { key:'sunrise_peak',   name:'Đỉnh núi bình minh', icon:'🏔️', accent:'orange',  bg:'mountain',desc:'Cam đỏ rực rỡ + núi non hoàng hôn' },
+  { key:'forest_zen',     name:'Rừng thiền tĩnh lặng',icon:'🌲', accent:'green',   bg:'forest',  desc:'Xanh lá tự nhiên + rừng cây' },
+  { key:'lavender_calm',  name:'Đồng lavender êm dịu',icon:'💜', accent:'purple',  bg:'lavender',desc:'Tím nhẹ + đồng hoa lavender' },
+  { key:'neon_nights',    name:'Đêm neon thành phố', icon:'🌆', accent:'fuchsia', bg:'neon',    desc:'Hồng tím nổi bật + ánh neon đô thị' },
+  { key:'snow_peace',     name:'Bình yên tuyết trắng',icon:'❄️', accent:'blue',    bg:'snow',    desc:'Xanh dương trong trẻo + tuyết rơi' },
+  { key:'minimal_marble', name:'Tối giản đá cẩm thạch',icon:'🤍', accent:'slate',   bg:'marble',  desc:'Xám xanh trung tính + vân đá cẩm thạch' },
+  { key:'meadow_morning', name:'Bình minh đồng cỏ',  icon:'🌼', accent:'green',   bg:'meadow',  desc:'Xanh lá tươi mới + đồng cỏ xuân' },
+  { key:'volcano_ember',  name:'Than hồng núi lửa',  icon:'🌋', accent:'amber',   bg:'volcano', desc:'Cam vàng nóng bỏng + núi lửa' }
+];
 (function initBgTheme(){
-  const saved = localStorage.getItem('vocab_bg_theme') || 'default';
+  const saved = localStorage.getItem('vocab_bg_theme') || 'meadow';
   applyBgTheme(saved);
   renderBgSwatches();
+  renderConceptSwatches();
 })();
 function applyBgTheme(key){
   if(key === 'default') document.documentElement.removeAttribute('data-bg');
@@ -44072,16 +44228,48 @@ function applyBgTheme(key){
 function setBgTheme(key){
   applyBgTheme(key);
   renderBgSwatches();
+  renderConceptSwatches();
 }
 function renderBgSwatches(){
   const grid = document.getElementById('bgSwatchGrid');
   if(!grid) return;
-  const cur = localStorage.getItem('vocab_bg_theme') || 'default';
+  const cur = localStorage.getItem('vocab_bg_theme') || 'meadow';
   grid.innerHTML = BG_THEMES.map(t=>`
     <button class="bg-swatch-btn ${cur===t.key?'active':''}" onclick="setBgTheme('${t.key}')">
       <span class="bg-swatch-preview ${t.cls}"></span>
       <span class="bg-swatch-label">${t.name}</span>
     </button>`).join('');
+}
+
+/* ---------- Áp dụng / hiển thị Concept giao diện (mảng UI_CONCEPTS
+   đã khai báo phía trên, trước initBgTheme) ---------- */
+function applyConcept(key){
+  const c = UI_CONCEPTS.find(x=>x.key===key);
+  if(!c) return;
+  applyAccentTheme(c.accent);
+  applyBgTheme(c.bg);
+  renderThemeSwatches();
+  renderBgSwatches();
+  renderConceptSwatches();
+  toast(`${c.icon} Đã áp dụng concept "${c.name}"`);
+}
+function renderConceptSwatches(){
+  const grid = document.getElementById('conceptSwatchGrid');
+  if(!grid) return;
+  const curAccent = localStorage.getItem('vocab_accent_theme') || 'green';
+  const curBg = localStorage.getItem('vocab_bg_theme') || 'meadow';
+  grid.innerHTML = UI_CONCEPTS.map(c=>{
+    const at = ACCENT_THEMES.find(a=>a.key===c.accent);
+    const bt = BG_THEMES.find(b=>b.key===c.bg);
+    const active = curAccent===c.accent && curBg===c.bg;
+    return `
+    <button class="concept-swatch-btn ${active?'active':''}" onclick="applyConcept('${c.key}')" title="${esc(c.desc)}">
+      <span class="concept-swatch-preview ${bt?bt.cls:''}" style="--cc-grad:${at?at.grad:''}">
+        <span class="concept-swatch-accent" style="background:${at?at.grad:''}"></span>
+      </span>
+      <span class="concept-swatch-name">${c.icon} ${c.name}</span>
+    </button>`;
+  }).join('');
 }
 
 /* ---------- Độ trong suốt các thẻ & tab ---------- */
