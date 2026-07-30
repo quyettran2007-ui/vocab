@@ -38133,7 +38133,16 @@ function buildLearnWords(scope){
 
   if(scope==='path'){
     /* Lộ trình: ưu tiên (1) từ đến hạn ôn, (2) từ đang dở giữa chừng
-       các cửa — vì bỏ dở là quên nhanh nhất, (3) từ mới. */
+       các cửa — vì bỏ dở là quên nhanh nhất, (3) từ mới.
+
+       LƯU Ý (đã sửa lỗi "due nuốt hết phiên"): nếu chỉ nối due+mid+fresh
+       rồi cắt theo sessionSize() như trước, một khi due dồn cục (ví dụ
+       sau khi đổi quy tắc tính "đã thuộc" khiến hàng loạt từ cùng đến
+       hạn) thì mid/fresh sẽ KHÔNG BAO GIỜ lọt vào phiên học, vì due đã
+       lấp đầy hết chỗ trước khi tới lượt chúng. Nên bây giờ mỗi phiên
+       LUÔN dành ra một tỉ lệ tối thiểu cho mid và fresh, phần còn lại
+       mới ưu tiên due (và due cũng được sắp theo mức độ khẩn cấp thay
+       vì giữ nguyên thứ tự trong kho từ). */
     const now = Date.now();
     const due=[], mid=[], fresh=[];
     VOCAB.forEach(v=>{
@@ -38144,8 +38153,35 @@ function buildLearnWords(scope){
       else if(!SRS[v.word]) fresh.push(v);
       // else: đã đủ 3 cửa, đang ôn ngắt quãng nhưng CHƯA đến hạn -> bỏ qua, không ôn sớm
     });
-    mid.sort((a,b)=> gateCount(b.word)-gateCount(a.word));   // gần xong trước
-    return cut([...due, ...mid, ...shuffle(fresh)]);
+    mid.sort((a,b)=> gateCount(b.word)-gateCount(a.word));   // gần xong trước (nhiều cửa hơn lên trước)
+    // due: quá hạn lâu + hay quên (lapses nhiều) thì ưu tiên hơn, giống srsQueue()
+    due.sort((a,b)=>{
+      const ra=SRS[a.word], rb=SRS[b.word];
+      const pa=(now-ra.due)/DAY + (ra.lapses||0)*2;
+      const pb=(now-rb.due)/DAY + (rb.lapses||0)*2;
+      return pb-pa;
+    });
+    if(n<=0) return [...due, ...mid, ...shuffle(fresh)];   // "Tất cả" -> không cần chia tỉ lệ
+
+    // Dành tối thiểu 35% phiên cho "mid" (từ dở dang, chưa đủ 3 cửa) và
+    // 10% cho "fresh" (từ mới), để 2 nhóm này không bao giờ bị due-list
+    // (dù đông đến đâu) nuốt hết cả phiên.
+    const minMid   = mid.length   ? Math.max(1, Math.min(mid.length,   Math.round(n*0.35))) : 0;
+    const minFresh = fresh.length ? Math.max(1, Math.min(fresh.length, Math.round(n*0.10))) : 0;
+    const midPick   = mid.slice(0, minMid);
+    const freshPick = shuffle(fresh).slice(0, minFresh);
+    const remain    = Math.max(0, n - midPick.length - freshPick.length);
+    const duePick   = due.slice(0, remain);
+
+    let result = [...duePick, ...midPick, ...freshPick];
+    if(result.length < n){
+      // due không đủ lấp chỗ còn thiếu -> bù thêm từ phần mid/fresh dư ra
+      const used = new Set(result.map(v=>v.word));
+      const extra = [...mid.slice(minMid), ...due.slice(remain), ...shuffle(fresh).slice(minFresh)]
+        .filter(v=>!used.has(v.word));
+      result = result.concat(extra.slice(0, n-result.length));
+    }
+    return result;
   }
   if(scope==='srs')    return srsQueue();
   if(scope==='random') return randomQueue();
