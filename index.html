@@ -1067,15 +1067,18 @@ select:focus, .search-box:focus {
 
 /* ===== TAB TRONG "CẦN HỌC" ===== */
 .need-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 14px;}
-.need-tab{display:flex;align-items:center;gap:7px;padding:10px 15px;border-radius:12px;cursor:pointer;
-  font:inherit;border:1.5px solid var(--line);background:var(--card);color:var(--ink-soft);transition:.15s;}
-.need-tab:hover{border-color:var(--accent);transform:translateY(-1px);}
-.need-tab.active{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);}
-.nt-ic{font-size:14px;}
+.need-tab{display:flex;align-items:center;gap:8px;padding:8px 14px 8px 8px;border-radius:999px;cursor:pointer;
+  font:inherit;border:1.5px solid var(--line);background:var(--card);color:var(--ink-soft);
+  transition:border-color .15s,background .15s,color .15s,transform .15s,box-shadow .15s;box-shadow:var(--shadow-xs);}
+.need-tab:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+.need-tab.active{background:var(--accent-grad,var(--accent));border-color:transparent;color:#fff;box-shadow:var(--glow,0 6px 16px -6px rgba(13,110,95,.5));}
+.nt-ic{font-size:14px;width:26px;height:26px;border-radius:50%;background:var(--paper-2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
+.need-tab.active .nt-ic{background:rgba(255,255,255,.22);}
 .nt-t{font-size:12.5px;font-weight:700;}
 .nt-n{font-family:var(--font-heading);font-weight:900;font-size:12px;
   background:var(--paper-2);border-radius:99px;padding:1px 8px;}
-.need-tab.active .nt-n{background:var(--accent);color:#fff;}
+.need-tab.active .nt-n{background:rgba(255,255,255,.28);color:#fff;}
 .need-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
   padding:10px 14px;border-radius:11px;background:var(--card-sunken);border:1px solid var(--line);
   margin-bottom:14px;font-size:12.5px;color:var(--ink-soft);}
@@ -1095,7 +1098,22 @@ select:focus, .search-box:focus {
 .trday-stat{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 8px;text-align:center;}
 .trday-stat b{display:block;font-family:var(--font-heading);font-size:19px;font-weight:900;color:var(--accent);line-height:1.1;}
 .trday-stat span{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:3px;display:block;}
-.trday-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.trday-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px;margin-bottom:14px;}
+.trday-action-card{
+  display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:14px;
+  border:1.5px solid var(--line-strong);background:var(--card);cursor:pointer;text-align:left;
+  transition:transform .15s,box-shadow .15s,border-color .15s,background .15s;box-shadow:var(--shadow-xs);
+  font:inherit;color:inherit;
+}
+.trday-action-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);border-color:var(--accent);}
+.trday-action-card.primary{background:var(--accent-bg);border-color:var(--accent);}
+.trday-action-card.ghost{background:transparent;border-style:dashed;}
+.tac-ic{width:36px;height:36px;border-radius:10px;background:var(--paper-2);display:flex;align-items:center;
+  justify-content:center;font-size:16px;flex-shrink:0;}
+.trday-action-card.primary .tac-ic{background:var(--card);}
+.tac-body{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.tac-title{font-size:12.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tac-sub{font-size:10.5px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .trday-gates{background:var(--card-sunken);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;}
 .trg-title{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:9px;}
 .trg-title span{font-weight:600;color:var(--muted);}
@@ -1428,10 +1446,10 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .hero-top{ display:flex; align-items:center; gap:16px; width:100%; }
 .hero-today{
   flex:1; min-width:0; display:flex; flex-direction:column; gap:6px;
-  text-align:left; background:var(--card-sunken); border:1px solid var(--line);
+  text-align:left; background:transparent; border:1px solid var(--line);
   border-radius:12px; padding:10px 12px;
 }
-[data-theme="dark"] .hero-today{ background:var(--paper-2); }
+[data-theme="dark"] .hero-today{ background:transparent; }
 .ht-title{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); }
 .ht-title-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .ht-shuffle{
@@ -1457,6 +1475,12 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .ht-pos.ht-pos-cl{ background:var(--ember,#c2410c); }
 .ht-word{ font-weight:800; color:var(--ink); font-family:var(--font-word); font-size:13px; }
 .ht-mean{ color:var(--ink-soft); font-size:12.5px; width:100%; }
+@media(max-width:700px){
+  .hero-pick-row{ flex-wrap:wrap; row-gap:8px; }
+  .hero-pick-row > button:nth-child(1),
+  .hero-pick-row > button:nth-child(2){ flex:1 1 calc(50% - 4px); }
+  .hero-pick-row > button:nth-child(3){ flex:1 1 100%; }
+}
 @media(max-width:480px){
   .hero-top{ flex-direction:row; align-items:center; gap:10px; }
   .hero-ring-wrap{ width:70px; height:70px; }
@@ -3106,12 +3130,13 @@ mark.ex-hl {
 .need-head {
   display:flex; align-items:center; justify-content:space-between;
   gap:14px; flex-wrap:wrap; margin-bottom:20px;
-  padding:18px 22px; background:var(--card);
-  border:1px solid var(--line); border-radius:var(--radius-xl);
+  padding:18px 22px 18px 20px; background:var(--card);
+  border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:var(--radius-xl);
   box-shadow:var(--shadow-sm);
 }
 .need-title { font-family:var(--font-heading); font-size:20px; font-weight:700; letter-spacing:-.5px; }
 .need-sub { font-size:12.5px; color:var(--muted); font-weight:600; margin-top:3px; }
+.need-sub b{ color:var(--ink); font-weight:800; }
 .need-actions { display:flex; gap:8px; flex-wrap:wrap; }
 
 /* toast */
@@ -4503,7 +4528,7 @@ nav.tabs{
 .fn-step.s5 i{ background:var(--ember-bg); }
 .fn-step.s5 b{ color:var(--ember); }
 .fn-step.s5 .fn-bar span{ background:var(--ember-grad); }
-.fn-step.s0{ opacity:.72; }
+.fn-step.s0{ }
 
 /* ---------- 5. THANH BƯỚC TRONG PHIÊN HỌC ---------- */
 .step-bar{
@@ -4996,51 +5021,55 @@ main{ padding-top:26px; }
   .hero-pick-row{ max-width:none; }
 }
 
-/* ================= LỘ TRÌNH THUỘC TỪ — bậc thang nối liền ================= */
+/* ================= LỘ TRÌNH THUỘC TỪ — mỗi cửa 1 thẻ riêng biệt ================= */
 .funnel-card{ border-radius:var(--radius-xl); padding:24px 26px; box-shadow:var(--shadow-sm); border:var(--dash-border); }
 .fn-head{ margin-bottom:18px; }
 .fn-title{ font-family:var(--font-heading); font-size:17px; font-weight:800; }
 .fn-cta{ border-radius:11px; padding:11px 18px; text-transform:uppercase; letter-spacing:.4px; font-size:12px; }
-.fn-track{ gap:0; position:relative; }
+.fn-track{ gap:10px; position:relative; }
 .fn-sep{ display:none; }
 .fn-step{
-  border-radius:10px 10px 0 0; padding:16px 10px 12px; gap:6px; background:transparent; color:var(--ink);
-  border:none; border-top:3px solid var(--line-strong); position:relative;
-  transition:background .15s, border-color .15s;
+  border-radius:14px; padding:16px 10px 13px; gap:6px; background:var(--card); color:var(--ink);
+  border:1.5px solid var(--line-strong); border-top:3px solid var(--line-strong); position:relative;
+  box-shadow:var(--shadow-xs);
+  transition:background .15s, border-color .15s, transform .15s, box-shadow .15s;
 }
-.fn-step:hover{ background:var(--card-sunken); transform:none; box-shadow:none; }
-.fn-step i{ font-size:15px; background:var(--paper-2); }
+.fn-step:hover{ background:var(--card-sunken); transform:translateY(-2px); box-shadow:var(--shadow-sm); }
+.fn-step i{ font-size:15px; background:var(--paper-2); border-radius:8px; }
 .fn-step b{ font-size:20px; font-family:var(--font-heading); color:var(--ink); }
 .fn-step em{ text-transform:uppercase; letter-spacing:.3px; font-size:10.5px; font-weight:800; color:var(--muted); }
 /* thanh tiến độ mảnh dưới mỗi cửa — cùng màu với cửa đó, cho biết tỉ lệ
    từ đang ở cửa này so với tổng số từ */
 .fn-bar{ margin-top:8px; height:3px; }
-.fn-step + .fn-step{ border-left:1px solid var(--line); }
 
-/* ---- Mỗi cửa trong lộ trình đúng 1 màu — viền trên, badge icon, số và
+/* ---- Mỗi cửa trong lộ trình đúng 1 màu — viền, badge icon, số và
    progress-bar đều lấy từ CÙNG biến --stageN nên không bao giờ lệch tông,
-   dù đổi theme sáng/tối. ---- */
-.fn-step.s0{ border-top-color:var(--line-strong); background:transparent; opacity:.75; }
-.fn-step.s1{ border-top-color:var(--stage1); background:var(--stage1-bg); }
-.fn-step.s1 i{ background:var(--stage1-bg); }
+   dù đổi theme sáng/tối. Mỗi cửa là 1 thẻ tách biệt, có khoảng cách rõ
+   ràng với cửa kế bên thay vì dính liền như bậc thang. ---- */
+.fn-step.s0{ border-color:var(--line-strong); border-top-color:var(--line-strong); background:color-mix(in srgb,var(--ink-soft) 10%,var(--card)); }
+.fn-step.s0 i{ background:var(--card); }
+.fn-step.s0:hover{ background:color-mix(in srgb,var(--ink-soft) 16%,var(--card)); }
+.fn-step.s1{ border-color:color-mix(in srgb,var(--stage1) 35%,var(--line)); border-top-color:var(--stage1); background:var(--stage1-bg); }
+.fn-step.s1 i{ background:var(--card); }
 .fn-step.s1 b{ color:var(--stage1); }
 .fn-step.s1:hover{ background:var(--stage1-bg-h); }
-.fn-step.s2{ border-top-color:var(--stage2); background:var(--stage2-bg); }
-.fn-step.s2 i{ background:var(--stage2-bg); }
+.fn-step.s2{ border-color:color-mix(in srgb,var(--stage2) 35%,var(--line)); border-top-color:var(--stage2); background:var(--stage2-bg); }
+.fn-step.s2 i{ background:var(--card); }
 .fn-step.s2 b{ color:var(--stage2); }
 .fn-step.s2:hover{ background:var(--stage2-bg-h); }
-.fn-step.s3{ border-top-color:var(--stage3); background:var(--stage3-bg); }
-.fn-step.s3 i{ background:var(--stage3-bg); }
+.fn-step.s3{ border-color:color-mix(in srgb,var(--stage3) 35%,var(--line)); border-top-color:var(--stage3); background:var(--stage3-bg); }
+.fn-step.s3 i{ background:var(--card); }
 .fn-step.s3 b{ color:var(--stage3); }
 .fn-step.s3:hover{ background:var(--stage3-bg-h); }
-.fn-step.s4{ border-top-color:var(--stage4); background:var(--stage4-bg); }
-.fn-step.s4 i{ background:var(--stage4-bg); }
+.fn-step.s4{ border-color:color-mix(in srgb,var(--stage4) 35%,var(--line)); border-top-color:var(--stage4); background:var(--stage4-bg); }
+.fn-step.s4 i{ background:var(--card); }
 .fn-step.s4 b{ color:var(--stage4); }
 .fn-step.s4:hover{ background:var(--stage4-bg-h); }
-.fn-step.s5{ border-top-color:var(--ember); background:var(--ember-bg); }
-.fn-step.s5 i{ background:var(--ember-bg); }
+.fn-step.s5{ border-color:color-mix(in srgb,var(--ember) 35%,var(--line)); border-top-color:var(--ember); background:var(--ember-bg); }
+.fn-step.s5 i{ background:var(--card); }
 .fn-step.s5 b{ color:var(--ember); }
 .fn-step.s5:hover{ background:rgba(234,88,12,.16); }
+@media(max-width:640px){ .fn-track{ gap:8px; } .fn-step{ padding:13px 8px 10px; } }
 
 /* ================= KHỐI CHỦ ĐỀ ================= */
 .topic-section{ border-radius:var(--radius-xl); padding:20px 22px 22px; box-shadow:var(--shadow-xs); border:var(--dash-border); }
@@ -32841,6 +32870,23 @@ function topicColorIndex(topic){
   if(TOPIC_COLORS[topic] === undefined) TOPIC_COLORS[topic] = _tci++ % 10;
   return TOPIC_COLORS[topic];
 }
+
+/* Color index từ LOẠI TỪ (pos) — cố định theo nhóm từ loại (không random/hash
+   theo chủ đề), để mọi từ cùng loại (danh từ/động từ/tính từ...) luôn ra
+   cùng 1 màu, dùng cho các thẻ "rút gọn" ở tab Danh sách & Cần học. */
+function posColorIndex(pos){
+  const p = (pos||'').toLowerCase().trim();
+  if(!p) return 9;
+  if(/phrasal verb|verb phrase|noun phrase|adjective phrase|^phrase/.test(p)) return 5;
+  if(/^idiom/.test(p)) return 6;
+  if(/^prepos/.test(p)) return 7;
+  if(/reflexive/.test(p)) return 8;
+  if(/^adv/.test(p)) return 3;
+  if(/^adj/.test(p)) return 2;
+  if(/^verb/.test(p)) return 1;
+  if(/^noun/.test(p)) return 0;
+  return 9;
+}
 /* Bảng màu --cc0..--cc9 lặp lại y hệt giá trị khai báo trong CSS (:root /
    [data-theme="dark"]) — dùng để in thẳng màu HEX vào inline style, làm
    lưới dự phòng cho các nơi nền màu qua biến CSS (--tp-c) lỡ không lên
@@ -34028,6 +34074,30 @@ function renderProgressCard(){
     </div>
 
     <div class="wb-grid">
+      <div class="wb-block wb-block-hard">
+        <div class="wb-block-head">
+          <span class="wb-ic wb-ic-hard">😵</span>
+          <div class="wb-head-text"><div class="wb-head-title">Từ hay quên nhất</div></div>
+        </div>
+        <div class="hard-words">${hardChips}</div>
+      </div>
+
+      <div class="wb-block wb-block-cefr">
+        <div class="wb-block-head">
+          <span class="wb-ic wb-ic-cefr">🎓</span>
+          <div class="wb-head-text"><div class="wb-head-title">Trình độ từ (CEFR)</div></div>
+        </div>
+        <div class="lvl-bars">${lvlBars || `<div class="dt-empty-mini">Chưa gán trình độ cho từ nào</div>`}</div>
+      </div>
+
+      <div class="wb-block wb-block-pos">
+        <div class="wb-block-head">
+          <span class="wb-ic wb-ic-pos">🏷️</span>
+          <div class="wb-head-text"><div class="wb-head-title">Loại từ phổ biến</div></div>
+        </div>
+        ${posPie}
+      </div>
+
       <div class="wb-block wb-block-bank">
         <div class="wb-block-head">
           <span class="wb-ic wb-ic-bank">📚</span>
@@ -34049,30 +34119,6 @@ function renderProgressCard(){
           <span class="status-leg-item" style="cursor:default">✅ Đã thuộc<b>${CLB.mastered}</b></span>
           <span class="status-leg-item" style="cursor:default">⬜ Chưa học<b>${CLB.unseen}</b></span>
         </div>
-      </div>
-
-      <div class="wb-block wb-block-cefr">
-        <div class="wb-block-head">
-          <span class="wb-ic wb-ic-cefr">🎓</span>
-          <div class="wb-head-text"><div class="wb-head-title">Trình độ từ (CEFR)</div></div>
-        </div>
-        <div class="lvl-bars">${lvlBars || `<div class="dt-empty-mini">Chưa gán trình độ cho từ nào</div>`}</div>
-      </div>
-
-      <div class="wb-block wb-block-pos">
-        <div class="wb-block-head">
-          <span class="wb-ic wb-ic-pos">🏷️</span>
-          <div class="wb-head-text"><div class="wb-head-title">Loại từ phổ biến</div></div>
-        </div>
-        ${posPie}
-      </div>
-
-      <div class="wb-block wb-block-hard">
-        <div class="wb-block-head">
-          <span class="wb-ic wb-ic-hard">😵</span>
-          <div class="wb-head-text"><div class="wb-head-title">Từ hay quên nhất</div></div>
-        </div>
-        <div class="hard-words">${hardChips}</div>
       </div>
     </div>`;
 }
@@ -34100,7 +34146,7 @@ function renderDashboard(){
 
   const LV = levelOf(GEMS);
   const USER_NAME = userName();
-  const pctLearned = Math.round(S.learned / Math.max(1,S.total) * 100);
+  const pctLearned = Math.round((S.total - S.new) / Math.max(1,S.total) * 100); // % đã học (đã đụng tới, không còn "chưa học")
   const pctDoing   = Math.round(S.inProgress / Math.max(1,S.total) * 100);
 
   /* ---- Từ mới hôm nay: 1 từ vựng + 1 collocation ngẫu nhiên — đổi mới
@@ -34208,7 +34254,7 @@ function renderDashboard(){
             </svg>
             <div class="hero-ring-in">
               <div class="hero-ring-num">${pctLearned}<span>%</span></div>
-              <div class="hero-ring-lbl">đã thuộc</div>
+              <div class="hero-ring-lbl">đã học</div>
             </div>
           </div>
           <div class="hero-today">
@@ -34630,10 +34676,22 @@ function renderTodayPaneHTML(){
     ${statsRow}
     ${gatesRow}
     <div class="trday-actions">
-      <button class="btn primary" onclick="startDayReviewQuiz('${_needDayKey}')">🔁 Trắc nghiệm ôn lại (${total} câu · Anh–Việt &amp; Việt–Anh)</button>
-      ${words.length ? `<button class="btn" onclick="startDayReviewTyping('${_needDayKey}')">⌨️ Gõ từ ôn lại (${words.length} từ)</button>` : ''}
-      ${collocs.length ? `<button class="btn" onclick="startDayReviewTypingColloc('${_needDayKey}')">✍️ Gõ lại collocation (${collocs.length} cụm · dạng rút gọn)</button>` : ''}
-      ${words.length ? `<button class="btn" onclick="starAllDay('${_needDayKey}')">⭐ Đánh dấu cả ngày vào Cần học</button>` : ''}
+      <button class="trday-action-card primary" onclick="startDayReviewQuiz('${_needDayKey}')">
+        <span class="tac-ic">🔁</span>
+        <span class="tac-body"><span class="tac-title">Trắc nghiệm ôn lại</span><span class="tac-sub">${total} câu · Anh–Việt &amp; Việt–Anh</span></span>
+      </button>
+      ${words.length ? `<button class="trday-action-card" onclick="startDayReviewTyping('${_needDayKey}')">
+        <span class="tac-ic">⌨️</span>
+        <span class="tac-body"><span class="tac-title">Gõ từ ôn lại</span><span class="tac-sub">${words.length} từ</span></span>
+      </button>` : ''}
+      ${collocs.length ? `<button class="trday-action-card" onclick="startDayReviewTypingColloc('${_needDayKey}')">
+        <span class="tac-ic">✍️</span>
+        <span class="tac-body"><span class="tac-title">Gõ lại collocation</span><span class="tac-sub">${collocs.length} cụm · dạng rút gọn</span></span>
+      </button>` : ''}
+      ${words.length ? `<button class="trday-action-card ghost" onclick="starAllDay('${_needDayKey}')">
+        <span class="tac-ic">⭐</span>
+        <span class="tac-body"><span class="tac-title">Đánh dấu cả ngày</span><span class="tac-sub">Thêm vào Cần học</span></span>
+      </button>` : ''}
     </div>
     <div class="need-tabs">
       <button class="need-tab ${_needDaySub==='word'?'active':''}" onclick="setNeedDaySub('word')">
@@ -35915,7 +35973,7 @@ function vocabCardHTML(v){
    VÀ chế độ Gọn của tab Cần học) — bấm vào mở popup thẻ chi tiết ngay
    tại chỗ qua lwcShowDetail(). */
 function lwcTileHTML(v){
-  const ci = topicColorIndex(v._topic);
+  const ci = posColorIndex(v.pos);
   const baseColor = teColorHex(ci);
   const st = srsState(v.word);
   const r = SRS[v.word];
