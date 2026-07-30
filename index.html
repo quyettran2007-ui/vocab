@@ -2453,12 +2453,12 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .ls-sub code{ font-family:var(--font-mono); background:var(--card-sunken); border:1px solid var(--line);
   border-radius:5px; padding:1px 6px; font-size:12px; color:var(--accent); }
 /* ============ CẤU TRÚC CÂU (Writing & Speaking) ============ */
-.st-modebar{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
-.st-mode-btn{ font-family:inherit; border:1px solid var(--line); background:var(--card-sunken);
-  color:var(--ink-soft); border-radius:10px; padding:8px 14px; font-size:13px; font-weight:600;
-  cursor:pointer; transition:.15s; }
-.st-mode-btn:hover{ border-color:var(--accent); color:var(--accent); }
-.st-mode-btn.active{ background:var(--accent); color:#fff; border-color:transparent; box-shadow:var(--shadow-sm); }
+.st-modebar{ display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; justify-content:center; }
+.st-mode-btn{ font-family:inherit; border:1.5px solid var(--line); background:var(--card-sunken);
+  color:var(--ink-soft); border-radius:12px; padding:10px 18px; font-size:13.5px; font-weight:700;
+  cursor:pointer; transition:.15s; box-shadow:var(--shadow-xs); }
+.st-mode-btn:hover{ border-color:var(--accent); color:var(--accent); transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+.st-mode-btn.active{ background:var(--accent); color:#fff; border-color:transparent; box-shadow:var(--shadow-sm); transform:translateY(-1px); }
 [data-theme="dark"] .st-mode-btn.active{ color:#04120f; }
 
 .st-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:14px; }
@@ -2467,7 +2467,23 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 
 .st-list{ display:flex; flex-direction:column; gap:14px; margin-top:14px; }
 .st-list.cl-list{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); align-items:start; }
-@media (min-width:1300px){ .st-list.cl-list{ grid-template-columns:repeat(3,1fr); } }
+@media (min-width:1300px){ .st-list.cl-list{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.st-list.cl-list.cl-list-compact{ grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; align-items:stretch; }
+@media (min-width:1300px){ .st-list.cl-list.cl-list-compact{ grid-template-columns:repeat(4,minmax(0,1fr)); } }
+/* Thẻ rút gọn: cùng chiều cao cố định cho mọi thẻ (không phụ thuộc độ dài
+   cụm từ/nghĩa) — dùng flex column + line-clamp để nội dung dài bị cắt gọn
+   thay vì đẩy chiều cao thẻ lệch nhau. */
+.cl-card-compact{ min-width:0; height:100%; display:flex; flex-direction:column; }
+.cl-card-compact .cl-compact-main{ min-width:0; flex:1; }
+.cl-card-compact .cl-compact-text{ min-width:0; overflow-wrap:break-word; word-break:break-word; }
+.cl-card-compact .st-structure{ overflow-wrap:break-word; word-break:break-word; }
+.cl-card-compact{ padding:12px 14px; contain-intrinsic-size:auto 108px; }
+.cl-card-compact .cl-compact-main{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.cl-card-compact .cl-compact-text{ min-width:0; flex:1; }
+.cl-card-compact .st-structure{ font-size:15px; margin-bottom:2px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.cl-card-compact .st-meaning{ font-size:12.5px; margin-bottom:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.cl-card-compact .cl-card-tools{ margin-left:0; flex-shrink:0; }
+.cl-card-compact .st-status-line{ margin:8px 0 0; flex-shrink:0; }
 .st-card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px;
   content-visibility:auto; contain-intrinsic-size:auto 260px; }
 .st-card-top{ margin-bottom:8px; }
@@ -3128,16 +3144,73 @@ mark.ex-hl {
 
 /* Cần học panel */
 .need-head {
+  position:relative; overflow:hidden;
   display:flex; align-items:center; justify-content:space-between;
-  gap:14px; flex-wrap:wrap; margin-bottom:20px;
-  padding:18px 22px 18px 20px; background:var(--card);
-  border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:var(--radius-xl);
+  gap:16px; flex-wrap:wrap; margin-bottom:20px;
+  padding:20px 24px; background:var(--card);
+  border:1px solid var(--line); border-radius:var(--radius-xl);
   box-shadow:var(--shadow-sm);
 }
-.need-title { font-family:var(--font-heading); font-size:20px; font-weight:700; letter-spacing:-.5px; }
-.need-sub { font-size:12.5px; color:var(--muted); font-weight:600; margin-top:3px; }
+.need-head::before{
+  content:''; position:absolute; inset:0; width:100%; height:100%;
+  background:var(--accent-grad); opacity:.07; pointer-events:none;
+}
+.need-head::after{
+  content:''; position:absolute; top:-60px; right:-40px; width:180px; height:180px;
+  border-radius:50%; background:var(--accent-grad); opacity:.14; pointer-events:none;
+}
+.need-head-info{ position:relative; z-index:1; display:flex; align-items:center; gap:14px; }
+.need-title {
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-heading); font-size:20px; font-weight:800; letter-spacing:-.5px;
+}
+.need-title-ic{
+  width:40px; height:40px; border-radius:13px; flex:none;
+  display:flex; align-items:center; justify-content:center; font-size:19px;
+  background:var(--accent-grad); color:#fff; box-shadow:var(--glow);
+}
+.need-sub { font-size:12.5px; color:var(--muted); font-weight:600; margin-top:4px; }
 .need-sub b{ color:var(--ink); font-weight:800; }
-.need-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.need-actions { position:relative; z-index:1; display:flex; gap:10px; flex-wrap:wrap; }
+
+/* ---- Nút hành động "Học ngay" (Ôn theo lịch / Học từ đánh dấu / Ngẫu nhiên / Hay quên):
+   dạng thẻ nhỏ có icon-bubble màu riêng cho từng loại, nổi bật hơn nút .btn thường ---- */
+.naa-btn{
+  display:flex; align-items:center; gap:10px;
+  padding:8px 18px 8px 8px; border-radius:16px;
+}
+.naa-ic{
+  width:36px; height:36px; border-radius:11px; flex:none;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; background:var(--paper); box-shadow:inset 0 0 0 1px var(--line);
+}
+.naa-txt{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.2; }
+.naa-t{ font-size:13px; font-weight:800; }
+.naa-n{ font-size:11px; font-weight:700; color:var(--muted); margin-top:1px; }
+
+.naa-btn.naa-primary{ padding-right:22px; }
+.naa-primary .naa-ic{ background:rgba(255,255,255,.24); box-shadow:none; }
+.naa-primary .naa-t{ color:#fff; }
+.naa-primary .naa-n{ color:rgba(255,255,255,.86); }
+.naa-primary:hover:not(:disabled){
+  filter:brightness(1.08); transform:translateY(-2px);
+  box-shadow:0 16px 34px -14px rgba(13,110,95,.55);
+}
+
+.naa-star .naa-ic{ background:linear-gradient(135deg,#fde68a,#f59e0b); box-shadow:none; }
+.naa-random .naa-ic{ background:linear-gradient(135deg,#c4b5fd,#8b5cf6); box-shadow:none; }
+.naa-weak .naa-ic{ background:linear-gradient(135deg,#fda4af,#f43f5e); box-shadow:none; }
+
+.naa-btn:not(.naa-primary):hover:not(:disabled){
+  transform:translateY(-2px); border-color:var(--accent); box-shadow:var(--shadow-sm);
+}
+@media (max-width:640px){
+  .need-head{ padding:16px; }
+  .naa-txt{ display:none; }
+  .naa-btn{ padding:9px; }
+  .naa-btn.naa-primary{ padding:9px 14px; }
+  .naa-btn.naa-primary .naa-txt{ display:flex; }
+}
 
 /* toast */
 .toast {
@@ -3726,6 +3799,25 @@ body.page-fs { overflow-x:hidden; }
 @media(max-width:420px){ .cl-overview-grid-1row{ grid-template-columns:repeat(2,1fr); } }
 .cl-overview-track{ display:flex; width:100%; height:12px; border-radius:7px; overflow:hidden;
   background:var(--card-sunken); border:1px solid var(--line); }
+
+/* Tách "Đang luyện" theo streak (1 lần / 2 lần đúng liên tiếp) */
+.cl-streak-split{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.cl-streak-item{
+  flex:1 1 240px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  background:var(--card-sunken); border:1px solid var(--line); border-radius:12px; padding:10px 12px;
+}
+.cls-info{ display:flex; align-items:center; gap:9px; min-width:0; }
+.cls-ic{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0; background:var(--card); }
+.cls-ic.s1{ background:rgba(217,119,6,.15); }
+.cls-ic.s2{ background:rgba(217,119,6,.28); }
+.cls-title{ font-size:12.5px; font-weight:800; color:var(--ink); }
+.cls-sub{ font-size:11px; color:var(--muted); font-weight:600; }
+.cls-sub b{ color:var(--gold); font-weight:900; }
+.cl-streak-item .st-stats-btn{ flex-shrink:0; white-space:nowrap; }
+.cl-streak-item .st-stats-btn:disabled{ opacity:.45; cursor:not-allowed; }
+@media(max-width:560px){ .cl-streak-item{ flex-direction:column; align-items:stretch; text-align:center; }
+  .cls-info{ justify-content:center; } }
 
 .prog-stats-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
 @media(max-width:520px){ .prog-stats-grid{ grid-template-columns:repeat(2,1fr); } }
@@ -5280,6 +5372,20 @@ body{
   border:1px solid transparent !important; box-shadow:var(--shadow-xs); transition:.15s;
 }
 .st-stats-btn:hover{ box-shadow:var(--shadow-sm); transform:translateY(-1px); background:var(--accent) !important; color:#fff !important; }
+
+/* Nút hành động chính (Học Flashcard / Gõ từ) — làm nổi bật hẳn lên so với
+   các nút phụ khác bằng nền gradient đậm màu & chữ trắng luôn hiện. */
+.cl-primary-action-btn{
+  background:linear-gradient(135deg,var(--accent),#0891b2) !important; color:#fff !important;
+  font-size:15px !important; padding:13px 24px !important; box-shadow:var(--shadow-sm);
+}
+.cl-primary-action-btn:hover{ filter:brightness(1.08); box-shadow:var(--shadow-md,var(--shadow-sm)); transform:translateY(-2px); }
+/* Nút phụ (Xoá lịch sử) — hạ tông xuống để không cạnh tranh với nút chính */
+.cl-ghost-action-btn{
+  background:transparent !important; color:var(--muted) !important; border:1px solid var(--line) !important;
+  box-shadow:none !important; font-weight:600 !important;
+}
+.cl-ghost-action-btn:hover{ background:var(--card-sunken) !important; color:var(--ink) !important; }
 
 /* ---- công cụ trên thẻ collocation (danh sách): phát âm + đánh dấu ---- */
 .cl-card-tools{ display:flex; gap:6px; margin-left:auto; }
@@ -35651,19 +35757,34 @@ function renderNeed(){
 
   root.innerHTML = `
     <div class="need-head">
-      <div>
-        <div class="need-title">🔁 Ôn tập ngắt quãng</div>
-        <div class="need-sub">
-          <b>${S.due}</b> đến hạn · <b>${S.inProgress}</b> đang học · <b>${S.learned}</b> đã thuộc · <b>${S.new}</b> chưa học
+      <div class="need-head-info">
+        <span class="need-title-ic">🔁</span>
+        <div>
+          <div class="need-title">Ôn tập ngắt quãng</div>
+          <div class="need-sub">
+            <b>${S.due}</b> đến hạn · <b>${S.inProgress}</b> đang học · <b>${S.learned}</b> đã thuộc · <b>${S.new}</b> chưa học
+          </div>
         </div>
       </div>
       <div class="need-actions">
-        <button class="btn primary" onclick="goSRS()" ${!S.due&&!S.new?'disabled':''}
-                title="Từ đến hạn → đang học dở → từ mới">🔁 Ôn theo lịch (${srsQueue().length})</button>
-        ${star.length?`<button class="btn" onclick="goLearnScope('star')"
-                title="Chỉ học đúng những từ bạn đánh dấu sao">⭐ Học từ đánh dấu (${star.length})</button>`:''}
-        <button class="btn" onclick="goLearnScope('random')">🎲 Ngẫu nhiên</button>
-        <button class="btn" onclick="goLearnScope('weak')">🔥 Hay quên</button>
+        <button class="btn primary naa-btn naa-primary" onclick="goSRS()" ${!S.due&&!S.new?'disabled':''}
+                title="Từ đến hạn → đang học dở → từ mới">
+          <span class="naa-ic">🔁</span>
+          <span class="naa-txt"><span class="naa-t">Ôn theo lịch</span><span class="naa-n">${srsQueue().length} từ</span></span>
+        </button>
+        ${star.length?`<button class="btn naa-btn naa-star" onclick="goLearnScope('star')"
+                title="Chỉ học đúng những từ bạn đánh dấu sao">
+          <span class="naa-ic">⭐</span>
+          <span class="naa-txt"><span class="naa-t">Học từ đánh dấu</span><span class="naa-n">${star.length} từ</span></span>
+        </button>`:''}
+        <button class="btn naa-btn naa-random" onclick="goLearnScope('random')">
+          <span class="naa-ic">🎲</span>
+          <span class="naa-txt"><span class="naa-t">Ngẫu nhiên</span></span>
+        </button>
+        <button class="btn naa-btn naa-weak" onclick="goLearnScope('weak')">
+          <span class="naa-ic">🔥</span>
+          <span class="naa-txt"><span class="naa-t">Hay quên</span></span>
+        </button>
       </div>
     </div>
 
@@ -39726,6 +39847,8 @@ let _stMode = 'lib';         // 'lib' | 'quiz' | 'translate' | 'colloc'
 let _stTopic = 'all';
 let _stQuery = '';
 let _clSortAZ = false;
+let _clSortStreak = false;   // true = sắp theo số lần gõ đúng liên tiếp (streak), nhiều nhất lên đầu
+let _clCompactView = false;  // true = xem thẻ rút gọn (chỉ từ, nghĩa, phát âm, đánh dấu, trạng thái)
 let _allQuery = '';
 let _allSearchT = null;
 let _allStatus = 'all';
@@ -40115,6 +40238,8 @@ function stCardHTML(s){
 function stRenderColloc(root){
   const boxes = clLoadTypeBoxes();
   const overall = clTypeStats(COLLOCATIONS);
+  const streak1Pool = clStreakPool(1);
+  const streak2Pool = clStreakPool(2);
 
   const byTopic = COLLOC_TOPICS.map(t=>{
     const pool = COLLOCATIONS.filter(c=>c.topic===t);
@@ -40131,7 +40256,16 @@ function stRenderColloc(root){
         || (c.synonyms||[]).some(s=>s.toLowerCase().includes(q));
   });
   list = list.slice();
-  if(_clSortAZ) list.sort((a,b)=> a.phrase.localeCompare(b.phrase));
+  if(_clSortStreak){
+    list.sort((a,b)=>{
+      const eb = boxes[b.id], ea = boxes[a.id];
+      const sb = (eb&&eb.streak)||0, sa = (ea&&ea.streak)||0;
+      if(sb !== sa) return sb-sa;
+      const cb = (eb&&eb.correct)||0, ca = (ea&&ea.correct)||0;
+      if(cb !== ca) return cb-ca;
+      return a.phrase.localeCompare(b.phrase);
+    });
+  } else if(_clSortAZ) list.sort((a,b)=> a.phrase.localeCompare(b.phrase));
   const totalMatched = list.length;
   const shownList = list.slice(0, _clListShown);
   const hasMore = totalMatched > shownList.length;
@@ -40148,9 +40282,9 @@ function stRenderColloc(root){
       </div>
     </div>
     <div class="st-tr-head-btns" style="justify-content:center;width:100%;margin:10px 0">
-      <button class="st-stats-btn" id="clFlashcardBtn">🎴 Học Flashcard</button>
-      <button class="st-stats-btn" id="clTypingModeBtn">⌨️ Gõ từ</button>
-      <button class="st-stats-btn" id="clStatResetBtn" title="Xoá lịch sử &amp; tiến độ Gõ từ Collocation">🗑 Xoá lịch sử</button>
+      <button class="st-stats-btn cl-primary-action-btn" id="clFlashcardBtn">🎴 Học Flashcard</button>
+      <button class="st-stats-btn cl-primary-action-btn" id="clTypingModeBtn">⌨️ Gõ từ</button>
+      <button class="st-stats-btn cl-ghost-action-btn" id="clStatResetBtn" title="Xoá lịch sử &amp; tiến độ Gõ từ Collocation">🗑 Xoá lịch sử</button>
     </div>
 
     <div class="cl-overview" style="margin-top:10px;margin-bottom:14px">
@@ -40167,6 +40301,25 @@ function stRenderColloc(root){
         <div class="cl-topic-bar-seg learning" style="width:${overall.total?overall.learning/overall.total*100:0}%"></div>
         <div class="cl-topic-bar-seg unseen" style="width:${overall.total?overall.unseen/overall.total*100:0}%"></div>
       </div>
+      ${overall.learning ? `
+      <div class="cl-streak-split">
+        <div class="cl-streak-item">
+          <div class="cls-info">
+            <span class="cls-ic s1">🔸</span>
+            <div class="cls-text"><div class="cls-title">Gõ đúng 1 lần liên tiếp</div>
+              <div class="cls-sub"><b>${streak1Pool.length}</b> cụm · còn 2 lần đúng nữa là "Đã thuộc"</div></div>
+          </div>
+          <button class="st-stats-btn" id="clStreak1Btn" ${!streak1Pool.length?'disabled':''}>🎯 Học thuộc nhóm này</button>
+        </div>
+        <div class="cl-streak-item">
+          <div class="cls-info">
+            <span class="cls-ic s2">🔹</span>
+            <div class="cls-text"><div class="cls-title">Gõ đúng 2 lần liên tiếp</div>
+              <div class="cls-sub"><b>${streak2Pool.length}</b> cụm · còn 1 lần đúng nữa là "Đã thuộc"</div></div>
+          </div>
+          <button class="st-stats-btn" id="clStreak2Btn" ${!streak2Pool.length?'disabled':''}>🎯 Học thuộc nhóm này</button>
+        </div>
+      </div>` : ''}
     </div>
 
     <div class="st-head">
@@ -40176,6 +40329,8 @@ function stRenderColloc(root){
         <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
       </div>
       <button class="st-stats-btn ${_clSortAZ?'active':''}" id="clSortAZBtn" title="Sắp xếp theo bảng chữ cái A→Z">🔤 A→Z</button>
+      <button class="st-stats-btn ${_clSortStreak?'active':''}" id="clSortStreakBtn" title="Sắp xếp theo số lần gõ đúng liên tiếp (cụm gõ đúng nhiều nhất lên đầu)">🔥 Số lần đúng</button>
+      <button class="st-stats-btn ${_clCompactView?'active':''}" id="clCompactBtn" title="Xem thẻ rút gọn: chỉ từ, nghĩa, phát âm, đánh dấu, trạng thái">${_clCompactView?'▤ Thẻ đầy đủ':'▦ Thẻ rút gọn'}</button>
     </div>
 
     <div class="rd-filters" id="clStatTabChips">
@@ -40196,7 +40351,7 @@ function stRenderColloc(root){
       <button class="rd-chip active" id="clStatTopicClear">📚 ${esc(_clStatTopicFilter)} ✕</button>
     </div>` : ''}
 
-    <div class="st-list cl-list" id="clStatList">
+    <div class="st-list cl-list ${_clCompactView?'cl-list-compact':''}" id="clStatList">
       ${shownList.length ? shownList.map(c=>clCardHTML(c, boxes)).join('') : `<div class="rd-empty">Không tìm thấy collocation nào khớp.</div>`}
     </div>
     ${hasMore ? `<div class="cl-load-more-wrap" style="text-align:center;margin:14px 0">
@@ -40246,7 +40401,13 @@ function stRenderColloc(root){
   document.getElementById('clSearch').value = _clStatQuery;
   document.getElementById('clFlashcardBtn').onclick = ()=> clStartFlashcards(list.length ? list : COLLOCATIONS);
   document.getElementById('clTypingModeBtn').onclick = ()=> clOpenTypingSetup(_clStatTopicFilter || (_clStatTab==='learning' ? 'learning' : 'all'));
-  document.getElementById('clSortAZBtn').onclick = ()=>{ _clSortAZ = !_clSortAZ; _clListShown = CL_LIST_PAGE_SIZE; stRenderColloc(root); };
+  const streak1Btn = document.getElementById('clStreak1Btn');
+  if(streak1Btn) streak1Btn.onclick = ()=>{ if(streak1Pool.length) clStartTyping(shuffle(streak1Pool.slice())); };
+  const streak2Btn = document.getElementById('clStreak2Btn');
+  if(streak2Btn) streak2Btn.onclick = ()=>{ if(streak2Pool.length) clStartTyping(shuffle(streak2Pool.slice())); };
+  document.getElementById('clSortAZBtn').onclick = ()=>{ _clSortAZ = !_clSortAZ; if(_clSortAZ) _clSortStreak=false; _clListShown = CL_LIST_PAGE_SIZE; stRenderColloc(root); };
+  document.getElementById('clSortStreakBtn').onclick = ()=>{ _clSortStreak = !_clSortStreak; if(_clSortStreak) _clSortAZ=false; _clListShown = CL_LIST_PAGE_SIZE; stRenderColloc(root); };
+  document.getElementById('clCompactBtn').onclick = ()=>{ _clCompactView = !_clCompactView; stRenderColloc(root); };
   document.getElementById('clStatResetBtn').onclick = clResetTypingProgress;
 
   root.querySelectorAll('.cl-card-speak').forEach(btn=>{
@@ -40268,6 +40429,27 @@ function clCardHTML(c, boxes){
   boxes = boxes || clLoadTypeBoxes();
   const st = clStatusOf(c, boxes);
   const e = boxes[c.id];
+
+  if(_clCompactView){
+    return `
+    <div class="st-card cl-card cl-card-compact" id="cl-card-${esc(c.id)}">
+      <div class="cl-compact-main">
+        <div class="cl-compact-text">
+          <div class="st-structure">${stHl(c.phrase, q)}</div>
+          <div class="st-meaning">${stHl(c.meaning, q)}</div>
+        </div>
+        <div class="cl-card-tools">
+          <button class="cl-card-speak" data-phrase="${esc(c.phrase)}" title="Phát âm">🔊</button>
+          <button class="cl-card-bm ${isBm?'on':''}" data-id="${esc(c.id)}" title="Đánh dấu">${isBm?'⭐':'☆'}</button>
+        </div>
+      </div>
+      <div class="st-status-line" title="Trạng thái đồng bộ với mục Thống kê Gõ từ">
+        <span class="st-status-badge st-status-${st}">${CL_STATUS_ICON[st]} ${CL_STATUS_LABEL[st]}</span>
+        ${e ? `<span class="st-status-streak">🔥 ${e.streak||0}/${CL_MASTER_STREAK}</span>` : ''}
+      </div>
+    </div>`;
+  }
+
   const ex = clFindExampleSentence(c);
   return `
   <div class="st-card cl-card" id="cl-card-${esc(c.id)}">
@@ -40614,6 +40796,13 @@ function clTypeReview(c, quality){
   clSaveTypeBoxes(b);
   return cur;
 }
+/* Trần hợp lý cho số lượt trả lời TÍNH VÀO TỔNG của mỗi collocation.
+   Thực tế chỉ cần đúng liên tiếp 3 lần (CL_MASTER_STREAK) là "Đã thuộc",
+   nên vài chục lượt/cụm đã là rất nhiều; đặt trần cao hơn hẳn mức đó để
+   không ảnh hưởng người học chăm, nhưng vẫn chặn được số liệu bị dồn quá
+   đà (ví dụ do dữ liệu cũ từ bản trước) khiến tổng lượt trả lời nhảy lên
+   tới hàng trăm nghìn — điều không thể xảy ra với đúng số cụm đang có. */
+const CL_ATTEMPTS_CAP_PER_ITEM = 50;
 function clTypeStats(pool){
   const list = pool && pool.length ? pool : COLLOCATIONS;
   const b = clLoadTypeBoxes();
@@ -40621,7 +40810,14 @@ function clTypeStats(pool){
   list.forEach(c=>{
     const e = b[c.id];
     if(!e){ unseen++; return; }
-    attempts += e.seen||0; correct += e.correct||0; wrong += e.wrong||0;
+    let seen = e.seen||0, cOk = e.correct||0, cNo = e.wrong||0;
+    if(seen > CL_ATTEMPTS_CAP_PER_ITEM){
+      const ratio = CL_ATTEMPTS_CAP_PER_ITEM / seen;
+      cOk = Math.round(cOk*ratio);
+      seen = CL_ATTEMPTS_CAP_PER_ITEM;
+      cNo = seen - cOk;
+    }
+    attempts += seen; correct += cOk; wrong += cNo;
     if((e.streak||0) >= CL_MASTER_STREAK) mastered++; else learning++;
   });
   const acc = (correct+wrong) ? Math.round(correct/(correct+wrong)*100) : null;
@@ -40711,6 +40907,16 @@ let _clTpCount = 20;           // số cụm mỗi phiên (số nguyên do ngư�
 function clLearningPool(){
   const boxes = clLoadTypeBoxes();
   return COLLOCATIONS.filter(c=> clStatusOf(c, boxes)==='learning');
+}
+/* Tách riêng nhóm "đang luyện" theo ĐÚNG streak hiện tại (1 hoặc 2 lần
+   đúng liên tiếp) — để có thể luyện tập trung từng nhóm gần đạt "Đã
+   thuộc" nhất trước, thay vì gộp chung tất cả "đang luyện". */
+function clStreakPool(streak){
+  const boxes = clLoadTypeBoxes();
+  return COLLOCATIONS.filter(c=>{
+    const e = boxes[c.id];
+    return e && (e.streak||0) === streak;
+  });
 }
 
 function clTypingSetupPool(){
