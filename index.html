@@ -1117,15 +1117,41 @@ select:focus, .search-box:focus {
 .trday-gates{background:var(--card-sunken);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;}
 .trg-title{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:9px;}
 .trg-title span{font-weight:600;color:var(--muted);}
-.trg-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;}
-.trg-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:99px;font-size:12px;font-weight:800;
-  background:var(--card);border:1.5px solid var(--line);color:var(--ink);}
-.trg-chip i{font-style:normal;font-weight:600;color:var(--muted);}
-.trg-chip.g3{border-color:var(--green);color:var(--green);}
-.trg-chip.g2{border-color:var(--accent);color:var(--accent);}
-.trg-chip.g1{border-color:var(--gold);color:var(--gold);}
-.trg-chip.g0{border-color:var(--line-strong);color:var(--muted);}
+.trg-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;}
+/* Nút thống kê cửa — dạng thẻ bấm được (không còn là span tĩnh): icon to,
+   số nổi bật, nhãn rõ nghĩa, có hover/active/disabled để biết là bấm được. */
+.trg-chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border-radius:12px;
+  background:var(--card);border:1.5px solid var(--line);color:var(--ink);cursor:pointer;font:inherit;
+  transition:transform .12s ease,box-shadow .15s ease,border-color .15s ease;}
+.trg-chip:hover:not(:disabled){ transform:translateY(-2px); box-shadow:var(--shadow-sm); }
+.trg-chip:active:not(:disabled){ transform:scale(.97); }
+.trg-chip:disabled{ opacity:.4; cursor:default; }
+.trg-ic{font-size:17px;line-height:1;}
+.trg-n{font-size:17px;font-weight:900;line-height:1.2;}
+.trg-lbl{font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap;}
+.trg-chip.g3{border-color:var(--green);}
+.trg-chip.g3 .trg-n{color:var(--green);}
+.trg-chip.g2{border-color:var(--accent);}
+.trg-chip.g2 .trg-n{color:var(--accent);}
+.trg-chip.g1{border-color:var(--gold);}
+.trg-chip.g1 .trg-n{color:var(--gold);}
+.trg-chip.g0{border-color:var(--line-strong);}
+.trg-chip.g0 .trg-n{color:var(--muted);}
+.trg-chip.active{ box-shadow:0 0 0 2.5px var(--accent-bg), var(--shadow-sm); }
+.trg-chip.active.g3{ background:var(--green-bg); }
+.trg-chip.active.g2{ background:var(--accent-bg); }
+.trg-chip.active.g1{ background:var(--gold-bg); }
+.trg-chip.active.g0{ background:var(--card-sunken); }
 .trg-done{font-size:12.5px;font-weight:700;color:var(--green);}
+@media(max-width:520px){ .trg-row{grid-template-columns:repeat(2,1fr);} }
+/* Dòng thông báo "đang lọc theo cửa" — gắn ngay trên khu vực need-tabs/
+   grid sẵn có (tận dụng lại thay vì tạo danh sách riêng bên dưới). */
+.trg-filter-note{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--accent-bg);
+  border:1px solid var(--accent);border-radius:10px;padding:8px 12px;margin:-4px 0 12px;font-size:12.5px;
+  font-weight:700;color:var(--accent);}
+.trg-filter-note button{margin-left:auto;border:none;background:var(--card);border:1px solid var(--accent);
+  border-radius:8px;padding:4px 10px;cursor:pointer;color:var(--accent);font-size:11.5px;font-weight:700;}
+.trg-filter-note button:hover{ background:var(--accent); color:#fff; }
 @media(max-width:640px){ .trday-stats{grid-template-columns:1fr 1fr;} }
 .need-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px;}
 .need-more{text-align:center;padding:16px;color:var(--muted);font-size:12.5px;}
@@ -4385,6 +4411,13 @@ html { scroll-behavior:smooth; }
   30%,50%,70%{transform:translateX(-7px)} 40%,60%{transform:translateX(7px)}
 }
 
+/* Nhấp nháy nhẹ cho nút "Nghe phát âm" trong Gõ từ ôn lại (Đã học hôm nay)
+   -> mắt tự nhiên bị hút vào nút này trước khi gõ, để không bỏ sót. */
+@keyframes ttqPulse{
+  0%,100%{ box-shadow:0 6px 16px -6px rgba(13,110,95,.5); }
+  50%{ box-shadow:0 6px 22px -4px rgba(13,110,95,.85); }
+}
+
 /* ===== GÕ TỪ: NGHE PHÁT ÂM ĐỂ ĐOÁN ===== */
 .type-listen{
   display:flex; align-items:center; justify-content:center;
@@ -6404,7 +6437,7 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
           <li><b>Nhập dữ liệu</b> từ file <code>.json</code> vừa lưu → dữ liệu trở lại nguyên vẹn.</li>
         </ol>
         <div class="backup-what">
-          Dữ liệu được sao lưu (toàn bộ, tự động — kể cả mục thêm mới sau này): tiến độ SRS (bậc/lịch ôn từng từ) · lịch sử học &amp; streak · từ "Cần học" · <b>từ vựng thêm từ bài Reading</b> · <b>toàn bộ lịch sử &amp; đánh dấu luyện dịch Anh–Việt (Writing)</b> · <b>dữ liệu &amp; thống kê luyện đồng nghĩa (Synonym)</b> · thống kê Quiz · <b>các mục đánh dấu (bookmark) ở Collocation</b> · <b>tiến độ &amp; thống kê Gõ từ Collocation (bậc nhớ từng cụm, số lượt đúng/sai, số cụm đã học theo ngày)</b> · <b>Sổ ghi chú (đoạn trích &amp; ghi chú lưu từ bài đọc, theo ngày)</b> · kim cương &amp; cấp độ · tên &amp; ảnh đại diện · cỡ phiên học · giọng đọc · giao diện sáng/tối/màu nhấn/nền/độ trong suốt/cỡ chữ/kiểu chữ/độ bo góc/mật độ bố cục.
+          Dữ liệu được sao lưu (toàn bộ, tự động — kể cả mục thêm mới sau này): tiến độ SRS (bậc/lịch ôn từng từ) · lịch sử học &amp; streak · từ "Cần học" · <b>từ vựng thêm từ bài Reading</b> · <b>toàn bộ lịch sử &amp; đánh dấu luyện dịch Anh–Việt (Writing)</b> · <b>dữ liệu &amp; thống kê luyện đồng nghĩa (Synonym)</b> · thống kê Quiz · <b>các mục đánh dấu (bookmark) ở Collocation</b> · <b>tiến độ &amp; thống kê Gõ từ Collocation (bậc nhớ từng cụm, số lượt đúng/sai, số cụm đã học theo ngày)</b> · <b>Sổ ghi chú — gồm cả đoạn trích &amp; ghi chú lưu từ bài đọc lẫn ghi chú nhanh gõ từ nút nổi 📝, theo ngày</b> · kim cương &amp; cấp độ · tên &amp; ảnh đại diện · cỡ phiên học · giọng đọc · giao diện sáng/tối/màu nhấn/nền/độ trong suốt/cỡ chữ/kiểu chữ/độ bo góc/mật độ bố cục.
         </div>
         <div class="backup-actions">
           <button class="btn primary" onclick="exportProgress()">⬇️ Xuất dữ liệu (.json)</button>
@@ -34562,12 +34595,18 @@ function openWordPopup(wordStr){
   const forms = normForms(v.wordforms);
   const exList = normExampleList(v);
   const sec = t => `<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:16px 0 7px">${t}</div>`;
+  const stg = STAGES[stageOf(v.word)];
   overlay.innerHTML = `
     <div style="background:var(--card);color:var(--ink);max-width:480px;width:100%;max-height:88vh;overflow-y:auto;
       border-radius:16px;padding:20px 20px 18px;box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px">
         <div>
-          <div style="font-size:23px;font-weight:900;font-family:var(--font-word)">${esc(v.word)}</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:23px;font-weight:900;font-family:var(--font-word)">${esc(v.word)}</span>
+            <button id="wpSpeak" title="Nghe phát âm"
+              style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+              border:1.5px solid var(--accent);background:var(--accent-bg);color:var(--accent);font-size:14px;cursor:pointer;flex-shrink:0">🔊</button>
+          </div>
           ${v.ipa?`<div style="color:var(--muted);font-family:var(--font-mono);font-size:13px;margin-top:2px">${esc(v.ipa)}</div>`:''}
         </div>
         <button id="wpClose" style="border:none;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
@@ -34575,6 +34614,10 @@ function openWordPopup(wordStr){
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
         ${v.pos?`<span style="background:var(--accent-bg);color:var(--accent);font-size:11px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:6px">${esc(v.pos)}</span>`:''}
         ${v.level?`<span class="lvl ${lvlClass(v.level)}">${esc(v.level)}</span>`:''}
+        <span title="Trạng thái học từ này" style="display:inline-flex;align-items:center;gap:4px;background:var(--card-sunken);
+          border:1px solid var(--line);font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;color:var(--ink-soft)">
+          ${stg.ic} ${stg.name}</span>
+        ${gateChips(v.word, true)}
       </div>
       <div style="font-size:16px;font-weight:700;color:var(--vn-color);margin-bottom:4px">${esc(v.vn)}</div>
 
@@ -34588,6 +34631,7 @@ function openWordPopup(wordStr){
   document.body.appendChild(overlay);
   const close = ()=> overlay.remove();
   overlay.querySelector('#wpClose').onclick = close;
+  overlay.querySelector('#wpSpeak').onclick = ()=> speak(v.word);
   overlay.querySelector('#wpFull').onclick = ()=>{ close(); openWord(v.word); };
   overlay.addEventListener('click', e=>{ if(e.target===overlay) close(); });
 }
@@ -34606,7 +34650,12 @@ function openCollocPopup(id){
     <div style="background:var(--card);color:var(--ink);max-width:480px;width:100%;max-height:88vh;overflow-y:auto;
       border-radius:16px;padding:20px 20px 18px;box-shadow:0 12px 40px rgba(0,0,0,.35);border:1px solid var(--line);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px">
-        <div style="font-size:20px;font-weight:900;font-family:var(--font-word)">${esc(c.phrase)}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:20px;font-weight:900;font-family:var(--font-word)">${esc(c.phrase)}</span>
+          <button id="cpSpeak" title="Nghe phát âm"
+            style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;
+            border:1.5px solid var(--accent);background:var(--accent-bg);color:var(--accent);font-size:13px;cursor:pointer;flex-shrink:0">🔊</button>
+        </div>
         <button id="cpClose" style="border:none;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px">✕</button>
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
@@ -34623,6 +34672,7 @@ function openCollocPopup(id){
   document.body.appendChild(overlay);
   const close = ()=> overlay.remove();
   overlay.querySelector('#cpClose').onclick = close;
+  overlay.querySelector('#cpSpeak').onclick = ()=> speak(c.phrase);
   overlay.querySelector('#cpFull').onclick = ()=>{ close(); goCollocType(); };
   overlay.addEventListener('click', e=>{ if(e.target===overlay) close(); });
 }
@@ -34635,6 +34685,7 @@ function openCollocPopup(id){
    bằng Trắc nghiệm hoặc Gõ từ — không đụng vào SRS/điểm số chính. --------- */
 let _needDayKey = todayKey();   // ngày đang xem trong pane "Đã học hôm nay"
 let _needDaySub = 'word';       // 'word' | 'colloc' — tab con đang mở trong pane
+let _needGateFilter = null;     // null | 0 | 1 | 2 | 3 — đang lọc theo số cửa nào trong "Phân loại theo số cửa đã học"
 
 /* 14 ngày gần nhất (kể cả ngày trống) để vẽ thanh chọn ngày, cũ->mới */
 function _last14DayKeys(){
@@ -34694,11 +34745,22 @@ function _markDayReviewDone(dayKey, mode, key){
 /* Nút "📅 Đã học hôm nay" trên Dashboard -> nhảy thẳng sang tab Cần học,
    mở đúng pane này với ngày hôm nay đang chọn sẵn. */
 function goTodayLearnedTab(){
-  _needTab = 'today'; _needDayKey = todayKey(); _needDaySub = 'word';
+  _needTab = 'today'; _needDayKey = todayKey(); _needDaySub = 'word'; _needGateFilter = null;
   document.querySelector('.tab-btn[data-mode="need"]').click();
 }
-function setNeedDay(k){ _needDayKey = k; renderNeed(); }
-function setNeedDaySub(s){ _needDaySub = s; renderNeed(); }
+function setNeedDay(k){ _needDayKey = k; _needGateFilter = null; renderNeed(); }
+function setNeedDaySub(s){ _needDaySub = s; if(s!=='word') _needGateFilter = null; renderNeed(); }
+/* Bấm vào 1 ô thống kê "Phân loại theo số cửa đã học" -> lọc ngay danh
+   sách Từ vựng ở khu vực grid sẵn có bên dưới (tận dụng lại, không tạo
+   danh sách riêng). Bấm lại ô đang chọn -> bỏ lọc, quay về xem tất cả. */
+function setNeedGateFilter(n){
+  _needGateFilter = (_needGateFilter === n) ? null : n;
+  if(_needGateFilter !== null) _needDaySub = 'word';
+  renderNeed();
+  if(_needGateFilter !== null){
+    setTimeout(()=>{ document.querySelector('.need-tabs')?.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 30);
+  }
+}
 
 /* Đánh dấu sao (⭐ Cần học) toàn bộ từ vựng đã luyện trong 1 ngày, để dồn
    ôn lại cùng lúc với các từ hay quên khác — tiện khi 1 ngày học nhiều từ
@@ -34754,14 +34816,25 @@ function renderTodayPaneHTML(){
   const gb = {0:0,1:0,2:0,3:0};
   words.forEach(v=> gb[gateCount(v.word)]++ );
   const gateTodo = gb[0]+gb[1]+gb[2];
+  if(_needGateFilter !== null && !gb[_needGateFilter]) _needGateFilter = null; // ô đang lọc rỗng (vd đổi ngày) -> bỏ lọc
+  const displayWords = _needGateFilter !== null ? words.filter(v=>gateCount(v.word)===_needGateFilter) : words;
+  const GATE_DEFS = [
+    {n:0, ic:'⬜', label:'Chưa qua cửa', cls:'g0'},
+    {n:1, ic:'🃏', label:'Qua 1 cửa',    cls:'g1'},
+    {n:2, ic:'❓', label:'Qua 2 cửa',    cls:'g2'},
+    {n:3, ic:'✅', label:'Đủ 3 cửa',     cls:'g3'},
+  ];
   const gatesRow = words.length ? `
     <div class="trday-gates">
-      <div class="trg-title">🚪 Phân loại theo số cửa đã học <span>(trong ${words.length} từ hôm nay)</span></div>
+      <div class="trg-title">🚪 Phân loại theo số cửa đã học <span>(trong ${words.length} từ hôm nay — bấm 1 ô để lọc danh sách bên dưới)</span></div>
       <div class="trg-row">
-        <span class="trg-chip g0" title="Chưa vượt cửa nào">⬜ ${gb[0]} <i>chưa qua cửa</i></span>
-        <span class="trg-chip g1" title="Mới vượt 1/3 cửa">🃏 ${gb[1]} <i>qua 1 cửa</i></span>
-        <span class="trg-chip g2" title="Đã vượt 2/3 cửa">❓ ${gb[2]} <i>qua 2 cửa</i></span>
-        <span class="trg-chip g3" title="Đã vượt đủ 3 cửa">✅ ${gb[3]} <i>đủ 3 cửa</i></span>
+        ${GATE_DEFS.map(g=>`
+          <button class="trg-chip ${g.cls} ${_needGateFilter===g.n?'active':''}" ${gb[g.n]?'':'disabled'}
+            onclick="setNeedGateFilter(${g.n})" title="Bấm để lọc danh sách bên dưới theo các từ ${g.label.toLowerCase()}">
+            <span class="trg-ic">${g.ic}</span>
+            <span class="trg-n">${gb[g.n]}</span>
+            <span class="trg-lbl">${g.label}</span>
+          </button>`).join('')}
       </div>
       ${gateTodo ? `<button class="btn primary" onclick="startGateCatchup('${_needDayKey}')">🚪 Học cho đủ cửa (${gateTodo} từ)</button>` : `<div class="trg-done">🎉 Cả ${words.length} từ hôm nay đã đủ 3 cửa!</div>`}
     </div>` : '';
@@ -34801,13 +34874,17 @@ function renderTodayPaneHTML(){
     </div>
     <div class="need-tabs">
       <button class="need-tab ${_needDaySub==='word'?'active':''}" onclick="setNeedDaySub('word')">
-        <span class="nt-ic">📖</span><span class="nt-t">Từ vựng</span><span class="nt-n">${words.length}</span></button>
+        <span class="nt-ic">📖</span><span class="nt-t">Từ vựng</span><span class="nt-n">${_needGateFilter!==null && _needDaySub==='word' ? displayWords.length+'/'+words.length : words.length}</span></button>
       <button class="need-tab ${_needDaySub==='colloc'?'active':''}" onclick="setNeedDaySub('colloc')">
         <span class="nt-ic">🔗</span><span class="nt-t">Collocation</span><span class="nt-n">${collocs.length}</span></button>
     </div>
+    ${_needGateFilter!==null && _needDaySub==='word' ? `<div class="trg-filter-note">
+        ${GATE_DEFS.find(x=>x.n===_needGateFilter).ic} Đang lọc: <b>${GATE_DEFS.find(x=>x.n===_needGateFilter).label.toLowerCase()}</b>
+        <button onclick="setNeedGateFilter(${_needGateFilter})">✕ Bỏ lọc, xem tất cả</button>
+      </div>` : ''}
     <div class="${_needDaySub==='word' && _needViewMode==='compact' ? 'lwc-grid' : 'need-grid'}">
       ${_needDaySub==='word'
-        ? (words.length ? words.map(_needViewMode==='compact'?lwcTileHTML:needCardHTML).join('') : `<div class="empty" style="grid-column:1/-1"><div style="font-size:13px">Ngày này chưa luyện từ vựng nào.</div></div>`)
+        ? (displayWords.length ? displayWords.map(_needViewMode==='compact'?lwcTileHTML:needCardHTML).join('') : `<div class="empty" style="grid-column:1/-1"><div style="font-size:13px">${_needGateFilter!==null?'Không có từ nào ở nhóm cửa này.':'Ngày này chưa luyện từ vựng nào.'}</div></div>`)
         : (collocs.length ? collocs.map(c=>clCardHTML(c)).join('') : `<div class="empty" style="grid-column:1/-1"><div style="font-size:13px">Ngày này chưa luyện collocation nào.</div></div>`)}
     </div>`;
 }
@@ -34920,10 +34997,11 @@ function renderDayReviewQuiz(){
       if(answered) return;
       answered = true;
       const ok = opt === item.a;
-      if(ok){ st.score++; b.style.background='#16a34a'; b.style.color='#fff'; b.style.borderColor='#16a34a'; _markDayReviewDone(st.dayKey, 'quiz', item._doneKey); }
+      if(ok){ st.score++; b.style.background='#16a34a'; b.style.color='#fff'; b.style.borderColor='#16a34a'; _markDayReviewDone(st.dayKey, 'quiz', item._doneKey); sfx.correct(); }
       else{
         b.style.background='#dc2626'; b.style.color='#fff'; b.style.borderColor='#dc2626';
         [...optsBox.children].find(c=>c.textContent===item.a).style.cssText += ';background:#16a34a;color:#fff;border-color:#16a34a';
+        sfx.wrong();
       }
       setTimeout(()=>{ overlay.remove(); st.i++; renderDayReviewQuiz(); }, 900);
     };
@@ -34994,6 +35072,17 @@ function renderDayReviewTyping(){
         ${v.pos?`<div style="color:var(--muted);font-size:12px;margin-top:3px">(${esc(v.pos)})</div>`:''}
         <div style="font-family:var(--font-mono);letter-spacing:3px;color:var(--muted);font-size:16px;margin-top:8px">${_typeHintBlanks(v.word)}
           <span style="opacity:.65;font-family:var(--font-body);letter-spacing:normal;font-size:12px">(${v.word.replace(/\s/g,'').length} chữ cái)</span></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:9px;margin-top:12px">
+          <button id="ttqSpeak" title="Nghe phát âm"
+            style="display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:99px;cursor:pointer;
+            font:inherit;font-size:13px;font-weight:800;border:1.5px solid var(--accent);background:var(--accent-grad);
+            color:#fff;box-shadow:var(--glow,0 6px 16px -6px rgba(13,110,95,.5));animation:ttqPulse 2.2s ease-in-out infinite">
+            <span style="font-size:16px;line-height:1">🔊</span><span>Nghe phát âm</span></button>
+          <button id="ttqSpeakSlow" title="Nghe chậm"
+            style="display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:99px;cursor:pointer;
+            font:inherit;font-size:13px;font-weight:700;border:1.5px solid var(--line);background:var(--card-sunken);color:var(--ink-soft)">
+            <span style="font-size:14px;line-height:1">🐢</span><span>Chậm</span></button>
+        </div>
       </div>
       <input id="ttqInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
         placeholder="Gõ từ tiếng Anh..."
@@ -35004,6 +35093,8 @@ function renderDayReviewTyping(){
     </div>`;
   document.body.appendChild(overlay);
   overlay.querySelector('#ttqClose').onclick = ()=> overlay.remove();
+  overlay.querySelector('#ttqSpeak').onclick = ()=> speak(v.word);
+  overlay.querySelector('#ttqSpeakSlow').onclick = ()=> speak(v.word, 0.65);
 
   const input = overlay.querySelector('#ttqInput');
   const fb = overlay.querySelector('#ttqFeedback');
@@ -35018,12 +35109,14 @@ function renderDayReviewTyping(){
       fb.style.color='#16a34a'; fb.textContent = '✅ Chính xác!'; input.style.borderColor='#16a34a';
       st.pool.shift();                       // gõ đúng -> tính là xong, bỏ khỏi hàng đợi
       _markDayReviewDone(st.dayKey, 'typing', v.word);
+      sfx.correct();
       speak(v.word);                         // đọc to từ khi gõ đúng
     } else {
       fb.style.color='#dc2626'; fb.textContent = `❌ Chưa đúng (đáp án: ${v.word}) — từ này sẽ quay lại ở cuối lượt`;
       input.style.borderColor='#dc2626';
       st.mistakes++;
       st.pool.push(st.pool.shift());         // gõ sai -> dồn xuống cuối hàng đợi, gõ đúng mới tính
+      sfx.wrong();
     }
     input.disabled = true;
     submitBtn.textContent = 'Tiếp theo →';
@@ -39417,6 +39510,13 @@ function exportProgress(){
     try{ writingCount = (JSON.parse(data['vocab_st_translate_history']||'[]')||[]).length; }catch(e){}
     let synCount = 0;
     try{ synCount = (JSON.parse(data['vocab_syn_stats_v1']||'{}')||{}).total || 0; }catch(e){}
+    let noteCount = 0, quickNoteCount = 0;
+    try{
+      const nbData = JSON.parse(data[NOTEBOOK_KEY]||'{}')||{};
+      Object.values(nbData).forEach(list=>{
+        (list||[]).forEach(item=>{ noteCount++; if(item.quickCapture) quickNoteCount++; });
+      });
+    }catch(e){}
 
     const payload = {
       app: 'IELTS VOCAB by Cris',
@@ -39426,6 +39526,7 @@ function exportProgress(){
       wordsWithProgress: srsCount,
       writingHistoryCount: writingCount,
       synonymAttemptCount: synCount,
+      notebookCount: noteCount,
       data
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
@@ -39437,7 +39538,7 @@ function exportProgress(){
     a.download = `vocab-tiendo-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(url), 2000);
-    backupMsg(`✅ Đã xuất toàn bộ dữ liệu (${srsCount} từ có tiến độ, ${writingCount} lượt luyện dịch, ${Object.keys(data).length} mục dữ liệu). Giữ file .json này để nhập lại sau khi thêm từ mới.`, true);
+    backupMsg(`✅ Đã xuất toàn bộ dữ liệu (${srsCount} từ có tiến độ, ${writingCount} lượt luyện dịch, ${noteCount} ghi chú${quickNoteCount?` — trong đó ${quickNoteCount} ghi chú nhanh`:''}, ${Object.keys(data).length} mục dữ liệu). Giữ file .json này để nhập lại sau khi thêm từ mới.`, true);
   }catch(e){
     backupMsg('❌ Không xuất được dữ liệu: ' + e.message, false);
   }
@@ -39562,7 +39663,14 @@ function mergeVocabValue(key, localRaw, importedRaw){
     }
     if(key === NOTEBOOK_KEY){
       /* Sổ ghi chú: gộp theo từng ngày, dedupe theo id — không ghi đè,
-         không nhân đôi mục trùng khi gộp cùng 1 file backup nhiều lần. */
+         không nhân đôi mục trùng khi gộp cùng 1 file backup nhiều lần.
+         Riêng "ghi chú nhanh" (quickCapture) mỗi ngày chỉ được ĐÚNG 1
+         mục theo đúng quy ước của app — nếu cả 2 máy đều có sẵn 1 mục
+         quickCapture cho cùng ngày (ví dụ máy tính và điện thoại đều
+         gõ ghi chú nhanh hôm đó), phải NỐI nội dung lại làm 1 mục duy
+         nhất, nếu không mục còn lại sẽ bị "lạc" khỏi luồng ghi chú
+         nhanh (lần gõ tiếp theo trên điện thoại chỉ nối vào 1 trong 2
+         mục, khiến nội dung từ máy kia như biến mất). */
       const a = JSON.parse(localRaw)||{}, b = JSON.parse(importedRaw)||{};
       const out = {};
       const allDays = new Set([...Object.keys(a), ...Object.keys(b)]);
@@ -39571,7 +39679,17 @@ function mergeVocabValue(key, localRaw, importedRaw){
         const have = new Set(listA.map(x=>x.id));
         const merged = listA.slice();
         listB.forEach(x=>{ if(!have.has(x.id)){ have.add(x.id); merged.push(x); } });
-        out[day] = merged;
+        const qcItems = merged.filter(x=>x.quickCapture);
+        if(qcItems.length > 1){
+          const keep = qcItems[0];
+          qcItems.slice(1).forEach(extra=>{
+            if(extra.note) keep.note = (keep.note||'') + extra.note;
+            extra._merged = true; // đánh dấu để loại khỏi danh sách cuối, không xoá nhầm mục khác
+          });
+          out[day] = merged.filter(x=>!x._merged);
+        } else {
+          out[day] = merged;
+        }
       });
       return JSON.stringify(out);
     }
@@ -39597,16 +39715,29 @@ function mergeVocabValue(key, localRaw, importedRaw){
 
 function applyImport(data, mode){
   try{
+    const failedKeys = [];
     Object.keys(data).forEach(k=>{
       if(k.indexOf('vocab_') !== 0) return;
       if(mode === 'merge' && MERGE_SKIP_KEYS.test(k)) return; // giữ cài đặt hiện tại khi Gộp
-      const localRaw = localStorage.getItem(k);
-      const finalVal = mode === 'merge' ? mergeVocabValue(k, localRaw, data[k]) : data[k];
-      localStorage.setItem(k, String(finalVal));
+      /* Xử lý ĐỘC LẬP từng key — nếu 1 key lỗi (vd. hết hạn mức lưu trữ
+         trên điện thoại, dữ liệu hỏng) thì KHÔNG được làm dừng cả vòng
+         lặp, nếu không các key xử lý sau đó (có thể là Sổ ghi chú) sẽ bị
+         bỏ sót hoàn toàn mà không có cảnh báo rõ ràng. */
+      try{
+        const localRaw = localStorage.getItem(k);
+        const finalVal = mode === 'merge' ? mergeVocabValue(k, localRaw, data[k]) : data[k];
+        localStorage.setItem(k, String(finalVal));
+      }catch(e){
+        failedKeys.push(k);
+      }
     });
     localStorage.setItem('vocab_imported','1');
-    backupMsg(mode==='merge' ? '✅ Đã gộp dữ liệu thành công. Đang tải lại trang...' : '✅ Nhập thành công. Đang tải lại trang...', true);
-    setTimeout(()=>location.reload(), 800);
+    if(failedKeys.length){
+      backupMsg(`⚠️ Đã nhập xong nhưng ${failedKeys.length} mục bị lỗi (có thể do đầy bộ nhớ trình duyệt): ${failedKeys.join(', ')}. Đang tải lại trang...`, false);
+    } else {
+      backupMsg(mode==='merge' ? '✅ Đã gộp dữ liệu thành công. Đang tải lại trang...' : '✅ Nhập thành công. Đang tải lại trang...', true);
+    }
+    setTimeout(()=>location.reload(), failedKeys.length ? 2200 : 800);
   }catch(e){
     backupMsg('❌ Nhập thất bại: ' + e.message, false);
   }
@@ -39617,6 +39748,11 @@ function stShowImportChoiceModal(payload, data){
   try{ srsCount = Object.keys(JSON.parse(data['vocab_srs_v1']||'{}')).length; }catch(e){}
   let writingCount = 0;
   try{ writingCount = (JSON.parse(data['vocab_st_translate_history']||'[]')||[]).length; }catch(e){}
+  let notebookCount = 0;
+  try{
+    const nbData = JSON.parse(data[NOTEBOOK_KEY]||'{}')||{};
+    Object.values(nbData).forEach(list=>{ notebookCount += (list||[]).length; });
+  }catch(e){}
   const when = payload.exportedAt ? new Date(payload.exportedAt).toLocaleString('vi-VN') : 'không rõ';
 
   const overlay = document.createElement('div');
@@ -39629,6 +39765,7 @@ function stShowImportChoiceModal(payload, data){
         • Thời điểm sao lưu: <b>${when}</b><br>
         • Số từ có tiến độ: <b>${srsCount}</b><br>
         • Số lượt luyện dịch (writing): <b>${writingCount}</b><br>
+        • Số ghi chú (kể cả ghi chú nhanh): <b>${notebookCount}</b>${data[NOTEBOOK_KEY]===undefined?' <span style="color:#c2410c">(file này không có mục Sổ ghi chú)</span>':''}<br>
         • Tổng số mục dữ liệu: <b>${Object.keys(data).length}</b>
       </p>
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
@@ -43022,7 +43159,23 @@ function rdSelToNotebook(){
 /* ---------- Sổ ghi chú (lưu ở localStorage, tự động gồm trong Sao lưu/Khôi phục
    vì tên khoá bắt đầu bằng "vocab_" — xem getAllVocabKeys()) ---------- */
 const NOTEBOOK_KEY = 'vocab_notebook_v1';
-function loadNotebook(){ try{ return JSON.parse(localStorage.getItem(NOTEBOOK_KEY)) || {}; }catch(e){ return {}; } }
+function loadNotebook(){
+  try{
+    const nb = JSON.parse(localStorage.getItem(NOTEBOOK_KEY)) || {};
+    /* Vá dữ liệu cũ: các mục "ghi chú nhanh" (quickCapture) được lưu trước khi có
+       cờ pinOnly có thể bị hiện lặp lại (vừa trong Bảng ghim, vừa trong danh sách
+       theo ngày bên dưới). Tự động gán pinOnly=true cho mọi mục quickCapture để
+       chỉ hiện đúng 1 lần trong Bảng ghim. */
+    let patched = false;
+    Object.keys(nb).forEach(day=>{
+      (nb[day]||[]).forEach(item=>{
+        if(item.quickCapture && !item.pinOnly){ item.pinOnly = true; patched = true; }
+      });
+    });
+    if(patched) saveNotebook(nb);
+    return nb;
+  }catch(e){ return {}; }
+}
 function saveNotebook(nb){ try{ localStorage.setItem(NOTEBOOK_KEY, JSON.stringify(nb)); }catch(e){} }
 function notebookAddLine(text, note, source, readingId, hidden, manual, pinnedDefault, noteRich){
   if(!text && !note) return;
@@ -43139,6 +43292,9 @@ function qcSave(){
     item.noteRich = true;
     item.hidden = false;
     item.pinned = true;
+    /* pinOnly: đảm bảo mục ghi chú nhanh trong ngày CHỈ hiện trong Bảng ghim,
+       không hiện lặp lại ở danh sách theo ngày bên dưới. */
+    item.pinOnly = true;
     if(!item.color) item.color = NB_COLORS[0];
   } else {
     item = {
@@ -43148,7 +43304,7 @@ function qcSave(){
       source: 'Ghi chú nhanh (nút nổi)', readingId: '', hidden: false, manual: true,
       pnote: '', pnoteRich: false,
       pinned: true, color: NB_COLORS[0], noteLinked: false, pinPos: null,
-      pinOnly: false, quickCapture: true
+      pinOnly: true, quickCapture: true
     };
     nb[day].unshift(item);
   }
