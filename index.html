@@ -96,10 +96,10 @@
   --line: #c3cec5;
   --line-strong: #9fada3;
 
-  --shadow-xs: none;
-  --shadow-sm: none;
-  --shadow: none;
-  --shadow-lg: none;
+  --shadow-xs: 0 1px 1px rgba(15,32,29,.03);
+  --shadow-sm: 0 1px 3px -2px rgba(15,32,29,.05), 0 1px 1px rgba(15,32,29,.03);
+  --shadow: 0 8px 18px -14px rgba(15,32,29,.11), 0 1px 4px -2px rgba(15,32,29,.04);
+  --shadow-lg: 0 18px 40px -26px rgba(15,32,29,.18), 0 4px 10px -8px rgba(15,32,29,.08);
   --glow: 0 10px 26px -10px rgba(13,110,95,.42);
 
   --radius-xl: 22px;
@@ -110,11 +110,14 @@
 
   /* ---- Neomorphism (soft-UI): dùng cho các cụm nút hành động nổi bật
      — bóng sáng + bóng tối trên CÙNG nền để tạo cảm giác nút "nổi lên"
-     khỏi mặt phẳng, và "lõm xuống" khi active/pressed. ---- */
+     khỏi mặt phẳng, và "lõm xuống" khi active/pressed.
+     Giảm bớt độ đậm của bóng đổ ở chế độ sáng (giảm alpha --neo-dark/
+     --neo-dark-soft) so với bản gốc, để các thẻ trên toàn trang trông
+     nhẹ nhàng hơn thay vì đổ bóng quá gắt — chế độ tối giữ nguyên. ---- */
   --neo-surface: #eef1ef;
   --neo-light: #ffffff;
-  --neo-dark: rgba(157,175,166,.55);
-  --neo-dark-soft: rgba(157,175,166,.32);
+  --neo-dark: rgba(157,175,166,.28);
+  --neo-dark-soft: rgba(157,175,166,.16);
 
   --font-heading: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
   --font-body: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
@@ -3064,13 +3067,9 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-lines{ padding:12px 14px; display:flex; flex-direction:column; gap:10px; }
 /* Mỗi ghi chú chưa ghim giờ hiển thị như 1 thẻ màu nhỏ (cùng bảng màu với thẻ ghim),
    thay cho nền xám/kẻ gạch chân như trước — viền mỏng nhất có thể (.5px). */
-.nb-line{ display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border-radius:12px;
-  border:none; color:#2b2b2b;
-  box-shadow:5px 5px 12px rgba(0,0,0,.13), -4px -4px 10px rgba(255,255,255,.7),
-    inset 0 0 0 1px rgba(255,255,255,.22);
-  transition:box-shadow .2s ease; }
-[data-theme="dark"] .nb-line{ box-shadow:5px 5px 12px rgba(0,0,0,.13), -4px -4px 10px rgba(255,255,255,.7),
-    inset 0 0 0 1px rgba(255,255,255,.22); }
+.nb-line{ display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border-radius:10px;
+  border:.5px solid rgba(0,0,0,.10); color:#2b2b2b; }
+[data-theme="dark"] .nb-line{ border-color:rgba(0,0,0,.18); }
 .nb-line-main{ flex:1; min-width:0; }
 .nb-quote{ font-size:13.5px; font-style:italic; line-height:1.6; }
 .nb-quote.nb-manual{ font-style:normal; font-weight:600; }
@@ -3133,23 +3132,10 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pinboard{ margin-bottom:22px; }
 .nb-pin-head{ font-size:14.5px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:6px; color:var(--ink); }
 .nb-pin-grid{ position:relative; }
-/* Neomorphism: bóng sáng (trên-trái) + bóng tối (dưới-phải) trên CÙNG nền
-   màu ghi chú tạo cảm giác thẻ "nổi" khỏi mặt phẳng. Nền màu ghi chú do
-   người dùng chọn (NB_COLORS, đặt qua style inline) — KHÔNG đổi theo theme,
-   nên bóng cũng cố định 1 kiểu ở cả sáng lẫn tối để không bị lệch khi bấm
-   đổi chế độ. */
-.nb-pin-card{ position:absolute; border-radius:14px; padding:12px 12px 10px;
-  box-shadow:7px 7px 16px rgba(0,0,0,.16), -6px -6px 14px rgba(255,255,255,.75),
-    inset 0 0 0 1px rgba(255,255,255,.25);
-  border:none; display:flex; flex-direction:column; gap:7px; min-height:120px; color:#2b2b2b;
-  resize:both; overflow:auto; box-sizing:border-box; width:220px;
-  transition:box-shadow .2s ease, transform .2s ease; }
-.nb-pin-card:hover{ box-shadow:9px 9px 20px rgba(0,0,0,.18), -7px -7px 16px rgba(255,255,255,.8),
-    inset 0 0 0 1px rgba(255,255,255,.3); }
-[data-theme="dark"] .nb-pin-card{ box-shadow:7px 7px 16px rgba(0,0,0,.16), -6px -6px 14px rgba(255,255,255,.75),
-    inset 0 0 0 1px rgba(255,255,255,.25); }
-[data-theme="dark"] .nb-pin-card:hover{ box-shadow:9px 9px 20px rgba(0,0,0,.18), -7px -7px 16px rgba(255,255,255,.8),
-    inset 0 0 0 1px rgba(255,255,255,.3); }
+.nb-pin-card{ position:absolute; border-radius:12px; padding:12px 12px 10px; box-shadow:0 5px 14px rgba(0,0,0,.10);
+  border:.5px solid rgba(0,0,0,.07); display:flex; flex-direction:column; gap:7px; min-height:120px; color:#2b2b2b;
+  resize:both; overflow:auto; box-sizing:border-box; width:220px; }
+[data-theme="dark"] .nb-pin-card{ box-shadow:0 6px 18px rgba(0,0,0,.4); border-color:rgba(0,0,0,.15); }
 .nb-pin-actions{ position:absolute; top:7px; right:7px; display:flex; gap:4px; }
 .nb-pin-actions button{ background:rgba(255,255,255,.75); border:none; border-radius:6px; width:22px; height:22px;
   font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#333; }
@@ -3160,10 +3146,9 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin-colors{ display:flex; gap:5px; flex-wrap:wrap; margin-top:2px; }
 .nb-color-dot{ width:16px; height:16px; border-radius:50%; cursor:pointer; border:2px solid rgba(0,0,0,.15); flex-shrink:0; padding:0; }
 .nb-color-dot.active{ border-color:#333; box-shadow:0 0 0 2px #fff inset; }
-.nb-pin-card .nb-edit-box textarea, .nb-line .nb-edit-box textarea{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
-.nb-pin-card .nb-note-editable, .nb-line .nb-note-editable{ background:rgba(255,255,255,.55); border:none; border-left:3px solid rgba(0,0,0,.3); color:#2b2b2b;
-  box-shadow:inset 2px 2px 5px rgba(0,0,0,.10), inset -1px -1px 3px rgba(255,255,255,.6); }
-.nb-pin-card .nb-fmt-toolbar button, .nb-line .nb-fmt-toolbar button{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
+.nb-pin-card .nb-edit-box textarea, .nb-line .nb-edit-box textarea{ background:rgba(255,255,255,.75) !important; border-color:rgba(0,0,0,.18) !important; color:#2b2b2b !important; box-shadow:none !important; }
+.nb-pin-card .nb-note-editable, .nb-line .nb-note-editable{ background:rgba(255,255,255,.55) !important; border-color:rgba(0,0,0,.18) !important; border-left-color:rgba(0,0,0,.3) !important; color:#2b2b2b !important; box-shadow:none !important; }
+.nb-pin-card .nb-fmt-toolbar button, .nb-line .nb-fmt-toolbar button{ background:rgba(255,255,255,.75) !important; border-color:rgba(0,0,0,.18) !important; color:#2b2b2b !important; box-shadow:none !important; }
 .nb-pin-card .nb-source-link, .nb-line .nb-source-link{ color:#2b2b2b; text-decoration-color:rgba(0,0,0,.4); }
 /* Cố định viền trong theo viền ngoài: bên trong ô ghi chú luôn lấp đầy phần còn lại của
    thẻ ghim, không tự resize riêng nữa — chỉ cần kéo giãn thẻ ghim (viền ngoài) là đủ. */
@@ -3844,28 +3829,6 @@ body.page-fs { overflow-x:hidden; }
    LEARN
    ============================================================ */
 .learn-wrap { max-width:640px; margin:0 auto; width:100%; }
-/* Trên màn hình rộng (máy tính), 640px để lại rất nhiều khoảng trống 2 bên
-   và buộc phải cuộn dọc nhiều vì mọi khối (tiến độ, lộ trình cửa, thẻ học)
-   đều xếp chồng theo chiều dọc. Từ 900px nới rộng khung; từ 1180px chuyển
-   sang bố cục 2 cột: cột trái là tiến độ/lộ trình/gợi ý, cột phải là thẻ
-   học chính — giúp dùng hết chiều ngang và rút ngắn chiều cao cần cuộn. */
-@media (min-width:900px){
-  .learn-wrap{ max-width:760px; }
-}
-@media (min-width:1180px){
-  .learn-wrap.has-side{
-    max-width:1060px; display:grid;
-    grid-template-columns:300px minmax(0,1fr);
-    column-gap:28px; align-items:start;
-  }
-  .learn-wrap.has-side .learn-topbar{ grid-column:1 / -1; }
-  .learn-wrap.has-side .learn-side{ grid-column:1; position:sticky; top:14px; }
-  .learn-wrap.has-side .learn-body{ grid-column:2; min-width:0; }
-  .learn-wrap.has-side .learn-side .step{ min-width:64px; padding:6px 8px; }
-  .learn-wrap.has-side .learn-side .step em{ font-size:9.5px; }
-  .learn-wrap.has-side .learn-side .step-hint{ padding:0; }
-  .learn-wrap.has-side .learn-side .lq-topic-tag{ margin:0 auto 0; }
-}
 .learn-progress {
   background:var(--card); border:1px solid var(--line);
   border-radius:var(--radius-xl); box-shadow:var(--shadow-sm);
@@ -5232,8 +5195,8 @@ main{ padding-top:26px; }
 
 /* ================= HỒ SƠ NGƯỜI HỌC ================= */
 .profile-card{
-  grid-template-columns:auto 1fr; gap:18px;
-  padding:15px 26px; border-radius:var(--radius-xl);
+  grid-template-columns:auto 1fr; gap:24px;
+  padding:22px 28px; border-radius:var(--radius-xl);
   background: linear-gradient(125deg, var(--pf-grad-1) 0%, var(--accent) 50%, var(--pf-grad-2) 100%);
   border:none; box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.06) inset;
   position:relative; overflow:hidden; isolation:isolate;
@@ -5252,11 +5215,11 @@ main{ padding-top:26px; }
 .profile-card > *{ position:relative; z-index:1; }
 .profile-card{ transition:transform .25s ease, box-shadow .25s ease; }
 .profile-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.12) inset; }
-.pf-left{ gap:13px; }
-.pf-avatar-wrap{ width:64px; height:64px; filter:drop-shadow(0 6px 14px rgba(0,0,0,.22)); }
+.pf-left{ gap:16px; }
+.pf-avatar-wrap{ width:92px; height:92px; filter:drop-shadow(0 8px 18px rgba(0,0,0,.22)); }
 .pf-ring circle:first-of-type{ stroke:rgba(255,255,255,.30) !important; }
 .pf-ava-emoji{
-  font-size:27px; inset:8px; background:rgba(255,255,255,.18);
+  font-size:38px; inset:11px; background:rgba(255,255,255,.18);
   border:1px solid rgba(255,255,255,.30); box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
 }
 .pf-edit{ background:rgba(255,255,255,.95); box-shadow:0 2px 6px rgba(0,0,0,.2); }
@@ -5271,18 +5234,18 @@ main{ padding-top:26px; }
   100%{ box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 2.5px rgba(255,255,255,.9), 0 0 0 0 rgba(251,191,36,0); }
 }
 @media(prefers-reduced-motion:reduce){ .pf-lv-dot{ animation:none; } }
-.pf-name{ font-family:var(--font-heading); font-size:19px; font-weight:800; color:#fff; letter-spacing:-.3px; text-shadow:0 2px 10px rgba(0,0,0,.18); }
+.pf-name{ font-family:var(--font-heading); font-size:23px; font-weight:800; color:#fff; letter-spacing:-.3px; text-shadow:0 2px 10px rgba(0,0,0,.18); }
 .pf-lv{
-  display:inline-flex; align-items:center; gap:5px; font-size:11.5px; margin-top:4px;
-  color:#fff; font-weight:700; padding:2px 9px 2px 7px; border-radius:99px;
+  display:inline-flex; align-items:center; gap:5px; font-size:12.5px; margin-top:6px;
+  color:#fff; font-weight:700; padding:3px 10px 3px 8px; border-radius:99px;
   background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.25);
 }
 .pf-mid{ padding:0 6px; }
-.pf-bar-top{ font-size:11.5px; margin-bottom:6px; color:rgba(255,255,255,.82); font-weight:600; }
+.pf-bar-top{ font-size:12.5px; margin-bottom:9px; color:rgba(255,255,255,.82); font-weight:600; }
 .pf-bar-top b{ color:#fff; font-weight:800; }
-.pf-bar{ height:8px; background:rgba(255,255,255,.20); border-color:rgba(255,255,255,.10); box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
+.pf-bar{ height:10px; background:rgba(255,255,255,.20); border-color:rgba(255,255,255,.10); box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
 .pf-fill{ background:linear-gradient(90deg,#fde68a,#fbbf24,#f59e0b); box-shadow:0 0 10px rgba(251,191,36,.5); }
-.pf-scale{ margin-top:7px; }
+.pf-scale{ margin-top:11px; }
 .pf-tick{ filter:none; opacity:.35; }
 .pf-tick.on{ opacity:1; filter:drop-shadow(0 1px 4px rgba(0,0,0,.25)); }
 .pf-right{ gap:0; padding-left:28px; border-left:1px solid rgba(255,255,255,.28); display:flex; }
@@ -5294,21 +5257,21 @@ main{ padding-top:26px; }
   .pf-right{ border-left:none; padding-left:0; padding-top:18px; border-top:1px solid rgba(255,255,255,.25); justify-content:center; gap:8px; }
 }
 @media(max-width:640px){
-  .profile-card{ padding:13px; gap:10px; }
-  .pf-left{ gap:9px; min-width:0; }
-  .pf-avatar-wrap{ width:50px; height:50px; flex-shrink:0; }
-  .pf-ava-emoji{ font-size:21px; }
-  .pf-name{ font-size:15px; white-space:normal; overflow-wrap:anywhere; }
-  .pf-lv{ font-size:10.5px; margin-top:3px; white-space:nowrap; }
+  .profile-card{ padding:16px; gap:12px; }
+  .pf-left{ gap:10px; min-width:0; }
+  .pf-avatar-wrap{ width:64px; height:64px; flex-shrink:0; }
+  .pf-ava-emoji{ font-size:26px; }
+  .pf-name{ font-size:17px; white-space:normal; overflow-wrap:anywhere; }
+  .pf-lv{ font-size:11px; margin-top:4px; white-space:nowrap; }
   .pf-mid{ padding:0; width:100%; }
-  .pf-bar-top{ font-size:10.5px; gap:6px; }
+  .pf-bar-top{ font-size:11px; gap:6px; }
   .pf-scale{ flex-wrap:wrap; row-gap:6px; justify-content:flex-start; }
 }
 @media(max-width:400px){
-  .pf-avatar-wrap{ width:42px; height:42px; }
-  .pf-ava-emoji{ font-size:18px; }
-  .pf-name{ font-size:14px; }
-  .pf-lv-dot{ min-width:17px; height:17px; font-size:8.5px; }
+  .pf-avatar-wrap{ width:54px; height:54px; }
+  .pf-ava-emoji{ font-size:22px; }
+  .pf-name{ font-size:15.5px; }
+  .pf-lv-dot{ min-width:19px; height:19px; font-size:9.5px; }
 }
 
 /* ================= HÀNG TIẾN ĐỘ CHÍNH: stats lên trên, ring+nút bên dưới =================
@@ -5457,7 +5420,7 @@ nav.tabs{ padding:10px 26px; }
 @media(max-width:900px){ .tp-sub-name{ width:150px; } }
 @media(max-width:640px){
   main{ padding-top:18px; }
-  .profile-card{ padding:13px; }
+  .profile-card{ padding:22px; flex-direction:column; }
   .hero-main,.hero-side,.funnel-card,.topic-section{ padding:20px 18px; }
   .topic-grid{ grid-template-columns:1fr; }
   .fn-track{ flex-wrap:wrap; }
@@ -6573,11 +6536,93 @@ header{
 }
 
 /* ============================================================
-   HỒ SƠ NGƯỜI HỌC (profile-card)
-   Theo yêu cầu: khôi phục lại nền gradient (thay vì khối "nổi"
-   trung tính neomorphism trước đây) — xem định nghĩa gradient
-   & kích thước rút gọn ở khối .profile-card phía trên (~dòng 5234).
+   HỒ SƠ NGƯỜI HỌC (profile-card) — "Neomorphism màu" (v2)
+   Thiết kế lại cả bố cục lẫn màu sắc theo góp ý: bản trung tính
+   xám quá phẳng/nhạt nhoà. Giữ lại dải gradient nhấn làm nền —
+   như một tấm "huy chương" nổi bật — nhưng đổi bóng đổ phẳng
+   sang CẶP bóng đổ MÀU (đậm hơn & sáng hơn chính gradient nền,
+   không dùng xám trung tính) để vẫn đúng tinh thần "nổi lên khỏi
+   mặt phẳng" thay vì phẳng lì như trước. Bố cục chia 3 vùng:
+   [Avatar + tên/cấp] · [Thanh kinh nghiệm] · [2 chỉ số nhanh —
+   streak & số từ đã thuộc] để thẻ đầy đặn, không còn trống trải.
    ============================================================ */
+:root{
+  --pf-shadow-d: rgba(3,38,32,.42);
+  --pf-shadow-l: rgba(190,250,235,.55);
+}
+[data-theme="dark"]{
+  --pf-shadow-d: rgba(0,0,0,.6);
+  --pf-shadow-l: rgba(94,234,212,.16);
+}
+.profile-card{
+  grid-template-columns:auto 1fr auto !important;
+  background:linear-gradient(125deg, var(--pf-grad-1) 0%, var(--accent) 48%, var(--pf-grad-2) 100%) !important;
+  border:none !important;
+  box-shadow:10px 10px 24px var(--pf-shadow-d), -8px -8px 20px var(--pf-shadow-l), 0 18px 40px -18px rgba(13,110,95,.45) !important;
+}
+.profile-card::before{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(460px 280px at 102% -25%, rgba(255,255,255,.24), transparent 62%),
+    radial-gradient(320px 220px at -10% 120%, rgba(255,255,255,.12), transparent 60%),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.045) 0 1px, transparent 1px 29px);
+}
+.profile-card::after{
+  content:''; position:absolute; left:0; right:0; top:0; height:1px; z-index:0; pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+}
+.profile-card:hover{
+  transform:translateY(-3px) !important;
+  box-shadow:12px 12px 28px var(--pf-shadow-d), -9px -9px 22px var(--pf-shadow-l), 0 22px 46px -18px rgba(13,110,95,.5) !important;
+}
+.pf-avatar-wrap{ filter:drop-shadow(0 8px 18px rgba(0,0,0,.25)) !important; width:88px !important; height:88px !important; }
+.pf-ring circle:first-of-type{ stroke:rgba(255,255,255,.30) !important; }
+.pf-ava-emoji{
+  font-size:36px !important; background:rgba(255,255,255,.16) !important;
+  border:1px solid rgba(255,255,255,.32) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3), inset 0 -4px 10px rgba(0,0,0,.12) !important;
+}
+.pf-edit{
+  background:rgba(255,255,255,.95) !important; border:none !important; color:#0d6e5f !important;
+  box-shadow:0 2px 6px rgba(0,0,0,.25) !important;
+}
+.pf-name{ color:#fff !important; font-size:22px !important; text-shadow:0 2px 10px rgba(0,0,0,.2) !important; }
+.pf-lv{
+  color:#fff !important; background:rgba(255,255,255,.16) !important; border:1px solid rgba(255,255,255,.28) !important;
+  box-shadow:none !important; font-size:12.5px !important;
+}
+.pf-bar-top{ color:rgba(255,255,255,.85) !important; }
+.pf-bar-top b{ color:#fff !important; }
+.pf-bar{
+  background:rgba(255,255,255,.20) !important; border:none !important;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.22) !important;
+}
+.pf-fill{ background:linear-gradient(90deg,#fde68a,#fbbf24,#f59e0b) !important; box-shadow:0 0 10px rgba(251,191,36,.55) !important; }
+.pf-tick{ filter:none; opacity:.35; }
+.pf-tick.on{ opacity:1; filter:drop-shadow(0 1px 4px rgba(0,0,0,.25)); }
+
+/* ---- 2 chỉ số nhanh bên phải: chip kính mờ nổi trên nền gradient ---- */
+.pf-right{
+  display:flex; gap:10px; padding-left:20px; margin-left:4px;
+  border-left:1px solid rgba(255,255,255,.25); flex-shrink:0;
+}
+.pf-stat-chip{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  min-width:74px; padding:10px 12px; border-radius:14px;
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 6px 14px -8px rgba(0,0,0,.3);
+}
+.pf-stat-chip b{ font-family:var(--font-heading); font-size:19px; font-weight:900; color:#fff; line-height:1; text-shadow:0 2px 6px rgba(0,0,0,.2); }
+.pf-stat-chip span{ font-size:9.5px; font-weight:700; color:rgba(255,255,255,.82); text-transform:uppercase; letter-spacing:.4px; text-align:center; }
+.pfc-ic{ font-size:16px; margin-bottom:1px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.2)); }
+
+@media(max-width:900px){
+  .profile-card{ grid-template-columns:1fr !important; }
+  .pf-right{ border-left:none; border-top:1px solid rgba(255,255,255,.22); padding-left:0; padding-top:14px; margin-left:0; justify-content:center; }
+}
+@media(max-width:640px){
+  .pf-stat-chip{ min-width:0; flex:1; padding:8px 6px; }
+}
 
 /* ============================================================
    LỘ TRÌNH THUỘC TỪ (funnel-card) — Neomorphism
@@ -6587,7 +6632,7 @@ header{
    NGUYÊN màu nền theo chặng để không mất tín hiệu phân loại.
    ============================================================ */
 .funnel-card{
-  background:var(--neo-surface) !important; border:none !important;
+  border:none !important;
   box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light) !important;
 }
 .fn-cta{
@@ -6623,60 +6668,139 @@ header{
 }
 
 /* ============================================================
-   THẺ CHỦ ĐỀ (tab Danh sách — .te-macro-card) &
-   THẺ BÀI ĐỌC (tab Reading — .rd-card) — Neomorphism
-   Thân thẻ chuyển sang bề mặt nổi --neo-surface + bóng đổ mềm,
-   GIỮ NGUYÊN viền màu + đầu thẻ gradient theo màu riêng từng
-   chủ đề/bài đọc (--tp-c) để không mất tín hiệu phân loại màu —
-   cùng cách tiếp cận đã dùng cho .fn-step, .funnel-card...
+   SỔ GHI CHÚ (⚙️ Setting → 📒) + NÚT GHI CHÚ NHANH NỔI — Neomorphism
+   Đồng bộ toàn bộ khu vực ghi chú (cả nút lẫn khung nội dung) theo
+   đúng ngôn ngữ nổi/lõm của toàn trang: khung chứa & thẻ ghi chú =
+   mặt "nổi"; riêng Ô ĐANG GÕ chuyển "lõm" xuống — đúng cảm giác
+   viết xuống trang giấy thay vì một khối dán phẳng lên nền.
+   Thẻ ghim (nb-pin-card) GIỮ NGUYÊN màu người dùng tự chọn, chỉ đổi
+   bóng đổ cứng sang bóng đổ mềm 2 tông để không mất khả năng tùy màu.
    ============================================================ */
-.te-macro-card, .rd-card{
-  background:var(--neo-surface) !important;
+.settings-nav-btn{
+  background:var(--neo-surface); border:none; color:var(--ink-soft);
+  box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light);
+}
+.settings-nav-btn:hover{ color:var(--accent); box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light); }
+.settings-nav-btn.active{
+  background:var(--accent-grad); color:#fff;
+  box-shadow:inset 2px 2px 6px rgba(0,0,0,.18), 0 6px 14px -8px rgba(13,110,95,.5);
+}
+[data-theme="dark"] .settings-nav-btn.active{ color:#04120f; }
+
+.backup-box{
+  background:var(--neo-surface) !important; border:none !important;
   box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light) !important;
 }
-.te-macro-card:hover, .rd-card:hover{
-  transform:translateY(-3px) !important;
-  box-shadow:7px 7px 16px var(--neo-dark), -7px -7px 16px var(--neo-light), 0 10px 22px -14px rgba(13,110,95,.4) !important;
-}
-.te-macro-card .cl-topic-bar-track, .rd-progress-track{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light) !important;
-}
-.te-macro-expand, .rd-badge{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light) !important;
-}
-.te-sub-chip{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light) !important;
-}
-.te-sub-chip:hover{
-  box-shadow:inset 1px 1px 3px var(--neo-dark-soft), inset -1px -1px 3px var(--neo-light) !important;
+.backup-what{
+  background:var(--neo-surface) !important;
+  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light);
 }
 
-/* ============================================================
-   TẮT ĐỔ BÓNG "THẺ NỔI" CÒN LẠI Ở CHẾ ĐỘ SÁNG
-   Các nơi trên đã tắt qua biến --shadow-*; đây là các chỗ viết
-   cứng giá trị bóng (modal, thanh tìm kiếm, nav, ô chọn, thẻ
-   hover...) không đi qua biến nên cần tắt riêng. KHÔNG đụng tới:
-   viền sáng khi focus (0 0 0 Npx, dạng ring), bóng lõm (inset)
-   dùng cho bề mặt neomorphism/trạng thái nhấn, và các quầng sáng
-   màu mang tính trang trí trên nút/badge/thanh tiến độ.
-   ============================================================ */
-html:not([data-theme="dark"]) .qc-modal,
-html:not([data-theme="dark"]) .ava-box,
-html:not([data-theme="dark"]) .levelup-pop,
-html:not([data-theme="dark"]) .rd-toast,
-html:not([data-theme="dark"]) .search-filter-row .search-wrap:not(:focus-within),
-html:not([data-theme="dark"]) .filter-toggle-btn,
-html:not([data-theme="dark"]) select:not(:focus),
-html:not([data-theme="dark"]) select:hover:not(:focus),
-html:not([data-theme="dark"]) nav.tabs,
-html:not([data-theme="dark"]) .dash-search:not(:focus-within),
-html:not([data-theme="dark"]) .ds-item:hover,
-html:not([data-theme="dark"]) .cefr-chip:hover,
-html:not([data-theme="dark"]) .pos-pie-chart{
-  box-shadow:none !important;
+/* ---- Nút nổi 📝 (góc màn hình) + cửa sổ ghi chú nhanh ---- */
+.qc-toggle-btn{
+  background:var(--neo-surface) !important; border:none !important; color:var(--accent) !important;
+  box-shadow:5px 5px 12px var(--neo-dark), -5px -5px 12px var(--neo-light) !important;
+}
+.qc-toggle-btn:hover{
+  box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light), 0 8px 18px -10px rgba(13,110,95,.4) !important;
+}
+.qc-toggle-btn.on{
+  box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light), 0 0 0 2.5px var(--accent-bg) !important;
+}
+.qc-modal{
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:10px 10px 24px var(--neo-dark), -8px -8px 20px var(--neo-light) !important;
+}
+
+/* ---- Từng nhóm ghi chú theo ngày ---- */
+.nb-day{
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:5px 5px 12px var(--neo-dark), -5px -5px 12px var(--neo-light);
+}
+.nb-day-head{ background:transparent !important; border-bottom:1px solid var(--line) !important; }
+.nb-copyall{
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light);
+}
+.nb-copyall:hover{ box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light); color:var(--accent); }
+
+/* ---- Từng ghi chú (chưa ghim) trong danh sách theo ngày ---- */
+.nb-line{
+  border:none !important; background:var(--neo-surface);
+  box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light);
+  color:var(--ink) !important;
+}
+.nb-meta{ color:var(--muted) !important; }
+.nb-note{
+  background:var(--neo-surface) !important; color:var(--ink-soft) !important;
+  box-shadow:inset 2px 2px 5px var(--neo-dark-soft), inset -1px -1px 3px var(--neo-light);
+}
+.nb-copy1, .nb-del, .nb-edit1, .nb-pin1{
+  background:var(--neo-surface); border-radius:8px; color:var(--ink-soft) !important;
+  box-shadow:2px 2px 5px var(--neo-dark-soft), -1px -1px 3px var(--neo-light);
+}
+.nb-copy1:hover, .nb-edit1:hover{ box-shadow:3px 3px 7px var(--neo-dark-soft), -2px -2px 5px var(--neo-light); color:var(--accent) !important; }
+.nb-del:hover{ box-shadow:3px 3px 7px var(--neo-dark-soft), -2px -2px 5px var(--neo-light); color:#ef4444 !important; }
+.nb-pin1:hover{ box-shadow:3px 3px 7px var(--neo-dark-soft), -2px -2px 5px var(--neo-light); color:#eab308 !important; }
+.nb-pin1.on{ box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light); color:#eab308 !important; }
+
+/* ---- Thanh định dạng: Hoàn tác/Làm lại/B/I/gạch đầu dòng/căn lề/màu chữ ---- */
+.nb-fmt-toolbar button{
+  background:var(--neo-surface) !important; border:none !important; color:var(--ink) !important;
+  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light);
+}
+.nb-fmt-toolbar button:hover{ box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light); color:var(--accent) !important; }
+.nb-fmt-toolbar button.on{
+  background:var(--accent-grad) !important; color:#fff !important;
+  box-shadow:inset 2px 2px 5px rgba(0,0,0,.2) !important;
+}
+.nb-fmt-swatch{
+  border:none !important;
+  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light), inset 0 0 0 1.5px rgba(255,255,255,.5);
+}
+.nb-fmt-swatch:hover{ box-shadow:3px 3px 6px var(--neo-dark), -2px -2px 5px var(--neo-light), inset 0 0 0 1.5px rgba(255,255,255,.7); }
+
+/* ---- Ô đang gõ ghi chú — "lõm" như đang viết xuống trang giấy ---- */
+.nb-note-editable{
+  background:var(--neo-surface) !important; border:none !important; border-left:3px solid var(--accent) !important;
+  box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light) !important;
+  color:var(--ink) !important;
+}
+.nb-note-editable:focus{
+  box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light), 0 0 0 3px var(--accent-bg) !important;
+  border-left-color:var(--accent) !important;
+}
+.nb-edit-box textarea{
+  background:var(--neo-surface) !important; border:none !important; color:var(--ink) !important;
+  box-shadow:inset 2.5px 2.5px 6px var(--neo-dark), inset -2.5px -2.5px 6px var(--neo-light) !important;
+}
+
+/* ---- Bảng ghim (sticky notes) — GIỮ màu người dùng tự chọn, chỉ
+   đổi bóng đổ cứng sang bóng đổ mềm 2 tông kiểu "nổi" ---- */
+.nb-pin-card{
+  border:none !important;
+  box-shadow:6px 6px 14px rgba(0,0,0,.16), -4px -4px 10px rgba(255,255,255,.55) !important;
+}
+[data-theme="dark"] .nb-pin-card{ box-shadow:6px 6px 16px rgba(0,0,0,.5), -3px -3px 8px rgba(255,255,255,.05) !important; }
+.nb-pin-actions button{
+  border:none !important;
+  box-shadow:2px 2px 5px rgba(0,0,0,.15), -1px -1px 3px rgba(255,255,255,.6);
+}
+.nb-color-dot{
+  border:none !important;
+  box-shadow:2px 2px 4px rgba(0,0,0,.18), -1px -1px 3px rgba(255,255,255,.5);
+}
+.nb-color-dot.active{ box-shadow:0 0 0 2px #fff inset, 0 0 0 3.5px var(--accent) !important; }
+
+/* ---- Bộ lọc ngày / chế độ gọn / số cột bảng ghim ---- */
+.nb-compact-toggle, .nb-pin-col-btn{
+  background:var(--neo-surface) !important; border:none !important; color:var(--ink-soft) !important;
+  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light);
+}
+.nb-compact-toggle:hover, .nb-pin-col-btn:hover{ box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light); color:var(--accent) !important; }
+.nb-compact-toggle.on, .nb-pin-col-btn.on{
+  background:var(--accent-grad) !important; color:#fff !important;
+  box-shadow:inset 2px 2px 5px rgba(0,0,0,.2) !important;
 }
 
 </style>
@@ -35116,6 +35240,14 @@ function renderDashboard(){
           ${LEVELS.map(L=>`<span class="pf-tick ${GEMS>=L.need?'on':''}" title="Cấp ${L.lv} — ${L.name} (${L.need}💎)">${L.ic}</span>`).join('')}
         </div>
       </div>
+      <div class="pf-right">
+        <div class="pf-stat-chip" title="Chuỗi ngày học liên tiếp">
+          <span class="pfc-ic">🔥</span><b>${streak}</b><span>ngày streak</span>
+        </div>
+        <div class="pf-stat-chip" title="Số từ đã thuộc hẳn">
+          <span class="pfc-ic">✅</span><b>${S.learned}</b><span>đã thuộc</span>
+        </div>
+      </div>
     </div>
 
     <!-- HÀNG 1: tiến độ học (thay cho 'từ mới hôm nay') -->
@@ -39158,7 +39290,7 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
   const acc   = tries>0 ? Math.round(learnState.sessionCorrect/tries*100) : 0;
 
   return `
-  <div class="learn-scroll"><div class="learn-wrap has-side">
+  <div class="learn-scroll"><div class="learn-wrap">
     <div class="learn-topbar">
       <button class="learn-exit-btn" id="learnSwitch">⇄ Đổi phiên</button>
       <span class="lt-scope">${SCOPE_LABEL[learnState.scope]||'Học ngay'}</span>
@@ -39166,7 +39298,6 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
       <button class="learn-exit-btn danger" id="learnExit">✕ Kết thúc</button>
     </div>
 
-    <div class="learn-side">
     <div class="learn-progress">
       <div class="lp-bar"><div class="lp-fill" style="width:${pct}%"></div></div>
       <div class="lp-stats">
@@ -39203,11 +39334,8 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
     <div class="step-hint" style="opacity:.6;font-size:11px;margin-top:-6px">Số từ trên là thống kê toàn bộ thư viện, không riêng phiên này</div>
     <div class="step-hint"><b>${stepIc} ${stepName}</b> — ${stepHint}</div>
     ${topicTagHTML(v)}
-    </div>
 
-    <div class="learn-body">
     ${bodyHTML}
-    </div>
   </div></div>`;
 }
 
