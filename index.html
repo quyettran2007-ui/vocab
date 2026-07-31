@@ -4664,6 +4664,10 @@ html { scroll-behavior:smooth; }
 .tl-btn.slow:hover{ border-color:var(--accent); background:var(--accent); color:#fff; }
 .tl-ic{ font-size:15px; line-height:1; }
 .tl-count{ font-size:11.5px; color:var(--muted); font-weight:600; }
+/* Từ loại (POS) nằm chung hàng với Nghe/Chậm thay vì tách riêng 1 dòng */
+.type-listen .tq-pos-inline{ margin:0; }
+/* Nghĩa tiếng Việt được căn giữa đều giữa thẻ ví dụ và hàng phát âm */
+.prompt-word.type-vn{ margin:18px 0; }
 /* Gợn sóng khi bấm -> cảm giác "đang phát" */
 .tl-btn:focus{ outline:none; box-shadow:0 0 0 4px var(--accent-bg); }
 @media(max-width:640px){
@@ -38017,9 +38021,9 @@ function nextType(){
         <div class="tex-en">${blankOut(ex.en, v.word)}</div>
         ${ex.vi?`<div class="tex-vi">${esc(ex.vi)}</div>`:''}
       </div>` : ''}
-      <div class="prompt-word small">${esc(v.vn)}</div>
-      ${v.pos?`<div class="tq-pos">${esc(v.pos)}</div>`:''}
+      <div class="prompt-word small type-vn">${esc(v.vn)}</div>
       <div class="type-listen">
+        ${v.pos?`<span class="tq-pos tq-pos-inline">${esc(v.pos)}</span>`:''}
         <button class="tl-btn" id="typeSpeak"><span class="tl-ic">🔊</span><span class="tl-txt">Nghe</span></button>
         <button class="tl-btn slow" id="typeSpeakSlow"><span class="tl-ic">🐢</span><span class="tl-txt">Chậm</span></button>
         <span class="tl-count" id="typeListenCount"></span>
@@ -39364,9 +39368,9 @@ function learnTypeCard(item){
   box.innerHTML = `
     <div class="quiz-q">
       ${ex?`<div class="type-ex"><div class="tex-en">${blankOut(ex.en, v.word)}</div>${ex.vi?`<div class="tex-vi">${esc(ex.vi)}</div>`:''}</div>`:''}
-      <div class="prompt-word small">${esc(v.vn)}</div>
-      ${v.pos?`<div class="tq-pos">${esc(v.pos)}</div>`:''}
+      <div class="prompt-word small type-vn">${esc(v.vn)}</div>
       <div class="type-listen">
+        ${v.pos?`<span class="tq-pos tq-pos-inline">${esc(v.pos)}</span>`:''}
         <button class="tl-btn" id="ltSpeak"><span class="tl-ic">🔊</span><span class="tl-txt">Nghe</span></button>
         <button class="tl-btn slow" id="ltSlow"><span class="tl-ic">🐢</span><span class="tl-txt">Chậm</span></button>
         <span class="tl-count" id="ltCount"></span>
