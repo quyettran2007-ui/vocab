@@ -6154,6 +6154,7 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
     </button>
     <button class="theme-toggle" id="pageFull" title="Toàn màn hình (F11)">⛶</button>
     <button class="theme-toggle" id="themeToggle" title="Chuyển sáng/tối">🌙</button>
+    <button class="theme-toggle" id="randomThemeBtn" onclick="randomizeTheme()" title="Đổi sang một giao diện (màu nhấn + hình nền) bất kỳ">🎲</button>
     <!-- Ô giữ chỗ vô hình: cùng cỡ & responsive như nút theme-toggle, đẩy 2 nút
          ⛶ / 🌙 phía trên sang trái, nhường đúng vị trí này cho nút 📝 nổi. -->
     <div class="theme-toggle qc-slot" id="qcSlot" aria-hidden="true"></div>
@@ -44997,8 +44998,21 @@ function renderBgSwatches(){
     </button>`).join('');
 }
 
-/* ---------- Áp dụng / hiển thị Concept giao diện (mảng UI_CONCEPTS
-   đã khai báo phía trên, trước initBgTheme) ---------- */
+/* ---------- Nút 🎲 cạnh nút sáng/tối: đổi ngẫu nhiên sang 1 trong các
+   "concept" giao diện (màu nhấn + hình nền) đã phối sẵn ở UI_CONCEPTS,
+   để giao diện lúc nào đổi cũng hài hoà chứ không random rời rạc từng
+   phần màu/nền riêng lẻ dễ bị chỏi nhau. Cố tránh lặp lại đúng concept
+   vừa áp dụng lần trước (nếu có hơn 1 lựa chọn). ---------- */
+function randomizeTheme(){
+  const savedAccent = localStorage.getItem('vocab_accent_theme') || 'emerald';
+  const savedBg = localStorage.getItem('vocab_bg_theme') || 'meadow';
+  let pool = UI_CONCEPTS.filter(c => !(c.accent === savedAccent && c.bg === savedBg));
+  if(!pool.length) pool = UI_CONCEPTS;
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  applyConcept(pick.key);
+}
+
+
 function applyConcept(key){
   const c = UI_CONCEPTS.find(x=>x.key===key);
   if(!c) return;
