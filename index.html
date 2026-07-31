@@ -6294,8 +6294,74 @@ select:focus, .search-box:focus, input[type="text"]:focus, input[type="number"]:
   .btn, .tab-btn, .opt, .st-mode-btn{ box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light); }
 }
 
+/* ============================================================
+   DASHBOARD — Neomorphism
+   Các ô có mã màu ý nghĩa (hero-stat theo trạng thái, cefr-chip
+   theo trình độ, fn-step theo chặng) GIỮ NGUYÊN màu nền/viền để
+   không mất tín hiệu phân loại — chỉ đổi viền cứng sang bóng đổ
+   mềm, đồng bộ chiều sâu với phần còn lại của trang. Các khối
+   trung tính (dash-card, hero-main, hero-side, strip-card, stat-mini,
+   lp-stat) chuyển hẳn sang bề mặt "nổi" neomorphism đầy đủ. ---- */
+.dash-card, .hero-main, .hero-side, .strip-card{
+  border:none !important; background:var(--neo-surface);
+  box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light);
+}
+.dash-card:hover{ transform:translateY(-3px); box-shadow:7px 7px 16px var(--neo-dark), -7px -7px 16px var(--neo-light); }
+.dash-card::after{ display:none; }
+
+.stat-mini, .lp-stat{
+  border:none; background:var(--neo-surface);
+  box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light);
+}
+.stat-mini:hover, .lp-stat:hover{
+  transform:translateY(-2px); box-shadow:5px 5px 11px var(--neo-dark), -5px -5px 11px var(--neo-light);
+}
+
+/* Vòng tròn % giữa hero — đĩa tròn "nổi" thay vì viền phẳng */
+.hero-ring-in{ box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light); background:var(--neo-surface); }
+
+/* 4 ô thống kê Đã thuộc/Đang học/Đến hạn/Từ mới — giữ dải màu bên trái
+   để phân loại, chuyển viền phẳng sang bóng đổ mềm */
+.hero-stat{ border:none; box-shadow:3px 3px 8px var(--neo-dark), -3px -3px 8px var(--neo-light); }
+.hero-stat:hover{ transform:translateY(-2px); box-shadow:4px 4px 10px var(--neo-dark), -4px -4px 10px var(--neo-light); }
+.hero-today{ border:none; box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light); }
+.ht-shuffle{
+  border:none; background:var(--neo-surface);
+  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light);
+}
+.ht-shuffle:hover{ background:var(--accent-grad); }
+
+/* Nút hành động hero: Học từ mới / Gõ từ Collocation / xem hôm nay */
+.hero-pick-btn, .hero-guide-btn, .hero-cta{
+  border:none;
+  box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light), 0 8px 18px -10px rgba(13,110,95,.5);
+}
+.hero-pick-btn:hover, .hero-guide-btn:hover, .hero-cta:hover{
+  transform:translateY(-2px);
+  box-shadow:4px 4px 10px var(--neo-dark-soft), -2px -2px 6px var(--neo-light), 0 12px 24px -12px rgba(13,110,95,.55);
+}
+.hero-guide-btn{ box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light), 0 8px 18px -10px rgba(194,65,12,.5); }
+.hero-guide-btn.today-btn{ box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light), 0 8px 18px -10px rgba(37,99,235,.5); }
+.hero-cta.secondary{ box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light), 0 8px 18px -10px rgba(37,99,235,.5); }
+
+/* Chip trình độ CEFR — giữ nguyên bảng màu theo A1..C2, chỉ thêm nổi nhẹ */
+.cefr-chip{ box-shadow:2px 2px 6px var(--neo-dark-soft), -2px -2px 6px var(--neo-light); }
+.cefr-chip:hover{ box-shadow:3px 3px 8px var(--neo-dark-soft), -3px -3px 8px var(--neo-light); }
+
+/* Lộ trình thuộc từ (fn-step) — giữ màu theo chặng s1..s5, viền cứng
+   chuyển sang bóng đổ mềm cho đồng bộ với phần còn lại */
+.fn-step{ border:none; box-shadow:2px 2px 6px var(--neo-dark-soft), -2px -2px 6px var(--neo-light); }
+.fn-step:hover{ transform:translateY(-2px); box-shadow:3px 3px 8px var(--neo-dark-soft), -3px -3px 8px var(--neo-light); }
+.fn-step i{ box-shadow:inset 1px 1px 3px rgba(0,0,0,.08); }
+
+/* Streak: khung tổng giữ nguyên biểu đồ nhiệt màu tím (thông tin theo
+   cường độ ngày học) — chỉ nổi nhẹ khung ngoài, không đụng ô ngày */
+.streak-section{ padding:14px 16px; border-radius:16px; background:var(--neo-surface);
+  box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light); }
+
 </style>
 <body>
+
 <!-- ===== NÚT GHI CHÚ NHANH NỔI — vị trí đồng bộ bằng JS theo .qc-slot trong header ===== -->
 <div id="qcWidget" class="qc-widget">
   <button type="button" id="qcToggleBtn" class="qc-toggle-btn" onclick="qcToggle()" title="Ghi chú từ vựng nhanh">📝</button>
