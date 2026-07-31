@@ -5651,6 +5651,11 @@ body{
 .cl-fc-act:hover{ box-shadow:var(--shadow-xs); }
 .cl-fc-act.on{ background:#fef9c3; border-color:#fde047; color:#854d0e; }
 [data-theme="dark"] .cl-fc-act.on{ background:rgba(250,204,21,.18); border-color:rgba(250,204,21,.5); color:#fde047; }
+/* Nút "☆ Đánh dấu" trong Gõ từ Collocation (cả lúc đang gõ và màn xem lại) */
+.tl-btn.on{ background:#fef9c3; border-color:#fde047; color:#854d0e; }
+[data-theme="dark"] .tl-btn.on{ background:rgba(250,204,21,.18); border-color:rgba(250,204,21,.5); color:#fde047; }
+.tpr-word .speak-btn.on{ background:#fef9c3; border-color:#fde047; color:#854d0e; }
+[data-theme="dark"] .tpr-word .speak-btn.on{ background:rgba(250,204,21,.18); border-color:rgba(250,204,21,.5); color:#fde047; }
 .cl-fc-nav{ display:flex; justify-content:center; gap:12px; margin-top:20px; }
 /* ---- Thanh công cụ gộp 1 hàng: Trước · Phát âm · Đánh dấu · Tiếp ---- */
 .cl-fc-toolbar{
@@ -36280,6 +36285,23 @@ document.addEventListener('keydown', e=>{
   if(synSkip && synSkip.classList.contains('primary') && synSkip.offsetParent !== null){ e.preventDefault(); synSkip.click(); return; }
 });
 
+/* ---------- Space = "⏸ Ở lại xem thêm" ngay sau khi trả lời đúng ----------
+   Áp dụng cho màn xem lại của Gõ từ (tab riêng) và Gõ từ Collocation —
+   bấm Space để dừng bộ đếm ngược tự chuyển câu, không cần với chuột.
+   Chỉ tác động khi nút đang hiển thị VÀ chưa bị bấm/disabled, và không
+   đang gõ trong 1 ô nhập liệu/contenteditable khác (tránh chặn dấu cách
+   khi gõ chữ bình thường ở nơi khác trong app). */
+document.addEventListener('keydown', e=>{
+  if(e.key !== ' ' && e.key !== 'Spacebar') return;
+  const tag = (e.target.tagName||'').toLowerCase();
+  if(tag==='input' || tag==='textarea' || tag==='select' || (e.target && e.target.isContentEditable)) return;
+
+  const clStay = document.getElementById('clTprStay');
+  if(clStay && clStay.offsetParent !== null && !clStay.disabled){ e.preventDefault(); clStay.click(); return; }
+  const stay = document.getElementById('tprStay');
+  if(stay && stay.offsetParent !== null && !stay.disabled){ e.preventDefault(); stay.click(); return; }
+});
+
 /* ---------- Phím tắt số 1-4 ----------
    - Gõ từ (tab riêng), Gõ từ Collocation, và bước "Gõ từ" trong Học ngay:
      1 = Gợi ý 1 chữ · 2 = Nghe phát âm.
@@ -40707,7 +40729,8 @@ function stRenderColloc(root){
 
   const q = _clStatQuery.trim().toLowerCase();
   let list = COLLOCATIONS.filter(c=>{
-    if(_clStatTab!=='all' && clStatusOf(c, boxes)!==_clStatTab) return false;
+    if(_clStatTab==='bookmark'){ if(!clIsBookmarked(c)) return false; }
+    else if(_clStatTab!=='all' && clStatusOf(c, boxes)!==_clStatTab) return false;
     if(_clStatTopicFilter && c.topic!==_clStatTopicFilter) return false;
     if(!q) return true;
     return c.phrase.toLowerCase().includes(q) || c.meaning.toLowerCase().includes(q)
@@ -40728,8 +40751,9 @@ function stRenderColloc(root){
   const shownList = list.slice(0, _clListShown);
   const hasMore = totalMatched > shownList.length;
 
-  const TAB_LABEL = { all:'Tất cả', unseen:'Chưa học', learning:'Đang luyện', mastered:'Đã thuộc' };
-  const statusIcon = { unseen:'⚪', learning:'🟡', mastered:'✅' };
+  const TAB_LABEL = { all:'Tất cả', unseen:'Chưa học', learning:'Đang luyện', mastered:'Đã thuộc', bookmark:'Đã đánh dấu' };
+  const statusIcon = { unseen:'⚪', learning:'🟡', mastered:'✅', bookmark:'⭐' };
+  const bookmarkCount = Object.keys(clLoadBookmarks()).length;
 
   root.innerHTML = `
     ${stModeBar('colloc')}
@@ -40793,7 +40817,7 @@ function stRenderColloc(root){
 
     <div class="rd-filters" id="clStatTabChips">
       ${Object.keys(TAB_LABEL).map(k=>{
-        const n = k==='all' ? overall.total : (k==='unseen'?overall.unseen:k==='learning'?overall.learning:overall.mastered);
+        const n = k==='all' ? overall.total : k==='bookmark' ? bookmarkCount : (k==='unseen'?overall.unseen:k==='learning'?overall.learning:overall.mastered);
         return `<button class="rd-chip ${_clStatTab===k?'active':''}" data-tab="${k}">${statusIcon[k]||''} ${TAB_LABEL[k]}<b>${n}</b></button>`;
       }).join('')}
     </div>
@@ -40858,7 +40882,7 @@ function stRenderColloc(root){
   };
   document.getElementById('clSearch').value = _clStatQuery;
   document.getElementById('clFlashcardBtn').onclick = ()=> clStartFlashcards(list.length ? list : COLLOCATIONS);
-  document.getElementById('clTypingModeBtn').onclick = ()=> clOpenTypingSetup(_clStatTopicFilter || (_clStatTab==='learning' ? 'learning' : 'all'));
+  document.getElementById('clTypingModeBtn').onclick = ()=> clOpenTypingSetup(_clStatTopicFilter || (_clStatTab==='learning' ? 'learning' : _clStatTab==='bookmark' ? 'bookmarked' : 'all'));
   const streak1Btn = document.getElementById('clStreak1Btn');
   if(streak1Btn) streak1Btn.onclick = ()=>{ if(streak1Pool.length) clStartTyping(shuffle(streak1Pool.slice())); };
   const streak2Btn = document.getElementById('clStreak2Btn');
@@ -41677,6 +41701,7 @@ function clNextTypeCard(){
       <div class="type-listen">
         <button class="tl-btn" id="clTpSpeak"><span class="tl-ic">🔊</span><span class="tl-txt">Nghe</span></button>
         <button class="tl-btn slow" id="clTpSpeakSlow"><span class="tl-ic">🐢</span><span class="tl-txt">Chậm</span></button>
+        <button class="tl-btn ${clIsBookmarked(c)?'on':''}" id="clTpBookmark" title="Đánh dấu để ôn lại"><span class="tl-ic">${clIsBookmarked(c)?'⭐':'☆'}</span><span class="tl-txt">Đánh dấu</span></button>
         <span class="tl-count" id="clTpListenCount"></span>
       </div>
     </div>
@@ -41804,7 +41829,7 @@ function clNextTypeCard(){
       ${stModeBar('colloc')}
       <div class="tp-review ${mastered?'is-master':''}">
         <div class="tpr-flag">✓ Chính xác${_clTypeHinted?' (có dùng gợi ý)':''}${_clTypeListens?` · đã nghe ${_clTypeListens} lần`:''}</div>
-        <div class="tpr-word">${esc(c.phrase)} <button class="speak-btn" id="clTprSpeak" title="Nghe lại">🔊</button></div>
+        <div class="tpr-word">${esc(c.phrase)} <button class="speak-btn" id="clTprSpeak" title="Nghe lại">🔊</button><button class="speak-btn ${clIsBookmarked(c)?'on':''}" id="clTprBookmark" title="Đánh dấu để ôn lại">${clIsBookmarked(c)?'⭐':'☆'}</button></div>
         ${c.ipa ? `<div class="tpr-ipa">${esc(c.ipa)}</div>` : ''}
         <div class="tpr-vn">${esc(c.meaning)}</div>
         ${(c.synonyms&&c.synonyms.length)?`<div class="tpr-syn">≈ ${c.synonyms.map(s=>`<span class="tpr-chip">${esc(s)}</span>`).join('')}</div>`:''}
@@ -41828,6 +41853,11 @@ function clNextTypeCard(){
       </div>`;
 
     document.getElementById('clTprSpeak').onclick = ()=> speak(c.phrase);
+    document.getElementById('clTprBookmark').onclick = (e)=>{
+      const on = clToggleBookmark(c);
+      e.currentTarget.classList.toggle('on', on);
+      e.currentTarget.textContent = on ? '⭐' : '☆';
+    };
     document.getElementById('clTprNext').onclick  = ()=>{ _clTypeIdx++; clNextTypeCard(); };
 
     const ring = document.getElementById('clTprRing');
@@ -41885,6 +41915,12 @@ function clNextTypeCard(){
   }
   document.getElementById('clTpSpeak').onclick     = ()=> doListen(0.9);
   document.getElementById('clTpSpeakSlow').onclick = ()=> doListen(0.55);
+  document.getElementById('clTpBookmark').onclick  = (e)=>{
+    const on = clToggleBookmark(c);
+    e.currentTarget.classList.toggle('on', on);
+    e.currentTarget.querySelector('.tl-ic').textContent = on ? '⭐' : '☆';
+    toast(on ? '⭐ Đã đánh dấu cụm này' : 'Đã bỏ đánh dấu');
+  };
 
   const autoBtn = document.getElementById('clTypeAutoToggle');
   autoBtn.onclick = ()=>{
