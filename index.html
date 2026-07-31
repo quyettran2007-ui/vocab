@@ -96,10 +96,10 @@
   --line: #c3cec5;
   --line-strong: #9fada3;
 
-  --shadow-xs: 0 1px 2px rgba(15,32,29,.025);
-  --shadow-sm: 0 1px 3px -1px rgba(15,32,29,.05), 0 1px 1px rgba(15,32,29,.03);
-  --shadow: 0 6px 14px -10px rgba(15,32,29,.10), 0 1px 4px -1px rgba(15,32,29,.04);
-  --shadow-lg: 0 14px 32px -18px rgba(15,32,29,.16), 0 3px 8px -4px rgba(15,32,29,.07);
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow: none;
+  --shadow-lg: none;
   --glow: 0 10px 26px -10px rgba(13,110,95,.42);
 
   --radius-xl: 22px;
@@ -6620,6 +6620,63 @@ header{
 .hero-cta.small{ white-space:normal; line-height:1.25; }
 @media(max-width:700px){
   .hero-pick-btn, .hero-guide-btn, .hero-cta.small{ min-height:40px; }
+}
+
+/* ============================================================
+   THẺ CHỦ ĐỀ (tab Danh sách — .te-macro-card) &
+   THẺ BÀI ĐỌC (tab Reading — .rd-card) — Neomorphism
+   Thân thẻ chuyển sang bề mặt nổi --neo-surface + bóng đổ mềm,
+   GIỮ NGUYÊN viền màu + đầu thẻ gradient theo màu riêng từng
+   chủ đề/bài đọc (--tp-c) để không mất tín hiệu phân loại màu —
+   cùng cách tiếp cận đã dùng cho .fn-step, .funnel-card...
+   ============================================================ */
+.te-macro-card, .rd-card{
+  background:var(--neo-surface) !important;
+  box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light) !important;
+}
+.te-macro-card:hover, .rd-card:hover{
+  transform:translateY(-3px) !important;
+  box-shadow:7px 7px 16px var(--neo-dark), -7px -7px 16px var(--neo-light), 0 10px 22px -14px rgba(13,110,95,.4) !important;
+}
+.te-macro-card .cl-topic-bar-track, .rd-progress-track{
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light) !important;
+}
+.te-macro-expand, .rd-badge{
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light) !important;
+}
+.te-sub-chip{
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light) !important;
+}
+.te-sub-chip:hover{
+  box-shadow:inset 1px 1px 3px var(--neo-dark-soft), inset -1px -1px 3px var(--neo-light) !important;
+}
+
+/* ============================================================
+   TẮT ĐỔ BÓNG "THẺ NỔI" CÒN LẠI Ở CHẾ ĐỘ SÁNG
+   Các nơi trên đã tắt qua biến --shadow-*; đây là các chỗ viết
+   cứng giá trị bóng (modal, thanh tìm kiếm, nav, ô chọn, thẻ
+   hover...) không đi qua biến nên cần tắt riêng. KHÔNG đụng tới:
+   viền sáng khi focus (0 0 0 Npx, dạng ring), bóng lõm (inset)
+   dùng cho bề mặt neomorphism/trạng thái nhấn, và các quầng sáng
+   màu mang tính trang trí trên nút/badge/thanh tiến độ.
+   ============================================================ */
+html:not([data-theme="dark"]) .qc-modal,
+html:not([data-theme="dark"]) .ava-box,
+html:not([data-theme="dark"]) .levelup-pop,
+html:not([data-theme="dark"]) .rd-toast,
+html:not([data-theme="dark"]) .search-filter-row .search-wrap:not(:focus-within),
+html:not([data-theme="dark"]) .filter-toggle-btn,
+html:not([data-theme="dark"]) select:not(:focus),
+html:not([data-theme="dark"]) select:hover:not(:focus),
+html:not([data-theme="dark"]) nav.tabs,
+html:not([data-theme="dark"]) .dash-search:not(:focus-within),
+html:not([data-theme="dark"]) .ds-item:hover,
+html:not([data-theme="dark"]) .cefr-chip:hover,
+html:not([data-theme="dark"]) .pos-pie-chart{
+  box-shadow:none !important;
 }
 
 </style>
