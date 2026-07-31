@@ -35797,7 +35797,7 @@ function renderNeed(){
   const S = srsStats();
 
   // Phân loại TOÀN BỘ từ theo trạng thái SRS
-  const due=[], learning=[], soon=[], done=[], star=[], temp=[];
+  const due=[], learning=[], soon=[], done=[], star=[], temp=[], gate1=[], gate2=[];
   VOCAB.forEach(v=>{
     const st = srsState(v.word);
     if(starred.has(v.word)) star.push(v);
@@ -35806,6 +35806,11 @@ function renderNeed(){
     // đạt mốc cuối 50 ngày -> "🌤️ Nhớ tạm thời"
     const r = SRS[v.word];
     if(r && r.box>=TEMP_RETAIN_BOX && r.box<SRS_MASTER_BOX) temp.push(v);
+    if(SRS[v.word]){
+      const gc = gateCount(v.word);
+      if(gc===1) gate1.push(v);
+      else if(gc===2) gate2.push(v);
+    }
     if(srsIsDue(v.word, now)) due.push(v);
     else if(st==='learning' || st==='review') soon.push(v);
     if(st==='learning') learning.push(v);
@@ -35819,12 +35824,16 @@ function renderNeed(){
   });
   temp.sort((a,b)=>SRS[a.word].due - SRS[b.word].due);
   done.sort((a,b)=>(SRS[b.word].last||0)-(SRS[a.word].last||0));
+  gate1.sort((a,b)=>(SRS[b.word].lapses||0)-(SRS[a.word].lapses||0));
+  gate2.sort((a,b)=>(SRS[b.word].lapses||0)-(SRS[a.word].lapses||0));
 
   const todayCount = (()=>{ const d=_dayReviewData(todayKey()); return d.words.length + d.collocs.length; })();
   const TABS = [
     {k:'due',      ic:'🔔', t:'Đến hạn ôn',  arr:due,      d:'Ôn ngay hôm nay'},
     {k:'soon',     ic:'⏳', t:'Đã lên lịch', arr:soon,     d:'Đang chờ tới ngày ôn'},
     {k:'star',     ic:'⭐', t:'Cần học',     arr:star,     d:'Từ bạn đánh dấu sao'},
+    {k:'gate1',    ic:'1️⃣', t:'Đã qua 1 cửa', arr:gate1,   d:'Đã qua 🃏 Flashcard, đang cần cửa kế tiếp'},
+    {k:'gate2',    ic:'2️⃣', t:'Đã qua 2 cửa', arr:gate2,   d:'Chỉ còn thiếu đúng 1 cửa cuối là "ngủ đông"'},
     {k:'temp',     ic:'🌤️', t:'Nhớ tạm thời', arr:temp,     d:'Đã giữ được ≥14 ngày — đủ chắc cho kỳ thi, chưa tới mốc 50 ngày "Đã thuộc"'},
     {k:'today',    ic:'📅', t:'Đã học hôm nay', arr:new Array(todayCount), d:'Xem & ôn lại theo từng ngày'},
     {k:'done',     ic:'✅', t:'Đã thuộc',    arr:done,     d:'Hoàn thành bậc 5'}
@@ -35863,6 +35872,8 @@ function renderNeed(){
     due:  ['🎉','Không còn từ nào đến hạn','Bạn đã ôn hết hôm nay! Thử <b>Ôn ngẫu nhiên</b> để củng cố.'],
     soon: ['⏳','Chưa có từ nào lên lịch','Học vài từ để hệ thống bắt đầu hẹn lịch ôn.'],
     star: ['⭐','Chưa đánh dấu từ nào','Bấm ☆ trên Flashcard hoặc Danh sách để thêm.'],
+    gate1:['1️⃣','Chưa có từ nào chỉ mới qua 1 cửa','Học từ mới ở "Lộ trình" để bắt đầu qua 🃏 Flashcard.'],
+    gate2:['2️⃣','Chưa có từ nào đã qua 2 cửa','Tiếp tục học để từ đi qua ❓ Trắc nghiệm sau Flashcard.'],
     temp: ['🌤️','Chưa có từ nào đạt mốc Nhớ tạm thời','Ôn đều đặn để từ vựng giữ được từ 14 ngày trở lên.'],
     done: ['✅','Chưa có từ nào thuộc','Đúng liên tiếp tới bậc 5 là từ được tính đã thuộc.']
   };
@@ -35888,6 +35899,16 @@ function renderNeed(){
                 title="Chỉ học đúng những từ bạn đánh dấu sao">
           <span class="naa-ic">⭐</span>
           <span class="naa-txt"><span class="naa-t">Học từ đánh dấu</span><span class="naa-n">${star.length} từ</span></span>
+        </button>`:''}
+        ${gate1.length?`<button class="btn naa-btn naa-gate1" onclick="goLearnScope('gate1')"
+                title="Chỉ học từ đã qua đúng 1/3 cửa, đang cần cửa kế tiếp">
+          <span class="naa-ic">1️⃣</span>
+          <span class="naa-txt"><span class="naa-t">Đã qua 1 cửa</span><span class="naa-n">${gate1.length} từ</span></span>
+        </button>`:''}
+        ${gate2.length?`<button class="btn naa-btn naa-gate2" onclick="goLearnScope('gate2')"
+                title="Chỉ học từ đã qua đúng 2/3 cửa, chỉ còn thiếu 1 cửa cuối">
+          <span class="naa-ic">2️⃣</span>
+          <span class="naa-txt"><span class="naa-t">Đã qua 2 cửa</span><span class="naa-n">${gate2.length} từ</span></span>
         </button>`:''}
         <button class="btn naa-btn naa-random" onclick="goLearnScope('random')">
           <span class="naa-ic">🎲</span>
@@ -35923,6 +35944,8 @@ function renderNeed(){
           ${cur.k==='star' ? `
             <button class="btn" onclick="clearNeeded()">Xoá hết sao</button>
             <button class="btn primary" onclick="goLearnScope('star')">🎯 Học ${list.length} từ này →</button>` : ''}
+          ${(cur.k==='gate1'||cur.k==='gate2') ? `
+            <button class="btn primary" onclick="goLearnScope('${cur.k}')">🎯 Học ${list.length} từ này →</button>` : ''}
           ${cur.k==='due'  ? `<button class="btn primary" onclick="goSRS()">Bắt đầu ôn →</button>` : ''}
           ${cur.k==='soon' ? `<button class="btn" onclick="goLearnScope('weak')">🔥 Ôn từ hay quên →</button>` : ''}
         </span>
@@ -37572,6 +37595,26 @@ let _srsVersion = 0;
 
 function loadSRS(){
   try{ SRS = JSON.parse(localStorage.getItem(LS_SRS)) || {}; }catch(e){ SRS = {}; }
+  syncGateDemotions();
+}
+/* Phát hiện từ bị "rớt hạng ÂM THẦM": đã từng lên bậc dài hạn (box>0)
+   nhưng hiện KHÔNG còn đủ 3 cửa nữa (ví dụ do đổi quy tắc số lần yêu cầu
+   ở 1 cửa nào đó) mà KHÔNG qua sự kiện trả lời nào để srsReview() tự lưu
+   savedBox. Gọi mỗi khi tải dữ liệu để: (1) lưu lại bậc cũ (savedBox) hòng
+   khôi phục sau khi qua đủ lại 3 cửa — khỏi phải leo lại từ bậc 1, và
+   (2) đưa box hiển thị về 0 ("Đang học" / cửa) thay vì hiện nhầm bậc cũ. */
+function syncGateDemotions(){
+  let changed = false;
+  Object.keys(SRS).forEach(w=>{
+    const r = SRS[w];
+    if(!r || !r.box) return;
+    if(!gateDone(w) && r.savedBox===undefined){
+      r.savedBox = r.box;
+      r.box = 0;
+      changed = true;
+    }
+  });
+  if(changed) saveSRS();
 }
 function saveSRS(){
   try{ localStorage.setItem(LS_SRS, JSON.stringify(SRS)); }catch(e){}
@@ -37767,17 +37810,22 @@ function srsReview(w, quality, mode){
        sau ít phút trong cùng phiên để lặp lại đủ số lần yêu cầu. Nếu vừa
        trả lời sai (quality 0) và từ này TRƯỚC ĐÓ đã từng "ngủ đông" (tức
        đang ôn dài hạn mà quên) thì coi như phải khởi động lại: reset box
-       và số lần lặp về 0 cho đúng nghĩa "quay lại luyện từ đầu". */
+       và số lần lặp về 0 cho đúng nghĩa "quay lại luyện từ đầu". Bậc cũ
+       (savedBox) được LƯU LẠI để khi qua đủ lại 3 cửa thì khôi phục đúng
+       bậc đó, không phải leo lại từ bậc 1. */
     if(quality === 0){
       r.lapses++;
+      if(r.savedBox===undefined && r.box>0) r.savedBox = r.box;
       r.box = 0;
     }
     r.due = now + 10*60*1000;              // ôn lại ngay trong phiên (10 phút)
   } else if(quality === 0){
     /* Quên khi ĐÃ đang ngủ đông (ôn ngắt quãng dài hạn) -> về lại khởi
        động: cửa vừa sai đã bị khoá lại ở trên, từ tự rời "ngủ đông" và
-       phải luyện lại đủ số lần mới được lên lịch dài hạn tiếp. */
+       phải luyện lại đủ số lần mới được lên lịch dài hạn tiếp. Vẫn lưu
+       lại bậc cũ (savedBox) để khôi phục sau khi qua đủ 3 cửa lại. */
     r.lapses++;
+    if(r.savedBox===undefined && r.box>0) r.savedBox = r.box;
     r.box = 0;
     r.due = now + 10*60*1000;
   } else if(quality === 1){                // Khó -> giữ nguyên bậc, quay lại SỚM HƠN (nửa mốc hiện tại)
@@ -37786,9 +37834,12 @@ function srsReview(w, quality, mode){
     r.due = now + Math.max(1, Math.round(base * 0.5)) * DAY;
   } else {                                 // Đúng / Dễ -> lên bậc, đúng y mốc chuẩn SRS_STEPS
     if(!wasGateDone && isGateDoneNow){
-      /* Vừa đạt đủ 3 cửa lần này -> chính thức "cho ngủ đông", bắt đầu
-         chu kỳ ngắt quãng dài hạn từ bước đầu tiên (1 ngày). */
-      r.box = 1;
+      /* Vừa đạt đủ 3 cửa lần này -> chính thức "cho ngủ đông" lại. Nếu
+         từng có bậc cũ (savedBox, do trước đó bị rớt hạng) thì KHÔI PHỤC
+         đúng bậc đó thay vì leo lại từ đầu; chỉ từ hoàn toàn mới mới bắt
+         đầu ở bước 1 (1 ngày). */
+      r.box = (r.savedBox !== undefined) ? r.savedBox : 1;
+      delete r.savedBox;
     } else {
       r.box = Math.min(SRS_MASTER_BOX, r.box + 1);
     }
@@ -37839,8 +37890,15 @@ function srsQueue(limit, pool){
     const st = srsState(v.word);
     if(st==='mastered') return;
     if(srsIsDue(v.word, now)) dueArr.push(v);
-    else if(st==='learning') learnArr.push(v);
-    else if(st==='new') newArr.push(v);
+    /* Dùng "SRS[v.word] && !gateDone(v.word)" thay vì "st==='learning'":
+       st==='learning' CHỈ đúng khi box===0. Một từ từng lên bậc cao
+       (box>0) trong lịch dài hạn, sau đó bị "rớt hạng" về chưa đủ cửa
+       (ví dụ do đổi quy tắc tính "đã thuộc" khiến gateDone() hoá false)
+       thì srsState() trả về 'review', không phải 'learning' -> nếu chỉ
+       kiểm tra st==='learning' thì từ này KHÔNG rơi vào nhóm nào cả,
+       biến mất khỏi hàng đợi hoàn toàn thay vì chỉ bị xếp sau. */
+    else if(SRS[v.word] && !gateDone(v.word)) learnArr.push(v);
+    else if(!SRS[v.word]) newArr.push(v);
   });
   // quá hạn lâu + nhiều lần quên => ưu tiên cao nhất
   dueArr.sort((a,b)=>{
@@ -37849,10 +37907,24 @@ function srsQueue(limit, pool){
     const pb=(now-rb.due)/DAY + rb.lapses*2;
     return pb-pa;
   });
-  learnArr.sort((a,b)=>(SRS[b.word].lapses||0)-(SRS[a.word].lapses||0));
-  const out = [...dueArr, ...learnArr, ...shuffle(newArr)];
+  learnArr.sort((a,b)=> gateCount(b.word)-gateCount(a.word));   // gần xong trước
   const n = (limit===undefined) ? sessionSize() : limit;
-  return (n && n>0) ? out.slice(0, n) : out;
+  if(!n || n<=0) return [...dueArr, ...learnArr, ...shuffle(newArr)];
+
+  // Dành tối thiểu 25% phiên cho "đang học dở" để due-list đông (do đổi
+  // quy tắc, dồn cục...) không nuốt hết chỗ của nhóm này như trước.
+  const minLearn = learnArr.length ? Math.max(1, Math.min(learnArr.length, Math.round(n*0.25))) : 0;
+  const learnPick = learnArr.slice(0, minLearn);
+  const remain = Math.max(0, n - learnPick.length);
+  const duePick = dueArr.slice(0, remain);
+  let out = [...duePick, ...learnPick];
+  if(out.length < n){
+    const used = new Set(out.map(v=>v.word));
+    const extra = [...learnArr.slice(minLearn), ...dueArr.slice(remain), ...shuffle(newArr)]
+      .filter(v=>!used.has(v.word));
+    out = out.concat(extra.slice(0, n-out.length));
+  }
+  return out;
 }
 /* Ôn ngẫu nhiên: trộn đều từ ĐÃ TỪNG HỌC (kể cả đã thuộc) để chống quên */
 function randomQueue(limit){
@@ -37877,6 +37949,22 @@ function weakQueue(limit){
 /* Chỉ từ mới: chưa từng có bản ghi SRS (chưa học qua bất kỳ cửa nào) */
 function newWordsQueue(limit){
   const arr = VOCAB.filter(v=>!SRS[v.word]);
+  const n = (limit===undefined) ? sessionSize() : limit;
+  return (n && n>0) ? arr.slice(0, n) : arr;
+}
+/* Từ đã qua ĐÚNG 1/3 cửa (thường vừa qua 🃏 Flashcard) — đang cần cửa kế tiếp.
+   Không phụ thuộc box/due, chỉ dựa trên gateCount() nên vẫn đúng cả khi
+   một từ bị "rớt hạng" về lại giai đoạn khởi động do đổi quy tắc tính thuộc. */
+function gate1Queue(limit){
+  const arr = VOCAB.filter(v=> SRS[v.word] && gateCount(v.word)===1)
+                    .sort((a,b)=>(SRS[b.word].lapses||0)-(SRS[a.word].lapses||0));
+  const n = (limit===undefined) ? sessionSize() : limit;
+  return (n && n>0) ? arr.slice(0, n) : arr;
+}
+/* Từ đã qua ĐÚNG 2/3 cửa — chỉ còn thiếu đúng 1 cửa cuối là "ngủ đông" */
+function gate2Queue(limit){
+  const arr = VOCAB.filter(v=> SRS[v.word] && gateCount(v.word)===2)
+                    .sort((a,b)=>(SRS[b.word].lapses||0)-(SRS[a.word].lapses||0));
   const n = (limit===undefined) ? sessionSize() : limit;
   return (n && n>0) ? arr.slice(0, n) : arr;
 }
@@ -38122,7 +38210,8 @@ function clRecordAnswer(correct, collocId){
 const SCOPE_LABEL = {
   path:'🚀 Lộ trình (khuyên dùng)', srs:'🔁 Ôn theo lịch', random:'🎲 Ôn ngẫu nhiên',
   weak:'🔥 Từ hay quên', star:'⭐ Cần học', filtered:'🗂️ Theo bộ lọc', new:'🆕 Chỉ từ mới',
-  gate:'🚪 Học cho đủ cửa', 'gate-today':'🚪 Học cho đủ cửa (hôm nay)'
+  gate:'🚪 Học cho đủ cửa', 'gate-today':'🚪 Học cho đủ cửa (hôm nay)',
+  gate1:'1️⃣ Từ đã qua 1 cửa', gate2:'2️⃣ Từ đã qua 2 cửa'
 };
 
 let learnState = null;
@@ -38187,8 +38276,11 @@ function buildLearnWords(scope){
   if(scope==='random') return randomQueue();
   if(scope==='weak')   return weakQueue();
   if(scope==='new')    return newWordsQueue();
+  if(scope==='gate1')  return gate1Queue();
+  if(scope==='gate2')  return gate2Queue();
   if(scope==='star')   return cut(VOCAB.filter(v=>starred.has(v.word)));
-  if(scope==='gate')   return cut(VOCAB.filter(v=>SRS[v.word] && !gateDone(v.word)));
+  if(scope==='gate')   return cut(VOCAB.filter(v=>SRS[v.word] && !gateDone(v.word))
+                                        .sort((a,b)=> gateCount(b.word)-gateCount(a.word)));
   if(scope==='gate-today') return cut(_gateCatchupWords || []);
   return cut(filtered.slice());
 }
@@ -38738,6 +38830,8 @@ function renderLearnStart(scope='path', empty=false){
   const nRnd  = randomQueue(0).length;
   const nWeak = weakQueue(0).length;
   const nNew  = newWordsQueue(0).length;
+  const nGate1 = gate1Queue(0).length;
+  const nGate2 = gate2Queue(0).length;
   const starCnt = starCount();
   const acc = stat.answered>0 ? Math.round(stat.correct/(stat.correct+stat.wrong||1)*100) : 0;
   const pct = Math.round(S.learned/Math.max(1,S.total)*100);
@@ -38746,6 +38840,8 @@ function renderLearnStart(scope='path', empty=false){
     {k:'path',   ic:'🚀', t:'Lộ trình (khuyên dùng)', n:nPath, d:'App tự dẫn qua đúng 3 cửa còn thiếu của từng từ'},
     {k:'srs',    ic:'🔁', t:'Chỉ ôn theo lịch',  n:nSrs,    d:'Riêng từ đã đủ 3 cửa, đến hạn ôn lại'},
     {k:'new',    ic:'🆕', t:'Chỉ từ mới',        n:nNew,    d:'Từ chưa từng học qua bất kỳ cửa nào'},
+    {k:'gate1',  ic:'1️⃣', t:'Từ đã qua 1 cửa',   n:nGate1,  d:'Đã qua 🃏 Flashcard, đang cần cửa kế tiếp'},
+    {k:'gate2',  ic:'2️⃣', t:'Từ đã qua 2 cửa',   n:nGate2,  d:'Chỉ còn thiếu đúng 1 cửa cuối là "ngủ đông"'},
     {k:'weak',   ic:'🔥', t:'Từ hay quên',       n:nWeak,   d:'Ưu tiên từ bạn hay sai, hay quên'},
     {k:'random', ic:'🎲', t:'Ôn ngẫu nhiên',     n:nRnd,    d:'Trộn đều từ đã học, chống quên'},
     {k:'star',   ic:'⭐', t:'Cần học',           n:starCnt, d:'Các từ bạn đánh dấu sao'},
