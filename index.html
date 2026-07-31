@@ -2631,6 +2631,8 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .st-tr-meaning-text{ font-size:13.5px; color:var(--ink-soft); line-height:1.55; }
 .st-tr-session-actions{ display:flex; justify-content:center; gap:10px; margin:16px 0 4px; flex-wrap:wrap; }
 .st-tr-session-actions .learn-ghost-btn{ font-size:12.5px; padding:8px 16px; }
+.cl-fc-head-sess-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.cl-fc-head-sess-actions .learn-ghost-btn{ font-size:12px; padding:6px 12px; }
 .st-examples{ display:flex; flex-direction:column; gap:10px; padding-top:10px; border-top:1px dashed var(--line); }
 .st-ex{ background:var(--card-sunken); border-left:3px solid var(--accent); border-radius:8px; padding:9px 12px; }
 .st-ex-en{ font-size:13.5px; color:var(--ex-color); line-height:1.55; }
@@ -41710,6 +41712,10 @@ function clNextTypeCard(){
       <button class="st-pick-mini" id="clTpBack">← Quay lại danh sách</button>
       <span class="cl-fc-progress">Cụm ${_clTypeIdx+1}/${_clTypeQueue.length}</span>
       <span class="tp-score">Đúng <b>${_clTypeScore}</b>/${_clTypeTotal}</span>
+      <span class="cl-fc-head-sess-actions">
+        <button class="learn-ghost-btn" id="clTpEndSession">🏁 Kết thúc phiên</button>
+        <button class="learn-ghost-btn" id="clTpNewSession">🔀 Luyện phiên khác</button>
+      </span>
       ${clStatChipsHTML(streak)}
     </div>
 
@@ -41746,10 +41752,6 @@ function clNextTypeCard(){
       <button class="btn" id="clTypeShow">👁 Hiện đáp án</button>
       <button class="btn" id="clTypeSkip">Bỏ qua →</button>
       <button class="btn ${CL_TP_AUTOCHECK?'active':''}" id="clTypeAutoToggle" title="Khi bật: chữ gõ trùng đáp án được tô xanh ngay, không cần bấm Kiểm tra. Áp dụng cho mọi cụm sau đó tới khi tắt.">${CL_TP_AUTOCHECK?'⚡ Tô xanh khi gõ: BẬT':'⚡ Tô xanh khi gõ: TẮT'}</button>
-    </div>
-    <div class="st-tr-session-actions">
-      <button class="learn-ghost-btn" id="clTpEndSession">🏁 Kết thúc phiên</button>
-      <button class="learn-ghost-btn" id="clTpNewSession">🔀 Luyện phiên khác</button>
     </div>
     <div class="type-tip">Enter = kiểm tra · Backspace = xoá chữ · Ctrl/⌘+Enter = nghe lại · Đang luyện dở? Cứ chuyển tab thoải mái — phiên sẽ tự lưu và giữ nguyên khi quay lại.</div>`;
 
