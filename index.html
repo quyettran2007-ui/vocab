@@ -5210,10 +5210,6 @@ nav.tabs{
 :root{
   --dash-card-bg: var(--card);
   --dash-border: 1px solid var(--line-strong);
-  --pf-grad-1:#0a5a4d; --pf-grad-2:#12897a;
-}
-[data-theme="dark"]{
-  --pf-grad-1:#0e8f7a; --pf-grad-2:#4fd8bd;
 }
 
 /* ---- nền trang ---- */
@@ -5240,67 +5236,75 @@ main{ padding-top:26px; }
 @media(max-width:640px){ .dash-search{ width:100%; max-width:100%; } }
 
 /* ================= HỒ SƠ NGƯỜI HỌC ================= */
+/* Quay lại đúng ngôn ngữ neomorphism của toàn trang (bề mặt --neo-surface
+   + bóng đổ mềm 2 chiều sáng-tối) thay vì nền gradient nhiều màu tương
+   phản mạnh — vẫn cho thẻ này NỔI BẬT hơn các thẻ khác trong Tổng quan
+   bằng cách nổi cao hơn (box-shadow mạnh hơn) + 1 viền accent mảnh phía
+   trên (cùng mô-típ với vạch chia dưới header), thay vì đổi hẳn tông màu. */
 .profile-card{
   grid-template-columns:auto 1fr; gap:18px;
   padding:15px 26px; border-radius:var(--radius-xl);
-  background: linear-gradient(125deg, var(--pf-grad-1) 0%, var(--accent) 50%, var(--pf-grad-2) 100%);
-  border:none; box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.06) inset;
-  position:relative; overflow:hidden; isolation:isolate;
+  background:var(--neo-surface); border:none; position:relative; overflow:hidden;
+  box-shadow:8px 8px 18px var(--neo-dark), -8px -8px 18px var(--neo-light), 0 16px 30px -20px rgba(13,110,95,.4);
+  transition:transform .25s ease, box-shadow .25s ease;
 }
 .profile-card::before{
-  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background:
-    radial-gradient(460px 280px at 102% -25%, rgba(255,255,255,.22), transparent 62%),
-    radial-gradient(320px 200px at -10% 120%, rgba(255,255,255,.10), transparent 60%),
-    repeating-linear-gradient(180deg, rgba(255,255,255,.045) 0 1px, transparent 1px 29px);
+  content:''; position:absolute; left:0; right:0; top:0; height:3px; z-index:1; pointer-events:none;
+  background:var(--accent-grad); opacity:.9;
 }
-.profile-card::after{
-  content:''; position:absolute; left:0; right:0; top:0; height:1px; z-index:0; pointer-events:none;
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+.profile-card::after{ content:none; }
+.profile-card:hover{
+  transform:translateY(-2px);
+  box-shadow:9px 9px 20px var(--neo-dark), -9px -9px 20px var(--neo-light), 0 18px 34px -18px rgba(13,110,95,.45);
 }
-.profile-card > *{ position:relative; z-index:1; }
-.profile-card{ transition:transform .25s ease, box-shadow .25s ease; }
-.profile-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.12) inset; }
 .pf-left{ gap:13px; }
-.pf-avatar-wrap{ width:64px; height:64px; filter:drop-shadow(0 6px 14px rgba(0,0,0,.22)); }
-.pf-ring circle:first-of-type{ stroke:rgba(255,255,255,.30) !important; }
+.pf-avatar-wrap{ width:64px; height:64px; filter:drop-shadow(0 4px 10px rgba(0,0,0,.14)); }
 .pf-ava-emoji{
-  font-size:27px; inset:8px; background:rgba(255,255,255,.18);
-  border:1px solid rgba(255,255,255,.30); box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+  font-size:27px; inset:8px; background:var(--neo-surface);
+  border:none; box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light);
 }
-.pf-edit{ background:rgba(255,255,255,.95); box-shadow:0 2px 6px rgba(0,0,0,.2); }
-/* Huy hiệu cấp độ nhịp sáng nhẹ — điểm nhấn "thành tựu" của cả thẻ */
+.pf-edit{ background:var(--neo-surface); border:none; box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light); color:var(--ink-soft); }
+/* Huy hiệu cấp độ — giữ tông vàng/ember, màu duy nhất dành riêng cho
+   thành tựu trong toàn app (không đụng tới màu nhấn teal của hành động) */
 .pf-lv-dot{
-  box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 2.5px rgba(255,255,255,.9), 0 0 0 0 rgba(251,191,36,.55);
+  background:linear-gradient(135deg,#fde68a,#f59e0b 60%,#c2410c); color:#fff;
+  box-shadow:0 3px 8px rgba(0,0,0,.2), 0 0 0 2.5px var(--neo-surface), 0 0 0 0 rgba(251,191,36,.55);
   animation:pfLvPulse 2.6s ease-out infinite;
 }
 @keyframes pfLvPulse{
-  0%{ box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 2.5px rgba(255,255,255,.9), 0 0 0 0 rgba(251,191,36,.55); }
-  70%{ box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 2.5px rgba(255,255,255,.9), 0 0 0 8px rgba(251,191,36,0); }
-  100%{ box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 2.5px rgba(255,255,255,.9), 0 0 0 0 rgba(251,191,36,0); }
+  0%{ box-shadow:0 3px 8px rgba(0,0,0,.2), 0 0 0 2.5px var(--neo-surface), 0 0 0 0 rgba(251,191,36,.55); }
+  70%{ box-shadow:0 3px 8px rgba(0,0,0,.2), 0 0 0 2.5px var(--neo-surface), 0 0 0 8px rgba(251,191,36,0); }
+  100%{ box-shadow:0 3px 8px rgba(0,0,0,.2), 0 0 0 2.5px var(--neo-surface), 0 0 0 0 rgba(251,191,36,0); }
 }
 @media(prefers-reduced-motion:reduce){ .pf-lv-dot{ animation:none; } }
-.pf-name{ font-family:var(--font-heading); font-size:19px; font-weight:800; color:#fff; letter-spacing:-.3px; text-shadow:0 2px 10px rgba(0,0,0,.18); }
+.pf-name{
+  font-family:var(--font-heading); font-size:19px; font-weight:800; letter-spacing:-.3px;
+  background:var(--accent-grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
 .pf-lv{
   display:inline-flex; align-items:center; gap:5px; font-size:11.5px; margin-top:4px;
-  color:#fff; font-weight:700; padding:2px 9px 2px 7px; border-radius:99px;
-  background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.25);
+  color:var(--gold); font-weight:800; padding:2px 9px 2px 7px; border-radius:99px;
+  background:var(--gold-bg); border:none;
+  box-shadow:inset 1px 1px 3px rgba(0,0,0,.06);
 }
 .pf-mid{ padding:0 6px; }
-.pf-bar-top{ font-size:11.5px; margin-bottom:6px; color:rgba(255,255,255,.82); font-weight:600; }
-.pf-bar-top b{ color:#fff; font-weight:800; }
-.pf-bar{ height:8px; background:rgba(255,255,255,.20); border-color:rgba(255,255,255,.10); box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
-.pf-fill{ background:linear-gradient(90deg,#fde68a,#fbbf24,#f59e0b); box-shadow:0 0 10px rgba(251,191,36,.5); }
+.pf-bar-top{ font-size:11.5px; margin-bottom:6px; color:var(--muted); font-weight:600; }
+.pf-bar-top b{ color:var(--ink); font-weight:800; }
+.pf-bar{ height:8px; background:var(--neo-surface); border:none; box-shadow:inset 2px 2px 4px var(--neo-dark), inset -2px -2px 4px var(--neo-light); }
+.pf-fill{
+  background:linear-gradient(90deg,#fde68a,#fbbf24,#f59e0b);
+  box-shadow:0 0 8px rgba(251,191,36,.5);
+}
 .pf-scale{ margin-top:7px; }
 .pf-tick{ filter:none; opacity:.35; }
-.pf-tick.on{ opacity:1; filter:drop-shadow(0 1px 4px rgba(0,0,0,.25)); }
-.pf-right{ gap:0; padding-left:28px; border-left:1px solid rgba(255,255,255,.28); display:flex; }
+.pf-tick.on{ opacity:1; border-radius:50%; box-shadow:0 0 0 5px var(--gold-bg); }
+.pf-right{ gap:0; padding-left:28px; border-left:1px solid var(--line); display:flex; }
 .pf-stat{ padding:0 20px; }
-.pf-stat + .pf-stat{ border-left:1px solid rgba(255,255,255,.22); }
-.pf-stat b{ font-family:var(--font-heading); font-size:27px; color:#fff; font-weight:800; text-shadow:0 2px 8px rgba(0,0,0,.15); }
-.pf-stat span{ font-size:11px; color:rgba(255,255,255,.78); text-transform:uppercase; letter-spacing:.6px; font-weight:700; }
+.pf-stat + .pf-stat{ border-left:1px solid var(--line); }
+.pf-stat b{ font-family:var(--font-heading); font-size:27px; color:var(--ink); font-weight:800; }
+.pf-stat span{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; font-weight:700; }
 @media(max-width:900px){
-  .pf-right{ border-left:none; padding-left:0; padding-top:18px; border-top:1px solid rgba(255,255,255,.25); justify-content:center; gap:8px; }
+  .pf-right{ border-left:none; padding-left:0; padding-top:18px; border-top:1px solid var(--line); justify-content:center; gap:8px; }
 }
 @media(max-width:640px){
   .profile-card{ padding:13px; gap:10px; }
@@ -6409,6 +6413,63 @@ select:focus, .search-box:focus, input[type="text"]:focus, input[type="number"]:
   box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light); }
 
 /* ============================================================
+   DASHBOARD — HOÀN THIỆN THÊM (v2)
+   ------------------------------------------------------------
+   1) Khối "chuỗi ngày học" trong hero-side được tách thành 1 mặt
+      nổi riêng (thay vì nằm trôi nổi không viền), cột ngày có
+      rãnh lõm để cảm giác cột dữ liệu "đổ đầy" vào khay.
+   2) Biểu đồ tuần & các ô màu trong "Tiến trình học tập" (wb-block,
+      prog-stat, hard-chip, lvl-bar-row, status-leg-item,
+      prog-range-btn) chuyển viền cứng 1px sang bóng đổ mềm cùng
+      tông — GIỮ NGUYÊN màu nền phân loại, chỉ đồng bộ chiều sâu.
+   (profile-card giờ dùng đúng bề mặt neomorphism — xem định nghĩa
+   đầy đủ ở khối "HỒ SƠ NGƯỜI HỌC" phía trên, ~dòng 5238.)
+   ============================================================ */
+
+.hero-streak.streak-v2{
+  padding:14px 15px; border-radius:16px; background:var(--neo-surface);
+  box-shadow:3px 3px 8px var(--neo-dark-soft), -3px -3px 8px var(--neo-light);
+}
+.streak-v2-flame{
+  background:var(--neo-surface); border-radius:50%;
+  box-shadow:2px 2px 6px var(--neo-dark-soft), -2px -2px 6px var(--neo-light);
+}
+.sv2-bar-track{
+  background:var(--neo-surface); border-radius:6px;
+  box-shadow:inset 1.5px 1.5px 4px var(--neo-dark-soft), inset -1.5px -1.5px 4px var(--neo-light);
+}
+.sv2-bar-fill{ border-radius:6px; }
+
+.week-bar-wrap{
+  background:var(--neo-surface); border-radius:10px; padding:6px 4px 4px;
+  box-shadow:inset 1.5px 1.5px 4px var(--neo-dark-soft), inset -1.5px -1.5px 4px var(--neo-light);
+}
+
+.wb-block{ border:none !important; box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light); }
+.wb-block:hover{ transform:translateY(-2px); box-shadow:4px 4px 10px var(--neo-dark-soft), -3px -3px 8px var(--neo-light); }
+.prog-stat{ border:none !important; box-shadow:2px 2px 6px var(--neo-dark-soft), -2px -2px 6px var(--neo-light); }
+.prog-stat:hover{ box-shadow:3px 3px 8px var(--neo-dark-soft), -3px -3px 8px var(--neo-light); }
+.hard-chip{ border:none !important; box-shadow:2px 2px 6px var(--neo-dark-soft), -2px -2px 6px var(--neo-light); }
+.hard-chip:hover{ box-shadow:3px 3px 8px var(--neo-dark-soft), -3px -3px 8px var(--neo-light); }
+.lvl-bar-row{ border:none !important; box-shadow:2px 2px 6px var(--neo-dark-soft), -2px -2px 6px var(--neo-light); }
+.lvl-bar-row:hover{ box-shadow:3px 3px 8px var(--neo-dark-soft), -3px -3px 8px var(--neo-light); }
+.status-leg-item{ border:none !important; background:var(--neo-surface); box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light); }
+.status-leg-item:hover{ box-shadow:3px 3px 7px var(--neo-dark-soft), -3px -3px 7px var(--neo-light); }
+.prog-range-btn{ border:none !important; background:var(--neo-surface); box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light); }
+.prog-range-btn:hover{ box-shadow:3px 3px 7px var(--neo-dark-soft), -3px -3px 7px var(--neo-light); }
+.prog-range-btn.active{ box-shadow:inset 2px 2px 5px rgba(0,0,0,.18) !important; }
+.pos-pie-hole{
+  background:var(--neo-surface) !important;
+  box-shadow:inset 1.5px 1.5px 4px var(--neo-dark-soft), inset -1.5px -1.5px 4px var(--neo-light);
+}
+
+@media(max-width:640px){
+  .wb-block, .prog-stat, .hard-chip, .lvl-bar-row, .status-leg-item, .prog-range-btn{
+    box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light);
+  }
+}
+
+/* ============================================================
    "HỌC NGAY" & CÁC BƯỚC LUYỆN TẬP TRONG PHIÊN — Neomorphism
    Áp dụng cho màn chọn phiên (renderLearnStart), thanh trên cùng
    của phiên (learnShell) và 3 bước Flashcard / Trắc nghiệm / Gõ từ
@@ -6529,10 +6590,16 @@ select:focus, .search-box:focus, input[type="text"]:focus, input[type="number"]:
    "lõm" nhẹ như mặt đồng hồ đo, hợp lý vì đó là số liệu chỉ đọc.
    ============================================================ */
 header{
-  background:var(--neo-surface) !important;
+  position:sticky; /* giữ position gốc, chỉ bổ sung ngữ cảnh cho ::after */
+  background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 7%, var(--neo-surface)) 0%, var(--neo-surface) 100%) !important;
   backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
   border-bottom:none !important;
-  box-shadow:0 10px 22px -16px var(--neo-dark), inset 0 -1px 0 var(--neo-light);
+  box-shadow:0 14px 28px -18px var(--neo-dark), 0 1px 0 var(--neo-light);
+  z-index:101; /* nổi rõ trên nav.tabs thay vì cùng lớp phẳng */
+}
+header::after{
+  content:''; position:absolute; left:0; right:0; bottom:-2px; height:2px;
+  background:var(--accent-grad); opacity:.85; pointer-events:none;
 }
 .brand-icon{
   box-shadow:5px 5px 12px var(--neo-dark), -5px -5px 12px var(--neo-light), 0 6px 14px -8px rgba(13,110,95,.4);
@@ -6540,6 +6607,7 @@ header{
 .brand-icon:hover{
   box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light), 0 8px 18px -10px rgba(13,110,95,.45);
 }
+.brand h1{ font-size:21px; }
 .brand h1 em{
   background:var(--neo-surface); border:none;
   box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light);
@@ -6581,11 +6649,20 @@ header{
   .header-stats{ display:none; }
 }
 
+/* ---- Thanh tab: đẩy xuống thành "lớp dưới" rõ ràng so với header —
+   nền hơi trầm hơn + rãnh lõm sát mép trên để trông như một khay
+   riêng nằm dưới header đang "nổi", thay vì 2 dải phẳng dính liền. */
+nav.tabs{
+  background:var(--paper-2) !important;
+  box-shadow:inset 0 3px 6px -4px var(--neo-dark), inset 0 -1px 0 var(--line);
+  border-bottom:none !important;
+}
+
 /* ============================================================
    HỒ SƠ NGƯỜI HỌC (profile-card)
-   Theo yêu cầu: khôi phục lại nền gradient (thay vì khối "nổi"
-   trung tính neomorphism trước đây) — xem định nghĩa gradient
-   & kích thước rút gọn ở khối .profile-card phía trên (~dòng 5234).
+   Đã quay lại bề mặt neomorphism đồng bộ toàn trang (bỏ nền
+   gradient nhiều màu trước đó) — xem định nghĩa đầy đủ ở khối
+   .profile-card phía trên (~dòng 5238).
    ============================================================ */
 
 /* ============================================================
@@ -35102,7 +35179,7 @@ function renderDashboard(){
               transform="rotate(-90 38 38)"/>
             <defs>
               <linearGradient id="pfGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#fcd34d"/>
+                <stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/>
               </linearGradient>
             </defs>
           </svg>
