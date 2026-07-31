@@ -5232,8 +5232,8 @@ main{ padding-top:26px; }
 
 /* ================= HỒ SƠ NGƯỜI HỌC ================= */
 .profile-card{
-  grid-template-columns:auto 1fr; gap:24px;
-  padding:22px 28px; border-radius:var(--radius-xl);
+  grid-template-columns:auto 1fr; gap:18px;
+  padding:15px 26px; border-radius:var(--radius-xl);
   background: linear-gradient(125deg, var(--pf-grad-1) 0%, var(--accent) 50%, var(--pf-grad-2) 100%);
   border:none; box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.06) inset;
   position:relative; overflow:hidden; isolation:isolate;
@@ -5252,11 +5252,11 @@ main{ padding-top:26px; }
 .profile-card > *{ position:relative; z-index:1; }
 .profile-card{ transition:transform .25s ease, box-shadow .25s ease; }
 .profile-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.12) inset; }
-.pf-left{ gap:16px; }
-.pf-avatar-wrap{ width:92px; height:92px; filter:drop-shadow(0 8px 18px rgba(0,0,0,.22)); }
+.pf-left{ gap:13px; }
+.pf-avatar-wrap{ width:64px; height:64px; filter:drop-shadow(0 6px 14px rgba(0,0,0,.22)); }
 .pf-ring circle:first-of-type{ stroke:rgba(255,255,255,.30) !important; }
 .pf-ava-emoji{
-  font-size:38px; inset:11px; background:rgba(255,255,255,.18);
+  font-size:27px; inset:8px; background:rgba(255,255,255,.18);
   border:1px solid rgba(255,255,255,.30); box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
 }
 .pf-edit{ background:rgba(255,255,255,.95); box-shadow:0 2px 6px rgba(0,0,0,.2); }
@@ -5271,18 +5271,18 @@ main{ padding-top:26px; }
   100%{ box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 2.5px rgba(255,255,255,.9), 0 0 0 0 rgba(251,191,36,0); }
 }
 @media(prefers-reduced-motion:reduce){ .pf-lv-dot{ animation:none; } }
-.pf-name{ font-family:var(--font-heading); font-size:23px; font-weight:800; color:#fff; letter-spacing:-.3px; text-shadow:0 2px 10px rgba(0,0,0,.18); }
+.pf-name{ font-family:var(--font-heading); font-size:19px; font-weight:800; color:#fff; letter-spacing:-.3px; text-shadow:0 2px 10px rgba(0,0,0,.18); }
 .pf-lv{
-  display:inline-flex; align-items:center; gap:5px; font-size:12.5px; margin-top:6px;
-  color:#fff; font-weight:700; padding:3px 10px 3px 8px; border-radius:99px;
+  display:inline-flex; align-items:center; gap:5px; font-size:11.5px; margin-top:4px;
+  color:#fff; font-weight:700; padding:2px 9px 2px 7px; border-radius:99px;
   background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.25);
 }
 .pf-mid{ padding:0 6px; }
-.pf-bar-top{ font-size:12.5px; margin-bottom:9px; color:rgba(255,255,255,.82); font-weight:600; }
+.pf-bar-top{ font-size:11.5px; margin-bottom:6px; color:rgba(255,255,255,.82); font-weight:600; }
 .pf-bar-top b{ color:#fff; font-weight:800; }
-.pf-bar{ height:10px; background:rgba(255,255,255,.20); border-color:rgba(255,255,255,.10); box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
+.pf-bar{ height:8px; background:rgba(255,255,255,.20); border-color:rgba(255,255,255,.10); box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
 .pf-fill{ background:linear-gradient(90deg,#fde68a,#fbbf24,#f59e0b); box-shadow:0 0 10px rgba(251,191,36,.5); }
-.pf-scale{ margin-top:11px; }
+.pf-scale{ margin-top:7px; }
 .pf-tick{ filter:none; opacity:.35; }
 .pf-tick.on{ opacity:1; filter:drop-shadow(0 1px 4px rgba(0,0,0,.25)); }
 .pf-right{ gap:0; padding-left:28px; border-left:1px solid rgba(255,255,255,.28); display:flex; }
@@ -5294,21 +5294,21 @@ main{ padding-top:26px; }
   .pf-right{ border-left:none; padding-left:0; padding-top:18px; border-top:1px solid rgba(255,255,255,.25); justify-content:center; gap:8px; }
 }
 @media(max-width:640px){
-  .profile-card{ padding:16px; gap:12px; }
-  .pf-left{ gap:10px; min-width:0; }
-  .pf-avatar-wrap{ width:64px; height:64px; flex-shrink:0; }
-  .pf-ava-emoji{ font-size:26px; }
-  .pf-name{ font-size:17px; white-space:normal; overflow-wrap:anywhere; }
-  .pf-lv{ font-size:11px; margin-top:4px; white-space:nowrap; }
+  .profile-card{ padding:13px; gap:10px; }
+  .pf-left{ gap:9px; min-width:0; }
+  .pf-avatar-wrap{ width:50px; height:50px; flex-shrink:0; }
+  .pf-ava-emoji{ font-size:21px; }
+  .pf-name{ font-size:15px; white-space:normal; overflow-wrap:anywhere; }
+  .pf-lv{ font-size:10.5px; margin-top:3px; white-space:nowrap; }
   .pf-mid{ padding:0; width:100%; }
-  .pf-bar-top{ font-size:11px; gap:6px; }
+  .pf-bar-top{ font-size:10.5px; gap:6px; }
   .pf-scale{ flex-wrap:wrap; row-gap:6px; justify-content:flex-start; }
 }
 @media(max-width:400px){
-  .pf-avatar-wrap{ width:54px; height:54px; }
-  .pf-ava-emoji{ font-size:22px; }
-  .pf-name{ font-size:15.5px; }
-  .pf-lv-dot{ min-width:19px; height:19px; font-size:9.5px; }
+  .pf-avatar-wrap{ width:42px; height:42px; }
+  .pf-ava-emoji{ font-size:18px; }
+  .pf-name{ font-size:14px; }
+  .pf-lv-dot{ min-width:17px; height:17px; font-size:8.5px; }
 }
 
 /* ================= HÀNG TIẾN ĐỘ CHÍNH: stats lên trên, ring+nút bên dưới =================
@@ -5457,7 +5457,7 @@ nav.tabs{ padding:10px 26px; }
 @media(max-width:900px){ .tp-sub-name{ width:150px; } }
 @media(max-width:640px){
   main{ padding-top:18px; }
-  .profile-card{ padding:22px; flex-direction:column; }
+  .profile-card{ padding:13px; }
   .hero-main,.hero-side,.funnel-card,.topic-section{ padding:20px 18px; }
   .topic-grid{ grid-template-columns:1fr; }
   .fn-track{ flex-wrap:wrap; }
@@ -6573,48 +6573,11 @@ header{
 }
 
 /* ============================================================
-   HỒ SƠ NGƯỜI HỌC (profile-card) — Neomorphism
-   Bỏ nền gradient đậm màu (khó đọc chữ trắng, lệch tông với
-   phần còn lại), chuyển thành khối "nổi" trung tính cùng --neo-
-   surface với toàn trang. Giữ lại đúng các điểm nhấn màu quan
-   trọng để không mất cảm giác "thành tựu": vòng cấp độ (viền
-   vàng), huy hiệu số cấp, và thanh kinh nghiệm (gradient nhấn).
+   HỒ SƠ NGƯỜI HỌC (profile-card)
+   Theo yêu cầu: khôi phục lại nền gradient (thay vì khối "nổi"
+   trung tính neomorphism trước đây) — xem định nghĩa gradient
+   & kích thước rút gọn ở khối .profile-card phía trên (~dòng 5234).
    ============================================================ */
-.profile-card{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:8px 8px 20px var(--neo-dark), -8px -8px 20px var(--neo-light) !important;
-}
-.profile-card::before, .profile-card::after{ display:none !important; }
-.profile-card:hover{
-  transform:translateY(-2px) !important;
-  box-shadow:9px 9px 22px var(--neo-dark), -9px -9px 22px var(--neo-light), 0 14px 30px -16px rgba(13,110,95,.3) !important;
-}
-.pf-avatar-wrap{ filter:none !important; }
-.pf-ring circle:first-of-type{ stroke:var(--neo-dark-soft) !important; }
-.pf-ava-emoji{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light) !important;
-}
-.pf-edit{
-  background:var(--neo-surface) !important; border:none !important; color:var(--muted) !important;
-  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light) !important;
-}
-.pf-lv-dot{ border-color:var(--neo-surface) !important; }
-.pf-name{ color:var(--ink) !important; text-shadow:none !important; }
-.pf-lv{
-  color:var(--accent) !important; background:var(--neo-surface) !important; border:none !important;
-  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light) !important;
-}
-.pf-bar-top{ color:var(--ink-soft) !important; }
-.pf-bar-top b{ color:var(--ink) !important; }
-.pf-bar{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light) !important;
-}
-.pf-fill{ background:var(--accent-grad) !important; box-shadow:0 0 8px rgba(13,110,95,.45) !important; }
-.pf-tick{ filter:grayscale(1); opacity:.3; }
-.pf-tick.on{ filter:none; opacity:1; }
-@media(max-width:900px){ .profile-card{ grid-template-columns:1fr; } }
 
 /* ============================================================
    LỘ TRÌNH THUỘC TỪ (funnel-card) — Neomorphism
