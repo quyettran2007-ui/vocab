@@ -36280,6 +36280,48 @@ document.addEventListener('keydown', e=>{
   if(synSkip && synSkip.classList.contains('primary') && synSkip.offsetParent !== null){ e.preventDefault(); synSkip.click(); return; }
 });
 
+/* ---------- Phím tắt số 1-4 ----------
+   - Gõ từ (tab riêng), Gõ từ Collocation, và bước "Gõ từ" trong Học ngay:
+     1 = Gợi ý 1 chữ · 2 = Nghe phát âm.
+   - Trắc nghiệm, Đồng nghĩa, các bước trắc nghiệm/ôn tập trong Học ngay,
+     và Trắc nghiệm cấu trúc: 1/2/3/4 = chọn phương án tương ứng theo thứ tự.
+   Chỉ tác động khi đang ở đúng màn hình đó (kiểm tra offsetParent !== null,
+   vì tab/bước không active thì phần tử bị display:none nên offsetParent
+   sẽ là null — an toàn, không đụng tới việc gõ số ở nơi khác). */
+document.addEventListener('keydown', e=>{
+  if(e.key!=='1' && e.key!=='2' && e.key!=='3' && e.key!=='4') return;
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+
+  const typeShortcutMaps = [
+    { hint:'typeReveal',    speak:'typeSpeak' },   // tab Gõ từ (từ vựng)
+    { hint:'ltHint',        speak:'ltSpeak' },     // bước Gõ từ trong Học ngay
+    { hint:'clTypeReveal',  speak:'clTpSpeak' }    // Gõ từ Collocation
+  ];
+  for(const m of typeShortcutMaps){
+    const hintBtn = document.getElementById(m.hint);
+    if(hintBtn && hintBtn.offsetParent !== null){
+      if(e.key==='1'){ e.preventDefault(); hintBtn.click(); return; }
+      if(e.key==='2'){
+        const speakBtn = document.getElementById(m.speak);
+        if(speakBtn){ e.preventDefault(); speakBtn.click(); }
+        return;
+      }
+      return; // đang ở màn Gõ từ nhưng bấm 3/4 -> không làm gì
+    }
+  }
+
+  const idx = +e.key - 1;
+  const optionSelectors = ['#quizBox .options .opt', '#synBox .options .opt', '#learnRoot .options .opt', '#stQuizOpts .opt'];
+  for(const sel of optionSelectors){
+    const opts = [...document.querySelectorAll(sel)].filter(o=>o.offsetParent !== null);
+    if(opts.length){
+      const btn = opts[idx];
+      if(btn && !btn.classList.contains('disabled')){ e.preventDefault(); btn.click(); }
+      return;
+    }
+  }
+});
+
 /* ---------- List ---------- */
 /* Bấm 1 từ ở ô "Gọn theo chủ đề" -> hiện thẻ chi tiết NỔI LÊN ngay tại
    chỗ (popup), KHÔNG chuyển chế độ xem, KHÔNG mất vị trí cuộn hiện tại.
