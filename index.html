@@ -38530,12 +38530,13 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
 
     <div class="step-bar">
       ${(()=>{
-        // Số từ trong PHIÊN HIỆN TẠI đang ở mỗi cửa (dựa trên cửa kế tiếp
-        // còn nợ của từng từ) — hiện dưới tên mỗi cửa để biết phiên này
-        // đang dồn nhiều ở đâu, cập nhật theo thời gian thực khi trả lời.
+        // Số từ của TOÀN BỘ THƯ VIỆN (không chỉ riêng phiên đang học) đang
+        // ở mỗi cửa (dựa trên cửa kế tiếp còn nợ của từng từ) — để biết
+        // toàn kho từ đang dồn nhiều ở đâu, cập nhật theo thời gian thực
+        // khi trả lời (vì SRS của từ vừa trả lời thay đổi ngay).
         const stepDist = { fc:0, qz:0, tp:0, done:0 };
-        learnState.words.forEach(item=>{
-          const ng = nextGate(item.v.word);
+        VOCAB.forEach(vv=>{
+          const ng = nextGate(vv.word);
           if(!ng) stepDist.done++; else stepDist[ng.k] = (stepDist[ng.k]||0) + 1;
         });
         const gatesHTML = GATES.map(x=>{
@@ -38551,6 +38552,7 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
           <span class="step ${stageOf(v.word)===5?'ok cur':''}"><i>✅</i><em>Thuộc</em><b class="step-cnt">${stepDist.done} từ</b></span>`;
       })()}
     </div>
+    <div class="step-hint" style="opacity:.6;font-size:11px;margin-top:-6px">Số từ trên là thống kê toàn bộ thư viện, không riêng phiên này</div>
     <div class="step-hint"><b>${stepIc} ${stepName}</b> — ${stepHint}</div>
     ${topicTagHTML(v)}
 
