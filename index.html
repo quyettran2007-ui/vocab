@@ -4617,7 +4617,12 @@ html { scroll-behavior:smooth; }
   letter-spacing:1px; border-bottom:2px solid var(--accent);
   padding:0 3px; margin:0 1px;
 }
-.tq-pos{ font-size:13px; color:var(--muted); margin-top:7px; }
+.tq-pos{
+  display:inline-block; font-size:12.5px; font-weight:800; text-transform:uppercase;
+  letter-spacing:1.1px; color:var(--accent); background:var(--accent-bg);
+  border:1px solid var(--accent); border-radius:999px; padding:4px 13px;
+  margin-top:12px; margin-bottom:10px;
+}
 .type-actions{
   display:flex; justify-content:center; gap:9px; flex-wrap:wrap; margin-top:18px;
 }
@@ -38008,7 +38013,10 @@ function nextType(){
     ${topicTagHTML(v)}
 
     <div class="quiz-q">
-      <div class="prompt-label">Gõ từ tiếng Anh cho nghĩa</div>
+      ${ex ? `<div class="type-ex">
+        <div class="tex-en">${blankOut(ex.en, v.word)}</div>
+        ${ex.vi?`<div class="tex-vi">${esc(ex.vi)}</div>`:''}
+      </div>` : ''}
       <div class="prompt-word small">${esc(v.vn)}</div>
       ${v.pos?`<div class="tq-pos">${esc(v.pos)}</div>`:''}
       <div class="type-listen">
@@ -38016,10 +38024,6 @@ function nextType(){
         <button class="tl-btn slow" id="typeSpeakSlow"><span class="tl-ic">🐢</span><span class="tl-txt">Chậm</span></button>
         <span class="tl-count" id="typeListenCount"></span>
       </div>
-      ${ex ? `<div class="type-ex">
-        <div class="tex-en">${blankOut(ex.en, v.word)}</div>
-        ${ex.vi?`<div class="tex-vi">${esc(ex.vi)}</div>`:''}
-      </div>` : ''}
     </div>
 
     <!-- ô chữ + input THẬT phủ lên trên -->
@@ -38069,16 +38073,6 @@ function nextType(){
   document.getElementById('typeField').addEventListener('pointerdown', e=>{
     if(_typeLocked) return;
     e.preventDefault(); inp.focus();
-  });
-  /* Khi bàn phím ảo mở lên, trình duyệt tự cuộn để giữ ô input trong tầm
-     nhìn — nhưng làm vậy che mất phần nghĩa tiếng Việt cần dịch ở đầu thẻ.
-     Nên tự cuộn lại (đợi bàn phím mở xong) để phần đầu thẻ luôn hiện. */
-  inp.addEventListener('focus', ()=>{
-    clearTimeout(inp._typeScrollT);
-    inp._typeScrollT = setTimeout(()=>{
-      const head = box.querySelector('.quiz-q');
-      if(head) head.scrollIntoView({behavior:'smooth', block:'start'});
-    }, 350);
   });
   setTimeout(()=>inp.focus(), 30);
   paint();
@@ -39369,7 +39363,7 @@ function learnTypeCard(item){
 
   box.innerHTML = `
     <div class="quiz-q">
-      <div class="prompt-label">Gõ từ tiếng Anh cho nghĩa</div>
+      ${ex?`<div class="type-ex"><div class="tex-en">${blankOut(ex.en, v.word)}</div>${ex.vi?`<div class="tex-vi">${esc(ex.vi)}</div>`:''}</div>`:''}
       <div class="prompt-word small">${esc(v.vn)}</div>
       ${v.pos?`<div class="tq-pos">${esc(v.pos)}</div>`:''}
       <div class="type-listen">
@@ -39377,7 +39371,6 @@ function learnTypeCard(item){
         <button class="tl-btn slow" id="ltSlow"><span class="tl-ic">🐢</span><span class="tl-txt">Chậm</span></button>
         <span class="tl-count" id="ltCount"></span>
       </div>
-      ${ex?`<div class="type-ex"><div class="tex-en">${blankOut(ex.en, v.word)}</div>${ex.vi?`<div class="tex-vi">${esc(ex.vi)}</div>`:''}</div>`:''}
     </div>
     <div class="type-field" id="ltField">
       <div class="letter-boxes">
@@ -39426,16 +39419,6 @@ function learnTypeCard(item){
   };
   inp.addEventListener('input', ()=>{ if(!locked) paint(); });
   box.querySelector('#ltField').addEventListener('pointerdown', e=>{ if(!locked){ e.preventDefault(); inp.focus(); } });
-  /* Khi bàn phím ảo mở lên, trình duyệt tự cuộn để giữ ô input trong tầm
-     nhìn — nhưng làm vậy che mất phần nghĩa tiếng Việt cần dịch ở đầu thẻ.
-     Nên tự cuộn lại (đợi bàn phím mở xong) để phần đầu thẻ luôn hiện. */
-  inp.addEventListener('focus', ()=>{
-    clearTimeout(inp._ltScrollT);
-    inp._ltScrollT = setTimeout(()=>{
-      const head = box.querySelector('.quiz-q');
-      if(head) head.scrollIntoView({behavior:'smooth', block:'start'});
-    }, 350);
-  });
   setTimeout(()=>inp.focus(),30);
 
   const listen = r=>{ listens++; speak(v.word,r); box.querySelector('#ltCount').textContent = `đã nghe ${listens} lần`; };
