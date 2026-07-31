@@ -36265,6 +36265,10 @@ document.addEventListener('keydown', e=>{
    listener này chỉ bắt các lần bấm Enter SAU khi đã có kết quả. */
 document.addEventListener('keydown', e=>{
   if(e.key !== 'Enter') return;
+  // Đang gõ Enter bên trong ô Ghi chú nhanh (📝) -> để hành vi xuống dòng
+  // mặc định của contenteditable hoạt động bình thường, KHÔNG cho listener
+  // này cướp mất Enter để bấm "Cụm tiếp theo" / "Bỏ qua" ở phía sau modal.
+  if(e.target && e.target.closest && e.target.closest('#qcModal')) return;
   const tprNext = document.getElementById('tprNext');
   if(tprNext && tprNext.offsetParent !== null){ e.preventDefault(); tprNext.click(); return; }
   const clTprNext = document.getElementById('clTprNext');
@@ -41192,7 +41196,7 @@ function clLoadTypeBoxes(){
   return raw;
 }
 function clSaveTypeBoxes(b){ try{ localStorage.setItem(CL_TYPE_KEY, JSON.stringify(b)); }catch(e){} _dashStale = true; }
-function clStreakOf(id){ const b = clLoadTypeBoxes(); return (b[id]&&b[id].streak) || 0; }
+function clStreakOf(id, preloadedBoxes){ const b = preloadedBoxes || clLoadTypeBoxes(); return (b[id]&&b[id].streak) || 0; }
 /* Phân bố TOÀN BỘ collocation trong thư viện theo số lần gõ đúng liên
    tiếp (streak) — dùng cho dải chip thống kê ở đầu màn "Gõ từ Collocation".
    Cố ý dùng COLLOCATIONS (toàn thư viện), KHÔNG dùng _clTypeQueue (chỉ
@@ -41200,8 +41204,10 @@ function clStreakOf(id){ const b = clLoadTypeBoxes(); return (b[id]&&b[id].strea
    không phải tiến độ riêng phiên này. */
 function clStreakDist(){
   const dist = { s1:0, s2:0, done:0 };
+  const boxes = clLoadTypeBoxes();     // đọc localStorage đúng 1 lần cho cả 1.398 cụm,
+                                        // thay vì trước đây đọc lại (JSON.parse) cho từng cụm một -> gây lag
   COLLOCATIONS.forEach(c=>{
-    const s = clStreakOf(c.id);
+    const s = clStreakOf(c.id, boxes);
     if(s >= CL_MASTER_STREAK) dist.done++;
     else if(s === 2) dist.s2++;
     else if(s === 1) dist.s1++;
