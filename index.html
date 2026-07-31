@@ -108,6 +108,14 @@
   --line: #c3cec5;
   --line-strong: #9fada3;
 
+  /* ---- Neomorphism (soft-UI): dùng cho các cụm nút hành động nổi bật
+     — bóng sáng + bóng tối trên CÙNG nền để tạo cảm giác nút "nổi lên"
+     khỏi mặt phẳng, và "lõm xuống" khi active/pressed. ---- */
+  --neo-surface: #eef1ef;
+  --neo-light: #ffffff;
+  --neo-dark: rgba(157,175,166,.55);
+  --neo-dark-soft: rgba(157,175,166,.32);
+
   --font-heading: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
   --font-body: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
   --font-word: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
@@ -248,6 +256,11 @@
   --code-bg: #050b09;
   --code-fg: #bfded5;
   --opt-bg: #182421;
+
+  --neo-surface: #17211e;
+  --neo-light: rgba(255,255,255,.06);
+  --neo-dark: rgba(0,0,0,.65);
+  --neo-dark-soft: rgba(0,0,0,.4);
   --opt-text: #e6efeb;
 }
 
@@ -1152,20 +1165,26 @@ select:focus, .search-box:focus {
 .lt-frac{margin-left:auto;font-size:12.5px;color:var(--ink-soft);font-weight:600;}
 .lt-frac b{font-family:var(--font-heading);font-size:15px;color:var(--ink);}
 
-/* ===== TAB TRONG "CẦN HỌC" ===== */
-.need-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 14px;}
-.need-tab{display:flex;align-items:center;gap:8px;padding:8px 14px 8px 8px;border-radius:999px;cursor:pointer;
-  font:inherit;border:1.5px solid var(--line);background:var(--card);color:var(--ink-soft);
-  transition:border-color .15s,background .15s,color .15s,transform .15s,box-shadow .15s;box-shadow:var(--shadow-xs);}
-.need-tab:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
-.need-tab.active{background:var(--accent-grad,var(--accent));border-color:transparent;color:#fff;box-shadow:var(--glow,0 6px 16px -6px rgba(13,110,95,.5));}
-.nt-ic{font-size:14px;width:26px;height:26px;border-radius:50%;background:var(--paper-2);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
-.need-tab.active .nt-ic{background:rgba(255,255,255,.22);}
+/* ===== TAB TRONG "CẦN HỌC" — Neomorphism: viên thuốc "nổi" trên nền,
+   bấm chọn thì đổi sang gradient nổi bật, không active thì lõm nhẹ khi hover ===== */
+.need-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 14px;padding:2px;}
+.need-tab{display:flex;align-items:center;gap:8px;padding:9px 15px 9px 9px;border-radius:999px;cursor:pointer;
+  font:inherit;border:none;background:var(--neo-surface);color:var(--ink-soft);
+  transition:transform .18s ease,box-shadow .18s ease,color .18s ease;
+  box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light);}
+.need-tab:hover{transform:translateY(-1px);color:var(--accent);}
+.need-tab:active{transform:translateY(0);box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light);}
+.need-tab.active{background:var(--accent-grad,var(--accent));color:#fff;
+  box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light), 0 8px 18px -10px rgba(13,110,95,.5);}
+.nt-ic{font-size:14px;width:27px;height:27px;border-radius:50%;background:var(--neo-surface);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;
+  box-shadow:inset 2px 2px 4px var(--neo-dark), inset -2px -2px 4px var(--neo-light);}
+.need-tab.active .nt-ic{background:rgba(255,255,255,.22);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);}
 .nt-t{font-size:12.5px;font-weight:700;}
 .nt-n{font-family:var(--font-heading);font-weight:900;font-size:12px;
-  background:var(--paper-2);border-radius:99px;padding:1px 8px;}
-.need-tab.active .nt-n{background:rgba(255,255,255,.28);color:#fff;}
+  background:var(--card);color:var(--ink-soft);border-radius:99px;padding:1px 9px;
+  box-shadow:inset 0 0 0 1px var(--line);}
+.need-tab.active .nt-n{background:rgba(255,255,255,.28);color:#fff;box-shadow:none;}
 .need-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
   padding:10px 14px;border-radius:11px;background:var(--card-sunken);border:1px solid var(--line);
   margin-bottom:14px;font-size:12.5px;color:var(--ink-soft);}
@@ -2169,17 +2188,22 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 /* ===== TOGGLE 2 CHẾ ĐỘ XEM Ở TAB DANH SÁCH: theo từ / theo danh mục ===== */
 .list-view-toggle{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; }
 .lv-seg{
-  display:inline-flex; gap:2px; padding:3px;
-  background:var(--paper); border:1px solid var(--line); border-radius:13px;
+  display:inline-flex; gap:4px; padding:5px;
+  background:var(--neo-surface); border:none; border-radius:15px;
+  box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light);
 }
 .lv-toggle-btn{
   display:inline-flex; align-items:center; gap:7px; cursor:pointer;
   font-family:var(--font-heading); font-size:13.5px; font-weight:700; color:var(--ink-soft);
   background:transparent; border:none; border-radius:10px; padding:8px 14px;
-  transition:color .18s var(--ease-smooth), background-color .18s var(--ease-smooth), box-shadow .18s var(--ease-smooth);
+  transition:color .18s var(--ease-smooth), background-color .18s var(--ease-smooth), box-shadow .18s var(--ease-smooth), transform .18s;
 }
 .lv-toggle-btn:hover{ color:var(--accent); }
-.lv-toggle-btn.active{ background:var(--accent-grad); color:#fff; box-shadow:var(--shadow-sm); }
+.lv-toggle-btn.active{
+  background:var(--accent-grad); color:#fff;
+  box-shadow:2px 2px 6px var(--neo-dark-soft), -1px -1px 4px var(--neo-light), 0 4px 10px -4px rgba(13,110,95,.5);
+  transform:translateY(-1px);
+}
 .lv-actions{ display:flex; align-items:center; gap:8px; margin-left:auto; }
 /* Nút hành động riêng (không phải toggle chuyển view) — cố tình khác kiểu
    .lv-toggle-btn để không bị hiểu nhầm là 1 view thứ 3, luôn nổi màu accent. */
@@ -2540,16 +2564,19 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   .rd-quick-search-wrap, .rd-tools-pin{ transition:none; }
 }
 
-.rd-filters{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;
+.rd-filters{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;
   padding-bottom:14px; border-bottom:1px solid var(--paper-2); }
 .rd-chip{ cursor:pointer; font-size:12.5px; font-weight:700; color:var(--ink-soft);
-  background:var(--paper); border:1px solid var(--line); border-radius:99px; padding:5px 12px;
-  transition:color .16s, background-color .16s, border-color .16s; }
-.rd-chip b{ font-size:10.5px; color:var(--muted); background:var(--paper-2);
-  border-radius:99px; padding:1px 6px; margin-left:5px; }
-.rd-chip:hover{ border-color:var(--accent); color:var(--accent); }
-.rd-chip.active{ background:var(--accent-grad); border-color:transparent; color:#fff; }
-.rd-chip.active b{ background:rgba(255,255,255,.24); color:#fff; }
+  background:var(--neo-surface); border:none; border-radius:99px; padding:6px 13px;
+  box-shadow:3px 3px 6px var(--neo-dark), -3px -3px 6px var(--neo-light);
+  transition:color .16s, background-color .16s, box-shadow .16s, transform .16s; }
+.rd-chip b{ font-size:10.5px; color:var(--muted); background:var(--card);
+  border-radius:99px; padding:1px 6px; margin-left:5px; box-shadow:inset 0 0 0 1px var(--line); }
+.rd-chip:hover{ color:var(--accent); transform:translateY(-1px); }
+.rd-chip:active{ transform:translateY(0); box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light); }
+.rd-chip.active{ background:var(--accent-grad); color:#fff;
+  box-shadow:2px 2px 6px var(--neo-dark-soft), -1px -1px 4px var(--neo-light), 0 5px 12px -6px rgba(13,110,95,.5); }
+.rd-chip.active b{ background:rgba(255,255,255,.24); color:#fff; box-shadow:none; }
 
 .rd-miss{ background:color-mix(in srgb, #f59e0b 8%, var(--card));
   border:1px solid color-mix(in srgb, #f59e0b 35%, var(--line));
@@ -3307,41 +3334,70 @@ mark.ex-hl {
 .need-actions { position:relative; z-index:1; display:flex; gap:10px; flex-wrap:wrap; }
 
 /* ---- Nút hành động "Học ngay" (Ôn theo lịch / Học từ đánh dấu / Ngẫu nhiên / Hay quên):
-   dạng thẻ nhỏ có icon-bubble màu riêng cho từng loại, nổi bật hơn nút .btn thường ---- */
+   thiết kế dạng Neomorphism — thẻ "nổi" nhẹ trên mặt phẳng nhờ cặp bóng
+   sáng/tối cùng tông nền, bấm vào thì "lõm" xuống (inset) để phản hồi rõ
+   ràng. Icon-bubble riêng màu cho từng loại, không viền cứng. ---- */
+.need-actions{ padding:4px; border-radius:20px; }
 .naa-btn{
-  display:flex; align-items:center; gap:10px;
-  padding:8px 18px 8px 8px; border-radius:16px;
+  display:flex; align-items:center; gap:11px;
+  padding:9px 20px 9px 9px; border-radius:17px;
+  background:var(--neo-surface); border:none !important;
+  box-shadow:
+    5px 5px 11px var(--neo-dark),
+    -5px -5px 11px var(--neo-light),
+    inset 0 0 0 1px rgba(255,255,255,.04);
+  transition:box-shadow .22s ease, transform .22s ease;
 }
+[data-theme="dark"] .naa-btn{ box-shadow:5px 5px 11px var(--neo-dark), -5px -5px 11px var(--neo-light); }
 .naa-ic{
-  width:36px; height:36px; border-radius:11px; flex:none;
+  width:38px; height:38px; border-radius:12px; flex:none;
   display:flex; align-items:center; justify-content:center;
-  font-size:17px; background:var(--paper); box-shadow:inset 0 0 0 1px var(--line);
+  font-size:17px; background:var(--neo-surface);
+  box-shadow:
+    inset 3px 3px 6px var(--neo-dark),
+    inset -3px -3px 6px var(--neo-light);
 }
 .naa-txt{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.2; }
-.naa-t{ font-size:13px; font-weight:800; }
+.naa-t{ font-size:13px; font-weight:800; color:var(--ink); }
 .naa-n{ font-size:11px; font-weight:700; color:var(--muted); margin-top:1px; }
 
-.naa-btn.naa-primary{ padding-right:22px; }
-.naa-primary .naa-ic{ background:rgba(255,255,255,.24); box-shadow:none; }
+.naa-btn.naa-primary{
+  padding-right:24px;
+  background:var(--accent-grad);
+  box-shadow:
+    5px 5px 13px var(--neo-dark-soft),
+    -4px -4px 10px var(--neo-light),
+    0 10px 22px -12px rgba(13,110,95,.5);
+}
+.naa-primary .naa-ic{ background:rgba(255,255,255,.22); box-shadow:inset 0 0 0 1px rgba(255,255,255,.3); }
 .naa-primary .naa-t{ color:#fff; }
 .naa-primary .naa-n{ color:rgba(255,255,255,.86); }
 .naa-primary:hover:not(:disabled){
-  filter:brightness(1.08); transform:translateY(-2px);
-  box-shadow:0 16px 34px -14px rgba(13,110,95,.55);
+  filter:brightness(1.06); transform:translateY(-2px);
+  box-shadow:6px 6px 16px var(--neo-dark-soft), -4px -4px 10px var(--neo-light), 0 14px 28px -14px rgba(13,110,95,.55);
 }
+.naa-primary:active:not(:disabled){ transform:translateY(0); filter:brightness(1); }
 
-.naa-star .naa-ic{ background:linear-gradient(135deg,#fde68a,#f59e0b); box-shadow:none; }
-.naa-random .naa-ic{ background:linear-gradient(135deg,#c4b5fd,#8b5cf6); box-shadow:none; }
-.naa-weak .naa-ic{ background:linear-gradient(135deg,#fda4af,#f43f5e); box-shadow:none; }
+.naa-star .naa-ic{ background:linear-gradient(135deg,#fde68a,#f59e0b); box-shadow:0 2px 6px -2px rgba(217,119,6,.5); }
+.naa-random .naa-ic{ background:linear-gradient(135deg,#c4b5fd,#8b5cf6); box-shadow:0 2px 6px -2px rgba(124,58,237,.5); }
+.naa-weak .naa-ic{ background:linear-gradient(135deg,#fda4af,#f43f5e); box-shadow:0 2px 6px -2px rgba(225,29,72,.5); }
+.naa-gate1 .naa-ic{ background:linear-gradient(135deg,#fcd34d,#d97706); box-shadow:0 2px 6px -2px rgba(180,83,9,.5); }
+.naa-gate2 .naa-ic{ background:linear-gradient(135deg,#5eead4,#0d6e5f); box-shadow:0 2px 6px -2px rgba(13,110,95,.5); }
 
 .naa-btn:not(.naa-primary):hover:not(:disabled){
-  transform:translateY(-2px); border-color:var(--accent); box-shadow:var(--shadow-sm);
+  transform:translateY(-2px);
+  box-shadow:7px 7px 15px var(--neo-dark), -6px -6px 15px var(--neo-light);
 }
+.naa-btn:not(.naa-primary):active:not(:disabled){
+  transform:translateY(0);
+  box-shadow:inset 3px 3px 8px var(--neo-dark), inset -3px -3px 8px var(--neo-light);
+}
+.naa-btn:disabled{ opacity:.5; cursor:not-allowed; }
 @media (max-width:640px){
   .need-head{ padding:16px; }
   .naa-txt{ display:none; }
-  .naa-btn{ padding:9px; }
-  .naa-btn.naa-primary{ padding:9px 14px; }
+  .naa-btn{ padding:10px; }
+  .naa-btn.naa-primary{ padding:10px 15px; }
   .naa-btn.naa-primary .naa-txt{ display:flex; }
 }
 
@@ -3902,8 +3958,25 @@ body.page-fs { overflow-x:hidden; }
 .prog-chart-legend i{ width:14px; height:3px; border-radius:2px; display:inline-block; }
 .prog-chart-legend i.leg-vocab{ background:var(--accent); }
 .prog-chart-legend i.leg-colloc{ width:10px; height:10px; border-radius:2px; background:var(--stage2); opacity:.6; }
-.cl-tp-stats{ margin-top:14px; padding:10px 12px; border-radius:12px; background:var(--card-sunken);
-  border:1px solid var(--line); font-size:12.5px; font-weight:700; color:var(--muted); text-align:center; }
+.cl-tp-stats{ margin-top:14px; padding:11px 14px; border-radius:14px; background:var(--neo-surface);
+  border:none; box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light);
+  font-size:12.5px; font-weight:700; color:var(--ink-soft); text-align:center; }
+
+/* ---- Số cụm cần luyện: khung "lõm" neomorphism, ô nhập số nổi nhẹ bên trong ---- */
+.cl-tp-count-row{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:16px 0;
+  padding:10px 14px; border-radius:16px; background:var(--neo-surface);
+  box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light);
+}
+.cl-tp-count-row label{ font-weight:800; font-size:13px; color:var(--ink); }
+.cl-tp-count-input{
+  width:84px; padding:8px 10px; border-radius:10px; border:none; font-size:15px;
+  font-family:var(--font-heading); font-weight:800; text-align:center; color:var(--ink);
+  background:var(--card); box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light);
+  transition:box-shadow .18s;
+}
+.cl-tp-count-input:focus{ outline:none; box-shadow:0 0 0 3px var(--accent-bg); }
+.cl-tp-count-input:disabled{ opacity:.5; }
 
 .cl-topic-bar-list{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px 14px; }
 @media (min-width:1400px){ .cl-topic-bar-list{ grid-template-columns:repeat(4,1fr); } }
@@ -5507,14 +5580,26 @@ body{
   padding:8px 12px; cursor:pointer;
 }
 
-/* ---- nút Thống kê / Đã đánh dấu / Học Flashcard: to & đẹp hơn ---- */
-.st-tr-head-btns{ display:flex; gap:10px; flex-wrap:wrap; }
+/* ---- nút Thống kê / Đã đánh dấu / Học Flashcard: Neomorphism — nổi nhẹ
+   trên nền, lõm xuống khi bấm, sáng gradient khi ở trạng thái active ---- */
+.st-tr-head-btns{ display:flex; gap:12px; flex-wrap:wrap; }
 .st-stats-btn{
-  font-size:14px !important; font-weight:700 !important; padding:12px 20px !important;
-  border-radius:12px !important; background:var(--accent-bg) !important; color:var(--accent) !important;
-  border:1px solid transparent !important; box-shadow:var(--shadow-xs); transition:.15s;
+  font-size:14px !important; font-weight:700 !important; padding:12px 22px !important;
+  border-radius:14px !important; background:var(--neo-surface) !important; color:var(--accent) !important;
+  border:none !important;
+  box-shadow:5px 5px 10px var(--neo-dark), -5px -5px 10px var(--neo-light) !important;
+  transition:box-shadow .2s ease, transform .2s ease, background .2s ease, color .2s ease;
 }
-.st-stats-btn:hover{ box-shadow:var(--shadow-sm); transform:translateY(-1px); background:var(--accent) !important; color:#fff !important; }
+.st-stats-btn:hover{
+  transform:translateY(-2px); color:#fff !important;
+  background:var(--accent-grad) !important;
+  box-shadow:5px 5px 12px var(--neo-dark-soft), -4px -4px 10px var(--neo-light), 0 10px 20px -10px rgba(13,110,95,.5) !important;
+}
+.st-stats-btn:active{ transform:translateY(0); box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light) !important; }
+.st-stats-btn.active{
+  color:#fff !important; background:var(--accent-grad) !important;
+  box-shadow:inset 2px 2px 6px rgba(0,0,0,.18), 0 4px 12px -6px rgba(13,110,95,.5) !important;
+}
 
 /* Nút hành động chính (Học Flashcard / Gõ từ) — làm nổi bật hẳn lên so với
    các nút phụ khác bằng nền gradient đậm màu & chữ trắng luôn hiện. */
@@ -6077,6 +6162,138 @@ html[data-radius="round"] { --radius-xl:30px; --radius:22px; --radius-sm:16px; }
    chỉ cần gọn lại hàng chip chủ đề con bên trong. ---- */
 .nw-chips{ gap:6px; margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
 .nw-chip{ background:var(--card); border:1px solid var(--line); font-weight:600; }
+
+/* ============================================================
+   ĐỒNG BỘ NEOMORPHISM TOÀN TRANG
+   Khối này đặt CUỐI stylesheet để "thắng" các định nghĩa .btn/
+   .tab-btn/.opt/select... rải rác phía trên, áp dụng một ngôn
+   ngữ hình khối thống nhất: bề mặt "nổi" nhờ cặp bóng sáng-tối
+   cùng tông nền (--neo-surface/--neo-light/--neo-dark), "lõm"
+   xuống khi bấm/focus, gradient khi ở trạng thái chọn/chính.
+   Không đụng tới thẻ nội dung có mã màu chủ đề (vocab-card,
+   dash-card...) để không phá vỡ hệ thống màu phân loại của chúng.
+   ============================================================ */
+
+/* ---- Nút dùng chung (.btn) ---- */
+.btn{
+  border:none; background:var(--neo-surface); color:var(--ink);
+  box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light);
+  transition:box-shadow .2s ease, transform .2s ease, color .2s ease, background .2s ease;
+}
+.btn:hover:not(:disabled){
+  color:var(--accent); transform:translateY(-2px); border-color:transparent;
+  box-shadow:5px 5px 11px var(--neo-dark), -5px -5px 11px var(--neo-light);
+}
+.btn:active:not(:disabled){
+  transform:translateY(0);
+  box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light);
+}
+.btn:disabled{ box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light); }
+.btn.primary{
+  background:var(--accent-grad); color:#fff; border-color:transparent;
+  box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light), 0 8px 18px -10px rgba(13,110,95,.5);
+}
+.btn.primary:hover{
+  color:#fff; filter:brightness(1.06); transform:translateY(-2px);
+  box-shadow:4px 4px 10px var(--neo-dark-soft), -2px -2px 6px var(--neo-light), 0 12px 24px -12px rgba(13,110,95,.55);
+}
+.btn.primary:active{ filter:brightness(1); transform:translateY(0); box-shadow:inset 2px 2px 6px rgba(0,0,0,.2); }
+.btn.ghost{ background:transparent; box-shadow:none; border:1.5px dashed var(--line-strong); }
+.btn.ghost:hover{ box-shadow:none; border-color:var(--accent); }
+.btn.danger-btn{ box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light); }
+[data-theme="dark"] .btn.primary{ color:#04120f; }
+
+/* ---- Thanh điều hướng chính (Danh sách / Flashcard / ... / Setting) ---- */
+nav.tabs{ background:var(--paper); box-shadow:inset 0 -1px 0 var(--line); border-bottom:none; }
+.tab-btn{
+  border:none; background:var(--neo-surface); color:var(--ink-soft);
+  box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light);
+  margin:2px;
+}
+.tab-btn:hover{
+  background:var(--neo-surface); color:var(--accent); transform:translateY(-1px);
+  box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light);
+}
+.tab-btn.active{
+  background:var(--accent-grad); color:#fff; transform:translateY(-1px);
+  box-shadow:2px 2px 6px var(--neo-dark-soft), -1px -1px 4px var(--neo-light), 0 6px 16px -8px rgba(13,110,95,.5);
+}
+.tab-btn.active:hover{ color:#fff; }
+[data-theme="dark"] .tab-btn.active{ color:#fff; }
+
+/* ---- Nút tròn icon: loa phát âm, đánh dấu sao ---- */
+.speak-btn, .star-btn{
+  border:none; background:var(--neo-surface);
+  box-shadow:3px 3px 6px var(--neo-dark), -3px -3px 6px var(--neo-light);
+  transition:box-shadow .18s, transform .18s, color .18s;
+}
+.speak-btn:hover, .star-btn:hover{ transform:translateY(-1px); color:var(--accent); }
+.speak-btn:active, .star-btn:active{
+  transform:translateY(0);
+  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light);
+}
+.star-btn.on{ color:var(--gold); box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light); }
+
+/* ---- Lựa chọn trắc nghiệm (Trắc nghiệm / Đồng nghĩa) ---- */
+.opt{
+  border:none; background:var(--neo-surface);
+  box-shadow:3px 3px 8px var(--neo-dark), -3px -3px 8px var(--neo-light);
+}
+.opt:hover:not(.disabled){
+  background:var(--neo-surface); transform:translateY(-1px) translateX(0);
+  box-shadow:4px 4px 10px var(--neo-dark), -4px -4px 10px var(--neo-light);
+}
+
+/* ---- Thanh chế độ (Cấu trúc câu / Writing & Speaking) ---- */
+.st-mode-btn{
+  border:none; background:var(--neo-surface); box-shadow:var(--shadow-xs);
+  box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light);
+}
+.st-mode-btn:hover{ transform:translateY(-1px); box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light); }
+.st-mode-btn.active{
+  background:var(--accent-grad); box-shadow:2px 2px 6px var(--neo-dark-soft), -1px -1px 4px var(--neo-light), 0 6px 14px -8px rgba(13,110,95,.5);
+}
+
+/* ---- Ô nhập liệu / dropdown dùng chung ---- */
+select, .search-box, input[type="text"], input[type="number"], input[type="search"], textarea{
+  border:none !important;
+  box-shadow:inset 2.5px 2.5px 6px var(--neo-dark), inset -2.5px -2.5px 6px var(--neo-light) !important;
+  background-color:var(--neo-surface) !important;
+}
+select:focus, .search-box:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="search"]:focus, textarea:focus{
+  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light), 0 0 0 3px var(--accent-bg) !important;
+}
+.dash-search{ background:var(--neo-surface); box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light); border:none; }
+.dash-search:focus-within{ box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light), 0 0 0 4px var(--accent-bg); }
+
+/* ---- Thẻ "cửa" & hành động trong "Đã học hôm nay" (tab Cần học) ---- */
+.trg-chip{
+  border:none; background:var(--neo-surface);
+  box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light);
+}
+.trg-chip:hover:not(:disabled){ box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light); }
+.trg-chip:active:not(:disabled){ box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light); }
+.trg-chip.active{ box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light), 0 0 0 2.5px var(--accent-bg); }
+.trday-action-card, .trday-chip{
+  border:none !important; background:var(--neo-surface);
+  box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light);
+}
+.trday-action-card:hover, .trday-chip:hover{
+  box-shadow:5px 5px 11px var(--neo-dark), -5px -5px 11px var(--neo-light);
+}
+.trday-action-card.primary{ background:var(--accent-grad); }
+.trday-action-card.primary .tac-title, .trday-action-card.primary .tac-sub{ color:#fff; }
+.trday-chip.active{
+  background:var(--accent-grad); color:#fff;
+  box-shadow:inset 2px 2px 6px rgba(0,0,0,.18), 0 0 0 2px var(--accent-bg);
+}
+.trday-chip.active .trday-chip-n{ color:#fff; }
+.trday-stat{ border:none; background:var(--neo-surface); box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light); }
+
+@media (max-width:640px){
+  .btn, .tab-btn, .opt, .st-mode-btn{ box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light); }
+}
+
 </style>
 <body>
 <!-- ===== NÚT GHI CHÚ NHANH NỔI — vị trí đồng bộ bằng JS theo .qc-slot trong header ===== -->
@@ -41531,12 +41748,12 @@ function clRenderTypingSetup(root){
     <p class="rd-hint" style="margin:6px 0 0;opacity:.7;font-size:12.5px">${_clTpLearningOnly
       ? 'Đang gộp tất cả cụm học dở (chưa đủ 3 lần đúng liên tiếp) từ mọi chủ đề — luyện xong sẽ trở lại đây.'
       : 'Có thể bấm chọn nhiều chủ đề cùng lúc — bấm lại một chủ đề đang chọn để bỏ chọn. Tiến độ được lưu riêng theo từng cụm, nên đổi chủ đề không làm mất tiến độ — bấm "🟡 Đang học dở" bất cứ lúc nào để luyện tiếp các cụm chưa xong.'}</p>
-    <div class="cl-tp-count-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0">
-      <label for="clTpCountInput" style="font-weight:600">Số cụm cần luyện:</label>
+    <div class="cl-tp-count-row">
+      <label for="clTpCountInput">Số cụm cần luyện</label>
       <input type="number" id="clTpCountInput" min="1" max="${Math.max(1,pool.length)}"
              value="${_clTpCount==='all' ? pool.length : Math.min(_clTpCount, Math.max(1,pool.length))}"
-             style="width:90px;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#ccc);font-size:15px" ${!pool.length?'disabled':''}>
-      <button class="st-stats-btn ${_clTpCount==='all'?'active':''}" id="clTpAllCountBtn">Tất cả (${pool.length})</button>
+             class="cl-tp-count-input" ${!pool.length?'disabled':''}>
+      <button class="st-stats-btn cl-tp-all-btn ${_clTpCount==='all'?'active':''}" id="clTpAllCountBtn">Tất cả (${pool.length})</button>
     </div>
     <div class="cl-tp-stats">🧩 Trong phạm vi này: đã thuộc <b>${stats.mastered}</b>/${stats.total} · đang luyện <b>${stats.learning}</b> · chưa gặp <b>${stats.unseen}</b>${stats.acc!==null?` · độ chính xác ${stats.acc}%`:''}</div>
     ${pool.length ? `
