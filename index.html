@@ -96,10 +96,10 @@
   --line: #c3cec5;
   --line-strong: #9fada3;
 
-  --shadow-xs: 0 1px 1px rgba(15,32,29,.03);
-  --shadow-sm: 0 1px 3px -2px rgba(15,32,29,.05), 0 1px 1px rgba(15,32,29,.03);
-  --shadow: 0 8px 18px -14px rgba(15,32,29,.11), 0 1px 4px -2px rgba(15,32,29,.04);
-  --shadow-lg: 0 18px 40px -26px rgba(15,32,29,.18), 0 4px 10px -8px rgba(15,32,29,.08);
+  --shadow-xs: 0 1px 2px rgba(15,32,29,.045);
+  --shadow-sm: 0 2px 6px -2px rgba(15,32,29,.07), 0 1px 2px rgba(15,32,29,.05);
+  --shadow: 0 12px 28px -12px rgba(15,32,29,.16), 0 2px 8px -2px rgba(15,32,29,.06);
+  --shadow-lg: 0 28px 60px -24px rgba(15,32,29,.28), 0 6px 16px -8px rgba(15,32,29,.12);
   --glow: 0 10px 26px -10px rgba(13,110,95,.42);
 
   --radius-xl: 22px;
@@ -110,14 +110,11 @@
 
   /* ---- Neomorphism (soft-UI): dùng cho các cụm nút hành động nổi bật
      — bóng sáng + bóng tối trên CÙNG nền để tạo cảm giác nút "nổi lên"
-     khỏi mặt phẳng, và "lõm xuống" khi active/pressed.
-     Giảm bớt độ đậm của bóng đổ ở chế độ sáng (giảm alpha --neo-dark/
-     --neo-dark-soft) so với bản gốc, để các thẻ trên toàn trang trông
-     nhẹ nhàng hơn thay vì đổ bóng quá gắt — chế độ tối giữ nguyên. ---- */
+     khỏi mặt phẳng, và "lõm xuống" khi active/pressed. ---- */
   --neo-surface: #eef1ef;
   --neo-light: #ffffff;
-  --neo-dark: rgba(157,175,166,.28);
-  --neo-dark-soft: rgba(157,175,166,.16);
+  --neo-dark: rgba(157,175,166,.55);
+  --neo-dark-soft: rgba(157,175,166,.32);
 
   --font-heading: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
   --font-body: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
@@ -3146,9 +3143,9 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .nb-pin-colors{ display:flex; gap:5px; flex-wrap:wrap; margin-top:2px; }
 .nb-color-dot{ width:16px; height:16px; border-radius:50%; cursor:pointer; border:2px solid rgba(0,0,0,.15); flex-shrink:0; padding:0; }
 .nb-color-dot.active{ border-color:#333; box-shadow:0 0 0 2px #fff inset; }
-.nb-pin-card .nb-edit-box textarea, .nb-line .nb-edit-box textarea{ background:rgba(255,255,255,.75) !important; border-color:rgba(0,0,0,.18) !important; color:#2b2b2b !important; box-shadow:none !important; }
-.nb-pin-card .nb-note-editable, .nb-line .nb-note-editable{ background:rgba(255,255,255,.55) !important; border-color:rgba(0,0,0,.18) !important; border-left-color:rgba(0,0,0,.3) !important; color:#2b2b2b !important; box-shadow:none !important; }
-.nb-pin-card .nb-fmt-toolbar button, .nb-line .nb-fmt-toolbar button{ background:rgba(255,255,255,.75) !important; border-color:rgba(0,0,0,.18) !important; color:#2b2b2b !important; box-shadow:none !important; }
+.nb-pin-card .nb-edit-box textarea, .nb-line .nb-edit-box textarea{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
+.nb-pin-card .nb-note-editable, .nb-line .nb-note-editable{ background:rgba(255,255,255,.55); border-color:rgba(0,0,0,.18); border-left-color:rgba(0,0,0,.3); color:#2b2b2b; }
+.nb-pin-card .nb-fmt-toolbar button, .nb-line .nb-fmt-toolbar button{ background:rgba(255,255,255,.75); border-color:rgba(0,0,0,.18); color:#2b2b2b; }
 .nb-pin-card .nb-source-link, .nb-line .nb-source-link{ color:#2b2b2b; text-decoration-color:rgba(0,0,0,.4); }
 /* Cố định viền trong theo viền ngoài: bên trong ô ghi chú luôn lấp đầy phần còn lại của
    thẻ ghim, không tự resize riêng nữa — chỉ cần kéo giãn thẻ ghim (viền ngoài) là đủ. */
@@ -6536,93 +6533,48 @@ header{
 }
 
 /* ============================================================
-   HỒ SƠ NGƯỜI HỌC (profile-card) — "Neomorphism màu" (v2)
-   Thiết kế lại cả bố cục lẫn màu sắc theo góp ý: bản trung tính
-   xám quá phẳng/nhạt nhoà. Giữ lại dải gradient nhấn làm nền —
-   như một tấm "huy chương" nổi bật — nhưng đổi bóng đổ phẳng
-   sang CẶP bóng đổ MÀU (đậm hơn & sáng hơn chính gradient nền,
-   không dùng xám trung tính) để vẫn đúng tinh thần "nổi lên khỏi
-   mặt phẳng" thay vì phẳng lì như trước. Bố cục chia 3 vùng:
-   [Avatar + tên/cấp] · [Thanh kinh nghiệm] · [2 chỉ số nhanh —
-   streak & số từ đã thuộc] để thẻ đầy đặn, không còn trống trải.
+   HỒ SƠ NGƯỜI HỌC (profile-card) — Neomorphism
+   Bỏ nền gradient đậm màu (khó đọc chữ trắng, lệch tông với
+   phần còn lại), chuyển thành khối "nổi" trung tính cùng --neo-
+   surface với toàn trang. Giữ lại đúng các điểm nhấn màu quan
+   trọng để không mất cảm giác "thành tựu": vòng cấp độ (viền
+   vàng), huy hiệu số cấp, và thanh kinh nghiệm (gradient nhấn).
    ============================================================ */
-:root{
-  --pf-shadow-d: rgba(3,38,32,.42);
-  --pf-shadow-l: rgba(190,250,235,.55);
-}
-[data-theme="dark"]{
-  --pf-shadow-d: rgba(0,0,0,.6);
-  --pf-shadow-l: rgba(94,234,212,.16);
-}
 .profile-card{
-  grid-template-columns:auto 1fr auto !important;
-  background:linear-gradient(125deg, var(--pf-grad-1) 0%, var(--accent) 48%, var(--pf-grad-2) 100%) !important;
-  border:none !important;
-  box-shadow:10px 10px 24px var(--pf-shadow-d), -8px -8px 20px var(--pf-shadow-l), 0 18px 40px -18px rgba(13,110,95,.45) !important;
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:8px 8px 20px var(--neo-dark), -8px -8px 20px var(--neo-light) !important;
 }
-.profile-card::before{
-  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background:
-    radial-gradient(460px 280px at 102% -25%, rgba(255,255,255,.24), transparent 62%),
-    radial-gradient(320px 220px at -10% 120%, rgba(255,255,255,.12), transparent 60%),
-    repeating-linear-gradient(180deg, rgba(255,255,255,.045) 0 1px, transparent 1px 29px);
-}
-.profile-card::after{
-  content:''; position:absolute; left:0; right:0; top:0; height:1px; z-index:0; pointer-events:none;
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
-}
+.profile-card::before, .profile-card::after{ display:none !important; }
 .profile-card:hover{
-  transform:translateY(-3px) !important;
-  box-shadow:12px 12px 28px var(--pf-shadow-d), -9px -9px 22px var(--pf-shadow-l), 0 22px 46px -18px rgba(13,110,95,.5) !important;
+  transform:translateY(-2px) !important;
+  box-shadow:9px 9px 22px var(--neo-dark), -9px -9px 22px var(--neo-light), 0 14px 30px -16px rgba(13,110,95,.3) !important;
 }
-.pf-avatar-wrap{ filter:drop-shadow(0 8px 18px rgba(0,0,0,.25)) !important; width:88px !important; height:88px !important; }
-.pf-ring circle:first-of-type{ stroke:rgba(255,255,255,.30) !important; }
+.pf-avatar-wrap{ filter:none !important; }
+.pf-ring circle:first-of-type{ stroke:var(--neo-dark-soft) !important; }
 .pf-ava-emoji{
-  font-size:36px !important; background:rgba(255,255,255,.16) !important;
-  border:1px solid rgba(255,255,255,.32) !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3), inset 0 -4px 10px rgba(0,0,0,.12) !important;
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light) !important;
 }
 .pf-edit{
-  background:rgba(255,255,255,.95) !important; border:none !important; color:#0d6e5f !important;
-  box-shadow:0 2px 6px rgba(0,0,0,.25) !important;
+  background:var(--neo-surface) !important; border:none !important; color:var(--muted) !important;
+  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light) !important;
 }
-.pf-name{ color:#fff !important; font-size:22px !important; text-shadow:0 2px 10px rgba(0,0,0,.2) !important; }
+.pf-lv-dot{ border-color:var(--neo-surface) !important; }
+.pf-name{ color:var(--ink) !important; text-shadow:none !important; }
 .pf-lv{
-  color:#fff !important; background:rgba(255,255,255,.16) !important; border:1px solid rgba(255,255,255,.28) !important;
-  box-shadow:none !important; font-size:12.5px !important;
+  color:var(--accent) !important; background:var(--neo-surface) !important; border:none !important;
+  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light) !important;
 }
-.pf-bar-top{ color:rgba(255,255,255,.85) !important; }
-.pf-bar-top b{ color:#fff !important; }
+.pf-bar-top{ color:var(--ink-soft) !important; }
+.pf-bar-top b{ color:var(--ink) !important; }
 .pf-bar{
-  background:rgba(255,255,255,.20) !important; border:none !important;
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.22) !important;
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light) !important;
 }
-.pf-fill{ background:linear-gradient(90deg,#fde68a,#fbbf24,#f59e0b) !important; box-shadow:0 0 10px rgba(251,191,36,.55) !important; }
-.pf-tick{ filter:none; opacity:.35; }
-.pf-tick.on{ opacity:1; filter:drop-shadow(0 1px 4px rgba(0,0,0,.25)); }
-
-/* ---- 2 chỉ số nhanh bên phải: chip kính mờ nổi trên nền gradient ---- */
-.pf-right{
-  display:flex; gap:10px; padding-left:20px; margin-left:4px;
-  border-left:1px solid rgba(255,255,255,.25); flex-shrink:0;
-}
-.pf-stat-chip{
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
-  min-width:74px; padding:10px 12px; border-radius:14px;
-  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 6px 14px -8px rgba(0,0,0,.3);
-}
-.pf-stat-chip b{ font-family:var(--font-heading); font-size:19px; font-weight:900; color:#fff; line-height:1; text-shadow:0 2px 6px rgba(0,0,0,.2); }
-.pf-stat-chip span{ font-size:9.5px; font-weight:700; color:rgba(255,255,255,.82); text-transform:uppercase; letter-spacing:.4px; text-align:center; }
-.pfc-ic{ font-size:16px; margin-bottom:1px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.2)); }
-
-@media(max-width:900px){
-  .profile-card{ grid-template-columns:1fr !important; }
-  .pf-right{ border-left:none; border-top:1px solid rgba(255,255,255,.22); padding-left:0; padding-top:14px; margin-left:0; justify-content:center; }
-}
-@media(max-width:640px){
-  .pf-stat-chip{ min-width:0; flex:1; padding:8px 6px; }
-}
+.pf-fill{ background:var(--accent-grad) !important; box-shadow:0 0 8px rgba(13,110,95,.45) !important; }
+.pf-tick{ filter:grayscale(1); opacity:.3; }
+.pf-tick.on{ filter:none; opacity:1; }
+@media(max-width:900px){ .profile-card{ grid-template-columns:1fr; } }
 
 /* ============================================================
    LỘ TRÌNH THUỘC TỪ (funnel-card) — Neomorphism
@@ -6632,7 +6584,7 @@ header{
    NGUYÊN màu nền theo chặng để không mất tín hiệu phân loại.
    ============================================================ */
 .funnel-card{
-  border:none !important;
+  background:var(--neo-surface) !important; border:none !important;
   box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light) !important;
 }
 .fn-cta{
@@ -6665,142 +6617,6 @@ header{
 .hero-cta.small{ white-space:normal; line-height:1.25; }
 @media(max-width:700px){
   .hero-pick-btn, .hero-guide-btn, .hero-cta.small{ min-height:40px; }
-}
-
-/* ============================================================
-   SỔ GHI CHÚ (⚙️ Setting → 📒) + NÚT GHI CHÚ NHANH NỔI — Neomorphism
-   Đồng bộ toàn bộ khu vực ghi chú (cả nút lẫn khung nội dung) theo
-   đúng ngôn ngữ nổi/lõm của toàn trang: khung chứa & thẻ ghi chú =
-   mặt "nổi"; riêng Ô ĐANG GÕ chuyển "lõm" xuống — đúng cảm giác
-   viết xuống trang giấy thay vì một khối dán phẳng lên nền.
-   Thẻ ghim (nb-pin-card) GIỮ NGUYÊN màu người dùng tự chọn, chỉ đổi
-   bóng đổ cứng sang bóng đổ mềm 2 tông để không mất khả năng tùy màu.
-   ============================================================ */
-.settings-nav-btn{
-  background:var(--neo-surface); border:none; color:var(--ink-soft);
-  box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light);
-}
-.settings-nav-btn:hover{ color:var(--accent); box-shadow:4px 4px 9px var(--neo-dark), -4px -4px 9px var(--neo-light); }
-.settings-nav-btn.active{
-  background:var(--accent-grad); color:#fff;
-  box-shadow:inset 2px 2px 6px rgba(0,0,0,.18), 0 6px 14px -8px rgba(13,110,95,.5);
-}
-[data-theme="dark"] .settings-nav-btn.active{ color:#04120f; }
-
-.backup-box{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light) !important;
-}
-.backup-what{
-  background:var(--neo-surface) !important;
-  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light);
-}
-
-/* ---- Nút nổi 📝 (góc màn hình) + cửa sổ ghi chú nhanh ---- */
-.qc-toggle-btn{
-  background:var(--neo-surface) !important; border:none !important; color:var(--accent) !important;
-  box-shadow:5px 5px 12px var(--neo-dark), -5px -5px 12px var(--neo-light) !important;
-}
-.qc-toggle-btn:hover{
-  box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light), 0 8px 18px -10px rgba(13,110,95,.4) !important;
-}
-.qc-toggle-btn.on{
-  box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light), 0 0 0 2.5px var(--accent-bg) !important;
-}
-.qc-modal{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:10px 10px 24px var(--neo-dark), -8px -8px 20px var(--neo-light) !important;
-}
-
-/* ---- Từng nhóm ghi chú theo ngày ---- */
-.nb-day{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:5px 5px 12px var(--neo-dark), -5px -5px 12px var(--neo-light);
-}
-.nb-day-head{ background:transparent !important; border-bottom:1px solid var(--line) !important; }
-.nb-copyall{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light);
-}
-.nb-copyall:hover{ box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light); color:var(--accent); }
-
-/* ---- Từng ghi chú (chưa ghim) trong danh sách theo ngày ---- */
-.nb-line{
-  border:none !important; background:var(--neo-surface);
-  box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light);
-  color:var(--ink) !important;
-}
-.nb-meta{ color:var(--muted) !important; }
-.nb-note{
-  background:var(--neo-surface) !important; color:var(--ink-soft) !important;
-  box-shadow:inset 2px 2px 5px var(--neo-dark-soft), inset -1px -1px 3px var(--neo-light);
-}
-.nb-copy1, .nb-del, .nb-edit1, .nb-pin1{
-  background:var(--neo-surface); border-radius:8px; color:var(--ink-soft) !important;
-  box-shadow:2px 2px 5px var(--neo-dark-soft), -1px -1px 3px var(--neo-light);
-}
-.nb-copy1:hover, .nb-edit1:hover{ box-shadow:3px 3px 7px var(--neo-dark-soft), -2px -2px 5px var(--neo-light); color:var(--accent) !important; }
-.nb-del:hover{ box-shadow:3px 3px 7px var(--neo-dark-soft), -2px -2px 5px var(--neo-light); color:#ef4444 !important; }
-.nb-pin1:hover{ box-shadow:3px 3px 7px var(--neo-dark-soft), -2px -2px 5px var(--neo-light); color:#eab308 !important; }
-.nb-pin1.on{ box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light); color:#eab308 !important; }
-
-/* ---- Thanh định dạng: Hoàn tác/Làm lại/B/I/gạch đầu dòng/căn lề/màu chữ ---- */
-.nb-fmt-toolbar button{
-  background:var(--neo-surface) !important; border:none !important; color:var(--ink) !important;
-  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light);
-}
-.nb-fmt-toolbar button:hover{ box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light); color:var(--accent) !important; }
-.nb-fmt-toolbar button.on{
-  background:var(--accent-grad) !important; color:#fff !important;
-  box-shadow:inset 2px 2px 5px rgba(0,0,0,.2) !important;
-}
-.nb-fmt-swatch{
-  border:none !important;
-  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light), inset 0 0 0 1.5px rgba(255,255,255,.5);
-}
-.nb-fmt-swatch:hover{ box-shadow:3px 3px 6px var(--neo-dark), -2px -2px 5px var(--neo-light), inset 0 0 0 1.5px rgba(255,255,255,.7); }
-
-/* ---- Ô đang gõ ghi chú — "lõm" như đang viết xuống trang giấy ---- */
-.nb-note-editable{
-  background:var(--neo-surface) !important; border:none !important; border-left:3px solid var(--accent) !important;
-  box-shadow:inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light) !important;
-  color:var(--ink) !important;
-}
-.nb-note-editable:focus{
-  box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light), 0 0 0 3px var(--accent-bg) !important;
-  border-left-color:var(--accent) !important;
-}
-.nb-edit-box textarea{
-  background:var(--neo-surface) !important; border:none !important; color:var(--ink) !important;
-  box-shadow:inset 2.5px 2.5px 6px var(--neo-dark), inset -2.5px -2.5px 6px var(--neo-light) !important;
-}
-
-/* ---- Bảng ghim (sticky notes) — GIỮ màu người dùng tự chọn, chỉ
-   đổi bóng đổ cứng sang bóng đổ mềm 2 tông kiểu "nổi" ---- */
-.nb-pin-card{
-  border:none !important;
-  box-shadow:6px 6px 14px rgba(0,0,0,.16), -4px -4px 10px rgba(255,255,255,.55) !important;
-}
-[data-theme="dark"] .nb-pin-card{ box-shadow:6px 6px 16px rgba(0,0,0,.5), -3px -3px 8px rgba(255,255,255,.05) !important; }
-.nb-pin-actions button{
-  border:none !important;
-  box-shadow:2px 2px 5px rgba(0,0,0,.15), -1px -1px 3px rgba(255,255,255,.6);
-}
-.nb-color-dot{
-  border:none !important;
-  box-shadow:2px 2px 4px rgba(0,0,0,.18), -1px -1px 3px rgba(255,255,255,.5);
-}
-.nb-color-dot.active{ box-shadow:0 0 0 2px #fff inset, 0 0 0 3.5px var(--accent) !important; }
-
-/* ---- Bộ lọc ngày / chế độ gọn / số cột bảng ghim ---- */
-.nb-compact-toggle, .nb-pin-col-btn{
-  background:var(--neo-surface) !important; border:none !important; color:var(--ink-soft) !important;
-  box-shadow:2px 2px 5px var(--neo-dark), -2px -2px 5px var(--neo-light);
-}
-.nb-compact-toggle:hover, .nb-pin-col-btn:hover{ box-shadow:3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light); color:var(--accent) !important; }
-.nb-compact-toggle.on, .nb-pin-col-btn.on{
-  background:var(--accent-grad) !important; color:#fff !important;
-  box-shadow:inset 2px 2px 5px rgba(0,0,0,.2) !important;
 }
 
 </style>
@@ -35238,14 +35054,6 @@ function renderDashboard(){
         <div class="pf-bar"><div class="pf-fill" style="width:${LV.pct}%"></div></div>
         <div class="pf-scale">
           ${LEVELS.map(L=>`<span class="pf-tick ${GEMS>=L.need?'on':''}" title="Cấp ${L.lv} — ${L.name} (${L.need}💎)">${L.ic}</span>`).join('')}
-        </div>
-      </div>
-      <div class="pf-right">
-        <div class="pf-stat-chip" title="Chuỗi ngày học liên tiếp">
-          <span class="pfc-ic">🔥</span><b>${streak}</b><span>ngày streak</span>
-        </div>
-        <div class="pf-stat-chip" title="Số từ đã thuộc hẳn">
-          <span class="pfc-ic">✅</span><b>${S.learned}</b><span>đã thuộc</span>
         </div>
       </div>
     </div>
