@@ -38070,6 +38070,16 @@ function nextType(){
     if(_typeLocked) return;
     e.preventDefault(); inp.focus();
   });
+  /* Khi bàn phím ảo mở lên, trình duyệt tự cuộn để giữ ô input trong tầm
+     nhìn — nhưng làm vậy che mất phần nghĩa tiếng Việt cần dịch ở đầu thẻ.
+     Nên tự cuộn lại (đợi bàn phím mở xong) để phần đầu thẻ luôn hiện. */
+  inp.addEventListener('focus', ()=>{
+    clearTimeout(inp._typeScrollT);
+    inp._typeScrollT = setTimeout(()=>{
+      const head = box.querySelector('.quiz-q');
+      if(head) head.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 350);
+  });
   setTimeout(()=>inp.focus(), 30);
   paint();
 
@@ -39416,6 +39426,16 @@ function learnTypeCard(item){
   };
   inp.addEventListener('input', ()=>{ if(!locked) paint(); });
   box.querySelector('#ltField').addEventListener('pointerdown', e=>{ if(!locked){ e.preventDefault(); inp.focus(); } });
+  /* Khi bàn phím ảo mở lên, trình duyệt tự cuộn để giữ ô input trong tầm
+     nhìn — nhưng làm vậy che mất phần nghĩa tiếng Việt cần dịch ở đầu thẻ.
+     Nên tự cuộn lại (đợi bàn phím mở xong) để phần đầu thẻ luôn hiện. */
+  inp.addEventListener('focus', ()=>{
+    clearTimeout(inp._ltScrollT);
+    inp._ltScrollT = setTimeout(()=>{
+      const head = box.querySelector('.quiz-q');
+      if(head) head.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 350);
+  });
   setTimeout(()=>inp.focus(),30);
 
   const listen = r=>{ listens++; speak(v.word,r); box.querySelector('#ltCount').textContent = `đã nghe ${listens} lần`; };
