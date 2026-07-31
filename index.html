@@ -72,27 +72,29 @@
 
   /* 4 ô thống kê ở trang chủ (Dashboard) — MỖI Ô đúng 1 màu, dùng thống
      nhất cho viền trái + nền + số + nhãn, để không bao giờ bị lệch màu
-     giữa các phần trong cùng 1 ô. */
-  --stat-learned:#059669; --stat-learned-bg:rgba(16,185,129,.14); --stat-learned-bd:rgba(16,185,129,.38);
-  --stat-doing:#2563eb;   --stat-doing-bg:rgba(37,99,235,.14);   --stat-doing-bd:rgba(37,99,235,.38);
-  --stat-due:#c2410c;     --stat-due-bg:rgba(249,115,22,.14);    --stat-due-bd:rgba(249,115,22,.38);
+     giữa các phần trong cùng 1 ô. (Đã chỉnh đậm hơn bản gốc để chữ trên
+     nền màu nhạt đạt tối thiểu 4.5:1 tương phản — trước đó "Đã thuộc" và
+     "Cửa 3" chỉ ~3.3:1, khó đọc.) */
+  --stat-learned:#04724f; --stat-learned-bg:rgba(16,185,129,.14); --stat-learned-bd:rgba(16,185,129,.38);
+  --stat-doing:#1d4ed8;   --stat-doing-bg:rgba(37,99,235,.14);   --stat-doing-bd:rgba(37,99,235,.38);
+  --stat-due:#b23a0a;     --stat-due-bg:rgba(249,115,22,.14);    --stat-due-bd:rgba(249,115,22,.38);
   --stat-new:#7c3aed;     --stat-new-bg:rgba(124,58,237,.14);    --stat-new-bd:rgba(124,58,237,.38);
 
   /* 5 chặng của "Lộ trình thuộc từ" — mỗi chặng 1 tông, dùng chung cho
      viền trên + nền + icon + số + progress-bar để không lệch màu. */
-  --stage1:#2563eb; --stage1-bg:rgba(37,99,235,.10); --stage1-bg-h:rgba(37,99,235,.17);
+  --stage1:#1d4ed8; --stage1-bg:rgba(37,99,235,.10); --stage1-bg-h:rgba(37,99,235,.17);
   --stage2:#7c3aed; --stage2-bg:rgba(124,58,237,.10); --stage2-bg-h:rgba(124,58,237,.17);
-  --stage3:#0d9488; --stage3-bg:rgba(13,148,136,.10); --stage3-bg-h:rgba(13,148,136,.17);
-  --stage4:#b45309; --stage4-bg:rgba(180,83,9,.10);  --stage4-bg-h:rgba(180,83,9,.17);
+  --stage3:#0b6e63; --stage3-bg:rgba(13,148,136,.10); --stage3-bg-h:rgba(13,148,136,.17);
+  --stage4:#935006; --stage4-bg:rgba(180,83,9,.10);  --stage4-bg-h:rgba(180,83,9,.17);
 
   /* Mốc "Nhớ tạm thời" (≥14 ngày, chưa tới 50 ngày "Đã thuộc") — màu xanh
      ngọc/teal riêng để phân biệt trực quan với các mốc thường trong tab
      Cần học. */
-  --temp-retain:#0e8a7d; --temp-retain-bg:rgba(14,138,125,.12); --temp-retain-bd:rgba(14,138,125,.36);
+  --temp-retain:#0a6b60; --temp-retain-bg:rgba(14,138,125,.12); --temp-retain-bd:rgba(14,138,125,.36);
 
-  --muted: #6b807a;
-  --line: #dbe2dd;
-  --line-strong: #c0cbc5;
+  --muted: #5a746c;
+  --line: #c3cec5;
+  --line-strong: #9fada3;
 
   --shadow-xs: 0 1px 2px rgba(15,32,29,.045);
   --shadow-sm: 0 2px 6px -2px rgba(15,32,29,.07), 0 1px 2px rgba(15,32,29,.05);
@@ -103,8 +105,8 @@
   --radius-xl: 22px;
   --radius: 14px;
   --radius-sm: 10px;
-  --line: #e2e7e2;
-  --line-strong: #c7d1c9;
+  --line: #c3cec5;
+  --line-strong: #9fada3;
 
   --font-heading: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
   --font-body: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
@@ -233,8 +235,8 @@
   --temp-retain:#5eead4; --temp-retain-bg:rgba(45,212,191,.18); --temp-retain-bd:rgba(45,212,191,.42);
 
   --muted: #7d948d;
-  --line: rgba(255,255,255,.09);
-  --line-strong: rgba(255,255,255,.19);
+  --line: rgba(255,255,255,.16);
+  --line-strong: rgba(255,255,255,.30);
 
   --shadow-xs: 0 1px 2px rgba(0,0,0,.4);
   --shadow-sm: 0 1px 4px rgba(0,0,0,.4);
@@ -4685,15 +4687,18 @@ nav.tabs{
 }
 .step i{ font-style:normal; font-size:15px; filter:grayscale(1); opacity:.5; }
 .step em{ font-style:normal; font-size:10.5px; color:var(--muted); font-weight:600; }
+.step-cnt{ font-style:normal; font-size:9.5px; color:var(--muted); font-weight:700; opacity:.85; }
 .step.ok{ background:var(--ember-bg); border-color:var(--ember); }
 .step.ok i{ filter:none; opacity:1; }
 .step.ok em{ color:var(--ember); }
+.step.ok .step-cnt{ color:var(--ember); }
 .step.cur{
   border-color:var(--accent); background:var(--accent-bg);
   box-shadow:0 0 0 3px var(--accent-bg);
 }
 .step.cur i{ filter:none; opacity:1; }
 .step.cur em{ color:var(--accent); font-weight:700; }
+.step.cur .step-cnt{ color:var(--accent); }
 .step-arrow{ color:var(--line-strong); font-size:13px; }
 .step-hint{
   text-align:center; font-size:13px; color:var(--muted);
@@ -5464,6 +5469,23 @@ body{
 /* ---- Flashcard collocation ---- */
 .cl-fc-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:14px 0; flex-wrap:wrap; }
 .cl-fc-progress{ font-size:13px; font-weight:700; color:var(--muted); }
+.cl-stat-row{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; width:100%; margin-top:2px; }
+.cl-stat-chip{
+  display:flex; align-items:baseline; gap:4px; padding:4px 11px; border-radius:99px;
+  border:1px solid var(--line-strong); background:var(--card-sunken);
+}
+.cl-stat-chip b{ font-size:13.5px; font-weight:800; letter-spacing:-.2px; }
+.cl-stat-chip em{ font-style:normal; font-size:10.5px; font-weight:700; color:var(--muted); }
+.cl-stat-chip.total b{ color:var(--ink); }
+.cl-stat-chip.s1{ border-color:var(--stage1); background:var(--stage1-bg); }
+.cl-stat-chip.s1 b{ color:var(--stage1); }
+.cl-stat-chip.s1 em{ color:var(--stage1); opacity:.8; }
+.cl-stat-chip.s2{ border-color:var(--stage2); background:var(--stage2-bg); }
+.cl-stat-chip.s2 b{ color:var(--stage2); }
+.cl-stat-chip.s2 em{ color:var(--stage2); opacity:.8; }
+.cl-stat-chip.done{ border-color:var(--stat-learned); background:var(--stat-learned-bg); }
+.cl-stat-chip.done b{ color:var(--stat-learned); }
+.cl-stat-chip.done em{ color:var(--stat-learned); opacity:.8; }
 .cl-fc-shuffle{
   font-family:inherit; font-size:12.5px; font-weight:700; color:var(--ink);
   background:var(--card); border:1px solid var(--line); border-radius:9px; padding:8px 14px; cursor:pointer;
@@ -38372,16 +38394,27 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
     </div>
 
     <div class="step-bar">
-      ${GATES.map(x=>{
-        const g = gateOf(v.word);
-        const cur = stepIc === x.ic;
-        const have = g[x.k]||0;
-        const okDone = have >= x.req;
-        return `<span class="step ${okDone?'ok':''} ${cur?'cur':''}">
-          <i>${x.ic}</i><em>${x.name}${x.req>1?` ${Math.min(have,x.req)}/${x.req}`:''}</em></span>`;
-      }).join('<span class="step-arrow">→</span>')}
-      <span class="step-arrow">→</span>
-      <span class="step ${stageOf(v.word)===5?'ok cur':''}"><i>✅</i><em>Thuộc</em></span>
+      ${(()=>{
+        // Số từ trong PHIÊN HIỆN TẠI đang ở mỗi cửa (dựa trên cửa kế tiếp
+        // còn nợ của từng từ) — hiện dưới tên mỗi cửa để biết phiên này
+        // đang dồn nhiều ở đâu, cập nhật theo thời gian thực khi trả lời.
+        const stepDist = { fc:0, qz:0, tp:0, done:0 };
+        learnState.words.forEach(item=>{
+          const ng = nextGate(item.v.word);
+          if(!ng) stepDist.done++; else stepDist[ng.k] = (stepDist[ng.k]||0) + 1;
+        });
+        const gatesHTML = GATES.map(x=>{
+          const g = gateOf(v.word);
+          const cur = stepIc === x.ic;
+          const have = g[x.k]||0;
+          const okDone = have >= x.req;
+          return `<span class="step ${okDone?'ok':''} ${cur?'cur':''}">
+            <i>${x.ic}</i><em>${x.name}${x.req>1?` ${Math.min(have,x.req)}/${x.req}`:''}</em>
+            <b class="step-cnt">${stepDist[x.k]} từ</b></span>`;
+        }).join('<span class="step-arrow">→</span>');
+        return gatesHTML + `<span class="step-arrow">→</span>
+          <span class="step ${stageOf(v.word)===5?'ok cur':''}"><i>✅</i><em>Thuộc</em><b class="step-cnt">${stepDist.done} từ</b></span>`;
+      })()}
     </div>
     <div class="step-hint"><b>${stepIc} ${stepName}</b> — ${stepHint}</div>
     ${topicTagHTML(v)}
@@ -41072,6 +41105,30 @@ function clLoadTypeBoxes(){
 }
 function clSaveTypeBoxes(b){ try{ localStorage.setItem(CL_TYPE_KEY, JSON.stringify(b)); }catch(e){} _dashStale = true; }
 function clStreakOf(id){ const b = clLoadTypeBoxes(); return (b[id]&&b[id].streak) || 0; }
+/* Phân bố TOÀN BỘ collocation trong thư viện theo số lần gõ đúng liên
+   tiếp (streak) — dùng cho dải chip thống kê ở đầu màn "Gõ từ Collocation".
+   Cố ý dùng COLLOCATIONS (toàn thư viện), KHÔNG dùng _clTypeQueue (chỉ
+   là tập con của phiên đang luyện), vì đây là tiến độ tổng thể chứ
+   không phải tiến độ riêng phiên này. */
+function clStreakDist(){
+  const dist = { s1:0, s2:0, done:0 };
+  COLLOCATIONS.forEach(c=>{
+    const s = clStreakOf(c.id);
+    if(s >= CL_MASTER_STREAK) dist.done++;
+    else if(s === 2) dist.s2++;
+    else if(s === 1) dist.s1++;
+  });
+  return dist;
+}
+function clStatChipsHTML(){
+  const d = clStreakDist();
+  return `<div class="cl-stat-row">
+    <span class="cl-stat-chip total"><b>${COLLOCATIONS.length}</b><em>Tổng cụm</em></span>
+    <span class="cl-stat-chip s1"><b>${d.s1}</b><em>Đúng 1 lần</em></span>
+    <span class="cl-stat-chip s2"><b>${d.s2}</b><em>Đúng 2 lần</em></span>
+    <span class="cl-stat-chip done"><b>${d.done}</b><em>Đã thuộc</em></span>
+  </div>`;
+}
 function clTypeReview(c, quality){
   const b = clLoadTypeBoxes();
   const cur = b[c.id] || { streak:0, seen:0, correct:0, wrong:0 };
@@ -41468,6 +41525,7 @@ function clNextTypeCard(){
       <button class="st-pick-mini" id="clTpBack">← Quay lại danh sách</button>
       <span class="cl-fc-progress">Cụm ${_clTypeIdx+1}/${_clTypeQueue.length}</span>
       <span class="tp-score">Đúng <b>${_clTypeScore}</b>/${_clTypeTotal}</span>
+      ${clStatChipsHTML()}
     </div>
 
     <div class="quiz-q">
@@ -41673,6 +41731,8 @@ function clNextTypeCard(){
     fb.className = 'type-feedback no';
     speak(c.phrase);
     root.querySelector('.tp-score').innerHTML = `Đúng <b>${_clTypeScore}</b>/${_clTypeTotal}`;
+    const chipRow = root.querySelector('.cl-stat-row');
+    if(chipRow) chipRow.outerHTML = clStatChipsHTML();
     _clTypeRvT = setTimeout(()=>{ _clTypeIdx++; clNextTypeCard(); }, 2600);
   }
 
