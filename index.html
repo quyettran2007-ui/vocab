@@ -8,7 +8,7 @@
 
 <!-- ===== PWA: cài lên máy như app thật ===== -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0d6e5f">
+<meta name="theme-color" content="#047857">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -44876,7 +44876,7 @@ const ACCENT_THEMES = [
   { key:'plum',    name:'Mận tím', color:'#86198f', grad:'linear-gradient(135deg,#701a75,#a21caf)' }
 ];
 (function initAccentTheme(){
-  const saved = localStorage.getItem('vocab_accent_theme') || 'green';
+  const saved = localStorage.getItem('vocab_accent_theme') || 'emerald';
   applyAccentTheme(saved);
   renderThemeSwatches();
 })();
@@ -44894,7 +44894,7 @@ function setAccentTheme(key){
 function renderThemeSwatches(){
   const grid = document.getElementById('themeSwatchGrid');
   if(!grid) return;
-  const cur = localStorage.getItem('vocab_accent_theme') || 'green';
+  const cur = localStorage.getItem('vocab_accent_theme') || 'emerald';
   grid.innerHTML = ACCENT_THEMES.map(t=>`
     <button class="theme-swatch-btn ${cur===t.key?'active':''}" style="--ts-color:${t.color};--ts-grad:${t.grad}" onclick="setAccentTheme('${t.key}')">
       <span class="theme-swatch-dot"></span>
@@ -45006,7 +45006,7 @@ function applyConcept(key){
 function renderConceptSwatches(){
   const grid = document.getElementById('conceptSwatchGrid');
   if(!grid) return;
-  const curAccent = localStorage.getItem('vocab_accent_theme') || 'green';
+  const curAccent = localStorage.getItem('vocab_accent_theme') || 'emerald';
   const curBg = localStorage.getItem('vocab_bg_theme') || 'meadow';
   grid.innerHTML = UI_CONCEPTS.map(c=>{
     const at = ACCENT_THEMES.find(a=>a.key===c.accent);
