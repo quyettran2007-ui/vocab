@@ -36348,6 +36348,21 @@ document.addEventListener('keydown', e=>{
   }
 });
 
+/* ---------- Phím Q = mở/đóng Ghi chú nhanh (📝) ----------
+   Hoạt động ở bất kỳ đâu trong app, TRỪ khi đang gõ chữ trong 1 ô nhập
+   liệu/contenteditable khác (input/textarea/select hoặc ô ghi chú/gõ từ)
+   — vì "q" là 1 chữ cái bình thường có thể xuất hiện khi gõ từ tiếng Anh
+   (queen, quiz…) hay gõ ghi chú, nên chỉ bắt phím này khi KHÔNG có ô nhập
+   liệu nào đang được focus. */
+document.addEventListener('keydown', e=>{
+  if(e.key!=='q' && e.key!=='Q') return;
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+  const tag = (e.target.tagName||'').toLowerCase();
+  if(tag==='input' || tag==='textarea' || tag==='select' || (e.target && e.target.isContentEditable)) return;
+  e.preventDefault();
+  qcToggle();
+});
+
 /* ---------- List ---------- */
 /* Bấm 1 từ ở ô "Gọn theo chủ đề" -> hiện thẻ chi tiết NỔI LÊN ngay tại
    chỗ (popup), KHÔNG chuyển chế độ xem, KHÔNG mất vị trí cuộn hiện tại.
