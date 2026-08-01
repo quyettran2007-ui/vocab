@@ -6688,6 +6688,117 @@ html:not([data-theme="dark"]) .pos-pie-chart{
   box-shadow:none !important;
 }
 
+/* ============================================================
+   PATCH — DASHBOARD REFRESH (theo yêu cầu):
+   1) Các nút hành động trên Dashboard -> neomorphism dạng CHÌM
+      (sunken/inset), bỏ nền gradient màu đặc, giữ màu chữ/icon
+      để vẫn phân biệt được chức năng.
+   2) Thanh tìm kiếm Dashboard: gộp lại thành 1 khối bóng đổ DUY
+      NHẤT (trước đây input bên trong tự có bóng lõm riêng, đè lên
+      bóng lõm của khung ngoài -> 2 góc trái/phải lệch nhau).
+   3) Header nổi bật, tách biệt rõ với thanh tab bên dưới.
+   4) Nền "Lộ trình thuộc từ" đồng bộ với nền thẻ "Chuỗi ngày học".
+   ============================================================ */
+
+/* ---- 1) Nút Dashboard: NỔI mềm — cùng phong cách với vòng tròn
+   "% đã học" (.hero-ring-in): nền --neo-surface, bóng đổ 2 phía
+   sáng/tối tạo cảm giác nổi nhẹ, không nền màu đặc, bấm xuống mới lõm. */
+.hero-pick-btn, .hero-guide-btn, .hero-cta, .fn-cta{
+  background:var(--neo-surface) !important;
+  border:none !important;
+  text-transform:none !important;
+  transition:box-shadow .18s, transform .18s, color .18s !important;
+  box-shadow:
+    4px 4px 9px var(--neo-dark),
+    -4px -4px 9px var(--neo-light) !important;
+}
+.hero-pick-btn, .hero-pick-btn .btn-label, .hero-pick-btn .hpb-arrow{ color:var(--accent) !important; }
+.hero-guide-btn, .hero-guide-btn .btn-label{ color:var(--ember) !important; }
+.hero-guide-btn.today-btn, .hero-guide-btn.today-btn .btn-label{ color:#1d4ed8 !important; }
+[data-theme="dark"] .hero-guide-btn.today-btn, [data-theme="dark"] .hero-guide-btn.today-btn .btn-label{ color:#7fb2ff !important; }
+.hero-cta, .hero-cta.small{ color:var(--accent) !important; }
+.hero-cta.secondary{ color:#1d4ed8 !important; }
+[data-theme="dark"] .hero-cta.secondary{ color:#7fb2ff !important; }
+.fn-cta{ color:var(--accent) !important; font-weight:800 !important; }
+
+.hero-pick-btn:hover, .hero-guide-btn:hover, .hero-cta:hover, .fn-cta:hover{
+  transform:translateY(-2px) !important;
+  filter:none !important;
+  box-shadow:
+    6px 6px 13px var(--neo-dark),
+    -6px -6px 13px var(--neo-light) !important;
+}
+.hero-pick-btn:active, .hero-guide-btn:active, .hero-cta:active, .fn-cta:active{
+  transform:translateY(0) !important;
+  box-shadow:
+    inset 3px 3px 7px var(--neo-dark),
+    inset -3px -3px 7px var(--neo-light) !important;
+}
+
+/* ---- 2) Thanh tìm kiếm Dashboard: 1 khối bóng đổ duy nhất ---- */
+.dash-search-wrap .dash-search{
+  background:var(--neo-surface) !important;
+  border:2px solid var(--accent) !important;
+  border-radius:999px !important;
+  box-shadow:
+    inset 3px 3px 7px var(--neo-dark),
+    inset -3px -3px 7px var(--neo-light),
+    0 0 0 3px var(--accent-bg) !important;
+}
+.dash-search-wrap .dash-search:focus-within{
+  border-color:var(--accent-hover, var(--accent)) !important;
+  box-shadow:
+    inset 2px 2px 6px var(--neo-dark),
+    inset -2px -2px 6px var(--neo-light),
+    0 0 0 5px var(--accent-bg) !important;
+}
+.dash-search-wrap #dashSearch{
+  background:transparent !important;
+  box-shadow:none !important;
+  border:none !important;
+}
+.dash-search-wrap .ds-clear{
+  background:var(--neo-surface) !important;
+  box-shadow:
+    2px 2px 5px var(--neo-dark),
+    -2px -2px 5px var(--neo-light) !important;
+}
+.dash-search-wrap .ds-clear:hover{
+  background:var(--accent) !important; color:#fff !important;
+  box-shadow:none !important;
+}
+
+/* ---- 3) Header/tab: bỏ hẳn đường ranh giới giữa 2 thanh (không viền,
+   không vạch màu, không bóng tạo cảm giác đường phân cách) ---- */
+header{
+  background:var(--card) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border-bottom:none !important;
+  box-shadow:none !important;
+}
+nav.tabs{
+  background:var(--paper-2) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border-bottom:none !important;
+  box-shadow:none !important;
+}
+
+/* ---- 4) Nền "Lộ trình thuộc từ" & "Chuỗi ngày học": KHÔNG can thiệp
+   nền riêng nữa — để đúng cơ chế trong suốt có sẵn của web
+   (rgba(--card-rgb, --panel-alpha), khai báo chung cho .hero-main,
+   .hero-side, .funnel-card ở mục "ĐỘ TRONG SUỐT") tự áp dụng, nhờ đó
+   2 thẻ này tự động trong/kính mờ giống hệt thẻ "Từ mới hôm nay"
+   (nằm trong .hero-main) thay vì lệch tông như trước.
+   Riêng .funnel-card có 1 rule nền đặc !important cũ hơn trong file
+   (mục Neomorphism) đang đè lên công thức trong suốt đó — ghi đè lại
+   ở đây (đứng sau, cùng !important) để funnel-card cũng trong suốt
+   đúng như hero-main/hero-side. */
+.funnel-card{
+  background: rgba(var(--card-rgb), var(--panel-alpha)) !important;
+}
+
 </style>
 
 <body>
