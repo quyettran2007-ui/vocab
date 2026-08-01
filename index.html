@@ -39651,7 +39651,8 @@ function typeReviewPanel(box, v, opt){
     <div class="tp-review ${just?'is-master':''}">
       <div class="tpr-flag">✓ Chính xác${opt.hinted?' (có gợi ý — cửa ⌨️ chưa mở)':''}${opt.listens?` · nghe ${opt.listens} lần`:''}</div>
       <div class="tpr-word">${esc(v.word)}
-        <button class="speak-btn" id="tprSpeak" title="Nghe lại">🔊</button></div>
+        <button class="speak-btn" id="tprSpeak" title="Nghe lại">🔊</button>
+        <button class="speak-btn ${isStarred(v.word)?'on':''}" id="tprBookmark" title="Đánh dấu Cần học">${isStarred(v.word)?'★':'☆'}</button></div>
       <div class="tpr-line">
         ${v.ipa?`<span class="tpr-ipa">${esc(v.ipa)}</span>`:''}
         ${v.pos?`<span class="tpr-pos">${esc(v.pos)}</span>`:''}
@@ -39680,6 +39681,12 @@ function typeReviewPanel(box, v, opt){
     </div>`;
 
   box.querySelector('#tprSpeak').onclick = ()=> speak(v.word);
+  box.querySelector('#tprBookmark').onclick = (e)=>{
+    const on = toggleStar(v.word);
+    e.currentTarget.classList.toggle('on', on);
+    e.currentTarget.textContent = on ? '★' : '☆';
+    toast(on ? `⭐ Đã thêm "${v.word}" vào Cần học` : `Đã bỏ "${v.word}" khỏi Cần học`);
+  };
   box.querySelector('#tprNext').onclick  = ()=>{ clearTypeTimers(); opt.onNext(); };
 
   const ring = box.querySelector('#tprRing');
