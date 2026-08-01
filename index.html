@@ -112,9 +112,9 @@
      — bóng sáng + bóng tối trên CÙNG nền để tạo cảm giác nút "nổi lên"
      khỏi mặt phẳng, và "lõm xuống" khi active/pressed. ---- */
   --neo-surface: #eef1ef;
-  --neo-light: rgba(0,0,0,.275);
-  --neo-dark: rgba(0,0,0,.275);
-  --neo-dark-soft: rgba(0,0,0,.16);
+  --neo-light: #ffffff;
+  --neo-dark: rgba(157,175,166,.55);
+  --neo-dark-soft: rgba(157,175,166,.32);
 
   --font-heading: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
   --font-body: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
@@ -820,7 +820,7 @@ main {
   max-width:1080px; width:100%;
   margin:0 auto; padding:30px 26px 64px;
 }
-.panel { display:none; contain:layout style; }
+.panel { display:none; contain:layout style paint; }
 .panel.active { display:block; animation:rise .32s cubic-bezier(.16,1,.3,1); will-change:auto; }
 /* #panel-flashcard: bỏ "paint" containment — "paint" khiến mọi phần tử con
    vượt quá khung bị CẮT MẤT hoàn toàn (không cuộn được, không thấy được),
@@ -6688,147 +6688,6 @@ html:not([data-theme="dark"]) .pos-pie-chart{
   box-shadow:none !important;
 }
 
-/* ============================================================
-   PATCH — DASHBOARD REFRESH (theo yêu cầu):
-   1) Các nút hành động trên Dashboard -> neomorphism dạng CHÌM
-      (sunken/inset), bỏ nền gradient màu đặc, giữ màu chữ/icon
-      để vẫn phân biệt được chức năng.
-   2) Thanh tìm kiếm Dashboard: gộp lại thành 1 khối bóng đổ DUY
-      NHẤT (trước đây input bên trong tự có bóng lõm riêng, đè lên
-      bóng lõm của khung ngoài -> 2 góc trái/phải lệch nhau).
-   3) Header nổi bật, tách biệt rõ với thanh tab bên dưới.
-   4) Nền "Lộ trình thuộc từ" đồng bộ với nền thẻ "Chuỗi ngày học".
-   ============================================================ */
-
-/* ---- 1) Nút Dashboard: NỔI mềm — cùng phong cách với vòng tròn
-   "% đã học" (.hero-ring-in): nền --neo-surface, bóng đổ 2 phía
-   sáng/tối tạo cảm giác nổi nhẹ, không nền màu đặc, bấm xuống mới lõm. */
-.hero-pick-btn, .hero-guide-btn, .hero-cta, .fn-cta{
-  background:var(--neo-surface) !important;
-  border:none !important;
-  text-transform:none !important;
-  transition:box-shadow .18s, transform .18s, color .18s !important;
-  box-shadow:
-    4px 4px 9px var(--neo-dark),
-    -4px -4px 9px var(--neo-light) !important;
-}
-.hero-pick-btn, .hero-pick-btn .btn-label, .hero-pick-btn .hpb-arrow{ color:var(--accent) !important; }
-.hero-guide-btn, .hero-guide-btn .btn-label{ color:var(--ember) !important; }
-.hero-guide-btn.today-btn, .hero-guide-btn.today-btn .btn-label{ color:#1d4ed8 !important; }
-[data-theme="dark"] .hero-guide-btn.today-btn, [data-theme="dark"] .hero-guide-btn.today-btn .btn-label{ color:#7fb2ff !important; }
-.hero-cta, .hero-cta.small{ color:var(--accent) !important; }
-.hero-cta.secondary{ color:#1d4ed8 !important; }
-[data-theme="dark"] .hero-cta.secondary{ color:#7fb2ff !important; }
-.fn-cta{ color:var(--accent) !important; font-weight:800 !important; }
-
-.hero-pick-btn:hover, .hero-guide-btn:hover, .hero-cta:hover, .fn-cta:hover{
-  transform:translateY(-2px) !important;
-  filter:none !important;
-  box-shadow:
-    6px 6px 13px var(--neo-dark),
-    -6px -6px 13px var(--neo-light) !important;
-}
-.hero-pick-btn:active, .hero-guide-btn:active, .hero-cta:active, .fn-cta:active{
-  transform:translateY(0) !important;
-  box-shadow:
-    inset 3px 3px 7px var(--neo-dark),
-    inset -3px -3px 7px var(--neo-light) !important;
-}
-
-/* ---- 2) Thanh tìm kiếm Dashboard: 1 khối bóng đổ duy nhất ---- */
-.dash-search-wrap .dash-search{
-  background:var(--neo-surface) !important;
-  border:2px solid var(--accent) !important;
-  border-radius:999px !important;
-  box-shadow:
-    inset 3px 3px 7px var(--neo-dark),
-    inset -3px -3px 7px var(--neo-light),
-    0 0 0 3px var(--accent-bg) !important;
-}
-.dash-search-wrap .dash-search:focus-within{
-  border-color:var(--accent-hover, var(--accent)) !important;
-  box-shadow:
-    inset 2px 2px 6px var(--neo-dark),
-    inset -2px -2px 6px var(--neo-light),
-    0 0 0 5px var(--accent-bg) !important;
-}
-.dash-search-wrap #dashSearch{
-  background:transparent !important;
-  box-shadow:none !important;
-  border:none !important;
-}
-.dash-search-wrap .ds-clear{
-  background:var(--neo-surface) !important;
-  box-shadow:
-    2px 2px 5px var(--neo-dark),
-    -2px -2px 5px var(--neo-light) !important;
-}
-.dash-search-wrap .ds-clear:hover{
-  background:var(--accent) !important; color:#fff !important;
-  box-shadow:none !important;
-}
-
-/* ---- 3) Header/tab: bỏ hẳn đường ranh giới giữa 2 thanh (không viền,
-   không vạch màu, không bóng tạo cảm giác đường phân cách) ---- */
-header{
-  background:var(--card) !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  border-bottom:none !important;
-  box-shadow:none !important;
-}
-nav.tabs{
-  background:var(--paper-2) !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  border-bottom:none !important;
-  box-shadow:none !important;
-}
-
-/* ---- 4) Nền "Lộ trình thuộc từ" & "Chuỗi ngày học": KHÔNG can thiệp
-   nền riêng nữa — để đúng cơ chế trong suốt có sẵn của web
-   (rgba(--card-rgb, --panel-alpha), khai báo chung cho .hero-main,
-   .hero-side, .funnel-card ở mục "ĐỘ TRONG SUỐT") tự áp dụng, nhờ đó
-   2 thẻ này tự động trong/kính mờ giống hệt thẻ "Từ mới hôm nay"
-   (nằm trong .hero-main) thay vì lệch tông như trước.
-   Riêng .funnel-card có 1 rule nền đặc !important cũ hơn trong file
-   (mục Neomorphism) đang đè lên công thức trong suốt đó — ghi đè lại
-   ở đây (đứng sau, cùng !important) để funnel-card cũng trong suốt
-   đúng như hero-main/hero-side. */
-.funnel-card{
-  background: rgba(var(--card-rgb), var(--panel-alpha)) !important;
-}
-
-/* ============================================================
-   PATCH — MÀN "HỌC NGAY" TRÊN PC (>=1180px, layout 2 cột):
-   Chuyển 2 nút "Đổi phiên" / "Kết thúc" từ thanh trên xuống cuối
-   khung bên trái, đồng thời khung bên trái được đóng khung (viền +
-   nền) và kéo cao bằng khung bên phải để cân đối 2 cột.
-   (Trên điện thoại/tablet giữ nguyên như cũ — 2 nút vẫn nằm ở
-   thanh trên cùng, vì lúc đó không có bố cục 2 cột.)
-   ============================================================ */
-.learn-side-actions{ display:none; gap:10px; }
-@media (min-width:1180px){
-  .learn-wrap.has-side{ align-items:stretch !important; }
-  .learn-wrap.has-side .learn-topbar .learn-topbar-btn{ display:none !important; }
-  .learn-wrap.has-side .learn-topbar{ justify-content:center !important; gap:14px !important; }
-  .learn-wrap.has-side .learn-side{
-    display:flex !important; flex-direction:column !important;
-    height:100% !important; box-sizing:border-box !important;
-    background:var(--card) !important; border:1px solid var(--line) !important;
-    border-radius:var(--radius-xl) !important; box-shadow:var(--shadow-sm) !important;
-    padding:20px 20px 18px !important;
-  }
-  .learn-wrap.has-side .learn-side .learn-progress{
-    border:none !important; box-shadow:none !important; background:transparent !important;
-    padding:0 0 16px !important; margin:0 0 14px !important;
-    border-bottom:1px dashed var(--line) !important; border-radius:0 !important;
-  }
-  .learn-wrap.has-side .learn-side-actions{
-    display:flex !important; margin-top:auto !important; padding-top:16px !important;
-  }
-  .learn-wrap.has-side .learn-side-actions .learn-exit-btn{ flex:1; }
-}
 </style>
 
 <body>
@@ -39309,10 +39168,10 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
   return `
   <div class="learn-scroll"><div class="learn-wrap has-side">
     <div class="learn-topbar">
-      <button class="learn-exit-btn learn-topbar-btn" id="learnSwitch">⇄ Đổi phiên</button>
+      <button class="learn-exit-btn" id="learnSwitch">⇄ Đổi phiên</button>
       <span class="lt-scope">${SCOPE_LABEL[learnState.scope]||'Học ngay'}</span>
       <span class="lt-frac"><b>${done}</b>/${total} xong</span>
-      <button class="learn-exit-btn danger learn-topbar-btn" id="learnExit">✕ Kết thúc</button>
+      <button class="learn-exit-btn danger" id="learnExit">✕ Kết thúc</button>
     </div>
 
     <div class="learn-side">
@@ -39349,13 +39208,9 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
           <span class="step ${stageOf(v.word)===5?'ok cur':''}"><i>✅</i><em>Thuộc</em><b class="step-cnt">${stepDist.done} từ</b></span>`;
       })()}
     </div>
-    <div class="step-hint" style="opacity:.6;font-size:11px;margin-top:-6px"></div>
+    <div class="step-hint" style="opacity:.6;font-size:11px;margin-top:-6px">Số từ trên là thống kê toàn bộ thư viện, không riêng phiên này</div>
     <div class="step-hint"><b>${stepIc} ${stepName}</b> — ${stepHint}</div>
     ${topicTagHTML(v)}
-    <div class="learn-side-actions">
-      <button class="learn-exit-btn" id="learnSwitch2">⇄ Đổi phiên</button>
-      <button class="learn-exit-btn danger" id="learnExit2">✕ Kết thúc</button>
-    </div>
     </div>
 
     <div class="learn-body">
@@ -39365,18 +39220,13 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
 }
 
 function bindLearnShell(root){
-  const doSwitch = ()=> renderLearnStart(learnState.scope);
-  const doExit = ()=>{
+  root.querySelector('#learnSwitch').onclick = ()=> renderLearnStart(learnState.scope);
+  root.querySelector('#learnExit').onclick = ()=>{
     clearTypeTimers();
     if(learnState.sessionCorrect + learnState.sessionWrong > 0) renderLearnDone();
     else { learnState = null; renderLearnStart('path'); }
   };
-  root.querySelector('#learnSwitch').onclick = doSwitch;
-  root.querySelector('#learnExit').onclick = doExit;
-  const sw2 = root.querySelector('#learnSwitch2'); if(sw2) sw2.onclick = doSwitch;
-  const ex2 = root.querySelector('#learnExit2'); if(ex2) ex2.onclick = doExit;
 }
-
 
 /* Ghi nhận 1 lượt trả lời trong phiên + kiểm tra từ đã xong lượt chưa */
 function learnScore(item, ok, quality, mode){
