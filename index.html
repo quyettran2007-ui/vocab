@@ -112,9 +112,9 @@
      — bóng sáng + bóng tối trên CÙNG nền để tạo cảm giác nút "nổi lên"
      khỏi mặt phẳng, và "lõm xuống" khi active/pressed. ---- */
   --neo-surface: #eef1ef;
-  --neo-light: #ffffff;
-  --neo-dark: rgba(157,175,166,.55);
-  --neo-dark-soft: rgba(157,175,166,.32);
+  --neo-light: rgba(0,0,0,.275);
+  --neo-dark: rgba(0,0,0,.275);
+  --neo-dark-soft: rgba(0,0,0,.16);
 
   --font-heading: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
   --font-body: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
@@ -820,7 +820,7 @@ main {
   max-width:1080px; width:100%;
   margin:0 auto; padding:30px 26px 64px;
 }
-.panel { display:none; contain:layout style paint; }
+.panel { display:none; contain:layout style; }
 .panel.active { display:block; animation:rise .32s cubic-bezier(.16,1,.3,1); will-change:auto; }
 /* #panel-flashcard: bỏ "paint" containment — "paint" khiến mọi phần tử con
    vượt quá khung bị CẮT MẤT hoàn toàn (không cuộn được, không thấy được),
