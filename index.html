@@ -100,6 +100,8 @@
   --shadow-sm: none;
   --shadow: none;
   --shadow-lg: none;
+  --neo-light: #ffffff;
+  --neo-dark: rgba(163,177,198,.55);
   --glow: 0 10px 26px -10px rgba(13,110,95,.42);
 
   --radius-xl: 22px;
@@ -250,6 +252,8 @@
   --shadow-sm: 0 1px 4px rgba(0,0,0,.4);
   --shadow: 0 8px 24px -10px rgba(0,0,0,.7);
   --shadow-lg: 0 24px 60px -22px rgba(0,0,0,.85);
+  --neo-light: rgba(255,255,255,.05);
+  --neo-dark: rgba(0,0,0,.6);
   --glow: 0 8px 28px -10px rgba(45,212,191,.42);
 
   --streak-empty: rgba(255,255,255,.05);
@@ -2551,16 +2555,25 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
    dính ngay dưới thanh tìm kiếm nhanh khi cuộn xuống, cỡ nhỏ gọn ---- */
 .rd-tools-pin{
   position:sticky; top:calc(var(--rd-tools-top,150px) - var(--hdr-hide,0) * var(--header-h)); z-index:25;
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  background:rgba(255,255,255,.75); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  border:1px solid var(--line); border-radius:9px;
+  display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;
   padding:5px 9px; margin-bottom:8px;
   font-size:12px;
   transition:top .28s cubic-bezier(.4,0,.2,1);
 }
-[data-theme="dark"] .rd-tools-pin{ background:rgba(20,30,27,.72); }
-.rd-tools-pin label{ display:flex; align-items:center; gap:4px; font-size:12px; font-weight:600; }
-.rd-tools-pin .btn{ font-size:12px; padding:5px 9px; }
+.rd-tools-pin label{ display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600;
+  padding:6px 12px; border-radius:9px; cursor:pointer; color:var(--ink);
+  background:var(--card); border:1px solid var(--line);
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.18);
+  transition:background-color .16s, border-color .16s, color .16s; }
+.rd-tools-pin label:has(input:checked){ background:var(--accent-bg); border-color:var(--accent); color:var(--accent-hover); }
+.rd-tools-pin .btn{ font-size:12px; padding:6px 12px; font-weight:700; border:none; color:#fff;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35); }
+.rd-tools-pin .rd-edit-btn{ background:var(--accent); }
+.rd-tools-pin .rd-edit-btn.on{ background:var(--accent-hover); }
+.rd-tools-pin .rd-notes-btn{ background:var(--accent-2, var(--accent)); }
+.rd-tools-pin .rd-notes-btn.on{ background:#0e7490; }
+.rd-tools-pin .rd-read-btn{ background:var(--green); }
+.rd-tools-pin .rd-stop-btn{ background:var(--coral); }
 @media (prefers-reduced-motion:reduce){
   .rd-quick-search-wrap, .rd-tools-pin{ transition:none; }
 }
@@ -2630,6 +2643,7 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .st-card-top{ margin-bottom:8px; }
 .st-topic-tag{ display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.4px; text-transform:uppercase;
   color:var(--accent); background:var(--accent-bg); border-radius:7px; padding:3px 9px; }
+.st-topic-center{ display:flex; justify-content:center; text-align:center; }
 .st-status-line{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0 10px; }
 .st-status-badge{ display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:700;
   padding:3px 10px; border-radius:20px; background:var(--card-sunken); border:1px solid var(--line); color:var(--ink-soft); white-space:nowrap; }
@@ -2808,6 +2822,7 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   background:var(--card); resize:vertical; outline:none; transition:border-color .15s;
 }
 .st-tr-field textarea:focus{ border-color:var(--accent); }
+.st-tr-field textarea::placeholder{ color:var(--muted); opacity:.45; }
 .st-tr-feedback{ margin-top:14px; }
 .st-tr-result{ border-radius:12px; padding:14px 16px; border:1px solid var(--line); }
 .st-tr-result.good{ background:var(--green-bg); border-color:var(--green); }
@@ -2888,13 +2903,14 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   background:color-mix(in srgb,var(--tp-c,var(--line)) 10%,var(--card-sunken)); border:1px solid var(--line); border-radius:8px; padding:3px 8px; }
 
 /* Trình đọc */
-.rd-bar{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:16px; }
-.rd-bar-title{ flex:1; min-width:0; }
+.rd-bar{ display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin-bottom:12px; }
+.rd-title-row{ text-align:center; margin-bottom:16px; }
+.rd-bar-title{ display:inline-block; max-width:100%; }
 .rd-bar-title b{ display:block; font-family:var(--font-heading); font-size:19px; letter-spacing:-.4px;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .rd-bar-title span{ font-size:11.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
   color:var(--accent); }
-.rd-tabs{ display:flex; gap:7px; margin-bottom:16px; }
+.rd-tabs{ display:flex; gap:7px; }
 .rd-tab{ cursor:pointer; font-family:var(--font-heading); font-size:13.5px; font-weight:700;
   color:var(--ink-soft); background:var(--paper); border:1px solid var(--line);
   border-radius:11px; padding:8px 14px;
@@ -4050,12 +4066,22 @@ body.page-fs { overflow-x:hidden; }
 .cl-overview-grid{ grid-template-columns:repeat(3,1fr); margin-bottom:10px; }
 @media(max-width:520px){ .cl-overview-grid{ grid-template-columns:repeat(2,1fr); } }
 /* Thu nhỏ để 6 ô thống kê nằm gọn 1 dòng */
-.cl-overview-grid-1row{ grid-template-columns:repeat(6,1fr); gap:6px; }
+.cl-overview-grid-1row{ grid-template-columns:repeat(5,1fr); gap:8px; }
 .cl-overview-grid-1row .prog-stat{ padding:6px 4px; border-radius:8px; }
 .cl-overview-grid-1row .prog-stat b{ font-size:14px; line-height:1.15; }
 .cl-overview-grid-1row .prog-stat span{ font-size:9.5px; line-height:1.2; display:block; }
-@media(max-width:700px){ .cl-overview-grid-1row{ grid-template-columns:repeat(3,1fr); } }
-@media(max-width:420px){ .cl-overview-grid-1row{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:700px){ .cl-overview-grid-1row{ grid-template-columns:repeat(5,1fr); gap:5px; } }
+@media(max-width:420px){ .cl-overview-grid-1row{ grid-template-columns:repeat(5,1fr); gap:4px; } }
+@media(max-width:420px){ .cl-overview-grid-1row .prog-stat b{ font-size:11.5px; } .cl-overview-grid-1row .prog-stat span{ font-size:7.8px; } }
+
+/* Neomorphism cho ô thống kê Collocation */
+.cl-stat-neo{
+  background:var(--card-sunken); border:none !important; border-radius:14px;
+  box-shadow: 5px 5px 10px var(--neo-dark), -5px -5px 10px var(--neo-light);
+  transition:box-shadow .15s, transform .15s;
+}
+.cl-stat-neo:hover{ transform:translateY(-2px); }
+.cl-stat-neo b{ color:var(--accent) !important; }
 .cl-overview-track{ display:flex; width:100%; height:12px; border-radius:7px; overflow:hidden;
   background:var(--card-sunken); border:1px solid var(--line); }
 
@@ -5514,11 +5540,19 @@ nav.tabs{ padding:10px 26px; }
 }
 [data-theme="dark"] .st-done-badge{ background:rgba(16,185,129,.2); color:#6ee7b7; }
 .st-bm-toggle{
-  font-family:inherit; font-size:15px; line-height:1; border:1px solid var(--line);
-  background:var(--card); border-radius:8px; padding:5px 8px; cursor:pointer; transition:.15s;
+  font-family:inherit; font-size:17px; line-height:1; border:1px solid var(--line);
+  background:var(--card); border-radius:99px; padding:6px 10px; cursor:pointer; transition:.15s;
 }
-.st-bm-toggle.on{ background:#fef9c3; border-color:#fde047; }
-[data-theme="dark"] .st-bm-toggle.on{ background:rgba(250,204,21,.18); border-color:rgba(250,204,21,.5); }
+.st-bm-toggle:hover{ transform:translateY(-1px) scale(1.05); border-color:var(--line-strong); }
+.st-bm-toggle.on{
+  background:linear-gradient(135deg,#fff7d6,#fde68a); border-color:#f59e0b; color:#b45309;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18), 0 2px 6px rgba(245,158,11,.35);
+  transform:scale(1.08);
+}
+[data-theme="dark"] .st-bm-toggle.on{
+  background:linear-gradient(135deg,rgba(250,204,21,.28),rgba(245,158,11,.22)); border-color:#fbbf24; color:#fde68a;
+  box-shadow:0 0 0 3px rgba(250,204,21,.22), 0 2px 8px rgba(250,204,21,.35);
+}
 .st-tr-head-btns{ display:flex; gap:8px; flex-wrap:wrap; }
 .st-bm-remove{
   font-family:inherit; font-size:11px; font-weight:700; color:var(--muted);
@@ -7077,18 +7111,20 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
   <div id="rdViewer" style="display:none">
     <div class="rd-bar">
       <button class="btn" onclick="rdBack()">← Thư viện</button>
-      <div class="rd-bar-title">
-        <b id="rdTitle"></b>
-        <span id="rdMeta"></span>
+      <div class="rd-tabs">
+        <button class="rd-tab active" data-rd="read">📖 Đọc</button>
+        <button class="rd-tab" data-rd="vocab">📝 Từ vựng</button>
+        <button class="rd-tab" data-rd="story">📚 Truyện chêm</button>
       </div>
       <button class="btn" id="rdAddBtn">＋ Thêm vào bộ học</button>
       <button class="btn primary" id="rdPracticeBtn">🎯 Luyện ngay</button>
     </div>
 
-    <div class="rd-tabs">
-      <button class="rd-tab active" data-rd="read">📖 Đọc</button>
-      <button class="rd-tab" data-rd="vocab">📝 Từ vựng</button>
-      <button class="rd-tab" data-rd="story">📚 Truyện chêm</button>
+    <div class="rd-title-row">
+      <div class="rd-bar-title">
+        <b id="rdTitle"></b>
+        <span id="rdMeta"></span>
+      </div>
     </div>
 
     <div class="rd-pane active" id="rdPane-read">
@@ -7105,11 +7141,11 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
         <label><input type="checkbox" id="rdTR"> Hiện bản dịch</label>
         <button type="button" class="btn rd-edit-btn" id="rdEditBtn" title="Bật để bôi chọn văn bản tự do trong bài (tắt tạm tính năng chạm từ để tra nghĩa)">✎ Edit</button>
         <button type="button" class="btn rd-notes-btn" id="rdShowNotesBtn" title="Hiện các ghi chú đã lưu ngay trong bài, kèm mũi tên chỉ đúng vị trí">🗨️ Hiện ghi chú</button>
+        <button class="btn rd-read-btn" onclick="rdSpeakAll()">🔊 Đọc bài</button>
+        <button class="btn rd-stop-btn" onclick="rdStopSpeak()">⏹ Dừng</button>
       </div>
       <div class="rd-tools">
         <span class="rd-edit-hint" id="rdEditHint" style="display:none">✏️ Đang bật Edit — bôi chọn văn bản để Sao chép / Ghi chú / Thêm vào sổ</span>
-        <button class="btn" onclick="rdSpeakAll()">🔊 Đọc bài</button>
-        <button class="btn" onclick="rdStopSpeak()">⏹ Dừng</button>
       </div>
       <article class="rd-article" id="rdArticle"></article>
     </div>
@@ -7126,7 +7162,6 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
 
     <div class="rd-pane" id="rdPane-story">
       <div class="rd-tools">
-        <span class="rd-hint-text">💡 Chạm vào từ được gạch chân để nghe phát âm và xem nghĩa</span>
         <label><input type="checkbox" id="rdStoryGloss"> Hiện nghĩa nhỏ bên cạnh</label>
       </div>
       <article class="rd-article rd-story" id="rdStory"></article>
@@ -39424,6 +39459,7 @@ function learnTypeCard(item){
         ${v.pos?`<span class="tq-pos tq-pos-inline">${esc(v.pos)}</span>`:''}
         <button class="tl-btn" id="ltSpeak"><span class="tl-ic">🔊</span><span class="tl-txt">Nghe</span></button>
         <button class="tl-btn slow" id="ltSlow"><span class="tl-ic">🐢</span><span class="tl-txt">Chậm</span></button>
+        <button class="tl-btn ${isStarred(v.word)?'on':''}" id="ltBookmark" title="Đánh dấu Cần học"><span class="tl-ic">${isStarred(v.word)?'★':'☆'}</span><span class="tl-txt">Đánh dấu</span></button>
         <span class="tl-count" id="ltCount"></span>
       </div>
     </div>
@@ -39479,6 +39515,12 @@ function learnTypeCard(item){
   const listen = r=>{ listens++; speak(v.word,r); box.querySelector('#ltCount').textContent = `đã nghe ${listens} lần`; };
   box.querySelector('#ltSpeak').onclick = ()=>listen(0.9);
   box.querySelector('#ltSlow').onclick  = ()=>listen(0.55);
+  box.querySelector('#ltBookmark').onclick = (e)=>{
+    const on = toggleStar(v.word);
+    e.currentTarget.classList.toggle('on', on);
+    e.currentTarget.querySelector('.tl-ic').textContent = on ? '★' : '☆';
+    toast(on ? `⭐ Đã thêm "${v.word}" vào Cần học` : `Đã bỏ "${v.word}" khỏi Cần học`);
+  };
 
   function check(){
     if(locked) return;
@@ -41444,12 +41486,6 @@ function stRenderColloc(root){
 
   root.innerHTML = `
     ${stModeBar('colloc')}
-    <div class="st-head">
-      <div>
-        <h2>🧩 Collocation cho Writing</h2>
-        <p>${overall.total} Collocation </p>
-      </div>
-    </div>
     <div class="st-tr-head-btns" style="justify-content:center;width:100%;margin:10px 0">
       <button class="st-stats-btn cl-primary-action-btn" id="clFlashcardBtn">🎴 Học Flashcard</button>
       <button class="st-stats-btn cl-primary-action-btn" id="clTypingModeBtn">⌨️ Gõ từ</button>
@@ -41457,13 +41493,12 @@ function stRenderColloc(root){
     </div>
 
     <div class="cl-overview" style="margin-top:10px;margin-bottom:14px">
-      <div class="prog-stats-grid cl-overview-grid cl-overview-grid-1row">
-        <div class="prog-stat" data-c="6"><b>${overall.total}</b><span>Tổng cụm</span></div>
-        <div class="prog-stat" data-c="5"><b>${overall.mastered}</b><span>✅ Đã thuộc</span></div>
-        <div class="prog-stat" data-c="3"><b>${overall.learning}</b><span>🟡 Đang luyện</span></div>
-        <div class="prog-stat" data-c="10"><b>${overall.unseen}</b><span>⚪ Chưa học</span></div>
-        <div class="prog-stat" data-c="2"><b>${overall.attempts}</b><span>📝 Lượt trả lời</span></div>
-        <div class="prog-stat" data-c="1"><b>${overall.acc!==null?overall.acc+'%':'—'}</b><span>Độ chính xác${overall.attempts?` (${overall.correct}✓/${overall.wrong}✗)`:''}</span></div>
+      <div class="prog-stats-grid cl-overview-grid cl-overview-grid-1row cl-stat-neo-row">
+        <div class="prog-stat cl-stat-neo" data-c="6"><b>${overall.total}</b><span>Tổng cụm</span></div>
+        <div class="prog-stat cl-stat-neo" data-c="5"><b>${overall.mastered}</b><span>✅ Đã thuộc</span></div>
+        <div class="prog-stat cl-stat-neo" data-c="3"><b>${overall.learning}</b><span>🟡 Đang luyện</span></div>
+        <div class="prog-stat cl-stat-neo" data-c="10"><b>${overall.unseen}</b><span>⚪ Chưa học</span></div>
+        <div class="prog-stat cl-stat-neo" data-c="1"><b>${overall.acc!==null?overall.acc+'%':'—'}</b><span>Độ chính xác</span></div>
       </div>
       <div class="cl-overview-track" title="Đã thuộc ${overall.mastered} · Đang luyện ${overall.learning} · Chưa học ${overall.unseen}">
         <div class="cl-topic-bar-seg mastered" style="width:${overall.total?overall.mastered/overall.total*100:0}%"></div>
@@ -41497,8 +41532,7 @@ function stRenderColloc(root){
         <input id="clSearch" type="text" placeholder="Tìm collocation, nghĩa, từ đồng nghĩa…" autocomplete="off">
         <button type="button" class="rd-clear" title="Xoá tìm kiếm">✕</button>
       </div>
-      <button class="st-stats-btn ${_clSortAZ?'active':''}" id="clSortAZBtn" title="Sắp xếp theo bảng chữ cái A→Z">🔤 A→Z</button>
-      <button class="st-stats-btn ${_clSortStreak?'active':''}" id="clSortStreakBtn" title="Sắp xếp theo số lần gõ đúng liên tiếp (cụm gõ đúng nhiều nhất lên đầu)">🔥 Số lần đúng</button>
+      <button class="st-stats-btn ${(_clSortAZ||_clSortStreak)?'active':''}" id="clSortBtn" title="Bấm để chuyển đổi: Mặc định → A→Z → Số lần đúng nhiều nhất">${_clSortAZ?'🔤 A→Z':_clSortStreak?'🔥 Số lần đúng':'↕️ Sắp xếp'}</button>
       <button class="st-stats-btn ${_clCompactView?'active':''}" id="clCompactBtn" title="Xem thẻ rút gọn: chỉ từ, nghĩa, phát âm, đánh dấu, trạng thái">${_clCompactView?'▤ Thẻ đầy đủ':'▦ Thẻ rút gọn'}</button>
     </div>
 
@@ -41574,8 +41608,12 @@ function stRenderColloc(root){
   if(streak1Btn) streak1Btn.onclick = ()=>{ if(streak1Pool.length) clStartTyping(shuffle(streak1Pool.slice())); };
   const streak2Btn = document.getElementById('clStreak2Btn');
   if(streak2Btn) streak2Btn.onclick = ()=>{ if(streak2Pool.length) clStartTyping(shuffle(streak2Pool.slice())); };
-  document.getElementById('clSortAZBtn').onclick = ()=>{ _clSortAZ = !_clSortAZ; if(_clSortAZ) _clSortStreak=false; _clListShown = CL_LIST_PAGE_SIZE; stRenderColloc(root); };
-  document.getElementById('clSortStreakBtn').onclick = ()=>{ _clSortStreak = !_clSortStreak; if(_clSortStreak) _clSortAZ=false; _clListShown = CL_LIST_PAGE_SIZE; stRenderColloc(root); };
+  document.getElementById('clSortBtn').onclick = ()=>{
+    if(!_clSortAZ && !_clSortStreak){ _clSortAZ = true; _clSortStreak = false; }
+    else if(_clSortAZ){ _clSortAZ = false; _clSortStreak = true; }
+    else { _clSortAZ = false; _clSortStreak = false; }
+    _clListShown = CL_LIST_PAGE_SIZE; stRenderColloc(root);
+  };
   document.getElementById('clCompactBtn').onclick = ()=>{ _clCompactView = !_clCompactView; stRenderColloc(root); };
   document.getElementById('clStatResetBtn').onclick = clResetTypingProgress;
 
@@ -43382,10 +43420,12 @@ function stNextTranslate(){
 
   root.innerHTML = `
     ${stModeBar('translate')}
-    <div class="tp-head" style="margin-top:14px">
+    <div class="st-topic-center" style="margin-top:14px">
       <span class="st-topic-tag">${esc(cur.topic)} · ${esc(cur.structure)}</span>
-      ${doneInfo ? `<span class="st-done-badge" title="Lần gần nhất: ${stTrOutcomeLabel(doneInfo.lastOutcome)}, khớp ${doneInfo.lastPct}%">✓ Đã luyện ${doneInfo.count}x</span>` : ''}
-      <button class="st-bm-toggle ${isBm?'on':''}" id="stBmToggle" title="Đánh dấu câu này để luyện lại/xem sau">${isBm?'🔖':'📑'}</button>
+    </div>
+    <div class="tp-head" style="margin-top:8px">
+      ${doneInfo ? `<span class="st-done-badge" title="Lần gần nhất: ${stTrOutcomeLabel(doneInfo.lastOutcome)}, khớp ${doneInfo.lastPct}%">✓ Đã luyện ${doneInfo.count}x</span>` : '<span></span>'}
+      <button class="st-bm-toggle ${isBm?'on':''}" id="stBmToggle" title="Đánh dấu câu này để luyện lại/xem sau">${isBm?'⭐':'☆'}</button>
       <span class="tp-score">Câu <b>${_stTrI+1}</b>/${_stTrPool.length}</span>
     </div>
     <div class="quiz-q">
@@ -43438,7 +43478,7 @@ function stNextTranslate(){
   inp.addEventListener('input', ()=>{ _stTrDraft = inp.value; stTrPersistActiveSoon(); });
   document.getElementById('stBmToggle').onclick = (e)=>{
     const on = stTrToggleBookmark(cur);
-    e.target.textContent = on ? '🔖' : '📑';
+    e.target.textContent = on ? '⭐' : '☆';
     e.target.classList.toggle('on', on);
   };
   document.getElementById('stTrEndSession').onclick = ()=>{
