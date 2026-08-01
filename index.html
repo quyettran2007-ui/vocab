@@ -111,10 +111,10 @@
   /* ---- Neomorphism (soft-UI): dùng cho các cụm nút hành động nổi bật
      — bóng sáng + bóng tối trên CÙNG nền để tạo cảm giác nút "nổi lên"
      khỏi mặt phẳng, và "lõm xuống" khi active/pressed. ---- */
-  --neo-surface: #eef1ef;
+  --neo-surface: #cdd2c9;
   --neo-light: #ffffff;
-  --neo-dark: rgba(157,175,166,.55);
-  --neo-dark-soft: rgba(157,175,166,.32);
+  --neo-dark: rgba(120,138,128,.55);
+  --neo-dark-soft: rgba(120,138,128,.32);
 
   --font-heading: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
   --font-body: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
@@ -6783,6 +6783,120 @@ html:not([data-theme="dark"]) .pos-pie-chart{
   box-shadow:none !important; transform:none !important;
 }
 .profile-card::before{ display:none; }
+
+/* ============================================================
+   CẬP NHẬT — "CHÌM" ĐỒNG BỘ cho thẻ hồ sơ / chuỗi ngày học / 5 nút
+   ------------------------------------------------------------
+   Dùng lại đúng công thức đã tạo cảm giác chìm đẹp cho khung
+   "📝 Từ mới hôm nay" (.hero-today): viền mảnh var(--line) + bóng
+   đổ LÕM VÀO TRONG bằng cặp biến --neo-dark/--neo-light — thay vì
+   để thẻ phẳng không viền (profile-card, streak) hoặc nổi lên với
+   glow ngoài (5 nút). Áp lại từ đây vì các khối ở trên đã set
+   box-shadow:none!important / bevel nổi trước đó.
+
+   Đồng thời: giãn cách các huy hiệu cấp độ (.pf-tick) — trên mobile
+   trước đây .pf-scale không có gap nên các icon dính sát nhau; và
+   thêm khoảng cách giữa khối "Chuỗi ngày học" với 2 nút "Ôn từ đến
+   hạn / Gõ từ Collocation" ngay bên dưới — trước đây chỉ cách nhau
+   2px do .hero-side{gap:2px}.
+   ============================================================ */
+
+/* ---- 1) Thẻ hồ sơ người dùng — chìm vào nền ---- */
+.profile-card{
+  background:var(--neo-surface) !important;
+  border:1px solid var(--line) !important;
+  box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light) !important;
+}
+.profile-card:hover{
+  transform:none !important;
+  box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light) !important;
+}
+.profile-card::before{ display:none !important; }
+
+/* Huy hiệu cấp độ — giãn đều, không còn dính sát nhau trên mobile */
+.pf-scale{ gap:8px 12px !important; row-gap:10px !important; }
+.pf-tick{ padding:2px; }
+.pf-tick.on{ box-shadow:0 0 0 4px var(--gold-bg); }
+@media(max-width:640px){
+  .pf-scale{ gap:9px 13px !important; row-gap:10px !important; }
+}
+@media(max-width:400px){
+  .pf-scale{ gap:7px 10px !important; row-gap:9px !important; }
+  .pf-tick{ font-size:12px; }
+}
+
+/* ---- 2) Khối "Chuỗi ngày học" — cùng công thức chìm ---- */
+.hero-streak.streak-v2{
+  background:var(--neo-surface) !important;
+  border:1px solid var(--line) !important;
+  box-shadow:inset 2px 2px 6px var(--neo-dark), inset -2px -2px 6px var(--neo-light) !important;
+}
+.streak-v2-flame{
+  background:var(--neo-surface);
+  box-shadow:2px 2px 6px var(--neo-dark-soft), -2px -2px 6px var(--neo-light);
+}
+
+/* Khoảng cách với 2 nút bên dưới (đang dính sát khung streak) */
+.hero-side{ gap:16px !important; }
+.hero-btn-row{ margin-top:0 !important; }
+.hero-btn-row .hero-cta{ margin-top:0 !important; }
+
+/* ---- 3) 5 nút điều hướng — chuyển từ nổi (bevel + glow ngoài) sang
+   chìm (viền mảnh + bóng lõm), vẫn giữ nguyên màu/gradient riêng của
+   từng nút để không mất tín hiệu phân biệt (vàng/cam/xanh) ---- */
+.hero-pick-btn, .hero-guide-btn, .hero-cta{
+  border:1px solid rgba(255,255,255,.14) !important;
+  box-shadow:
+    inset 2px 2px 5px rgba(0,0,0,.28),
+    inset -2px -2px 5px rgba(255,255,255,.16) !important;
+}
+.hero-pick-btn:hover, .hero-guide-btn:hover, .hero-cta:hover{
+  transform:none !important;
+  filter:brightness(1.06);
+  box-shadow:
+    inset 2px 2px 6px rgba(0,0,0,.32),
+    inset -2px -2px 6px rgba(255,255,255,.18) !important;
+}
+.hero-pick-btn:active, .hero-guide-btn:active, .hero-cta:active{
+  filter:brightness(.97);
+  box-shadow:
+    inset 3px 3px 7px rgba(0,0,0,.34),
+    inset -1px -1px 4px rgba(255,255,255,.12) !important;
+}
+
+/* Khung "Danh sách chủ đề" ở cuối dashboard vẫn còn nền trắng --card
+   (chưa từng được chuyển sang neo-surface như các khối khác) — đồng bộ nốt. */
+.topic-section{ background:var(--neo-surface) !important; }
+
+/* ---- Khung viền nhỏ bên ngoài cho tất cả các thẻ, màu theo màu chủ đề
+   (--accent) đang chọn — viền mảnh, hơi trong suốt để không gắt, tự đổi
+   theo mọi bảng màu chủ đề & sáng/tối vì luôn bám theo biến --accent. ---- */
+.profile-card, .hero-main, .hero-side, .funnel-card, .topic-section,
+.strip-card, .strip-card.progress-card, .dash-card,
+.te-macro-card, .rd-card, .dash-search{
+  border:1px solid var(--accent) !important;
+}
+
+/* ---- Thẻ hồ sơ người dùng: cho NỔI BẬT hơn hẳn các thẻ khác — nền
+   pha gradient nhẹ theo màu chủ đề (thay vì cùng tông nền phẳng) +
+   quầng sáng (glow) quanh viền, vẫn tự đổi theo mọi bảng màu/theme
+   vì bám theo --accent/--accent-2. ---- */
+.profile-card{
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--accent) 22%, var(--neo-surface)) 0%,
+      var(--neo-surface) 45%,
+      color-mix(in srgb, var(--accent-2, var(--accent)) 16%, var(--neo-surface)) 100%
+    ) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent),
+    0 8px 26px -10px color-mix(in srgb, var(--accent) 55%, transparent) !important;
+}
+.profile-card:hover{
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 70%, transparent),
+    0 10px 30px -8px color-mix(in srgb, var(--accent) 65%, transparent) !important;
+}
 
 </style>
 
