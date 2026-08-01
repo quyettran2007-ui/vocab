@@ -6765,6 +6765,25 @@ html:not([data-theme="dark"]) .pos-pie-chart{
   box-shadow:none !important;
 }
 
+/* ============================================================
+   DASHBOARD — BỎ BÓNG ĐỔ/VIỀN NGOÀI Ở CÁC THẺ TO
+   Theo yêu cầu: các khối lớn (hồ sơ, tiến độ học, lộ trình thuộc
+   từ, báo cáo tiến trình...) không còn viền cứng lẫn bóng đổ nổi
+   quanh mép ngoài nữa — chỉ còn nền --neo-surface phẳng, không
+   tách lớp khỏi nền trang. Các phần tử NHỎ bên trong (nút, chip,
+   ô số liệu, fn-step...) không bị ảnh hưởng, vẫn giữ hiệu ứng
+   neomorphism riêng của chúng.
+   ============================================================ */
+.profile-card, .hero-main, .hero-side, .funnel-card,
+.strip-card, .strip-card.progress-card, .dash-card{
+  box-shadow:none !important; border:none !important;
+}
+.profile-card:hover, .hero-main:hover, .hero-side:hover, .funnel-card:hover,
+.strip-card:hover, .strip-card.progress-card:hover, .dash-card:hover{
+  box-shadow:none !important; transform:none !important;
+}
+.profile-card::before{ display:none; }
+
 </style>
 
 <body>
