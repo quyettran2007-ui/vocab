@@ -6112,6 +6112,29 @@ html[data-bg="mist"] body::before{
 .bg-preview-maiblossom{ background:linear-gradient(180deg,#fef9c3 0%,#fde68a 100%); }
 .bg-preview-waterfall{ background:linear-gradient(180deg,#bbf7d0 0%,#4ade80 45%,#166534 100%); }
 .bg-preview-sondoong{ background:radial-gradient(circle at 50% 0%,#bbf7d0,#166534 45%,#052e16 100%); }
+.bg-preview-roofcity{ background:linear-gradient(180deg,#c7d2e8 0%,#d8cfe0 55%,#eceef2 100%); }
+.bg-preview-mucangchai{ background:linear-gradient(180deg,#fef9c3 0%,#facc15 45%,#854d0e 100%); }
+.bg-preview-sapawater{ background:linear-gradient(180deg,#e0f2fe 0%,#38bdf8 45%,#0c4a6e 100%); }
+.bg-preview-mocchautea{ background:linear-gradient(180deg,#e0f2fe 0%,#4ade80 45%,#14532d 100%); }
+.bg-preview-hoangsuphi{ background:linear-gradient(180deg,#e2e8f0 0%,#4ade80 45%,#052e16 100%); }
+.bg-preview-muoininh{ background:linear-gradient(180deg,#fed7aa 0%,#fbcfe8 55%,#f9a8d4 100%); }
+
+/* ---- Hình nền TUỲ CHỈNH tải từ máy người dùng ---- */
+.custom-bg-box{
+  margin-top:16px; padding-top:14px; border-top:1px dashed var(--line);
+}
+.bg-swatch-btn.custom-empty .bg-swatch-preview{
+  background:repeating-linear-gradient(45deg, var(--card-sunken) 0 8px, var(--card) 8px 16px);
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+.bg-swatch-btn.custom-has-image .bg-swatch-preview{
+  background-size:cover; background-position:center;
+}
+html[data-bg="custom"] body::before{
+  background-image: var(--custom-bg-url, none);
+  background-size:cover; background-position:center center; background-repeat:no-repeat;
+  opacity: var(--custom-bg-opacity, .55);
+}
 
 html[data-bg="halong"] body::before{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='hlsky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23bae6fd'/%3E%3Cstop offset='1' stop-color='%23e0f2fe'/%3E%3C/linearGradient%3E%3ClinearGradient id='hlsea' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%230e7490'/%3E%3Cstop offset='1' stop-color='%23164e63'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23hlsky)'/%3E%3Crect y='600' width='1600' height='300' fill='url(%23hlsea)' opacity='.6'/%3E%3Cg fill='%235eead4' opacity='.35'%3E%3Cpath d='M50 600 Q100 480 160 600 Q200 520 260 600 Z'/%3E%3Cpath d='M700 600 Q760 460 820 600 Q860 500 920 600 Z'/%3E%3Cpath d='M1300 600 Q1360 480 1420 600 Q1460 520 1520 600 Z'/%3E%3C/g%3E%3Cg fill='%23134e4a' opacity='.75'%3E%3Cpath d='M150 650 Q230 460 310 650 Q360 550 440 650 Z'/%3E%3Cpath d='M500 650 Q580 440 660 650 Q700 540 780 650 Z'/%3E%3Cpath d='M950 650 Q1030 460 1110 650 Q1160 540 1240 650 Z'/%3E%3Cpath d='M1250 650 Q1330 470 1410 650 Q1460 560 1550 650 Z'/%3E%3C/g%3E%3C/svg%3E");
@@ -6140,6 +6163,33 @@ html[data-bg="waterfall"] body::before{
 html[data-bg="sondoong"] body::before{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3CradialGradient id='sdlight' gradientUnits='userSpaceOnUse' cx='800' cy='0' r='950'%3E%3Cstop offset='0' stop-color='%23bbf7d0'/%3E%3Cstop offset='.4' stop-color='%23166534'/%3E%3Cstop offset='1' stop-color='%23052e16'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23sdlight)'/%3E%3Cg fill='%23052e16' opacity='.8'%3E%3Cpolygon points='0,0 300,0 100,300 0,250'/%3E%3Cpolygon points='1600,0 1300,0 1500,320 1600,260'/%3E%3Cpolygon points='0,900 0,600 250,700 150,900'/%3E%3Cpolygon points='1600,900 1600,600 1350,700 1450,900'/%3E%3C/g%3E%3Cellipse cx='800' cy='120' rx='340' ry='110' fill='%23f0fdf4' opacity='.35'/%3E%3C/svg%3E");
   background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
+}
+html[data-bg="roofcity"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='rcsky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23c7d2e8'/%3E%3Cstop offset='.6' stop-color='%23d8cfe0'/%3E%3Cstop offset='1' stop-color='%23ecdcd8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23rcsky)'/%3E%3Cg fill='%23aab1d4' opacity='.4'%3E%3Crect x='0' y='500' width='70' height='250'/%3E%3Crect x='90' y='560' width='50' height='200'/%3E%3Crect x='160' y='470' width='90' height='280'/%3E%3Crect x='280' y='520' width='60' height='230'/%3E%3Crect x='370' y='440' width='100' height='310'/%3E%3Crect x='500' y='500' width='70' height='250'/%3E%3Crect x='600' y='460' width='80' height='290'/%3E%3Crect x='720' y='520' width='60' height='230'/%3E%3Crect x='820' y='480' width='90' height='270'/%3E%3Crect x='950' y='500' width='70' height='250'/%3E%3Crect x='1060' y='450' width='100' height='300'/%3E%3Crect x='1200' y='510' width='60' height='240'/%3E%3Crect x='1300' y='470' width='90' height='280'/%3E%3Crect x='1430' y='500' width='70' height='250'/%3E%3Crect x='1530' y='460' width='70' height='290'/%3E%3C/g%3E%3Cg fill='%23666c96' opacity='.55'%3E%3Crect x='20' y='600' width='60' height='170'/%3E%3Crect x='110' y='640' width='50' height='130'/%3E%3Crect x='200' y='580' width='80' height='190'/%3E%3Crect x='330' y='620' width='60' height='150'/%3E%3Crect x='430' y='560' width='90' height='210'/%3E%3Crect x='560' y='610' width='60' height='160'/%3E%3Crect x='660' y='580' width='80' height='190'/%3E%3Crect x='780' y='630' width='50' height='140'/%3E%3Crect x='870' y='590' width='90' height='180'/%3E%3Crect x='1000' y='620' width='60' height='150'/%3E%3Crect x='1100' y='570' width='100' height='200'/%3E%3Crect x='1240' y='610' width='60' height='160'/%3E%3Crect x='1340' y='580' width='80' height='190'/%3E%3Crect x='1460' y='620' width='60' height='150'/%3E%3Crect x='1550' y='590' width='50' height='180'/%3E%3C/g%3E%3Cg fill='%234b3f52' opacity='.35'%3E%3Crect x='60' y='560' width='36' height='40'/%3E%3Crect x='420' y='540' width='40' height='36'/%3E%3Crect x='1080' y='550' width='36' height='40'/%3E%3C/g%3E%3Crect x='1478' y='560' width='10' height='210' fill='%23fbbf72' opacity='.55'/%3E%3Cg fill='%23fbbf72' opacity='.5'%3E%3Crect x='30' y='620' width='6' height='10'/%3E%3Crect x='55' y='650' width='6' height='10'/%3E%3Crect x='210' y='610' width='6' height='10'/%3E%3Crect x='340' y='650' width='6' height='10'/%3E%3Crect x='450' y='590' width='6' height='10'/%3E%3Crect x='680' y='610' width='6' height='10'/%3E%3Crect x='890' y='620' width='6' height='10'/%3E%3Crect x='1120' y='600' width='6' height='10'/%3E%3Crect x='1260' y='640' width='6' height='10'/%3E%3Crect x='1360' y='610' width='6' height='10'/%3E%3C/g%3E%3Crect y='770' width='1600' height='130' fill='%23eceef2'/%3E%3Crect x='0' y='730' width='520' height='45' fill='%23e3e5eb'/%3E%3Crect x='520' y='730' width='16' height='45' fill='%23d7d9e0'/%3E%3Crect x='900' y='800' width='700' height='100' fill='%23dfe1e8'/%3E%3Crect x='860' y='770' width='40' height='30' fill='%23d2d4dc'/%3E%3Crect y='895' width='1600' height='10' fill='%23c7c9d2' opacity='.6'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
+}
+
+/* ---- 5 hình nền RUỘNG BẬC THANG & ĐỒI NÚI mới, cùng phong cách với
+   nền "rice" (ruộng bậc thang) đã có: nhiều lớp dải cong xếp tầng ---- */
+html[data-bg="mucangchai"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='mccsky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fef9c3'/%3E%3Cstop offset='1' stop-color='%23fde68a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23mccsky)'/%3E%3Ccircle cx='250' cy='150' r='60' fill='%23fff7ed' opacity='.8'/%3E%3Cpath d='M0 380 Q400 340 800 380 T1600 370 V450 H0 Z' fill='%23fde047' opacity='.55'/%3E%3Cpath d='M0 480 Q400 440 800 480 T1600 470 V560 H0 Z' fill='%23facc15' opacity='.6'/%3E%3Cpath d='M0 580 Q400 540 800 580 T1600 570 V670 H0 Z' fill='%23eab308' opacity='.65'/%3E%3Cpath d='M0 680 Q400 640 800 680 T1600 670 V780 H0 Z' fill='%23ca8a04' opacity='.7'/%3E%3Cpath d='M0 780 Q400 750 800 780 T1600 770 V900 H0 Z' fill='%23854d0e' opacity='.8'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="sapawater"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='spwsky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e0f2fe'/%3E%3Cstop offset='1' stop-color='%23bae6fd'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23spwsky)'/%3E%3Cpath d='M0 380 Q400 340 800 380 T1600 370 V450 H0 Z' fill='%237dd3fc' opacity='.55'/%3E%3Cpath d='M0 480 Q400 440 800 480 T1600 470 V560 H0 Z' fill='%2338bdf8' opacity='.6'/%3E%3Cpath d='M0 580 Q400 540 800 580 T1600 570 V670 H0 Z' fill='%230ea5e9' opacity='.65'/%3E%3Cpath d='M0 680 Q400 640 800 680 T1600 670 V780 H0 Z' fill='%230369a1' opacity='.7'/%3E%3Cpath d='M0 780 Q400 750 800 780 T1600 770 V900 H0 Z' fill='%230c4a6e' opacity='.8'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="mocchautea"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='mctsky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e0f2fe'/%3E%3Cstop offset='1' stop-color='%23dcfce7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23mctsky)'/%3E%3Ccircle cx='1300' cy='160' r='55' fill='%23fff7ed' opacity='.75'/%3E%3Cpath d='M0 400 Q200 320 400 400 Q600 320 800 400 Q1000 320 1200 400 Q1400 320 1600 400 V480 H0 Z' fill='%2386efac' opacity='.55'/%3E%3Cpath d='M0 500 Q200 420 400 500 Q600 420 800 500 Q1000 420 1200 500 Q1400 420 1600 500 V600 H0 Z' fill='%234ade80' opacity='.6'/%3E%3Cpath d='M0 620 Q200 540 400 620 Q600 540 800 620 Q1000 540 1200 620 Q1400 540 1600 620 V720 H0 Z' fill='%2322c55e' opacity='.65'/%3E%3Cpath d='M0 740 Q200 660 400 740 Q600 660 800 740 Q1000 660 1200 740 Q1400 660 1600 740 V820 H0 Z' fill='%2315803d' opacity='.72'/%3E%3Cpath d='M0 830 Q200 780 400 830 Q600 780 800 830 Q1000 780 1200 830 Q1400 780 1600 830 V900 H0 Z' fill='%2314532d' opacity='.8'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="hoangsuphi"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='hspsky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e2e8f0'/%3E%3Cstop offset='1' stop-color='%23bbf7d0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23hspsky)'/%3E%3Cpolygon points='0,900 0,500 300,380 600,520 900,360 1200,540 1600,420 1600,900' fill='%2386efac' opacity='.4'/%3E%3Cpath d='M0 500 Q400 460 800 500 T1600 490 V580 H0 Z' fill='%234ade80' opacity='.55'/%3E%3Cpath d='M0 600 Q400 560 800 600 T1600 590 V690 H0 Z' fill='%2316a34a' opacity='.62'/%3E%3Cpath d='M0 700 Q400 660 800 700 T1600 690 V800 H0 Z' fill='%23166534' opacity='.7'/%3E%3Cpath d='M0 800 Q400 770 800 800 T1600 790 V900 H0 Z' fill='%23052e16' opacity='.82'/%3E%3Crect y='460' width='1600' height='80' fill='%23f8fafc' opacity='.25'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="muoininh"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='mnsky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fed7aa'/%3E%3Cstop offset='1' stop-color='%23fecdd3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23mnsky)'/%3E%3Ccircle cx='1250' cy='200' r='70' fill='%23fff7ed' opacity='.85'/%3E%3Crect y='500' width='1600' height='400' fill='%23fbcfe8' opacity='.4'/%3E%3Cg stroke='%23f9a8d4' stroke-width='4' opacity='.5'%3E%3Cline x1='0' y1='560' x2='1600' y2='560'/%3E%3Cline x1='0' y1='650' x2='1600' y2='650'/%3E%3Cline x1='0' y1='740' x2='1600' y2='740'/%3E%3Cline x1='0' y1='830' x2='1600' y2='830'/%3E%3Cline x1='200' y1='500' x2='200' y2='900'/%3E%3Cline x1='450' y1='500' x2='450' y2='900'/%3E%3Cline x1='700' y1='500' x2='700' y2='900'/%3E%3Cline x1='950' y1='500' x2='950' y2='900'/%3E%3Cline x1='1200' y1='500' x2='1200' y2='900'/%3E%3Cline x1='1400' y1='500' x2='1400' y2='900'/%3E%3C/g%3E%3Cg fill='%23ffffff' opacity='.7'%3E%3Cpolygon points='320,830 350,780 380,830'/%3E%3Cpolygon points='560,740 590,690 620,740'/%3E%3Cpolygon points='820,830 850,780 880,830'/%3E%3Cpolygon points='1050,650 1080,600 1110,650'/%3E%3Cpolygon points='1300,740 1330,690 1360,740'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
 }
 
 /* ============================================================
@@ -7322,6 +7372,21 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
         <div class="bg-swatch-grid" id="bgSwatchGrid"></div>
         <div class="backup-actions" style="margin-top:12px">
           <button class="btn" onclick="setBgTheme('default')">↺ Về nền mặc định</button>
+        </div>
+        <div class="custom-bg-box" id="customBgBox">
+          <h4 style="margin:0 0 6px">📷 Dùng ảnh của riêng bạn</h4>
+          <p style="margin:0 0 10px">Tải một ảnh từ máy (JPG/PNG/WebP) để làm hình nền. Ảnh chỉ lưu trong trình duyệt của bạn (localStorage), không tải lên máy chủ nào.</p>
+          <input type="file" id="customBgFile" accept="image/*" hidden onchange="handleCustomBgUpload(this)">
+          <div class="backup-actions">
+            <button class="btn" onclick="document.getElementById('customBgFile').click()">⬆️ Tải ảnh lên</button>
+            <button class="btn" id="customBgRemoveBtn" onclick="removeCustomBg()" style="display:none">🗑️ Xoá ảnh nền</button>
+          </div>
+          <div class="opacity-row" id="customBgOpacityRow" style="display:none; margin-top:10px">
+            <label style="font-size:12.5px; color:var(--muted); min-width:120px">Độ rõ ảnh nền</label>
+            <input type="range" id="customBgOpacitySlider" min="10" max="100" step="1" oninput="setCustomBgOpacity(this.value)">
+            <span class="opacity-val" id="customBgOpacityVal"></span>
+          </div>
+          <p id="customBgHint" style="margin:8px 0 0; font-size:12px; color:var(--muted)"></p>
         </div>
       </div>
 
@@ -45859,6 +45924,12 @@ const BG_THEMES = [
   { key:'maiblossom', name:'🌼 Hoa mai ngày Tết',   cls:'bg-preview-maiblossom' },
   { key:'waterfall',  name:'💦 Thác Bản Giốc',      cls:'bg-preview-waterfall' },
   { key:'sondoong',   name:'🕳️ Hang Sơn Đoòng',     cls:'bg-preview-sondoong' },
+  { key:'roofcity',   name:'🌆 Sân thượng hoàng hôn',cls:'bg-preview-roofcity' },
+  { key:'mucangchai', name:'🌾 Mù Cang Chải mùa vàng', cls:'bg-preview-mucangchai' },
+  { key:'sapawater',  name:'💧 Sa Pa mùa nước đổ',    cls:'bg-preview-sapawater' },
+  { key:'mocchautea', name:'🍃 Đồi chè Mộc Châu',     cls:'bg-preview-mocchautea' },
+  { key:'hoangsuphi', name:'⛅ Ruộng bậc thang Hoàng Su Phì', cls:'bg-preview-hoangsuphi' },
+  { key:'muoininh',   name:'🧂 Ruộng muối Ninh Thuận', cls:'bg-preview-muoininh' },
   { key:'plain',   name:'Trơn',      cls:'bg-preview-plain' }
 ];
 /* ============================================================
@@ -45910,9 +45981,16 @@ const UI_CONCEPTS = [
   { key:'dongson_bronze', name:'Trống đồng Đông Sơn', icon:'🥁', accent:'gold',    bg:'trongdong', desc:'Vàng kim cổ truyền + hoạ tiết trống đồng' },
   { key:'tet_apricot',    name:'Mai vàng ngày Tết',   icon:'🌼', accent:'amber',   bg:'maiblossom',desc:'Cam vàng rực rỡ + hoa mai đón xuân' },
   { key:'bangioc_falls',  name:'Thác Bản Giốc hùng vĩ',icon:'💦', accent:'green',   bg:'waterfall', desc:'Xanh lá tự nhiên + thác nước đổ tràn' },
-  { key:'sondoong_cave',  name:'Hang Sơn Đoòng bí ẩn',icon:'🕳️', accent:'emerald', bg:'sondoong',  desc:'Ngọc lục bảo huyền bí + hang động kỳ vĩ' }
+  { key:'sondoong_cave',  name:'Hang Sơn Đoòng bí ẩn',icon:'🕳️', accent:'emerald', bg:'sondoong',  desc:'Ngọc lục bảo huyền bí + hang động kỳ vĩ' },
+  { key:'dusk_rooftop',   name:'Sân thượng chiều tà', icon:'🌆', accent:'indigo',  bg:'roofcity',  desc:'Chàm tím dịu nhẹ + skyline thành phố lúc hoàng hôn' },
+  { key:'golden_terrace',  name:'Mù Cang Chải mùa lúa chín', icon:'🌾', accent:'gold',  bg:'mucangchai', desc:'Vàng kim rực rỡ + ruộng bậc thang mùa gặt' },
+  { key:'sapa_mirror',     name:'Sa Pa gương nước',   icon:'💧', accent:'sapphire',bg:'sapawater',  desc:'Lam ngọc bích sâu lắng + ruộng bậc thang mùa nước đổ' },
+  { key:'mocchau_hills',   name:'Đồi chè xanh mướt',  icon:'🍃', accent:'emerald', bg:'mocchautea', desc:'Ngọc lục bảo tươi mát + đồi chè bồng bềnh' },
+  { key:'hoangsuphi_mist', name:'Bậc thang trong sương', icon:'⛅', accent:'green', bg:'hoangsuphi', desc:'Xanh lá tự nhiên + ruộng bậc thang ẩn hiện trong mây' },
+  { key:'saltfield_dawn',  name:'Ruộng muối bình minh', icon:'🧂', accent:'coral',  bg:'muoininh',   desc:'Cam san hô ấm áp + ruộng muối lấp lánh lúc rạng đông' }
 ];
 (function initBgTheme(){
+  loadCustomBgVars();
   const saved = localStorage.getItem('vocab_bg_theme') || 'meadow';
   applyBgTheme(saved);
   renderBgSwatches();
@@ -45924,6 +46002,11 @@ function applyBgTheme(key){
   try{ localStorage.setItem('vocab_bg_theme', key); }catch(e){}
 }
 function setBgTheme(key){
+  if(key === 'custom' && !localStorage.getItem('vocab_bg_custom_image')){
+    const inp = document.getElementById('customBgFile');
+    if(inp) inp.click();
+    return;
+  }
   applyBgTheme(key);
   renderBgSwatches();
   renderConceptSwatches();
@@ -45937,6 +46020,119 @@ function renderBgSwatches(){
       <span class="bg-swatch-preview ${t.cls}"></span>
       <span class="bg-swatch-label">${t.name}</span>
     </button>`).join('');
+  const customImg = localStorage.getItem('vocab_bg_custom_image');
+  const hasImg = !!customImg;
+  const previewStyle = hasImg ? ` style="background-image:url('${customImg}')"` : '';
+  grid.insertAdjacentHTML('beforeend', `
+    <button class="bg-swatch-btn ${hasImg?'custom-has-image':'custom-empty'} ${cur==='custom'?'active':''}" onclick="setBgTheme('custom')">
+      <span class="bg-swatch-preview"${previewStyle}>${hasImg?'':'📷'}</span>
+      <span class="bg-swatch-label">${hasImg?'Ảnh của bạn':'+ Tải ảnh riêng'}</span>
+    </button>`);
+  syncCustomBgBox();
+}
+
+/* ---------- Hình nền TUỲ CHỈNH tải từ máy người dùng ----------
+   Ảnh được resize/nén qua canvas rồi lưu dạng base64 trong
+   localStorage (khoá 'vocab_bg_custom_image'), hoàn toàn ở phía
+   trình duyệt, không gửi lên server nào. Vì localStorage có hạn mức
+   (thường ~5-10MB), ảnh được nén xuống chiều rộng tối đa 1920px và
+   chất lượng JPEG ~0.82 để tránh vượt hạn mức. */
+function loadCustomBgVars(){
+  const img = localStorage.getItem('vocab_bg_custom_image');
+  const op = localStorage.getItem('vocab_bg_custom_opacity') || '.55';
+  if(img) document.documentElement.style.setProperty('--custom-bg-url', `url("${img}")`);
+  document.documentElement.style.setProperty('--custom-bg-opacity', op);
+}
+function syncCustomBgBox(){
+  const hasImg = !!localStorage.getItem('vocab_bg_custom_image');
+  const removeBtn = document.getElementById('customBgRemoveBtn');
+  const opRow = document.getElementById('customBgOpacityRow');
+  const slider = document.getElementById('customBgOpacitySlider');
+  const val = document.getElementById('customBgOpacityVal');
+  const hint = document.getElementById('customBgHint');
+  if(removeBtn) removeBtn.style.display = hasImg ? '' : 'none';
+  if(opRow) opRow.style.display = hasImg ? '' : 'none';
+  if(hasImg && slider){
+    const op = Math.round(parseFloat(localStorage.getItem('vocab_bg_custom_opacity') || '.55') * 100);
+    slider.value = op;
+    if(val) val.textContent = op + '%';
+  }
+  if(hint) hint.textContent = hasImg ? 'Đã có ảnh nền riêng — bấm "Ảnh của bạn" ở lưới trên để áp dụng.' : '';
+}
+function handleCustomBgUpload(inputEl){
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){
+    alert('Vui lòng chọn một tệp hình ảnh (JPG, PNG, WebP...).');
+    inputEl.value = '';
+    return;
+  }
+  const hint = document.getElementById('customBgHint');
+  if(hint) hint.textContent = 'Đang xử lý ảnh…';
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const img = new Image();
+    img.onload = function(){
+      const MAX_W = 1920, MAX_H = 1920;
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if(w > MAX_W || h > MAX_H){
+        const scale = Math.min(MAX_W / w, MAX_H / h);
+        w = Math.round(w * scale); h = Math.round(h * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      let dataUrl;
+      try{ dataUrl = canvas.toDataURL('image/jpeg', 0.82); }
+      catch(err){ dataUrl = e.target.result; }
+      try{
+        localStorage.setItem('vocab_bg_custom_image', dataUrl);
+        localStorage.setItem('vocab_bg_custom_opacity', localStorage.getItem('vocab_bg_custom_opacity') || '.55');
+        loadCustomBgVars();
+        applyBgTheme('custom');
+        renderBgSwatches();
+        renderConceptSwatches();
+        if(hint){
+          const kb = Math.round(dataUrl.length * 0.75 / 1024);
+          hint.textContent = `Đã lưu ảnh nền (~${kb.toLocaleString('vi-VN')} KB) trong trình duyệt của bạn.`;
+        }
+      }catch(err){
+        alert('Ảnh quá lớn để lưu trong trình duyệt. Vui lòng chọn ảnh nhỏ hơn hoặc thử lại (ảnh đã được tự động nén).');
+        if(hint) hint.textContent = '';
+      }
+      inputEl.value = '';
+    };
+    img.onerror = function(){
+      alert('Không thể đọc ảnh này. Vui lòng thử một tệp ảnh khác.');
+      if(hint) hint.textContent = '';
+      inputEl.value = '';
+    };
+    img.src = e.target.result;
+  };
+  reader.onerror = function(){
+    alert('Không thể đọc tệp này.');
+    if(hint) hint.textContent = '';
+    inputEl.value = '';
+  };
+  reader.readAsDataURL(file);
+}
+function setCustomBgOpacity(val){
+  const op = (parseInt(val, 10) / 100).toFixed(2);
+  document.documentElement.style.setProperty('--custom-bg-opacity', op);
+  try{ localStorage.setItem('vocab_bg_custom_opacity', op); }catch(e){}
+  const label = document.getElementById('customBgOpacityVal');
+  if(label) label.textContent = val + '%';
+}
+function removeCustomBg(){
+  if(!confirm('Xoá ảnh nền riêng đã tải lên?')) return;
+  localStorage.removeItem('vocab_bg_custom_image');
+  document.documentElement.style.removeProperty('--custom-bg-url');
+  if((localStorage.getItem('vocab_bg_theme') || '') === 'custom'){
+    setBgTheme('meadow');
+  }else{
+    renderBgSwatches();
+  }
 }
 
 /* ---------- Nút 🎲 cạnh nút sáng/tối: đổi ngẫu nhiên sang 1 trong các
