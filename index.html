@@ -36754,36 +36754,6 @@ function renderNeed(){
           </div>
         </div>
       </div>
-      <div class="need-actions">
-        <button class="btn primary naa-btn naa-primary" onclick="goSRS()" ${!S.due&&!S.new?'disabled':''}
-                title="Từ đến hạn → đang học dở → từ mới">
-          <span class="naa-ic">🔁</span>
-          <span class="naa-txt"><span class="naa-t">Ôn theo lịch</span><span class="naa-n">${srsQueue().length} từ</span></span>
-        </button>
-        ${star.length?`<button class="btn naa-btn naa-star" onclick="goLearnScope('star')"
-                title="Chỉ học đúng những từ bạn đánh dấu sao">
-          <span class="naa-ic">⭐</span>
-          <span class="naa-txt"><span class="naa-t">Học từ đánh dấu</span><span class="naa-n">${star.length} từ</span></span>
-        </button>`:''}
-        ${gate1.length?`<button class="btn naa-btn naa-gate1" onclick="goLearnScope('gate1')"
-                title="Chỉ học từ đã qua đúng 1/3 cửa, đang cần cửa kế tiếp">
-          <span class="naa-ic">1️⃣</span>
-          <span class="naa-txt"><span class="naa-t">Đã qua 1 cửa</span><span class="naa-n">${gate1.length} từ</span></span>
-        </button>`:''}
-        ${gate2.length?`<button class="btn naa-btn naa-gate2" onclick="goLearnScope('gate2')"
-                title="Chỉ học từ đã qua đúng 2/3 cửa, chỉ còn thiếu 1 cửa cuối">
-          <span class="naa-ic">2️⃣</span>
-          <span class="naa-txt"><span class="naa-t">Đã qua 2 cửa</span><span class="naa-n">${gate2.length} từ</span></span>
-        </button>`:''}
-        <button class="btn naa-btn naa-random" onclick="goLearnScope('random')">
-          <span class="naa-ic">🎲</span>
-          <span class="naa-txt"><span class="naa-t">Ngẫu nhiên</span></span>
-        </button>
-        <button class="btn naa-btn naa-weak" onclick="goLearnScope('weak')">
-          <span class="naa-ic">🔥</span>
-          <span class="naa-txt"><span class="naa-t">Hay quên</span></span>
-        </button>
-      </div>
     </div>
 
     <div class="need-tabs">
