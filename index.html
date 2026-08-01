@@ -6799,6 +6799,36 @@ nav.tabs{
   background: rgba(var(--card-rgb), var(--panel-alpha)) !important;
 }
 
+/* ============================================================
+   PATCH — MÀN "HỌC NGAY" TRÊN PC (>=1180px, layout 2 cột):
+   Chuyển 2 nút "Đổi phiên" / "Kết thúc" từ thanh trên xuống cuối
+   khung bên trái, đồng thời khung bên trái được đóng khung (viền +
+   nền) và kéo cao bằng khung bên phải để cân đối 2 cột.
+   (Trên điện thoại/tablet giữ nguyên như cũ — 2 nút vẫn nằm ở
+   thanh trên cùng, vì lúc đó không có bố cục 2 cột.)
+   ============================================================ */
+.learn-side-actions{ display:none; gap:10px; }
+@media (min-width:1180px){
+  .learn-wrap.has-side{ align-items:stretch !important; }
+  .learn-wrap.has-side .learn-topbar .learn-topbar-btn{ display:none !important; }
+  .learn-wrap.has-side .learn-topbar{ justify-content:center !important; gap:14px !important; }
+  .learn-wrap.has-side .learn-side{
+    display:flex !important; flex-direction:column !important;
+    height:100% !important; box-sizing:border-box !important;
+    background:var(--card) !important; border:1px solid var(--line) !important;
+    border-radius:var(--radius-xl) !important; box-shadow:var(--shadow-sm) !important;
+    padding:20px 20px 18px !important;
+  }
+  .learn-wrap.has-side .learn-side .learn-progress{
+    border:none !important; box-shadow:none !important; background:transparent !important;
+    padding:0 0 16px !important; margin:0 0 14px !important;
+    border-bottom:1px dashed var(--line) !important; border-radius:0 !important;
+  }
+  .learn-wrap.has-side .learn-side-actions{
+    display:flex !important; margin-top:auto !important; padding-top:16px !important;
+  }
+  .learn-wrap.has-side .learn-side-actions .learn-exit-btn{ flex:1; }
+}
 </style>
 
 <body>
@@ -39279,10 +39309,10 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
   return `
   <div class="learn-scroll"><div class="learn-wrap has-side">
     <div class="learn-topbar">
-      <button class="learn-exit-btn" id="learnSwitch">⇄ Đổi phiên</button>
+      <button class="learn-exit-btn learn-topbar-btn" id="learnSwitch">⇄ Đổi phiên</button>
       <span class="lt-scope">${SCOPE_LABEL[learnState.scope]||'Học ngay'}</span>
       <span class="lt-frac"><b>${done}</b>/${total} xong</span>
-      <button class="learn-exit-btn danger" id="learnExit">✕ Kết thúc</button>
+      <button class="learn-exit-btn danger learn-topbar-btn" id="learnExit">✕ Kết thúc</button>
     </div>
 
     <div class="learn-side">
@@ -39319,9 +39349,13 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
           <span class="step ${stageOf(v.word)===5?'ok cur':''}"><i>✅</i><em>Thuộc</em><b class="step-cnt">${stepDist.done} từ</b></span>`;
       })()}
     </div>
-    <div class="step-hint" style="opacity:.6;font-size:11px;margin-top:-6px">Số từ trên là thống kê toàn bộ thư viện, không riêng phiên này</div>
+    <div class="step-hint" style="opacity:.6;font-size:11px;margin-top:-6px"></div>
     <div class="step-hint"><b>${stepIc} ${stepName}</b> — ${stepHint}</div>
     ${topicTagHTML(v)}
+    <div class="learn-side-actions">
+      <button class="learn-exit-btn" id="learnSwitch2">⇄ Đổi phiên</button>
+      <button class="learn-exit-btn danger" id="learnExit2">✕ Kết thúc</button>
+    </div>
     </div>
 
     <div class="learn-body">
@@ -39331,13 +39365,18 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
 }
 
 function bindLearnShell(root){
-  root.querySelector('#learnSwitch').onclick = ()=> renderLearnStart(learnState.scope);
-  root.querySelector('#learnExit').onclick = ()=>{
+  const doSwitch = ()=> renderLearnStart(learnState.scope);
+  const doExit = ()=>{
     clearTypeTimers();
     if(learnState.sessionCorrect + learnState.sessionWrong > 0) renderLearnDone();
     else { learnState = null; renderLearnStart('path'); }
   };
+  root.querySelector('#learnSwitch').onclick = doSwitch;
+  root.querySelector('#learnExit').onclick = doExit;
+  const sw2 = root.querySelector('#learnSwitch2'); if(sw2) sw2.onclick = doSwitch;
+  const ex2 = root.querySelector('#learnExit2'); if(ex2) ex2.onclick = doExit;
 }
+
 
 /* Ghi nhận 1 lượt trả lời trong phiên + kiểm tra từ đã xong lượt chưa */
 function learnScore(item, ok, quality, mode){
