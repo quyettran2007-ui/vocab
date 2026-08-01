@@ -6035,6 +6035,12 @@ html[data-bg="desert"] body::before{
 .bg-preview-rainbow{ background:linear-gradient(90deg,#fecaca,#fed7aa,#fef08a,#bbf7d0,#bae6fd,#ddd6fe,#fbcfe8); }
 .bg-preview-marble{ background:linear-gradient(135deg,#f1f5f9,#e2e8f0 40%,#cbd5e1 60%,#f8fafc); }
 .bg-preview-bamboo{ background:repeating-linear-gradient(90deg,#166534 0 10px,#22c55e 10px 16px,#f0fdf4 16px 38px); }
+.bg-preview-rice{ background:linear-gradient(180deg,#fef3c7 0%,#84cc16 55%,#365314 100%); }
+.bg-preview-wheatfield{ background:linear-gradient(180deg,#93c5fd 0%,#fcd34d 55%,#b45309 100%); }
+.bg-preview-pinesnow{ background:linear-gradient(180deg,#e0f2fe 0%,#93c5fd 55%,#14532d 100%); }
+.bg-preview-tulip{ background:linear-gradient(180deg,#bae6fd 0%,#f472b6 55%,#facc15 100%); }
+.bg-preview-tropical{ background:linear-gradient(180deg,#fde68a 0%,#22d3ee 55%,#0e7490 100%); }
+.bg-preview-mist{ background:linear-gradient(180deg,#e2e8f0 0%,#94a3b8 55%,#334155 100%); }
 
 html[data-bg="ocean"] body::before{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='oc' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%230ea5e9'/%3E%3Cstop offset='.5' stop-color='%230369a1'/%3E%3Cstop offset='1' stop-color='%23082f49'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23oc)'/%3E%3Ccircle cx='1250' cy='150' r='55' fill='%23e0f2fe' opacity='.5'/%3E%3Cg fill='%23e0f2fe' opacity='.45'%3E%3Ccircle cx='200' cy='700' r='10'/%3E%3Ccircle cx='260' cy='620' r='7'/%3E%3Ccircle cx='320' cy='760' r='12'/%3E%3Ccircle cx='900' cy='680' r='9'/%3E%3Ccircle cx='960' cy='600' r='6'/%3E%3Ccircle cx='1400' cy='740' r='11'/%3E%3Ccircle cx='1460' cy='650' r='8'/%3E%3C/g%3E%3Cpath d='M0 780 Q200 730 400 780 T800 780 T1200 770 T1600 780 V900 H0 Z' fill='%23164e63' opacity='.65'/%3E%3C/svg%3E");
@@ -6069,6 +6075,71 @@ html[data-bg="marble"] body::before{
 }
 html[data-bg="bamboo"] body::before{
   background-image: repeating-linear-gradient(90deg, rgba(34,197,94,.14) 0 8px, transparent 8px 34px);
+}
+
+/* ---- 6 hình nền phong cảnh thiên nhiên MỚI (vẽ SVG cảnh thật, không
+   phải chỉ gradient/hoạ tiết màu trơn) ---- */
+html[data-bg="rice"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='rc' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fef3c7'/%3E%3Cstop offset='.4' stop-color='%23bef264'/%3E%3Cstop offset='1' stop-color='%23365314'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23rc)'/%3E%3Ccircle cx='250' cy='150' r='60' fill='%23fff7ed' opacity='.8'/%3E%3Cpath d='M0 380 Q400 340 800 380 T1600 370 V450 H0 Z' fill='%2384cc16' opacity='.55'/%3E%3Cpath d='M0 480 Q400 440 800 480 T1600 470 V560 H0 Z' fill='%2365a30d' opacity='.6'/%3E%3Cpath d='M0 580 Q400 540 800 580 T1600 570 V670 H0 Z' fill='%234d7c0f' opacity='.65'/%3E%3Cpath d='M0 680 Q400 640 800 680 T1600 670 V780 H0 Z' fill='%233f6212' opacity='.7'/%3E%3Cpath d='M0 780 Q400 750 800 780 T1600 770 V900 H0 Z' fill='%23365314' opacity='.8'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="wheatfield"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='wf' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%2393c5fd'/%3E%3Cstop offset='.4' stop-color='%23fef3c7'/%3E%3Cstop offset='1' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23wf)'/%3E%3Ccircle cx='1300' cy='200' r='75' fill='%23fffbeb' opacity='.85'/%3E%3Cpath d='M0 520 Q400 470 800 520 T1600 500 V900 H0 Z' fill='%23fcd34d' opacity='.7'/%3E%3Cpath d='M0 620 Q400 580 800 620 T1600 600 V900 H0 Z' fill='%23d97706' opacity='.6'/%3E%3Cg stroke='%23b45309' stroke-width='4' opacity='.4'%3E%3Cpath d='M200 900 L210 700'/%3E%3Cpath d='M320 900 L330 690'/%3E%3Cpath d='M460 900 L470 700'/%3E%3Cpath d='M620 900 L630 690'/%3E%3Cpath d='M800 900 L810 700'/%3E%3Cpath d='M980 900 L990 690'/%3E%3Cpath d='M1140 900 L1150 700'/%3E%3Cpath d='M1300 900 L1310 690'/%3E%3Cpath d='M1460 900 L1470 700'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="pinesnow"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='pf' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e0f2fe'/%3E%3Cstop offset='1' stop-color='%2393c5fd'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23pf)'/%3E%3Cpolygon points='300,300 500,600 100,600' fill='%23ffffff' opacity='.7'/%3E%3Cpolygon points='900,250 1150,600 650,600' fill='%23ffffff' opacity='.6'/%3E%3Cg fill='%2314532d' opacity='.85'%3E%3Cpolygon points='150,900 220,600 290,900'/%3E%3Cpolygon points='350,900 420,550 490,900'/%3E%3Cpolygon points='560,900 630,620 700,900'/%3E%3Cpolygon points='800,900 870,560 940,900'/%3E%3Cpolygon points='1020,900 1090,600 1160,900'/%3E%3Cpolygon points='1250,900 1320,570 1390,900'/%3E%3Cpolygon points='1460,900 1530,610 1600,900'/%3E%3C/g%3E%3Crect y='860' width='1600' height='40' fill='%23f8fafc' opacity='.9'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
+}
+html[data-bg="tulip"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='tl' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23bae6fd'/%3E%3Cstop offset='1' stop-color='%23fce7f3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23tl)'/%3E%3Ccircle cx='300' cy='160' r='55' fill='%23fef9c3' opacity='.85'/%3E%3Crect y='520' width='1600' height='380' fill='%23bbf7d0' opacity='.5'/%3E%3Cg opacity='.85'%3E%3Cg fill='%23f472b6'%3E%3Ccircle cx='100' cy='600' r='14'/%3E%3Ccircle cx='260' cy='600' r='14'/%3E%3Ccircle cx='420' cy='600' r='14'/%3E%3Ccircle cx='580' cy='600' r='14'/%3E%3Ccircle cx='740' cy='600' r='14'/%3E%3Ccircle cx='900' cy='600' r='14'/%3E%3Ccircle cx='1060' cy='600' r='14'/%3E%3Ccircle cx='1220' cy='600' r='14'/%3E%3Ccircle cx='1380' cy='600' r='14'/%3E%3Ccircle cx='1540' cy='600' r='14'/%3E%3C/g%3E%3Cg fill='%23facc15'%3E%3Ccircle cx='180' cy='700' r='14'/%3E%3Ccircle cx='340' cy='700' r='14'/%3E%3Ccircle cx='500' cy='700' r='14'/%3E%3Ccircle cx='660' cy='700' r='14'/%3E%3Ccircle cx='820' cy='700' r='14'/%3E%3Ccircle cx='980' cy='700' r='14'/%3E%3Ccircle cx='1140' cy='700' r='14'/%3E%3Ccircle cx='1300' cy='700' r='14'/%3E%3Ccircle cx='1460' cy='700' r='14'/%3E%3C/g%3E%3Cg fill='%23c084fc'%3E%3Ccircle cx='100' cy='800' r='14'/%3E%3Ccircle cx='260' cy='800' r='14'/%3E%3Ccircle cx='420' cy='800' r='14'/%3E%3Ccircle cx='580' cy='800' r='14'/%3E%3Ccircle cx='740' cy='800' r='14'/%3E%3Ccircle cx='900' cy='800' r='14'/%3E%3Ccircle cx='1060' cy='800' r='14'/%3E%3Ccircle cx='1220' cy='800' r='14'/%3E%3Ccircle cx='1380' cy='800' r='14'/%3E%3Ccircle cx='1540' cy='800' r='14'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="tropical"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='ti' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fde68a'/%3E%3Cstop offset='.5' stop-color='%2322d3ee'/%3E%3Cstop offset='1' stop-color='%230e7490'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23ti)'/%3E%3Ccircle cx='1250' cy='220' r='70' fill='%23fff7ed' opacity='.85'/%3E%3Crect y='560' width='1600' height='340' fill='%230891b2' opacity='.4'/%3E%3Cpath d='M0 600 Q300 560 600 600 T1200 600 T1600 590 V900 H0 Z' fill='%2306b6d4' opacity='.35'/%3E%3Cg fill='%23064e3b' opacity='.85'%3E%3Cpath d='M180 900 C170 700 210 620 260 560 C230 640 240 700 250 900 Z'/%3E%3Cpath d='M260 560 C300 540 340 550 370 590 C330 580 300 590 270 610 Z'/%3E%3Cpath d='M260 560 C230 530 190 530 160 560 C200 555 230 565 255 590 Z'/%3E%3Cpath d='M260 560 C300 520 300 480 280 440 C280 480 275 520 255 560 Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="mist"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='mv' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e2e8f0'/%3E%3Cstop offset='1' stop-color='%2364748b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23mv)'/%3E%3Cpolygon points='0,900 0,500 300,380 600,520 900,360 1200,540 1600,420 1600,900' fill='%2394a3b8' opacity='.45'/%3E%3Cpolygon points='0,900 0,600 350,500 700,640 1050,480 1400,640 1600,560 1600,900' fill='%2364748b' opacity='.55'/%3E%3Cpolygon points='0,900 0,720 400,660 800,760 1200,660 1600,740 1600,900' fill='%23334155' opacity='.7'/%3E%3Crect y='560' width='1600' height='120' fill='%23f1f5f9' opacity='.25'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
+}
+
+/* ---- 7 hình nền THIÊN NHIÊN & VĂN HOÁ VIỆT NAM mới ---- */
+.bg-preview-halong{ background:linear-gradient(180deg,#bae6fd 0%,#0e7490 55%,#134e4a 100%); }
+.bg-preview-hoian{ background:linear-gradient(180deg,#fde68a 0%,#d97706 55%,#78350f 100%); }
+.bg-preview-lotus{ background:linear-gradient(180deg,#e0f2fe 0%,#bbf7d0 55%,#166534 100%); }
+.bg-preview-trongdong{ background:radial-gradient(circle at 50% 50%,#eab308,#7c2d12 55%,#450a0a 100%); }
+.bg-preview-maiblossom{ background:linear-gradient(180deg,#fef9c3 0%,#fde68a 100%); }
+.bg-preview-waterfall{ background:linear-gradient(180deg,#bbf7d0 0%,#4ade80 45%,#166534 100%); }
+.bg-preview-sondoong{ background:radial-gradient(circle at 50% 0%,#bbf7d0,#166534 45%,#052e16 100%); }
+
+html[data-bg="halong"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='hlsky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23bae6fd'/%3E%3Cstop offset='1' stop-color='%23e0f2fe'/%3E%3C/linearGradient%3E%3ClinearGradient id='hlsea' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%230e7490'/%3E%3Cstop offset='1' stop-color='%23164e63'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23hlsky)'/%3E%3Crect y='600' width='1600' height='300' fill='url(%23hlsea)' opacity='.6'/%3E%3Cg fill='%235eead4' opacity='.35'%3E%3Cpath d='M50 600 Q100 480 160 600 Q200 520 260 600 Z'/%3E%3Cpath d='M700 600 Q760 460 820 600 Q860 500 920 600 Z'/%3E%3Cpath d='M1300 600 Q1360 480 1420 600 Q1460 520 1520 600 Z'/%3E%3C/g%3E%3Cg fill='%23134e4a' opacity='.75'%3E%3Cpath d='M150 650 Q230 460 310 650 Q360 550 440 650 Z'/%3E%3Cpath d='M500 650 Q580 440 660 650 Q700 540 780 650 Z'/%3E%3Cpath d='M950 650 Q1030 460 1110 650 Q1160 540 1240 650 Z'/%3E%3Cpath d='M1250 650 Q1330 470 1410 650 Q1460 560 1550 650 Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="hoian"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='hasky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fde68a'/%3E%3Cstop offset='1' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23hasky)'/%3E%3Crect y='500' width='1600' height='400' fill='%23d97706' opacity='.5'/%3E%3Crect y='560' width='1600' height='340' fill='%23b45309' opacity='.45'/%3E%3Cg fill='%2378350f' opacity='.55'%3E%3Crect x='80' y='560' width='260' height='340'/%3E%3Crect x='420' y='540' width='260' height='360'/%3E%3Crect x='760' y='570' width='260' height='330'/%3E%3Crect x='1100' y='550' width='260' height='350'/%3E%3Crect x='1420' y='560' width='180' height='340'/%3E%3C/g%3E%3Cg fill='%23dc2626' opacity='.85'%3E%3Cellipse cx='150' cy='420' rx='22' ry='30'/%3E%3Cellipse cx='320' cy='400' rx='22' ry='30'/%3E%3Cellipse cx='490' cy='420' rx='22' ry='30'/%3E%3Cellipse cx='660' cy='400' rx='22' ry='30'/%3E%3Cellipse cx='830' cy='420' rx='22' ry='30'/%3E%3Cellipse cx='1000' cy='400' rx='22' ry='30'/%3E%3Cellipse cx='1170' cy='420' rx='22' ry='30'/%3E%3Cellipse cx='1340' cy='400' rx='22' ry='30'/%3E%3Cellipse cx='1500' cy='420' rx='22' ry='30'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="lotus"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='lts' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e0f2fe'/%3E%3Cstop offset='1' stop-color='%23bbf7d0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23lts)'/%3E%3Crect y='460' width='1600' height='440' fill='%234ade80' opacity='.35'/%3E%3Cg fill='%23166534' opacity='.55'%3E%3Cellipse cx='200' cy='620' rx='90' ry='34'/%3E%3Cellipse cx='480' cy='700' rx='100' ry='36'/%3E%3Cellipse cx='820' cy='600' rx='95' ry='34'/%3E%3Cellipse cx='1150' cy='700' rx='100' ry='36'/%3E%3Cellipse cx='1420' cy='600' rx='90' ry='32'/%3E%3C/g%3E%3Cg fill='%23f472b6' opacity='.85'%3E%3Cpath d='M330 560 q20 -50 40 0 q20 -60 40 0 q20 -50 40 0 q-20 40 -60 40 q-40 0 -60 -40 Z'/%3E%3Cpath d='M960 520 q20 -50 40 0 q20 -60 40 0 q20 -50 40 0 q-20 40 -60 40 q-40 0 -60 -40 Z'/%3E%3Cpath d='M1250 560 q20 -50 40 0 q20 -60 40 0 q20 -50 40 0 q-20 40 -60 40 q-40 0 -60 -40 Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="trongdong"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3CradialGradient id='tdbg' gradientUnits='userSpaceOnUse' cx='800' cy='450' r='700'%3E%3Cstop offset='0' stop-color='%237c2d12'/%3E%3Cstop offset='1' stop-color='%23450a0a'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23tdbg)'/%3E%3Cg stroke='%23eab308' stroke-width='3' fill='none' opacity='.55'%3E%3Ccircle cx='800' cy='450' r='120'/%3E%3Ccircle cx='800' cy='450' r='190'/%3E%3Ccircle cx='800' cy='450' r='260'/%3E%3Ccircle cx='800' cy='450' r='330'/%3E%3C/g%3E%3Cg fill='%23eab308' opacity='.7'%3E%3Ccircle cx='800' cy='450' r='60'/%3E%3C/g%3E%3Cg stroke='%23facc15' stroke-width='6' opacity='.6'%3E%3Cpath d='M800 450 L800 130'/%3E%3Cpath d='M800 450 L1080 290'/%3E%3Cpath d='M800 450 L1120 450'/%3E%3Cpath d='M800 450 L1080 610'/%3E%3Cpath d='M800 450 L800 770'/%3E%3Cpath d='M800 450 L520 610'/%3E%3Cpath d='M800 450 L480 450'/%3E%3Cpath d='M800 450 L520 290'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:center center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="maiblossom"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='mtbg' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fef9c3'/%3E%3Cstop offset='1' stop-color='%23fde68a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23mtbg)'/%3E%3Cg stroke='%2378350f' stroke-width='6' fill='none' opacity='.6'%3E%3Cpath d='M100 900 C 140 650 260 500 380 350'/%3E%3Cpath d='M380 350 C 460 300 560 280 650 200'/%3E%3Cpath d='M380 350 C 340 420 420 470 500 460'/%3E%3C/g%3E%3Cg fill='%23facc15' opacity='.9'%3E%3Cg transform='translate(650,200)'%3E%3Ccircle cx='0' cy='-20' r='16'/%3E%3Ccircle cx='19' cy='-6' r='16'/%3E%3Ccircle cx='12' cy='16' r='16'/%3E%3Ccircle cx='-12' cy='16' r='16'/%3E%3Ccircle cx='-19' cy='-6' r='16'/%3E%3C/g%3E%3Cg transform='translate(500,460) scale(.8)'%3E%3Ccircle cx='0' cy='-20' r='16'/%3E%3Ccircle cx='19' cy='-6' r='16'/%3E%3Ccircle cx='12' cy='16' r='16'/%3E%3Ccircle cx='-12' cy='16' r='16'/%3E%3Ccircle cx='-19' cy='-6' r='16'/%3E%3C/g%3E%3Cg transform='translate(420,300) scale(.6)'%3E%3Ccircle cx='0' cy='-20' r='16'/%3E%3Ccircle cx='19' cy='-6' r='16'/%3E%3Ccircle cx='12' cy='16' r='16'/%3E%3Ccircle cx='-12' cy='16' r='16'/%3E%3Ccircle cx='-19' cy='-6' r='16'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="waterfall"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3ClinearGradient id='wfsky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23bbf7d0'/%3E%3Cstop offset='1' stop-color='%234ade80'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23wfsky)'/%3E%3Cg fill='%23166534' opacity='.6'%3E%3Cpolygon points='0,900 0,500 300,420 600,520 900,400 1200,520 1600,460 1600,900'/%3E%3C/g%3E%3Cg fill='%23f0fdf4' opacity='.85'%3E%3Crect x='620' y='300' width='90' height='420'/%3E%3Crect x='740' y='260' width='70' height='460'/%3E%3Crect x='840' y='320' width='80' height='400'/%3E%3C/g%3E%3Crect y='680' width='1600' height='220' fill='%237dd3fc' opacity='.5'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.5;
+}
+html[data-bg="sondoong"] body::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cdefs%3E%3CradialGradient id='sdlight' gradientUnits='userSpaceOnUse' cx='800' cy='0' r='950'%3E%3Cstop offset='0' stop-color='%23bbf7d0'/%3E%3Cstop offset='.4' stop-color='%23166534'/%3E%3Cstop offset='1' stop-color='%23052e16'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='1600' height='900' fill='url(%23sdlight)'/%3E%3Cg fill='%23052e16' opacity='.8'%3E%3Cpolygon points='0,0 300,0 100,300 0,250'/%3E%3Cpolygon points='1600,0 1300,0 1500,320 1600,260'/%3E%3Cpolygon points='0,900 0,600 250,700 150,900'/%3E%3Cpolygon points='1600,900 1600,600 1350,700 1450,900'/%3E%3C/g%3E%3Cellipse cx='800' cy='120' rx='340' ry='110' fill='%23f0fdf4' opacity='.35'/%3E%3C/svg%3E");
+  background-size:cover; background-position:bottom center; background-repeat:no-repeat; opacity:.55;
 }
 
 /* ============================================================
@@ -45775,6 +45846,19 @@ const BG_THEMES = [
   { key:'rainbow', name:'🌈 Cầu vồng pastel',cls:'bg-preview-rainbow' },
   { key:'marble',  name:'🤍 Đá cẩm thạch',   cls:'bg-preview-marble' },
   { key:'bamboo',  name:'🎋 Rừng trúc',      cls:'bg-preview-bamboo' },
+  { key:'rice',       name:'🌾 Ruộng bậc thang',   cls:'bg-preview-rice' },
+  { key:'wheatfield', name:'🌻 Đồng lúa mì vàng',  cls:'bg-preview-wheatfield' },
+  { key:'pinesnow',   name:'🌲 Rừng thông tuyết',  cls:'bg-preview-pinesnow' },
+  { key:'tulip',      name:'🌷 Cánh đồng tulip',   cls:'bg-preview-tulip' },
+  { key:'tropical',   name:'🌴 Đảo nhiệt đới',     cls:'bg-preview-tropical' },
+  { key:'mist',       name:'🏞️ Thung lũng sương mù', cls:'bg-preview-mist' },
+  { key:'halong',     name:'⛰️ Vịnh Hạ Long',       cls:'bg-preview-halong' },
+  { key:'hoian',      name:'🏮 Phố cổ Hội An',      cls:'bg-preview-hoian' },
+  { key:'lotus',      name:'🪷 Đầm sen',            cls:'bg-preview-lotus' },
+  { key:'trongdong',  name:'🥁 Hoa văn Đông Sơn',   cls:'bg-preview-trongdong' },
+  { key:'maiblossom', name:'🌼 Hoa mai ngày Tết',   cls:'bg-preview-maiblossom' },
+  { key:'waterfall',  name:'💦 Thác Bản Giốc',      cls:'bg-preview-waterfall' },
+  { key:'sondoong',   name:'🕳️ Hang Sơn Đoòng',     cls:'bg-preview-sondoong' },
   { key:'plain',   name:'Trơn',      cls:'bg-preview-plain' }
 ];
 /* ============================================================
@@ -45804,7 +45888,29 @@ const UI_CONCEPTS = [
   { key:'sapphire_waves', name:'Vịnh lam ngọc bích', icon:'🌊', accent:'sapphire',bg:'waves',   desc:'Xanh lam sâu sang trọng + sóng nước' },
   { key:'golden_desert',  name:'Hoàng kim sa mạc',   icon:'🏜️', accent:'gold',    bg:'desert',  desc:'Vàng kim quý phái + cát sa mạc' },
   { key:'coral_beach',    name:'Bờ biển san hô',     icon:'🏖️', accent:'coral',   bg:'beach',   desc:'Cam san hô ấm áp + nắng biển' },
-  { key:'plum_candy',     name:'Kẹo mận tím',        icon:'🍬', accent:'plum',    bg:'candy',   desc:'Tím mận quyến rũ + kẹo ngọt pastel' }
+  { key:'plum_candy',     name:'Kẹo mận tím',        icon:'🍬', accent:'plum',    bg:'candy',   desc:'Tím mận quyến rũ + kẹo ngọt pastel' },
+  { key:'teal_dots',      name:'Chấm bi ngọc lam',   icon:'🔵', accent:'teal',    bg:'dots',    desc:'Ngọc lam tươi mát + hoạ tiết chấm bi' },
+  { key:'blue_grid',      name:'Lưới xanh gọn gàng', icon:'📐', accent:'blue',    bg:'grid',    desc:'Xanh dương rõ ràng + lưới ô vuông tối giản' },
+  { key:'purple_diamond', name:'Kim cương tím huyền bí', icon:'💎', accent:'purple', bg:'diamond', desc:'Tím sang trọng + hoạ tiết kim cương' },
+  { key:'rose_confetti',  name:'Tiệc hồng confetti', icon:'🎉', accent:'rose',    bg:'confetti',desc:'Hồng đỏ vui tươi + confetti rực rỡ' },
+  { key:'orange_sunset',  name:'Hoàng hôn cam rực',  icon:'🌇', accent:'orange',  bg:'sunset',  desc:'Cam đỏ nồng nàn + trời hoàng hôn' },
+  { key:'brown_paper',    name:'Giấy cũ ấm áp',      icon:'📜', accent:'brown',   bg:'paper',   desc:'Nâu cà phê mộc mạc + nền giấy ấm' },
+  { key:'slate_mono',     name:'Kẻ sọc tối giản',    icon:'📏', accent:'slate',   bg:'mono',    desc:'Xám xanh trung tính + kẻ sọc tối giản' },
+  { key:'fuchsia_rainbow',name:'Cầu vồng hồng tím',  icon:'🌈', accent:'fuchsia', bg:'rainbow', desc:'Hồng tím nổi bật + cầu vồng pastel' },
+  { key:'cyan_plain',     name:'Tối giản xanh cyan', icon:'🩵', accent:'cyan',    bg:'plain',   desc:'Xanh cyan trong trẻo + nền trơn thanh lịch' },
+  { key:'rice_terrace',   name:'Ruộng bậc thang xanh mướt', icon:'🌾', accent:'green', bg:'rice',    desc:'Xanh lá tươi mới + ruộng bậc thang trải dài' },
+  { key:'golden_wheat',   name:'Đồng lúa mì vàng óng', icon:'🌻', accent:'amber',  bg:'wheatfield', desc:'Cam vàng ấm áp + đồng lúa mì chín rộ' },
+  { key:'pine_winter',    name:'Rừng thông tuyết trắng', icon:'🌲', accent:'cyan',   bg:'pinesnow', desc:'Xanh cyan tinh khôi + rừng thông phủ tuyết' },
+  { key:'tulip_garden',   name:'Cánh đồng tulip rực rỡ', icon:'🌷', accent:'fuchsia',bg:'tulip',    desc:'Hồng tím nổi bật + cánh đồng tulip nhiều màu' },
+  { key:'island_escape',  name:'Đảo nhiệt đới xanh ngọc', icon:'🌴', accent:'teal',   bg:'tropical', desc:'Ngọc lam tươi mát + đảo nhiệt đới yên bình' },
+  { key:'valley_mist',    name:'Thung lũng sương mù', icon:'🏞️', accent:'indigo', bg:'mist',     desc:'Chàm trầm tĩnh + núi đồi ẩn hiện trong sương' },
+  { key:'halong_bay',     name:'Vịnh Hạ Long kỳ vĩ',  icon:'⛰️', accent:'teal',    bg:'halong',    desc:'Ngọc lam sâu lắng + núi đá vôi giữa biển xanh' },
+  { key:'hoian_lantern',  name:'Đèn lồng phố Hội',    icon:'🏮', accent:'coral',   bg:'hoian',     desc:'Cam đỏ ấm áp + phố cổ vàng ươm đèn lồng' },
+  { key:'lotus_pond',     name:'Sen hồng đầm nước',   icon:'🪷', accent:'rose',    bg:'lotus',     desc:'Hồng đỏ dịu dàng + đầm sen xanh mát' },
+  { key:'dongson_bronze', name:'Trống đồng Đông Sơn', icon:'🥁', accent:'gold',    bg:'trongdong', desc:'Vàng kim cổ truyền + hoạ tiết trống đồng' },
+  { key:'tet_apricot',    name:'Mai vàng ngày Tết',   icon:'🌼', accent:'amber',   bg:'maiblossom',desc:'Cam vàng rực rỡ + hoa mai đón xuân' },
+  { key:'bangioc_falls',  name:'Thác Bản Giốc hùng vĩ',icon:'💦', accent:'green',   bg:'waterfall', desc:'Xanh lá tự nhiên + thác nước đổ tràn' },
+  { key:'sondoong_cave',  name:'Hang Sơn Đoòng bí ẩn',icon:'🕳️', accent:'emerald', bg:'sondoong',  desc:'Ngọc lục bảo huyền bí + hang động kỳ vĩ' }
 ];
 (function initBgTheme(){
   const saved = localStorage.getItem('vocab_bg_theme') || 'meadow';
