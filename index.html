@@ -112,9 +112,9 @@
      — bóng sáng + bóng tối trên CÙNG nền để tạo cảm giác nút "nổi lên"
      khỏi mặt phẳng, và "lõm xuống" khi active/pressed. ---- */
   --neo-surface: #eef1ef;
-  --neo-light: #ffffff;
-  --neo-dark: rgba(157,175,166,.55);
-  --neo-dark-soft: rgba(157,175,166,.32);
+  --neo-light: rgba(0,0,0,.05);
+  --neo-dark: rgba(120,138,129,.28);
+  --neo-dark-soft: rgba(120,138,129,.16);
 
   --font-heading: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
   --font-body: 'Be Vietnam Pro',-apple-system,'Segoe UI',sans-serif;
@@ -1472,6 +1472,7 @@ header{ background:var(--card); border-bottom:1px solid var(--line); }
 .dash-search:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-bg);}
 .ds-ico{font-size:16px;flex-shrink:0;opacity:.65;}
 #dashSearch{flex:1;border:none;outline:none;background:none;padding:14px 10px;
+  -webkit-appearance:none; -moz-appearance:none; appearance:none;
   font-family:var(--font-body);font-size:15px;font-weight:500;color:var(--ink);}
 #dashSearch::placeholder{color:var(--muted);font-weight:400;}
 .ds-clear{display:none;place-items:center;width:26px;height:26px;border-radius:50%;border:none;
@@ -3856,7 +3857,7 @@ body.page-fs { overflow-x:hidden; }
   .learn-wrap.has-side{
     max-width:1060px; display:grid;
     grid-template-columns:300px minmax(0,1fr);
-    column-gap:28px; align-items:start;
+    column-gap:28px; align-items:stretch;
   }
   .learn-wrap.has-side .learn-topbar{ grid-column:1 / -1; }
   .learn-wrap.has-side .learn-side{ grid-column:1; position:sticky; top:14px; }
@@ -3866,6 +3867,18 @@ body.page-fs { overflow-x:hidden; }
   .learn-wrap.has-side .learn-side .step-hint{ padding:0; }
   .learn-wrap.has-side .learn-side .lq-topic-tag{ margin:0 auto 0; }
 }
+.learn-side{
+  display:flex; flex-direction:column;
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius-xl); box-shadow:var(--shadow-sm);
+  padding:22px 24px;
+}
+.learn-side .learn-progress{ background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:0; }
+.learn-side-actions{
+  display:flex; gap:10px; margin-top:auto; padding-top:16px;
+  border-top:1px solid var(--line);
+}
+.learn-side-actions .learn-exit-btn{ flex:1; text-align:center; }
 .learn-progress {
   background:var(--card); border:1px solid var(--line);
   border-radius:var(--radius-xl); box-shadow:var(--shadow-sm);
@@ -6351,7 +6364,7 @@ select:focus, .search-box:focus, input[type="text"]:focus, input[type="number"]:
    mềm, đồng bộ chiều sâu với phần còn lại của trang. Các khối
    trung tính (dash-card, hero-main, hero-side, strip-card, stat-mini,
    lp-stat) chuyển hẳn sang bề mặt "nổi" neomorphism đầy đủ. ---- */
-.dash-card, .hero-main, .hero-side, .strip-card{
+.dash-card, .hero-main, .hero-side, .strip-card, .funnel-card{
   border:none !important; background:var(--neo-surface);
   box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light);
 }
@@ -6595,10 +6608,6 @@ header{
    Từng chặng (fn-step) đã có bóng đổ mềm ở khối phía trên, GIỮ
    NGUYÊN màu nền theo chặng để không mất tín hiệu phân loại.
    ============================================================ */
-.funnel-card{
-  background:var(--neo-surface) !important; border:none !important;
-  box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light) !important;
-}
 .fn-cta{
   border:none; box-shadow:3px 3px 8px var(--neo-dark-soft), -2px -2px 6px var(--neo-light), 0 8px 18px -10px rgba(13,110,95,.5);
 }
@@ -6681,11 +6690,56 @@ html:not([data-theme="dark"]) .filter-toggle-btn,
 html:not([data-theme="dark"]) select:not(:focus),
 html:not([data-theme="dark"]) select:hover:not(:focus),
 html:not([data-theme="dark"]) nav.tabs,
-html:not([data-theme="dark"]) .dash-search:not(:focus-within),
 html:not([data-theme="dark"]) .ds-item:hover,
 html:not([data-theme="dark"]) .cefr-chip:hover,
 html:not([data-theme="dark"]) .pos-pie-chart{
   box-shadow:none !important;
+}
+
+/* ---- Thanh tìm kiếm dashboard: 1 màu kính trong suốt đồng nhất
+   trên toàn thanh (icon + ô nhập + nút xoá), thay vì bị chia hai
+   tông do các lớp nền/viền/bóng chồng nhau phía trên. ---- */
+html:not([data-theme="dark"]) .dash-search{
+  background:rgba(255,255,255,.20) !important;
+  -webkit-backdrop-filter:blur(10px) saturate(160%);
+  backdrop-filter:blur(10px) saturate(160%);
+  border:1px solid rgba(255,255,255,.45) !important;
+  box-shadow:none !important;
+}
+html:not([data-theme="dark"]) .dash-search:focus-within{
+  background:rgba(255,255,255,.32) !important;
+  box-shadow:0 0 0 4px var(--accent-bg) !important;
+}
+#dashSearch{
+  background-color:transparent !important;
+  box-shadow:none !important;
+  border:none !important;
+}
+
+/* ---- Áp dụng đúng kiểu "kính trong suốt" này cho MỌI thanh tìm
+   kiếm khác trong trang (Danh sách, Reading, Writing&Speaking,
+   Collocation, Toàn bộ câu…) — cùng 2 lỗi như thanh tìm kiếm
+   dashboard: (1) input[type="text"] dùng chung bị ép nền
+   var(--neo-surface) !important ở khối neomorphism phía trên,
+   (2) khung ngoài trước đây tô đặc var(--card)/rgba trắng cao. ---- */
+.rd-search input[type="text"], .search-filter-row .search-box{
+  background-color:transparent !important;
+  box-shadow:none !important;
+  border:none !important;
+  -webkit-appearance:none; -moz-appearance:none; appearance:none;
+}
+html:not([data-theme="dark"]) .search-wrap,
+html:not([data-theme="dark"]) .rd-search{
+  background:rgba(255,255,255,.20) !important;
+  -webkit-backdrop-filter:blur(10px) saturate(160%);
+  backdrop-filter:blur(10px) saturate(160%);
+  border:1px solid rgba(255,255,255,.45) !important;
+  box-shadow:none !important;
+}
+html:not([data-theme="dark"]) .search-wrap:focus-within,
+html:not([data-theme="dark"]) .rd-search:focus-within{
+  background:rgba(255,255,255,.32) !important;
+  box-shadow:0 0 0 4px var(--accent-bg) !important;
 }
 
 </style>
@@ -35580,7 +35634,7 @@ function renderTodayPaneHTML(){
   ];
   const gatesRow = words.length ? `
     <div class="trday-gates">
-      <div class="trg-title">🚪 Phân loại theo số cửa đã học <span>(trong ${words.length} từ hôm nay — bấm 1 ô để lọc danh sách bên dưới)</span></div>
+      <div class="trg-title">🚪 Phân loại theo số cửa đã học <span></span></div>
       <div class="trg-row">
         ${GATE_DEFS.map(g=>`
           <button class="trg-chip ${g.cls} ${_needGateFilter===g.n?'active':''}" ${gb[g.n]?'':'disabled'}
@@ -39167,13 +39221,6 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
 
   return `
   <div class="learn-scroll"><div class="learn-wrap has-side">
-    <div class="learn-topbar">
-      <button class="learn-exit-btn" id="learnSwitch">⇄ Đổi phiên</button>
-      <span class="lt-scope">${SCOPE_LABEL[learnState.scope]||'Học ngay'}</span>
-      <span class="lt-frac"><b>${done}</b>/${total} xong</span>
-      <button class="learn-exit-btn danger" id="learnExit">✕ Kết thúc</button>
-    </div>
-
     <div class="learn-side">
     <div class="learn-progress">
       <div class="lp-bar"><div class="lp-fill" style="width:${pct}%"></div></div>
@@ -39208,9 +39255,13 @@ function learnShell(item, stepIc, stepName, stepHint, bodyHTML){
           <span class="step ${stageOf(v.word)===5?'ok cur':''}"><i>✅</i><em>Thuộc</em><b class="step-cnt">${stepDist.done} từ</b></span>`;
       })()}
     </div>
-    <div class="step-hint" style="opacity:.6;font-size:11px;margin-top:-6px">Số từ trên là thống kê toàn bộ thư viện, không riêng phiên này</div>
+    <div class="step-hint" style="opacity:.6;font-size:11px;margin-top:-6px"></div>
     <div class="step-hint"><b>${stepIc} ${stepName}</b> — ${stepHint}</div>
     ${topicTagHTML(v)}
+    <div class="learn-side-actions">
+      <button class="learn-exit-btn" id="learnSwitch">⇄ Đổi phiên</button>
+      <button class="learn-exit-btn danger" id="learnExit">✕ Kết thúc</button>
+    </div>
     </div>
 
     <div class="learn-body">
@@ -39394,7 +39445,7 @@ function learnTypeCard(item){
       <button class="btn" id="ltHintLast">🔡 Chữ cuối</button>
       <button class="btn" id="ltShow">👁 Hiện đáp án</button>
     </div>
-    <div class="type-tip">Enter = kiểm tra · Backspace = xoá tự do</div>`;
+    <div class="type-tip"></div>`;
 
   const inp = box.querySelector('#ltInp');
   const fb  = box.querySelector('#ltFb');
@@ -41396,7 +41447,7 @@ function stRenderColloc(root){
     <div class="st-head">
       <div>
         <h2>🧩 Collocation cho Writing</h2>
-        <p>${overall.total} collocation · tổng quan tiến độ &amp; danh sách theo trạng thái Gõ từ</p>
+        <p>${overall.total} Collocation </p>
       </div>
     </div>
     <div class="st-tr-head-btns" style="justify-content:center;width:100%;margin:10px 0">
