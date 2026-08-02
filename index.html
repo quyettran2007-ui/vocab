@@ -33891,13 +33891,17 @@ function practicePool(list){
 
 /* ============================================================
    ÂM THANH PHẢN HỒI — tạo bằng Web Audio, không cần file ngoài
-   v2: mỗi hiệu ứng là 1 lớp âm riêng (osc chính + bồi âm/độ vang)
-   để tai phân biệt được ngay, không bị lẫn thành "tiếng bíp" chung.
+   v3: có 1 "bus" chung (compressor nhẹ + reverb ngắn) để mọi hiệu ứng
+   nghe đầy & hoà quyện hơn thay vì tiếng bíp điện tử trần trụi; mỗi
+   hiệu ứng dùng nhiều lớp âm (osc chính + bồi âm + noise) và filter
+   để có "chất liệu" riêng, dễ phân biệt bằng tai.
    ============================================================ */
 const LS_SOUND = 'vocab_sound';
 let SOUND_ON = localStorage.getItem(LS_SOUND) !== '0';
 let _audioCtx = null;
 let _noiseBuf = null;
+let _masterBus = null;   // compressor nhẹ, chặn vỡ tiếng khi nhiều âm chồng nhau
+let _reverbSend = null;  // độ vang ngắn dùng chung cho các âm "vui" (đúng/lên cấp/kim cương)
 function audioCtx(){
   if(!_audioCtx){
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -33906,6 +33910,36 @@ function audioCtx(){
   }
   if(_audioCtx.state === 'suspended') _audioCtx.resume();
   return _audioCtx;
+}
+/* Bus chính: mọi âm đi qua đây trước khi ra loa. Một compressor nhẹ
+   giữ cho tiếng không bị chói/vỡ khi 2-3 hiệu ứng chồng lên nhau (ví dụ
+   "đúng" + "kim cương" bắn cùng lúc). */
+function masterBus(ctx){
+  if(_masterBus) return _masterBus;
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -18; comp.knee.value = 24; comp.ratio.value = 3.2;
+  comp.attack.value = 0.003; comp.release.value = 0.16;
+  comp.connect(ctx.destination);
+  _masterBus = comp;
+  return comp;
+}
+/* Impulse response ngắn (~350ms) tạo độ vang nhẹ, giống phòng nhỏ chứ
+   không phải hồi âm nhà thờ -> làm các nốt "chuông/thuỷ tinh" nghe đầy
+   và tự nhiên hơn là tiếng sine khô khốc. */
+function reverbSend(ctx){
+  if(_reverbSend) return _reverbSend;
+  const dur = 0.35, decay = 2.4;
+  const rate = ctx.sampleRate;
+  const buf = ctx.createBuffer(2, rate*dur, rate);
+  for(let ch=0; ch<2; ch++){
+    const d = buf.getChannelData(ch);
+    for(let i=0;i<d.length;i++){ d[i] = (Math.random()*2-1) * Math.pow(1-i/d.length, decay); }
+  }
+  const conv = ctx.createConvolver(); conv.buffer = buf;
+  const wet = ctx.createGain(); wet.gain.value = 0.55;
+  conv.connect(wet); wet.connect(masterBus(ctx));
+  _reverbSend = conv;
+  return conv;
 }
 /* Bộ đệm nhiễu trắng dùng chung cho các tiếng "tách/gõ" có chất liệu
    thay vì chỉ sóng sine thuần -> nghe thật hơn, đỡ giống chuông báo lỗi. */
@@ -33918,11 +33952,13 @@ function noiseBuffer(ctx){
   _noiseBuf = buf;
   return buf;
 }
-/* Chơi một chuỗi nốt: [[tần số, thời điểm bắt đầu, độ dài], ...] */
-function tone(notes, type='sine', vol=0.16, out){
+/* Chơi một chuỗi nốt: [[tần số, thời điểm bắt đầu, độ dài], ...].
+   send=true -> gửi thêm 1 lớp nhỏ qua reverb cho đầy tiếng. */
+function tone(notes, type='sine', vol=0.16, out, send){
   if(!SOUND_ON) return;
   const ctx = audioCtx(); if(!ctx) return;
-  const dest = out || ctx.destination;
+  const bus = masterBus(ctx);
+  const dest = out || bus;
   const t0 = ctx.currentTime;
   notes.forEach(([freq, at, dur])=>{
     const osc = ctx.createOscillator();
@@ -33931,16 +33967,18 @@ function tone(notes, type='sine', vol=0.16, out){
     osc.frequency.setValueAtTime(freq, t0+at);
     // vào/ra mượt -> không bị "tách" chói tai
     g.gain.setValueAtTime(0, t0+at);
-    g.gain.linearRampToValueAtTime(vol, t0+at+0.012);
+    g.gain.linearRampToValueAtTime(vol, t0+at+0.014);
     g.gain.exponentialRampToValueAtTime(0.0001, t0+at+dur);
     osc.connect(g); g.connect(dest);
-    osc.start(t0+at); osc.stop(t0+at+dur+0.02);
+    if(send){ g.connect(reverbSend(ctx)); }
+    osc.start(t0+at); osc.stop(t0+at+dur+0.03);
   });
 }
 /* Một bồi âm (nốt cao hơn, rất nhỏ) chồng lên nốt chính -> nghe như
    chuông/thuỷ tinh thay vì tiếng bíp máy tính trần trụi. */
 function shimmer(freq, at, dur, vol=0.05){
-  tone([[freq*2.01, at, dur*0.8]], 'sine', vol);
+  tone([[freq*2.01, at, dur*0.85]], 'sine', vol, null, true);
+  tone([[freq*3.005, at+0.01, dur*0.6]], 'sine', vol*0.5, null, true);
 }
 /* Quét cao độ liên tục (glissando) — dùng cho lật thẻ / vuốt, tạo cảm
    giác chuyển động thay vì một nốt tĩnh. */
@@ -33956,12 +33994,14 @@ function sweep(f0, f1, dur, type='sine', vol=0.12, at=0){
   g.gain.setValueAtTime(0, t0);
   g.gain.linearRampToValueAtTime(vol, t0+dur*0.25);
   g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
-  osc.connect(g); g.connect(ctx.destination);
+  osc.connect(g); g.connect(masterBus(ctx));
   osc.start(t0); osc.stop(t0+dur+0.02);
 }
 /* Một tiếng "gõ" ngắn từ nhiễu lọc qua bộ lọc thông dải -> giống tiếng
-   tách vật lý (bấm nút, chạm thẻ) hơn là tiếng điện tử. */
-function tick(freq=1800, dur=.045, vol=0.10){
+   tách vật lý (bấm nút, chạm thẻ) hơn là tiếng điện tử. thock=true ->
+   thêm 1 lớp sine trầm rất ngắn bên dưới để nghe "đục/chắc" hơn (dùng
+   cho phím cơ, nút xác nhận) thay vì chỉ tiếng "xoẹt" cao. */
+function tick(freq=1800, dur=.045, vol=0.10, thock){
   if(!SOUND_ON) return;
   const ctx = audioCtx(); if(!ctx) return;
   const t0 = ctx.currentTime;
@@ -33972,30 +34012,63 @@ function tick(freq=1800, dur=.045, vol=0.10){
   const g = ctx.createGain();
   g.gain.setValueAtTime(vol, t0);
   g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
-  src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+  src.connect(bp); bp.connect(g); g.connect(masterBus(ctx));
   src.start(t0); src.stop(t0+dur+0.02);
+  if(thock){
+    const osc = ctx.createOscillator(); const og = ctx.createGain();
+    osc.type='sine'; osc.frequency.setValueAtTime(freq*0.09, t0);
+    osc.frequency.exponentialRampToValueAtTime(freq*0.05, t0+dur*1.4);
+    og.gain.setValueAtTime(vol*0.9, t0);
+    og.gain.exponentialRampToValueAtTime(0.0001, t0+dur*1.4);
+    osc.connect(og); og.connect(masterBus(ctx));
+    osc.start(t0); osc.stop(t0+dur*1.4+.02);
+  }
 }
 const sfx = {
-  // Đô-mi-son đi lên + bồi âm thuỷ tinh ở nốt cuối -> vui, sáng, "đúng rồi!"
-  correct: ()=>{ tone([[880,0,.09],[1108.7,.08,.10],[1318.5,.16,.20]], 'sine', .15); shimmer(1318.5,.16,.20,.05); },
-  // Hợp âm giảm đi xuống + tiếng gõ trầm đệm dưới -> rõ ràng là sai, không chói tai
-  wrong:   ()=> { tone([[220,0,.16],[196,.12,.22]], 'triangle', .11); tick(320,.09,.05); },
-  // Fanfare 4 nốt đi lên, có bồi âm lấp lánh ở nốt chốt -> cảm giác "lên cấp"
-  levelUp: ()=>{ tone([[523.3,0,.11],[659.3,.10,.11],[784,.20,.12],[1046.5,.32,.34]], 'sine', .16); shimmer(1046.5,.32,.34,.07); },
-  // Twinkle 3 lớp cao dần, mỗi nốt có bồi âm riêng -> lấp lánh như viên kim cương
-  gem:     ()=>{ tone([[1568,0,.05],[1975.5,.04,.07],[2637,.08,.12]], 'sine', .09); shimmer(2637,.08,.12,.04); },
-  // Tiếng gõ ngắn + nốt cao rất nhẹ -> tách gọn, không bị lẫn với "click"
-  tab:     ()=>{ tick(1500,.035,.06); tone([[880,.005,.04]], 'sine', .05); },
-  // Tiếng gõ trầm gọn hơn "tab" -> phân biệt được bằng tai giữa bấm nút thường và đổi tab
-  click:   ()=> tick(2200,.03,.07),
-  // Quét cao độ đi lên rồi tiếng gõ nhẹ chốt lại -> mô phỏng thẻ lật trong không khí
-  flip:    ()=>{ sweep(520,1050,.14,'sine',.09); tick(2600,.03,.04); },
-  // Hai nốt ấm đi lên + bồi âm -> cảm giác "đã lưu" chắc chắn, dễ chịu
-  add:     ()=>{ tone([[784,0,.07],[988,.07,.13]], 'sine', .12); shimmer(988,.07,.13,.05); },
-  // Quét cao độ đi xuống nhanh ("whoosh") -> đúng cảm giác vuốt thẻ trôi đi
-  swipe:   ()=> sweep(900,340,.10,'triangle',.07),
-  // Tách gõ phím: nhiễu lọc dải cao, mỗi lần đổi nhẹ tần số cho tự nhiên
-  key:     ()=> tick(2600+Math.random()*900,.028,.045)
+  // Hợp âm 3 nốt đi lên (đô-mi-son) chồng cùng lúc thay vì gảy rời rạc,
+  // vào êm + bồi âm thuỷ tinh đổ vang nhẹ ở nốt cuối -> nghe "đúng rồi!"
+  // tròn trịa và vui tai hơn hẳn tiếng bíp trước đây.
+  correct: ()=>{
+    tone([[880,0,.11],[1108.7,.015,.13],[1318.5,.03,.30]], 'sine', .14, null, true);
+    shimmer(1318.5,.05,.30,.055);
+  },
+  // Hợp âm giảm đi xuống (dấu lặng, không chói) + tiếng "thock" trầm đệm
+  // dưới -> rõ ràng là sai nhưng nghe điềm tĩnh, không gây khó chịu khi
+  // lặp lại nhiều lần trong lúc luyện tập.
+  wrong: ()=>{
+    tone([[233.1,0,.10],[196,.09,.24]], 'triangle', .085, null, false);
+    tick(260,.10,.05,true);
+  },
+  // Fanfare 4 nốt đi lên đầy đặn hơn (thêm quãng 5 đệm) + bồi âm lấp
+  // lánh dày ở nốt chốt -> cảm giác "lên cấp" rõ rệt, đáng ăn mừng.
+  levelUp: ()=>{
+    tone([[523.3,0,.12],[659.3,.11,.12],[784,.22,.13],[1046.5,.34,.15],[1318.5,.36,.34]], 'sine', .15, null, true);
+    shimmer(1318.5,.36,.34,.07);
+  },
+  // Twinkle 3 lớp cao dần kiểu hộp nhạc, mỗi nốt có bồi âm & độ vang
+  // riêng -> lấp lánh như viên kim cương thật thay vì tiếng "bíp bíp".
+  gem: ()=>{
+    tone([[1568,0,.06],[1975.5,.045,.08],[2637,.09,.14]], 'sine', .085, null, true);
+    shimmer(2637,.09,.14,.045);
+  },
+  // Tiếng gõ gọn + nốt cao rất nhẹ đệm trên -> tách bạch, không lẫn "click"
+  tab: ()=>{ tick(1500,.035,.06); tone([[880,.006,.05]], 'sine', .045); },
+  // Tiếng gõ trầm & "đục" hơn "tab", có lớp thock đệm dưới -> phân biệt
+  // rõ bằng tai giữa bấm nút thường và đổi tab.
+  click: ()=> tick(2200,.032,.065,true),
+  // Quét cao độ đi lên mượt rồi tiếng gõ nhẹ chốt lại -> mô phỏng đúng
+  // cảm giác thẻ lật trong không khí rồi đáp xuống.
+  flip: ()=>{ sweep(520,1050,.15,'sine',.09); tick(2600,.03,.045); },
+  // Hai nốt ấm đi lên (quãng 4, không phải quãng 2 sát) + bồi âm nhẹ ->
+  // cảm giác "đã lưu" chắc chắn, ấm áp, dễ chịu khi bấm nhiều lần.
+  add: ()=>{ tone([[698.5,0,.08],[932.3,.075,.15]], 'sine', .11, null, true); shimmer(932.3,.075,.15,.045); },
+  // Quét cao độ đi xuống nhanh ("whoosh") kèm 1 chút noise mờ -> đúng
+  // cảm giác vuốt thẻ trôi đi thay vì chỉ 1 nốt tụt cao độ khô khốc.
+  swipe: ()=>{ sweep(900,340,.11,'triangle',.065); tick(700,.06,.02); },
+  // Tách gõ phím kiểu bàn phím cơ nhẹ: nhiễu lọc dải cao + chút "thock"
+  // trầm rất nhỏ bên dưới, mỗi lần đổi nhẹ tần số cho tự nhiên, không
+  // đơn điệu khi gõ liên tục nhiều chữ.
+  key: ()=> tick(2500+Math.random()*1100,.026,.04,Math.random()>0.5)
 };
 function toggleSound(){
   SOUND_ON = !SOUND_ON;
@@ -36853,9 +36926,14 @@ function onStarClick(ev, btn){
   ev.stopPropagation();
   const w = btn.dataset.w;
   const on = toggleStar(w);
+  btn.classList.toggle('on', on);
+  btn.textContent = on ? '★' : '☆';
+  btn.title = 'Cần học';
+  if(on){ btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
   toast(on ? `⭐ Đã thêm "${w}" vào Cần học` : `Đã bỏ "${w}" khỏi Cần học`);
   // if we're filtering by star, drop the card out of view
-  if(!on && document.getElementById('starFilter').value==='star') applyFilter();
+  const sf = document.getElementById('starFilter');
+  if(!on && sf && sf.value==='star') applyFilter();
 }
 document.getElementById('fcStar').onclick = (e)=>{
   e.stopPropagation();
@@ -37666,6 +37744,13 @@ function quizRecordWordStat(word, ok){
 }
 /* Bảng thống kê hiện/ẩn được trong tab Trắc nghiệm: tổng quan độ chính
    xác + danh sách từ hay sai nhất, giống hệt khu thống kê ở tab Đồng nghĩa. */
+function quizResetStats(){
+  if(!confirm('Xoá toàn bộ số liệu thống kê Trắc nghiệm (tổng số câu, đúng/sai, từ hay sai) và đếm lại từ 0?\n\nTiến độ học (cửa 🃏❓⌨️, SRS) KHÔNG bị ảnh hưởng.')) return;
+  try{ localStorage.removeItem(QUIZ_STATS_KEY); localStorage.removeItem(QUIZ_WORDSTATS_KEY); }catch(e){}
+  toast('✅ Đã đặt lại số liệu thống kê Trắc nghiệm');
+  const panel = document.getElementById('quizStatsPanel');
+  if(panel) panel.innerHTML = quizStatsPanelHTML();
+}
 function quizStatsPanelHTML(){
   const agg = quizLoadStats();
   const acc = agg.total>0 ? Math.round(agg.correct/agg.total*100) : 0;
@@ -37693,6 +37778,7 @@ function quizStatsPanelHTML(){
           </div>`;
         }).join('')}
       </div>` : `<div class="empty" style="padding:8px 0">Chưa có dữ liệu từ hay sai — làm thêm vài câu nhé.</div>`}
+      <button type="button" class="btn syn-wrong-practice-btn" id="quizResetStatsBtn" style="margin-top:8px;opacity:.75;font-size:12px">🩹 Số liệu bị lệch (quá lớn bất thường)? Bấm để đặt lại từ 0</button>
     </div>`;
 }
 /* Thẻ chi tiết hiện SAU KHI trả lời 1 câu — giống hệt mặt sau Flashcard
@@ -37779,7 +37865,10 @@ function nextQuiz(){
       <div class="prompt-label">${askVN?'Nghĩa của từ này là gì?':'Từ tiếng Anh của nghĩa này?'}</div>
       <div class="prompt-word ${askVN?'':'small'}">${askVN?esc(correct.word):esc(correct.vn)}</div>
       ${askVN&&correct.ipa?`<div class="tq-pos">${esc(correct.ipa)}</div>`:''}
-      ${askVN?`<button class="speak-btn" id="quizSpeakBtn" style="margin-top:8px">🔊</button>`:''}
+      <div style="margin-top:8px">
+        ${askVN?`<button class="speak-btn" id="quizSpeakBtn">🔊</button>`:''}
+        <button class="star-btn ${isStarred(correct.word)?'on':''}" data-w="${esc(correct.word)}" onclick="onStarClick(event,this)" title="Cần học">${isStarred(correct.word)?'★':'☆'}</button>
+      </div>
     </div>
     <div class="options">
       ${opts.map((o,i)=>`<button class="opt" data-ci="${i}" data-word="${esc(o.word)}">${askVN?esc(o.vn):esc(o.word)}</button>`).join('')}
@@ -37798,7 +37887,11 @@ function nextQuiz(){
     const panel = document.getElementById('quizStatsPanel');
     const showing = panel.style.display !== 'none';
     if(showing){ panel.style.display='none'; panel.innerHTML=''; statsBtn.classList.remove('active'); }
-    else { panel.innerHTML = quizStatsPanelHTML(); panel.style.display=''; statsBtn.classList.add('active'); }
+    else {
+      panel.innerHTML = quizStatsPanelHTML(); panel.style.display=''; statsBtn.classList.add('active');
+      const resetBtn = document.getElementById('quizResetStatsBtn');
+      if(resetBtn) resetBtn.onclick = quizResetStats;
+    }
   };
 
   let answered = false;
@@ -37916,6 +38009,17 @@ function synStatsForCurrentSource(){
   rows.sort((a,b)=> b.wrong-a.wrong || (b.wrong/(b.wrong+b.correct)) - (a.wrong/(a.wrong+a.correct)));
   return { total, correct, wrong, rows };
 }
+/* Số liệu Đồng nghĩa bị lệch (cộng dồn phi thực tế) trước đây là do lỗi
+   gộp file backup (đã sửa ở mergeVocabValue). Nếu số liệu đang lưu trên
+   máy này đã bị lệch trước khi có bản sửa, nút này cho phép xoá sạch để
+   bắt đầu đếm lại từ 0 — không ảnh hưởng đến tiến độ SRS/cửa đã mở. */
+function synResetStats(){
+  if(!confirm('Xoá toàn bộ số liệu thống kê Đồng nghĩa (tổng số câu, đúng/sai, từ hay sai) và đếm lại từ 0?\n\nTiến độ học (cửa 🃏❓⌨️, SRS) KHÔNG bị ảnh hưởng.')) return;
+  try{ localStorage.removeItem(SYN_STATS_KEY); localStorage.removeItem(SYN_WORDSTATS_KEY); }catch(e){}
+  toast('✅ Đã đặt lại số liệu thống kê Đồng nghĩa');
+  const panel = document.getElementById('synStatsPanel');
+  if(panel) panel.innerHTML = synStatsPanelHTML();
+}
 function synStatsPanelHTML(){
   const scoped = synStatsForCurrentSource();
   const acc = scoped.total>0 ? Math.round(scoped.correct/scoped.total*100) : 0;
@@ -37944,6 +38048,7 @@ function synStatsPanelHTML(){
       </div>
       <button type="button" class="btn primary syn-wrong-practice-btn" id="synWrongPracticeBtn">🔥 Luyện các câu hay sai (${scoped.rows.length})</button>
       ` : `<div class="empty" style="padding:8px 0">Chưa có dữ liệu từ hay sai trong nguồn này — làm thêm vài câu nhé.</div>`}
+      <button type="button" class="btn syn-wrong-practice-btn" id="synResetStatsBtn" style="margin-top:8px;opacity:.75;font-size:12px">🩹 Số liệu bị lệch (quá lớn bất thường)? Bấm để đặt lại từ 0</button>
     </div>`;
 }
 function buildSynonymPool(){
@@ -38259,7 +38364,10 @@ function nextSynQuiz(){
       ${correct.vn ? `
       <button class="st-tr-meaning-toggle" id="synVnToggle" style="margin-top:6px">${SYN_SHOW_VN ? '🙈 Ẩn nghĩa tiếng Việt' : '👁️ Hiện nghĩa tiếng Việt'}</button>
       <div class="tq-pos" id="synVnText" style="${SYN_SHOW_VN?'':'display:none'}">${esc(correct.vn)}</div>` : ''}
-      <button class="speak-btn" id="synSpeakBtn" style="margin-top:8px">🔊</button>
+      <div style="margin-top:8px">
+        <button class="speak-btn" id="synSpeakBtn">🔊</button>
+        <button class="star-btn ${isStarred(correct.word)?'on':''}" data-w="${esc(correct.word)}" onclick="onStarClick(event,this)" title="Cần học">${isStarred(correct.word)?'★':'☆'}</button>
+      </div>
     </div>
     <div class="options">
       ${opts.map((o,i)=>`<button class="opt" data-ci="${i}" data-ans="${esc(o)}">${esc(o)}</button>`).join('')}
@@ -38285,6 +38393,8 @@ function nextSynQuiz(){
       panel.innerHTML = synStatsPanelHTML(); panel.style.display=''; statsBtn.classList.add('active');
       const wrongBtn = document.getElementById('synWrongPracticeBtn');
       if(wrongBtn) wrongBtn.onclick = synStartWrongPractice;
+      const resetBtn = document.getElementById('synResetStatsBtn');
+      if(resetBtn) resetBtn.onclick = synResetStats;
     }
   };
   const vnToggle = document.getElementById('synVnToggle');
@@ -38442,6 +38552,7 @@ function nextType(){
         ${v.pos?`<span class="tq-pos tq-pos-inline">${esc(v.pos)}</span>`:''}
         <button class="tl-btn" id="typeSpeak"><span class="tl-ic">🔊</span><span class="tl-txt">Nghe</span></button>
         <button class="tl-btn slow" id="typeSpeakSlow"><span class="tl-ic">🐢</span><span class="tl-txt">Chậm</span></button>
+        <button class="tl-btn ${isStarred(v.word)?'on':''}" id="typeBookmark" title="Đánh dấu Cần học"><span class="tl-ic">${isStarred(v.word)?'★':'☆'}</span><span class="tl-txt">Đánh dấu</span></button>
         <span class="tl-count" id="typeListenCount"></span>
       </div>
     </div>
@@ -38650,6 +38761,13 @@ function nextType(){
   }
   document.getElementById('typeSpeak').onclick     = ()=> doListen(0.9);
   document.getElementById('typeSpeakSlow').onclick = ()=> doListen(0.55);
+  const typeBookmarkBtn = document.getElementById('typeBookmark');
+  if(typeBookmarkBtn) typeBookmarkBtn.onclick = ()=>{
+    const on = toggleStar(v.word);
+    typeBookmarkBtn.classList.toggle('on', on);
+    typeBookmarkBtn.querySelector('.tl-ic').textContent = on ? '★' : '☆';
+    toast(on ? `⭐ Đã thêm "${v.word}" vào Cần học` : `Đã bỏ "${v.word}" khỏi Cần học`);
+  };
 
   /* ---------- nút ---------- */
   btnCheck.onclick = checkTyping;
@@ -39687,6 +39805,7 @@ function learnStepFlash(item){
         ${v.ipa?`<div class="lf-ipa">${esc(v.ipa)}</div>`:''}
         ${v.pos?`<div class="lf-pos">${esc(v.pos)}</div>`:''}
         <button class="speak-btn lf-spk" id="lfSpeak">🔊</button>
+        <button class="star-btn ${isStarred(v.word)?'on':''}" data-w="${esc(v.word)}" onclick="onStarClick(event,this)" title="Cần học">${isStarred(v.word)?'★':'☆'}</button>
         <button class="btn primary lf-flip" id="lfFlip">Xem nghĩa ↻</button>
       </div>
       <div class="lf-back" id="lfBack" hidden>
@@ -39738,6 +39857,9 @@ function learnStepQuiz(item){
       <div class="prompt-label">${askVN?'Nghĩa của từ này là gì?':'Từ tiếng Anh của nghĩa này?'}</div>
       <div class="prompt-word ${askVN?'':'small'}">${askVN?esc(v.word):esc(v.vn)}</div>
       ${askVN&&v.ipa?`<div class="tq-pos">${esc(v.ipa)}</div>`:''}
+      <div style="margin-top:8px">
+        <button class="star-btn ${isStarred(v.word)?'on':''}" data-w="${esc(v.word)}" onclick="onStarClick(event,this)" title="Cần học">${isStarred(v.word)?'★':'☆'}</button>
+      </div>
     </div>
     <div class="options" id="learnOpts">
       ${opts.map(o=>`<button class="opt" data-word="${esc(o.word)}">${askVN?esc(o.vn):esc(o.word)}</button>`).join('')}
@@ -40993,16 +41115,17 @@ function mergeVocabValue(key, localRaw, importedRaw){
         const x = out[d], y = b[d];
         if(!x){ out[d]=y; return; }
         out[d] = {
-          correct: (x.correct||0)+(y.correct||0),
-          wrong: (x.wrong||0)+(y.wrong||0),
-          answered: (x.answered||0)+(y.answered||0),
+          // lấy MAX thay vì cộng dồn -> gộp lặp lại nhiều lần không bị
+          // nhân số liệu lên (idempotent), tránh lỗi thống kê phình to.
+          correct: Math.max(x.correct||0, y.correct||0),
+          wrong: Math.max(x.wrong||0, y.wrong||0),
+          answered: Math.max(x.answered||0, y.answered||0),
           mastered: Array.from(new Set([...(x.mastered||[]), ...(y.mastered||[])])),
           studied: Array.from(new Set([...(x.studied||[]), ...(y.studied||[])])),
-          /* --- số liệu Collocation theo ngày: PHẢI gộp, không được bỏ sót,
-             nếu không trang chủ sẽ hiện sai số "collocation đã học" sau khi Nhập/Gộp --- */
-          collocAnswered: (x.collocAnswered||0)+(y.collocAnswered||0),
-          collocCorrect: (x.collocCorrect||0)+(y.collocCorrect||0),
-          collocWrong: (x.collocWrong||0)+(y.collocWrong||0),
+          /* --- số liệu Collocation theo ngày --- */
+          collocAnswered: Math.max(x.collocAnswered||0, y.collocAnswered||0),
+          collocCorrect: Math.max(x.collocCorrect||0, y.collocCorrect||0),
+          collocWrong: Math.max(x.collocWrong||0, y.collocWrong||0),
           collocStudied: Array.from(new Set([...(x.collocStudied||[]), ...(y.collocStudied||[])]))
         };
       });
@@ -41021,9 +41144,9 @@ function mergeVocabValue(key, localRaw, importedRaw){
         if(!x){ out[id] = { streak: streakOf(y), seen:y.seen||0, correct:y.correct||0, wrong:y.wrong||0, last:y.last||0 }; return; }
         out[id] = {
           streak: Math.max(streakOf(x), streakOf(y)),
-          seen: (x.seen||0)+(y.seen||0),
-          correct: (x.correct||0)+(y.correct||0),
-          wrong: (x.wrong||0)+(y.wrong||0),
+          seen: Math.max(x.seen||0, y.seen||0),
+          correct: Math.max(x.correct||0, y.correct||0),
+          wrong: Math.max(x.wrong||0, y.wrong||0),
           last: Math.max(x.last||0, y.last||0)
         };
       });
@@ -41043,24 +41166,34 @@ function mergeVocabValue(key, localRaw, importedRaw){
       return JSON.stringify(a);
     }
     if(MERGE_SUM_STATS_KEYS.includes(key)){
+      /* LƯU Ý: trước đây chỗ này CỘNG DỒN (a+b) mỗi lần Gộp. Nếu người
+         dùng Gộp cùng 1 file backup nhiều lần (đồng bộ qua lại giữa 2
+         máy nhiều lần), số liệu bị CỘNG LẶP LẠI mỗi lần gộp -> phình to
+         phi thực tế (hàng triệu câu ảo — đây chính là lỗi bảng thống kê
+         Đồng nghĩa/Trắc nghiệm bị sai). Đổi sang lấy MAX giữa 2 bản (theo
+         từng ngày trong byDate, và theo tổng/đúng/sai) để việc gộp trở
+         nên "idempotent" — gộp đi gộp lại cùng 1 file không làm số liệu
+         tăng thêm nữa. */
       const a = JSON.parse(localRaw)||{total:0,correct:0,wrong:0,byDate:{}};
       const b = JSON.parse(importedRaw)||{total:0,correct:0,wrong:0,byDate:{}};
       const byDate = {...(a.byDate||{})};
-      Object.keys(b.byDate||{}).forEach(d=>{ byDate[d]=(byDate[d]||0)+(b.byDate[d]||0); });
+      Object.keys(b.byDate||{}).forEach(d=>{ byDate[d]=Math.max(byDate[d]||0, b.byDate[d]||0); });
       return JSON.stringify({
-        total:(a.total||0)+(b.total||0),
-        correct:(a.correct||0)+(b.correct||0),
-        wrong:(a.wrong||0)+(b.wrong||0),
+        total: Math.max(a.total||0, b.total||0),
+        correct: Math.max(a.correct||0, b.correct||0),
+        wrong: Math.max(a.wrong||0, b.wrong||0),
         byDate
       });
     }
     if(MERGE_WORDSTATS_KEYS.includes(key)){
+      /* Cùng lý do như trên: LẤY MAX theo từng từ thay vì cộng dồn, để
+         gộp file backup nhiều lần không làm số liệu phình to giả tạo. */
       const a = JSON.parse(localRaw)||{}, b = JSON.parse(importedRaw)||{};
       const out = {...a};
       Object.keys(b).forEach(w=>{
         const x = out[w], y = b[w];
         if(!x){ out[w]=y; return; }
-        out[w] = { word: x.word||y.word, correct:(x.correct||0)+(y.correct||0), wrong:(x.wrong||0)+(y.wrong||0) };
+        out[w] = { word: x.word||y.word, correct: Math.max(x.correct||0, y.correct||0), wrong: Math.max(x.wrong||0, y.wrong||0) };
       });
       return JSON.stringify(out);
     }
@@ -41117,7 +41250,7 @@ function mergeVocabValue(key, localRaw, importedRaw){
         if(!x){ out[k]=y; return; }
         const useY = (y.lastTs||0) > (x.lastTs||0);
         out[k] = {
-          count:(x.count||0)+(y.count||0),
+          count: Math.max(x.count||0, y.count||0),
           lastOutcome: useY ? y.lastOutcome : x.lastOutcome,
           lastPct: useY ? y.lastPct : x.lastPct,
           lastTs: Math.max(x.lastTs||0, y.lastTs||0)
