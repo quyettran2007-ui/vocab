@@ -3748,6 +3748,10 @@ body.page-fs { overflow-x:hidden; }
    QUIZ / TYPING
    ============================================================ */
 .center-wrap { display:flex; align-items:flex-start; justify-content:center; padding-top:10px; }
+/* Trong "Học ngay" (bố cục 2 cột), bỏ khoảng đệm trên của khung phải để
+   mép trên của thẻ bên phải (.quiz-q) ngang bằng mép trên của khung bên
+   trái (.learn-side) — trước đây khung phải thấp hơn ~10px trông lệch. */
+.learn-body .center-wrap{ padding-top:0; }
 .quiz-box, .type-box { width:100%; max-width:580px; }
 .type-box { text-align:center; }
 .quiz-q {
@@ -3890,7 +3894,16 @@ body.page-fs { overflow-x:hidden; }
   background:var(--card); border:1px solid var(--line);
   border-radius:var(--radius-xl); box-shadow:var(--shadow-sm);
   padding:22px 24px;
+  position:relative; overflow:hidden;
 }
+/* Cùng lớp phủ gradient nhạt như .quiz-q (khung bên phải) để 2 khung
+   trái/phải có cùng 1 tông nền, thay vì bên trái trắng phẳng còn bên
+   phải có sắc gradient nhẹ. */
+.learn-side::before{
+  content:''; position:absolute; inset:0;
+  background:var(--accent-grad-soft); opacity:.6; pointer-events:none;
+}
+.learn-side > *{ position:relative; z-index:1; }
 .learn-side .learn-progress{ background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:0; }
 .learn-side-actions{
   display:flex; gap:10px; margin-top:auto; padding-top:16px;
@@ -3914,10 +3927,20 @@ body.page-fs { overflow-x:hidden; }
 }
 .lp-stats { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
 .lp-stat {
-  flex:1; min-width:72px; text-align:center;
+  flex:1; min-width:72px; text-align:center; position:relative; overflow:hidden;
   background:var(--paper); border:1px solid var(--line);
-  border-radius:14px; padding:12px 8px; transition:.25s;
+  border-radius:14px; padding:14px 8px 12px; transition:.25s;
 }
+/* Dải màu nhấn mỏng phía trên mỗi ô, đồng bộ màu với con số bên dưới —
+   giúp 3 ô phân biệt rõ ràng và đỡ đơn điệu hơn thay vì 3 ô xám giống hệt nhau. */
+.lp-stat::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--line-strong); opacity:.5;
+}
+.lp-stat.mastered::before{ background:var(--green); opacity:1; }
+.lp-stat.learning::before{ background:var(--gold); opacity:1; }
+.lp-stat.acc::before{ background:var(--accent); opacity:1; }
+.lp-stat.remain::before{ background:var(--muted); opacity:.6; }
 .lp-stat:hover { transform:translateY(-2px); border-color:var(--line-strong); }
 .lp-stat .num { font-family:var(--font-heading); font-size:22px; display:block; line-height:1.15; font-weight:700; letter-spacing:-.8px; }
 .lp-stat .lbl { font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; font-weight:800; }
@@ -4956,7 +4979,7 @@ nav.tabs{
 .step.cur .step-cnt{ color:var(--accent); }
 .step-arrow{ color:var(--line-strong); font-size:13px; }
 .step-hint{
-  text-align:center; font-size:13px; color:var(--muted);
+  text-align:center; font-size:11.5px; color:var(--muted);
   margin-bottom:14px; padding:0 8px;
 }
 .step-hint b{ color:var(--ink); }
@@ -5034,7 +5057,13 @@ nav.tabs{
 /* ---------- 7. THẺ "5 GIÂY XEM LẠI" (yêu cầu của người dùng) ---------- */
 .tp-review{
   text-align:center; animation:rvIn .3s cubic-bezier(.2,.9,.3,1);
+  /* Cùng kiểu "khung thẻ" như .quiz-q (nền + viền + bóng đổ mềm) để chữ
+     nổi rõ trên ảnh nền tuỳ chỉnh, thay vì trôi nổi không viền như trước. */
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius-xl); box-shadow:var(--shadow);
+  padding:32px 28px;
 }
+@media (max-width:640px){ .tp-review{ padding:22px 18px; } }
 @keyframes rvIn{ from{ opacity:0; transform:translateY(10px) scale(.98); } to{ opacity:1; transform:none; } }
 .tpr-flag{
   display:inline-block; font-size:12.5px; font-weight:700; color:var(--green);
@@ -5756,29 +5785,43 @@ body{
   padding:14px 18px; box-shadow:0 2px 10px rgba(16,32,28,.06);
 }
 [data-theme="dark"] .cl-fc-head-panel{ box-shadow:0 4px 16px rgba(0,0,0,.4); }
-.cl-fc-head-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.cl-fc-head-top{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px;
+}
 .cl-fc-head-top .st-pick-mini{
   font-size:12px; font-weight:700; color:var(--accent); background:var(--accent-bg);
   border:1px solid transparent; border-radius:9px; padding:7px 13px; cursor:pointer; white-space:nowrap; transition:.15s;
+  justify-self:start;
 }
 .cl-fc-head-top .st-pick-mini:hover{ border-color:var(--accent); text-decoration:none; }
-.cl-fc-head-center{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.cl-fc-head-center{ display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
 .cl-fc-head-center .cl-fc-progress,
 .cl-fc-head-center .tp-score{
   font-size:12px; font-weight:700; color:var(--ink-soft); background:var(--card-sunken);
   border:1px solid var(--line); border-radius:9px; padding:7px 13px; white-space:nowrap; line-height:1;
 }
 .cl-fc-head-center .tp-score b{ color:var(--accent); }
-.cl-fc-head-sess-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.cl-fc-head-sess-actions{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-self:end; }
 .cl-fc-head-sess-actions .learn-ghost-btn{
   font-size:12px; font-weight:700; padding:7px 13px; border-radius:9px;
   background:var(--accent-bg); color:var(--accent); box-shadow:none; border:1px solid transparent;
+  white-space:nowrap;
 }
 .cl-fc-head-sess-actions .learn-ghost-btn:hover{ border-color:var(--accent); box-shadow:none; }
 .cl-fc-progress{ font-size:13.5px; font-weight:800; color:var(--ink); }
+@media (max-width:640px){
+  .cl-fc-head-top{ grid-template-columns:1fr; justify-items:center; text-align:center; gap:10px; }
+  .cl-fc-head-top .st-pick-mini{ justify-self:center; }
+  .cl-fc-head-center, .cl-fc-head-sess-actions{ justify-content:center; justify-self:center; width:100%; }
+}
 .cl-stat-row{
-  display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; width:100%;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%;
   padding-top:12px; border-top:1px dashed var(--line);
+}
+.cl-stat-row .cl-cur-chip{ margin-left:auto; }
+@media (max-width:640px){
+  .cl-stat-row{ justify-content:center; }
+  .cl-stat-row .cl-cur-chip{ margin-left:0; width:100%; justify-content:center; }
 }
 .cl-stat-chip{
   display:flex; align-items:baseline; gap:5px; padding:5px 13px; border-radius:99px;
@@ -5925,6 +5968,21 @@ nav.tabs, .strip-card, .funnel-card, .tp-card,
    thanh công cụ đọc bài...) đã tự có nền thẻ riêng, nên bỏ hẳn nền của
    khung bọc ngoài để nó trong suốt, hoà theo đúng nền trang. */
 .quiz-box, .type-box, .rd-pane{ background:transparent !important; }
+/* Nền trong suốt nhưng .type-box vẫn còn bóng đổ neomorphism (sáng/tối 2
+   lớp) từ CSS gốc — với nền trong suốt, bóng đổ đó lộ ra thành một viền
+   mờ bao quanh thẻ .quiz-q/.type-actions bên trong, lệch tông và không
+   cân xứng với khung bên trái (vốn chỉ có đúng 1 lớp viền của .learn-side).
+   Bỏ hẳn bóng đổ + đệm của khung bọc ngoài để chỉ còn đúng 1 lớp viền —
+   của thẻ nội dung bên trong — giống cách khung trái chỉ có 1 lớp. */
+.type-box{ box-shadow:none !important; padding:0 !important; }
+/* Làm nền 2 khung chính (trái: .learn-side · phải: .quiz-q/.tp-review) hơi
+   trong suốt + phủ kính mờ (backdrop blur), để lộ nhẹ ảnh nền phía sau
+   thay vì 1 mảng nền đặc hoàn toàn — nhìn nhẹ nhàng và hợp với ảnh nền
+   tuỳ chỉnh hơn. */
+.learn-side, .quiz-q, .tp-review, .cl-fc-head-panel{
+  background:rgba(var(--card-rgb), .5) !important;
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+}
 
 /* thêm hình nền giao diện đa dạng hơn */
 .bg-preview-waves{ background:repeating-linear-gradient(45deg, rgba(14,165,233,.20) 0 10px, transparent 10px 20px); }
@@ -6728,6 +6786,92 @@ select:focus, .search-box:focus, input[type="text"]:focus, input[type="number"]:
 @media (max-width:640px){
   .type-box{ padding:16px; }
 }
+
+/* ============================================================
+   MÀN "GÕ TỪ COLLOCATION" — Neomorphism (đồng bộ với phần còn lại)
+   Panel đầu trang trước đây dùng viền cứng phẳng (border:1px solid),
+   lệch tông với ngôn ngữ "bề mặt nổi" neomorphism dùng chung toàn app.
+   Quy ước thống nhất cho cả màn hình:
+     - Khối chứa (panel)      -> nổi nhẹ (neo-surface, bóng đổ đôi)
+     - Nút bấm được (back,
+       kết thúc/đổi phiên)     -> chip "nổi" bo tròn, đồng bộ .btn
+     - Số liệu chỉ để xem
+       (tiến độ, điểm)         -> chip "lõm" (readout, không bấm được)
+     - Dải chip thống kê       -> chip "nổi", màu phân loại giữ nguyên
+       nhưng chuyển từ viền cứng sang viền màu mảnh + bóng đổ mềm
+   ============================================================ */
+.cl-fc-head-panel{
+  border:none !important; background:var(--neo-surface);
+  border-radius:18px; box-shadow:5px 5px 12px var(--neo-dark), -5px -5px 12px var(--neo-light);
+}
+[data-theme="dark"] .cl-fc-head-panel{ box-shadow:5px 5px 12px var(--neo-dark), -5px -5px 12px var(--neo-light); }
+
+/* Nút "Quay lại danh sách" + "Kết thúc phiên" / "Luyện phiên khác": cùng 1
+   kiểu chip nổi, cùng kích thước/bo góc để không lệch nhau như trước. */
+.cl-fc-head-top .st-pick-mini,
+.cl-fc-head-sess-actions .learn-ghost-btn{
+  border:none !important; background:var(--neo-surface); color:var(--ink-soft);
+  border-radius:10px; padding:7px 14px; font-size:12px; font-weight:700;
+  box-shadow:2px 2px 6px var(--neo-dark), -2px -2px 6px var(--neo-light) !important;
+  transition:box-shadow .2s ease, transform .2s ease, color .2s ease;
+}
+.cl-fc-head-top .st-pick-mini:hover,
+.cl-fc-head-sess-actions .learn-ghost-btn:hover{
+  color:var(--accent); transform:translateY(-1px);
+  box-shadow:3px 3px 8px var(--neo-dark), -3px -3px 8px var(--neo-light) !important;
+}
+.cl-fc-head-top .st-pick-mini:active,
+.cl-fc-head-sess-actions .learn-ghost-btn:active{
+  transform:translateY(0);
+  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light) !important;
+}
+
+/* Số liệu chỉ để xem (không bấm được) -> chip "lõm" cho khác biệt rõ với
+   nút bấm được ở trên, cùng bo góc/kích thước để đồng bộ hàng ngang. */
+.cl-fc-head-center .cl-fc-progress,
+.cl-fc-head-center .tp-score{
+  border:none !important; background:var(--neo-surface); color:var(--ink-soft);
+  border-radius:10px; padding:7px 14px; font-size:12px; font-weight:700;
+  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light);
+}
+.cl-fc-head-center .tp-score b{ color:var(--accent); }
+
+/* Dải chip thống kê (Tổng cụm / Đúng 1 lần / Đúng 2 lần / Đã thuộc / Cụm
+   này…): giữ mã màu phân loại nhưng chuyển viền cứng -> viền màu mảnh +
+   bóng đổ mềm, cùng bo góc/đệm với các chip phía trên cho thống nhất. */
+.cl-stat-chip{
+  border:1.5px solid transparent; background:var(--neo-surface);
+  border-radius:12px; padding:6px 14px;
+  box-shadow:2px 2px 6px var(--neo-dark), -2px -2px 6px var(--neo-light);
+  transition:box-shadow .2s ease, transform .2s ease;
+}
+.cl-stat-chip:hover{
+  transform:translateY(-2px);
+  box-shadow:3px 3px 8px var(--neo-dark), -3px -3px 8px var(--neo-light);
+}
+.cl-stat-chip.total{ border-color:var(--line-strong); }
+.cl-stat-chip.s1{ border-color:var(--stage1); }
+.cl-stat-chip.s2{ border-color:var(--stage2); }
+.cl-stat-chip.done{ border-color:var(--stat-learned); }
+.cl-stat-chip.cur{
+  border-color:var(--accent);
+  box-shadow:inset 2px 2px 5px var(--neo-dark-soft), 0 0 0 2px var(--accent-bg);
+}
+.cl-stat-chip.cur:hover{ box-shadow:inset 2px 2px 5px var(--neo-dark-soft), 0 0 0 2px var(--accent-bg); transform:none; }
+.cl-cur-dot{ box-shadow:inset 1px 1px 2px rgba(0,0,0,.15); }
+
+/* Thẻ chủ đề (VD: "SÁCH VÀ PHIM ẢNH") trong khung gõ collocation: từ pill
+   phẳng -> chip nổi nhẹ, đồng bộ chiều sâu với các chip xung quanh. */
+.quiz-q .st-topic-tag{
+  border-radius:10px; box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light);
+}
+
+/* Nút "⚡ Tô xanh khi gõ" khi đang BẬT: giữ màu xanh báo trạng thái nhưng
+   vẫn có chiều sâu nổi/lõm giống các nút neomorphism khác, thay vì phẳng. */
+.btn.active{
+  box-shadow:inset 2px 2px 6px rgba(0,0,0,.2), 0 0 0 2px var(--green) !important;
+}
+[data-theme="dark"] .btn.active{ box-shadow:inset 2px 2px 6px rgba(0,0,0,.35), 0 0 0 2px var(--green) !important; }
 
 /* ============================================================
    THANH LOGO TRÊN CÙNG (header) — Neomorphism
@@ -38215,6 +38359,30 @@ let typeI=0, typePool=[], typeScore=0, typeTotal=0,
     _typeLocked=false, _typeHinted=false, _typeShown=false, _typeListens=0,
     _typeRvT=null, _typeRvRaf=null;
 
+/* "Tô xanh/đỏ khi gõ": bật thì từng ô chữ được so khớp NGAY khi gõ (tô
+   xanh nếu đúng ký tự, đỏ nếu sai) thay vì đợi bấm Kiểm tra — cùng cơ chế
+   với bên Gõ từ Collocation (CL_TP_AUTOCHECK), áp dụng cho MỌI từ sau đó
+   (và các phiên sau) tới khi tắt lại. Dùng chung cho cả tab "Gõ từ" độc
+   lập lẫn bước Gõ từ nhúng trong "Học ngay". */
+const VOCAB_TP_AUTOCHECK_KEY = 'vocab_word_tp_autocheck';
+let VOCAB_TP_AUTOCHECK = localStorage.getItem(VOCAB_TP_AUTOCHECK_KEY) !== '0';
+function vocabSetAutoCheck(on){
+  VOCAB_TP_AUTOCHECK = !!on;
+  try{ localStorage.setItem(VOCAB_TP_AUTOCHECK_KEY, VOCAB_TP_AUTOCHECK ? '1' : '0'); }catch(e){}
+}
+function vocabAutoCheckBtnHTML(){
+  return `<button class="btn ${VOCAB_TP_AUTOCHECK?'active':''}" id="vocabTypeAutoToggle" title="Khi bật: chữ gõ trùng đáp án được tô xanh ngay, sai thì tô đỏ, không cần bấm Kiểm tra. Áp dụng cho mọi từ sau đó tới khi tắt.">${VOCAB_TP_AUTOCHECK?'⚡ Tô xanh khi gõ: BẬT':'⚡ Tô xanh khi gõ: TẮT'}</button>`;
+}
+function bindVocabAutoCheckBtn(box){
+  const autoBtn = box.querySelector('#vocabTypeAutoToggle');
+  if(!autoBtn) return;
+  autoBtn.onclick = ()=>{
+    vocabSetAutoCheck(!VOCAB_TP_AUTOCHECK);
+    autoBtn.classList.toggle('active', VOCAB_TP_AUTOCHECK);
+    autoBtn.textContent = VOCAB_TP_AUTOCHECK ? '⚡ Tô xanh khi gõ: BẬT' : '⚡ Tô xanh khi gõ: TẮT';
+  };
+}
+
 function clearTypeTimers(){
   if(_typeRvT){ clearTimeout(_typeRvT); _typeRvT=null; }
   if(_typeRvRaf){ cancelAnimationFrame(_typeRvRaf); _typeRvRaf=null; }
@@ -38288,6 +38456,7 @@ function nextType(){
       <button class="btn" id="typeHintLast">🔡 Chữ cuối</button>
       <button class="btn" id="typeShow">👁 Hiện đáp án</button>
       <button class="btn" id="typeSkip">Bỏ qua →</button>
+      ${vocabAutoCheckBtnHTML()}
     </div>
     <div class="type-tip">Enter = kiểm tra · Backspace = xoá · Ctrl/⌘+Enter = nghe lại</div>`;
 
@@ -38295,6 +38464,7 @@ function nextType(){
   const fb    = document.getElementById('typeFeedback');
   const cells = [...box.querySelectorAll('.letter-box:not(.space)')];
   const btnCheck = document.getElementById('typeCheck');
+  bindVocabAutoCheckBtn(box);
 
   /* ---------- vẽ ô theo giá trị input (nguồn sự thật duy nhất) ---------- */
   function paint(){
@@ -38302,7 +38472,10 @@ function nextType(){
     cells.forEach((bx,i)=>{
       bx.classList.remove('filled','cursor','correct','wrong','revealed');
       bx.textContent = val[i] || '';
-      if(val[i]) bx.classList.add('filled');
+      if(val[i]){
+        bx.classList.add('filled');
+        if(VOCAB_TP_AUTOCHECK) bx.classList.add(val[i]===typable[i] ? 'correct' : 'wrong');
+      }
     });
     const pos = Math.min(val.length, MAX-1);
     if(val.length < MAX && cells[val.length]) cells[val.length].classList.add('cursor');
@@ -39627,6 +39800,7 @@ function learnTypeCard(item){
       <button class="btn" id="ltHintFirst">🔠 Chữ đầu</button>
       <button class="btn" id="ltHintLast">🔡 Chữ cuối</button>
       <button class="btn" id="ltShow">👁 Hiện đáp án</button>
+      ${vocabAutoCheckBtnHTML()}
     </div>
     <div class="type-tip"></div>`;
 
@@ -39634,6 +39808,7 @@ function learnTypeCard(item){
   const fb  = box.querySelector('#ltFb');
   const cells = [...box.querySelectorAll('.letter-box:not(.space)')];
   const chk = box.querySelector('#ltCheck');
+  bindVocabAutoCheckBtn(box);
 
   let _ltPaintedLen = 0;
   const paint = ()=>{
@@ -39641,7 +39816,10 @@ function learnTypeCard(item){
     cells.forEach((bx,i)=>{
       bx.classList.remove('filled','cursor','correct','wrong','revealed');
       bx.textContent = val[i]||'';
-      if(val[i]) bx.classList.add('filled');
+      if(val[i]){
+        bx.classList.add('filled');
+        if(VOCAB_TP_AUTOCHECK) bx.classList.add(val[i]===typable[i] ? 'correct' : 'wrong');
+      }
     });
     /* Chữ nhảy: chỉ ô vừa gõ mới nảy lên, không lặp lại cho các ô đã điền
        từ trước để tránh giật khi backspace/gõ tiếp. */
@@ -39967,15 +40145,6 @@ function renderLearnStart(scope='path', empty=false){
     <div class="learn-card">
       <h2>🎯 Chọn phiên học</h2>
 
-      <div class="scope-grid">
-        ${SCOPES.map(x=>`
-          <button class="scope-card ${scope===x.k?'active':''} ${!x.n?'off':''}" data-scope="${x.k}">
-            <div class="sc-top"><span class="sc-ic">${x.ic}</span><span class="sc-n">${x.n}</span></div>
-            <div class="sc-t">${x.t}</div>
-            <div class="sc-d">${x.d}</div>
-          </button>`).join('')}
-      </div>
-
       <div class="sess-row">
         <span class="sess-lbl">Số từ mỗi phiên</span>
         <div class="sess-btns">
@@ -39991,6 +40160,15 @@ function renderLearnStart(scope='path', empty=false){
       ${scope==='srs'&&!nSrs?`<p style="color:var(--green)">🎉 Bạn đã ôn hết từ đến hạn hôm nay!</p>`:''}
 
       <button class="learn-big-btn" id="learnStartBtn">Bắt đầu học</button>
+
+      <div class="scope-grid">
+        ${SCOPES.map(x=>`
+          <button class="scope-card ${scope===x.k?'active':''} ${!x.n?'off':''}" data-scope="${x.k}">
+            <div class="sc-top"><span class="sc-ic">${x.ic}</span><span class="sc-n">${x.n}</span></div>
+            <div class="sc-t">${x.t}</div>
+            <div class="sc-d">${x.d}</div>
+          </button>`).join('')}
+      </div>
 
       <div class="srs-explain">
         <div class="se-title">Vì sao phải qua đủ 3 cửa mới tính là thuộc?</div>
