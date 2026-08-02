@@ -2277,6 +2277,7 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   border:2px solid var(--tp-c,var(--line-strong));
   border-radius:14px; background:var(--card);
   overflow:hidden; transition:box-shadow .15s, transform .15s;
+  content-visibility:auto; contain-intrinsic-size:auto 210px;
 }
 [data-theme="dark"] .te-macro-card{ background:var(--card); }
 .te-macro-card[data-color="0"]{ --tp-c:var(--cc0); } .te-macro-card[data-color="1"]{ --tp-c:var(--cc1); }
@@ -2293,11 +2294,29 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
    trình duyệt không hỗ trợ color-mix()/gradient thì vẫn còn màu nền đặc
    đúng của thẻ đó, không bao giờ trắng trơn mất chữ. */
 .te-macro-head{
+  position:relative; isolation:isolate;
   width:100%; display:flex; align-items:center; gap:8px; cursor:pointer;
   background:var(--tp-c,var(--accent));
-  background:linear-gradient(135deg,var(--tp-c,var(--accent)),color-mix(in srgb,var(--tp-c,var(--accent)) 62%,black));
+  /* Nhiều lớp gradient mờ chồng nhau (không dùng backdrop-filter) để
+     có cảm giác "sương mờ" dày hơn mà không tốn chi phí lấy mẫu nền
+     phía sau mỗi khung hình — hàng chục thẻ cùng bật backdrop-filter
+     lúc cuộn từng là nguyên nhân chính gây giật/lag trang. */
+  background:
+    radial-gradient(120% 160% at 15% -30%, rgba(255,255,255,.30), transparent 55%),
+    linear-gradient(135deg,color-mix(in srgb,var(--tp-c,var(--accent)) 82%,transparent),color-mix(in srgb,var(--tp-c,var(--accent)) 55%,black) 88%);
   border:none; padding:12px 13px 10px; text-align:left; font:inherit; color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
+  overflow:hidden;
 }
+/* Quầng sáng mờ ở góc trên-phải — blur() thường (không phải
+   backdrop-filter) chỉ áp lên chính lớp này, không cần lấy mẫu nền
+   phía sau nên rẻ hơn nhiều lần, mượt khi cuộn dù có rất nhiều thẻ. */
+.te-macro-head::before{
+  content:''; position:absolute; top:-65%; right:-20%; width:150px; height:150px;
+  background:radial-gradient(circle,rgba(255,255,255,.55),transparent 68%);
+  filter:blur(24px); pointer-events:none; z-index:0;
+}
+.te-macro-ico, .te-macro-name, .te-macro-count{ position:relative; z-index:1; }
 .te-macro-ico{ font-size:18px; flex-shrink:0; }
 .te-macro-name{ font-size:13px; font-weight:800; line-height:1.3; flex:1; color:#fff; }
 .te-macro-count{
@@ -2886,10 +2905,24 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .rd-card[data-color="6"]{ --tp-c:var(--cc6); } .rd-card[data-color="7"]{ --tp-c:var(--cc7); }
 .rd-card[data-color="8"]{ --tp-c:var(--cc8); } .rd-card[data-color="9"]{ --tp-c:var(--cc9); }
 .rd-card-head{
+  position:relative; isolation:isolate;
   display:flex; align-items:flex-start; gap:8px; padding:11px 13px 9px;
   width:100%; box-sizing:border-box; flex:0 0 auto;
   background:var(--tp-c,var(--accent));
+  background:
+    radial-gradient(120% 160% at 15% -30%, rgba(255,255,255,.30), transparent 55%),
+    linear-gradient(135deg,color-mix(in srgb,var(--tp-c,var(--accent)) 82%,transparent),color-mix(in srgb,var(--tp-c,var(--accent)) 55%,black) 88%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
+  overflow:hidden;
 }
+/* Cùng hiệu ứng kính mờ như đầu thẻ chủ đề (.te-macro-head) để 2 khu vực
+   duyệt nội dung (Danh sách & Reading) nhìn đồng nhất. */
+.rd-card-head::before{
+  content:''; position:absolute; top:-65%; right:-20%; width:150px; height:150px;
+  background:radial-gradient(circle,rgba(255,255,255,.55),transparent 68%);
+  filter:blur(24px); pointer-events:none; z-index:0;
+}
+.rd-eyebrow, .rd-card-count{ position:relative; z-index:1; }
 .rd-eyebrow{ font-size:10px; font-weight:800; letter-spacing:.5px; text-transform:uppercase;
   color:rgba(255,255,255,.92); flex:1; line-height:1.4; }
 .rd-card-count{ font-size:11px; font-weight:800; color:#fff; white-space:nowrap;
@@ -4340,6 +4373,20 @@ body.page-fs { overflow-x:hidden; }
   --ease-smooth: cubic-bezier(.4,0,.2,1);
 }
 html { scroll-behavior:smooth; }
+/* ---- Cuộn trang mượt hơn ----
+   - overscroll-behavior-y:none: chặn hiệu ứng "bật lại" (rubber-band)
+     kéo cả trang lún xuống ở đầu/cuối trên iOS/Android, hay xung đột
+     với header/nav dạng sticky gây giật khi cuộn nhanh tới đầu/cuối.
+   - transform:translateZ(0) trên header/nav sticky: ép trình duyệt
+     dựng riêng 1 lớp GPU (compositing layer) cho 2 thanh này, để khi
+     cuộn trình duyệt chỉ cần di chuyển lớp đã dựng sẵn thay vì vẽ lại
+     (repaint) toàn bộ mỗi khung hình — đây là chỗ tốn tài nguyên nhất
+     khi cuộn nhanh trên trang dài nhiều thẻ/màu như app này. */
+html { overscroll-behavior-y:none; }
+header, nav.tabs{
+  transform:translateZ(0); -webkit-transform:translateZ(0);
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+}
 
 /* Panel entrance — chỉ chạy opacity + translate (GPU), không đụng layout */
 .panel.active { animation:rise .38s cubic-bezier(.22,1,.36,1); }
