@@ -3727,6 +3727,18 @@ body.page-fs { overflow-x:hidden; }
   content-visibility:auto;
   contain-intrinsic-size:auto 240px;
 }
+/* Nền thẻ (chi tiết & gọn) + khung duyệt chủ đề phía trên: cho MỜ NHẸ
+   (kính mờ) thay vì đặc hoàn toàn — vẫn lộ nhẹ ảnh nền phía sau cho có
+   chiều sâu, nhưng đủ đục để chữ luôn dễ đọc, cùng tông với khung câu
+   ví dụ (.vc-example). */
+.vocab-card, .vocab-card[data-color],
+.lwc-tile, .lwc-tile[data-color],
+.topic-explorer, .te-toggle {
+  background:rgba(var(--paper-rgb), .82) !important;
+  backdrop-filter:blur(14px) saturate(150%) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(150%) !important;
+}
+.te-toggle:hover{ background:rgba(var(--paper-rgb), .92) !important; }
 .vocab-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--line-strong); }
 @media (hover:none){ .vocab-card:hover{ transform:none; box-shadow:var(--shadow-xs); } }
 .vc-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -5949,8 +5961,8 @@ body{
 /* ============================================================
    ĐỘ TRONG SUỐT (opacity) cho các thẻ & thanh tab
    ============================================================ */
-:root{ --panel-alpha:1; --card-rgb:255,255,255; }
-[data-theme="dark"]{ --card-rgb:22,26,36; }
+:root{ --panel-alpha:1; --card-rgb:255,255,255; --paper-rgb:244,246,244; }
+[data-theme="dark"]{ --card-rgb:22,26,36; --paper-rgb:10,18,16; }
 .opacity-row{ display:flex; align-items:center; gap:12px; margin-top:10px; }
 .opacity-row input[type="range"]{ flex:1; accent-color:var(--accent); height:6px; }
 .opacity-val{ font-family:var(--font-heading); font-weight:800; font-size:13px; color:var(--accent); min-width:44px; text-align:right; }
