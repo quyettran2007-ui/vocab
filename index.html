@@ -44841,6 +44841,179 @@ function nbSanitizeHtml(html){
   })(tmp);
   return tmp.innerHTML;
 }
+/* ---------- Dán (paste) vào ô ghi chú: chuẩn hoá cỡ chữ & kiểu chữ (font-family) về
+   mặc định của ô ghi chú, CHỈ giữ lại đậm/nhạt (bold) và in nghiêng (italic) từ
+   nguồn copy — bỏ hết font-size, font-family, màu chữ, gạch chân, nền highlight,
+   link... để nội dung dán vào luôn đồng bộ giao diện với phần còn lại của ghi chú. */
+function nbCleanPasteHtml(html, inlineMode){
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  tmp.querySelectorAll('script,style').forEach(function(n){ n.remove(); });
+  function isBold(el){
+    if(el.tagName === 'B' || el.tagName === 'STRONG') return true;
+    const w = el.style && el.style.fontWeight;
+    if(w){ const n = parseInt(w, 10); if(!isNaN(n)) return n >= 600; return /bold/i.test(w); }
+    return false;
+  }
+  function isItalic(el){
+    if(el.tagName === 'I' || el.tagName === 'EM') return true;
+    return !!(el.style && /italic|oblique/i.test(el.style.fontStyle || ''));
+  }
+  function isListTag(tag){ return tag === 'UL' || tag === 'OL'; }
+  function isBlock(el){
+    const blockTags = {DIV:1, P:1, TR:1, TABLE:1, TBODY:1, H1:1, H2:1, H3:1, H4:1, H5:1, H6:1, SECTION:1, ARTICLE:1};
+    if(blockTags[el.tagName]) return true;
+    const d = el.style && el.style.display;
+    return !!(d && /^(block|table.*)$/i.test(d));
+  }
+  /* Nối 1 khoảng trắng vào cuối target nếu chưa có, dùng khi ở chế độ "nối liền"
+     (inlineMode) để tách các cụm/dòng nguồn ra mà không tạo dòng mới. */
+  function appendSpace(target){
+    const last = target.lastChild;
+    const lastText = last ? (last.textContent || '') : '';
+    if(target.childNodes.length && !/\s$/.test(lastText)) target.appendChild(document.createTextNode(' '));
+  }
+  /* Xử lý đệ quy: chép nội dung "sạch" (chỉ giữ b/i/br/ul/ol/li, hoặc chỉ chữ
+     liền mạch nếu inlineMode) từ srcParent vào target (một node DOM nháp). */
+  function process(srcParent, target, bold, italic){
+    Array.prototype.slice.call(srcParent.childNodes).forEach(function(child){
+      if(child.nodeType === 3){
+        if(!child.nodeValue) return;
+        let wrap = document.createTextNode(child.nodeValue);
+        if(italic){ const i = document.createElement('i'); i.appendChild(wrap); wrap = i; }
+        if(bold){ const b = document.createElement('b'); b.appendChild(wrap); wrap = b; }
+        target.appendChild(wrap);
+        return;
+      }
+      if(child.nodeType !== 1) return;
+      const tag = child.tagName;
+      if(tag === 'SCRIPT' || tag === 'STYLE') return;
+      if(tag === 'BR'){
+        if(inlineMode) appendSpace(target); else target.appendChild(document.createElement('br'));
+        return;
+      }
+      const nb2 = bold || isBold(child);
+      const ni2 = italic || isItalic(child);
+      if(isListTag(tag)){
+        if(inlineMode){
+          /* Đang nối liền vào 1 dòng có sẵn: không tạo bullet/dòng mới, chỉ lấy
+             chữ trong từng mục, nối liền nhau bằng khoảng trắng. */
+          Array.prototype.slice.call(child.children).forEach(function(liChild){
+            if(liChild.tagName !== 'LI') return;
+            appendSpace(target);
+            process(liChild, target, nb2, ni2);
+          });
+          return;
+        }
+        const listEl = document.createElement(tag.toLowerCase());
+        Array.prototype.slice.call(child.children).forEach(function(liChild){
+          if(liChild.tagName === 'LI'){
+            const li = document.createElement('li');
+            process(liChild, li, nb2, ni2);
+            /* Bỏ các mục danh sách rỗng (không có chữ) để tránh chấm đầu dòng
+               "mồ côi" không có nội dung khi dán */
+            if(li.textContent.replace(/\u200b/g,'').trim() !== '') listEl.appendChild(li);
+          }
+        });
+        if(listEl.children.length) target.appendChild(listEl);
+        return;
+      }
+      if(tag === 'LI'){
+        if(inlineMode){ appendSpace(target); process(child, target, nb2, ni2); return; }
+        const li = document.createElement('li');
+        process(child, li, nb2, ni2);
+        target.appendChild(li);
+        return;
+      }
+      if(isBlock(child)){
+        if(inlineMode){ appendSpace(target); process(child, target, nb2, ni2); return; }
+        process(child, target, nb2, ni2);
+        target.appendChild(document.createElement('br'));
+        return;
+      }
+      /* Thẻ inline khác (span/font/a/…): coi như "trong suốt", chỉ mang theo
+         cờ đậm/nghiêng, không giữ lại chính thẻ đó (bỏ màu, cỡ chữ, link…) */
+      process(child, target, nb2, ni2);
+    });
+  }
+  const scratch = document.createElement('div');
+  process(tmp, scratch, false, false);
+  let out = scratch.innerHTML;
+  if(inlineMode){
+    out = out.replace(/\s+/g, ' ').trim();
+  } else {
+    out = out.replace(/(<br>\s*){3,}/g, '<br><br>').replace(/^(<br>\s*)+/, '').replace(/(<br>\s*)+$/, '');
+  }
+  return out;
+}
+/* Con trỏ hiện có đang nằm trong 1 mục danh sách (bullet) có sẵn của ô ghi chú
+   hay không — nếu có thì dán nối liền vào ngay sau bullet đó thay vì xuống dòng. */
+/* Nếu con trỏ (collapsed) đang ở vị trí biên của 1 thẻ cha (ví dụ ngay sau
+   thẻ <ul>) thay vì thực sự nằm bên trong nội dung con cuối cùng, "dò xuống"
+   tới điểm cuối cùng thực bên trong (ví dụ bên trong thẻ li/font/text) — vị
+   trí này mới đúng là nơi con trỏ hiển thị trên màn hình, và insertHTML cần
+   chèn đúng vào đây để không bị "bật ra ngoài" tạo dòng/khối mới. */
+function nbDescendCaretToEnd(range){
+  if(!range || !range.collapsed) return range;
+  let container = range.startContainer, offset = range.startOffset;
+  while(container.nodeType === 1 && offset > 0){
+    const child = container.childNodes[offset - 1];
+    if(!child) break;
+    if(child.nodeType === 3){ container = child; offset = child.length; break; }
+    if(child.nodeType === 1 && child.childNodes.length){ container = child; offset = child.childNodes.length; continue; }
+    break;
+  }
+  const r = document.createRange();
+  r.setStart(container, offset);
+  r.collapse(true);
+  return r;
+}
+function nbCaretInsideLi(el){
+  const sel = window.getSelection();
+  if(!sel || !sel.rangeCount) return false;
+  let node = sel.getRangeAt(0).startContainer;
+  while(node && node !== el){
+    if(node.nodeType === 1 && node.tagName === 'LI') return true;
+    node = node.parentNode;
+  }
+  return false;
+}
+function nbHandlePaste(e){
+  const el = e.target && e.target.closest ? e.target.closest('.nb-note-editable') : null;
+  if(!el || el.getAttribute('contenteditable') !== 'true') return;
+  const cd = e.clipboardData || window.clipboardData;
+  if(!cd) return;
+  e.preventDefault();
+  /* Chuẩn hoá lại vị trí con trỏ: nếu đang ở biên ngoài (ví dụ ngay sau thẻ
+     <ul>) thì dò xuống vị trí thực bên trong nội dung cuối cùng, rồi đặt lại
+     selection theo đúng vị trí đó — để insertHTML chèn đúng chỗ con trỏ đang
+     hiển thị, không bị bật ra ngoài tạo dòng/bullet mới. */
+  const _sel = window.getSelection();
+  if(_sel && _sel.rangeCount){
+    const _fixed = nbDescendCaretToEnd(_sel.getRangeAt(0));
+    if(_fixed){ _sel.removeAllRanges(); _sel.addRange(_fixed); }
+  }
+  /* Nếu con trỏ đang ở trong 1 dòng có sẵn bullet (ví dụ bullet mặc định, đậm,
+     đỏ của ô Ghi chú nhanh khi còn trống) thì dán nối liền chữ ngay sau bullet
+     đó trên cùng 1 dòng, KHÔNG tạo dòng/bullet mới. */
+  const inlineMode = nbCaretInsideLi(el);
+  const html = cd.getData('text/html');
+  const text = cd.getData('text/plain') || '';
+  let clean;
+  if(html){
+    clean = nbCleanPasteHtml(html, inlineMode);
+  } else {
+    clean = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    clean = inlineMode ? clean.replace(/\r\n|\r|\n/g, ' ').replace(/\s+/g, ' ').trim()
+                        : clean.replace(/\r\n|\r|\n/g, '<br>');
+  }
+  if(!clean) return;
+  try{ document.execCommand('insertHTML', false, clean); }
+  catch(err){ try{ document.execCommand('insertText', false, text); }catch(e2){} }
+  if(el.id === 'qcInput'){ if(typeof qcUpdateToolbarState === 'function') qcUpdateToolbarState(); }
+  else if(typeof nbNoteAutosave === 'function') nbNoteAutosave(el);
+}
+document.addEventListener('paste', nbHandlePaste, true);
 /* ---------- Lưu kích thước đã kéo (resize) để không bị mất khi tải lại trang ---------- */
 function nbSaveSize(day, id, key, w, h){
   const nb = loadNotebook();
