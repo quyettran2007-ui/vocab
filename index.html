@@ -144,7 +144,7 @@
    được đồng bộ bằng JS (căn theo .qc-slot) để khớp mọi kích cỡ
    màn hình mà không cần đoán lại từng breakpoint của header. */
 .qc-slot{ visibility:hidden; }
-.qc-widget{ position:fixed; top:50%; right:14px; transform:translateY(-50%); z-index:5000; display:flex; flex-direction:column; gap:10px; align-items:center; }
+.qc-widget{ position:fixed; top:50%; right:14px; transform:translateY(-50%); z-index:5000; }
 .qc-toggle-btn{
   width:40px; height:40px; border-radius:13px; border:1px solid rgba(255,255,255,.35);
   background:var(--accent-grad); color:#fff; font-size:17px; cursor:pointer; padding:0;
@@ -154,146 +154,8 @@
 .qc-toggle-btn:hover{ transform:rotate(-10deg) scale(1.07); box-shadow:var(--shadow-lg); }
 .qc-toggle-btn:active{ transform:scale(.94); }
 .qc-toggle-btn.on{ box-shadow:0 0 0 3px var(--accent-bg), var(--shadow); }
-.mm-toggle-btn{ background:linear-gradient(135deg,#0ea5e9,#6366f1); }
 @media (max-width:640px){
   .qc-toggle-btn{ width:32px; height:32px; font-size:14px; border-radius:11px; }
-}
-
-/* ============================================================
-   MIND MAP TỪ VỰNG — trang riêng toàn màn hình (không phải modal
-   nổi như Ghi chú nhanh). Đọc lại dữ liệu Sổ ghi chú (NOTEBOOK_KEY),
-   tự nhận diện các dòng ghi theo format:
-   syn1 = syn2 = ... (pos) : nghĩa1 / nghĩa2 → cụm1 (dịch1), cụm2 (dịch2), ...
-   rồi vẽ thành sơ đồ tư duy (radial) có thể phóng to/thu nhỏ & kéo xem.
-   ============================================================ */
-.mm-page{
-  position:fixed; inset:0; z-index:6000; background:var(--card);
-  display:flex; flex-direction:column;
-}
-.mm-header{
-  display:flex; align-items:center; gap:12px; padding:12px 16px;
-  background:var(--card); border-bottom:1px solid var(--line); box-shadow:var(--shadow-sm);
-  flex:0 0 auto; z-index:22;
-}
-.mm-back-btn{
-  width:38px; height:38px; border-radius:11px; border:1px solid var(--line);
-  background:var(--card-sunken); color:var(--ink); font-size:18px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; flex:0 0 auto;
-}
-.mm-back-btn:hover{ background:var(--accent-bg); color:var(--accent); }
-.mm-title{ font-weight:800; font-size:16px; white-space:nowrap; }
-.mm-title small{ font-weight:500; opacity:.65; margin-left:6px; }
-.mm-search{
-  flex:1 1 auto; max-width:360px; padding:8px 12px; border-radius:10px;
-  border:1px solid var(--line); background:var(--card-sunken); color:var(--ink); font-size:13px;
-}
-.mm-zoom-ctrl{ display:flex; align-items:center; gap:4px; margin-left:auto; flex:0 0 auto; }
-.mm-zoom-ctrl button{
-  width:32px; height:32px; border-radius:9px; border:1px solid var(--line);
-  background:var(--card-sunken); color:var(--ink); font-size:15px; cursor:pointer;
-}
-.mm-zoom-ctrl button:hover{ background:var(--accent-bg); color:var(--accent); }
-.mm-zoom-val{ font-size:12px; opacity:.7; width:42px; text-align:center; }
-.mm-body{ flex:1 1 auto; display:flex; min-height:0; }
-.mm-left{
-  width:30%; min-width:220px; max-width:360px; flex:0 0 auto; border-right:1px solid var(--line);
-  background:var(--card); overflow-y:auto; padding:8px;
-  transition:width .22s ease, min-width .22s ease, max-width .22s ease, padding .22s ease, opacity .18s ease;
-}
-.mm-left.collapsed{ width:0; min-width:0; max-width:0; padding:0; opacity:0; overflow:hidden; border-right:none; }
-#mmCollapseBtn.on{ background:var(--accent-bg); color:var(--accent); border-color:var(--accent); }
-.mm-count{ font-size:12px; opacity:.6; padding:6px 8px 10px; }
-.mm-empty{ padding:24px 14px; text-align:center; opacity:.6; font-size:13px; line-height:1.6; }
-.mm-list-item{
-  display:block; width:100%; text-align:left; padding:10px 12px; margin-bottom:6px;
-  border-radius:11px; border:1px solid transparent; background:var(--card-sunken);
-  cursor:pointer; transition:background .15s ease, border-color .15s ease;
-}
-.mm-list-item:hover{ background:var(--accent-bg); }
-.mm-list-item.active{ border-color:var(--accent); background:var(--accent-bg); }
-.mm-li-word{ font-weight:700; font-size:13.5px; color:var(--ink); line-height:1.35; }
-.mm-li-pos{ display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:6px; background:var(--accent); color:#fff; margin-right:6px; vertical-align:middle; }
-.mm-li-meaning{ font-size:12px; opacity:.7; margin-top:2px; line-height:1.4; }
-.mm-canvas-wrap{
-  flex:1 1 auto; position:relative; overflow:hidden; cursor:grab;
-  background-image:radial-gradient(var(--line) 1px, transparent 1px);
-  background-size:22px 22px;
-  display:flex; align-items:center; justify-content:center;
-}
-.mm-canvas-wrap.dragging{ cursor:grabbing; }
-.mm-canvas{
-  position:relative; width:100%; height:100%; transform-origin:center center;
-  display:flex; align-items:center; justify-content:center;
-}
-.mm-empty-canvas{ opacity:.55; font-size:13.5px; text-align:center; padding:20px; max-width:280px; }
-.mm-card{
-  position:relative; transition:opacity .2s ease;
-}
-.mm-card.flash .mm-node-center{ box-shadow:0 0 0 6px var(--accent-bg), var(--shadow-lg); }
-.mm-diagram{
-  position:relative; display:flex; align-items:center; justify-content:center; gap:54px; padding:36px;
-}
-.mm-node-syn, .mm-node-colloc{ transition:transform .25s ease; }
-.mm-links{ position:absolute; top:0; left:0; pointer-events:none; z-index:1; overflow:visible; }
-.mm-links path{ fill:none; stroke:var(--line); stroke-width:1.7; }
-.mm-col{ display:flex; flex-direction:column; gap:14px; z-index:2; position:relative; }
-.mm-col-syn{ align-items:flex-end; }
-.mm-col-colloc{ align-items:flex-start; }
-.mm-col-title{ font-size:10.5px; font-weight:800; opacity:.5; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px; }
-.mm-col-syn .mm-col-title{ align-self:flex-end; }
-.mm-col-colloc .mm-col-title{ align-self:flex-start; }
-.mm-node{ position:relative; z-index:2; }
-.mm-node-center{
-  background:linear-gradient(135deg, var(--accent), #6366f1); color:#fff; text-align:center;
-  padding:16px 24px; border-radius:20px; box-shadow:var(--shadow-lg); max-width:280px;
-}
-.mm-center-pos{ display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,.25); padding:2px 9px; border-radius:8px; margin-bottom:6px; }
-.mm-center-word{ font-weight:800; font-size:17px; line-height:1.3; }
-.mm-center-mean{ font-size:12px; opacity:.92; margin-top:6px; font-weight:500; line-height:1.4; }
-.mm-node-syn{
-  background:var(--accent-bg); border:1px solid var(--accent); color:var(--ink);
-  font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:12px; max-width:210px; text-align:right;
-  display:flex; align-items:center; justify-content:flex-end; gap:2px;
-}
-.mm-node-colloc{
-  background:var(--card-sunken); border:1px solid var(--line); padding:8px 14px; border-radius:12px; max-width:230px;
-}
-.mm-colloc-en{ font-weight:700; color:var(--ink); font-size:12.5px; line-height:1.35; }
-.mm-colloc-match{ color:var(--accent); font-weight:800; }
-.mm-colloc-vi{ opacity:.62; font-size:11px; margin-top:2px; line-height:1.35; }
-.mm-colloc-vi-diff{ opacity:1; color:var(--accent-2); font-weight:700; }
-
-/* ---- nút 🔊 phát âm gắn cạnh mỗi từ/cụm trong mind map ---- */
-.mm-speak-btn{
-  display:inline-flex; align-items:center; justify-content:center;
-  width:19px; height:19px; margin-left:5px; border:none; border-radius:50%;
-  background:rgba(255,255,255,.28); color:inherit; font-size:10px; cursor:pointer;
-  vertical-align:middle; padding:0; line-height:1; flex:0 0 auto;
-  transition:transform .12s ease, background .12s ease;
-}
-.mm-speak-btn:hover{ transform:scale(1.15); }
-.mm-speak-btn:active{ transform:scale(.88); }
-.mm-node-syn .mm-speak-btn,
-.mm-node-colloc .mm-speak-btn{ background:var(--accent-bg); color:var(--accent); }
-.mm-center-word{ display:inline-flex; align-items:center; }
-.mm-colloc-en{ display:flex; align-items:center; flex-wrap:wrap; gap:2px; }
-
-/* ---- lớp phủ tối phía sau danh sách từ khi mở dạng ngăn kéo (mobile) ---- */
-.mm-left-backdrop{ position:fixed; inset:0; background:rgba(10,20,18,.42); z-index:19; }
-
-@media (max-width:760px){
-  .mm-left{
-    position:fixed; top:0; bottom:0; left:0; width:84%; max-width:340px; min-width:0;
-    z-index:20; padding:10px; border-right:1px solid var(--line);
-    box-shadow:var(--shadow-lg);
-    transform:translateX(-102%);
-    transition:transform .25s cubic-bezier(.22,.9,.3,1);
-    opacity:1; overflow-y:auto;
-  }
-  .mm-left.mm-mobile-open{ transform:translateX(0); }
-  .mm-left.collapsed{ width:84%; max-width:340px; padding:10px; opacity:1; overflow-y:auto; }
-  .mm-title small{ display:none; }
-  .mm-search{ max-width:none; }
 }
 
 /* ---- Cửa sổ ghi chú nhanh: modal chiếm khoảng nửa diện tích màn hình ---- */
@@ -2415,6 +2277,7 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   border:2px solid var(--tp-c,var(--line-strong));
   border-radius:14px; background:var(--card);
   overflow:hidden; transition:box-shadow .15s, transform .15s;
+  content-visibility:auto; contain-intrinsic-size:auto 210px;
 }
 [data-theme="dark"] .te-macro-card{ background:var(--card); }
 .te-macro-card[data-color="0"]{ --tp-c:var(--cc0); } .te-macro-card[data-color="1"]{ --tp-c:var(--cc1); }
@@ -2434,19 +2297,24 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   position:relative; isolation:isolate;
   width:100%; display:flex; align-items:center; gap:8px; cursor:pointer;
   background:var(--tp-c,var(--accent));
-  background:linear-gradient(135deg,color-mix(in srgb,var(--tp-c,var(--accent)) 90%,transparent),color-mix(in srgb,var(--tp-c,var(--accent)) 58%,black) 88%);
-  backdrop-filter:blur(16px) saturate(170%);
-  -webkit-backdrop-filter:blur(16px) saturate(170%);
+  /* Nhiều lớp gradient mờ chồng nhau (không dùng backdrop-filter) để
+     có cảm giác "sương mờ" dày hơn mà không tốn chi phí lấy mẫu nền
+     phía sau mỗi khung hình — hàng chục thẻ cùng bật backdrop-filter
+     lúc cuộn từng là nguyên nhân chính gây giật/lag trang. */
+  background:
+    radial-gradient(120% 160% at 15% -30%, rgba(255,255,255,.30), transparent 55%),
+    linear-gradient(135deg,color-mix(in srgb,var(--tp-c,var(--accent)) 82%,transparent),color-mix(in srgb,var(--tp-c,var(--accent)) 55%,black) 88%);
   border:none; padding:12px 13px 10px; text-align:left; font:inherit; color:#fff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
   overflow:hidden;
 }
-/* Quầng sáng mờ ở góc trên-phải, làm loang bằng blur -> đầu thẻ trông
-   như kính mờ (frosted glass) thay vì mảng màu gradient phẳng cứng. */
+/* Quầng sáng mờ ở góc trên-phải — blur() thường (không phải
+   backdrop-filter) chỉ áp lên chính lớp này, không cần lấy mẫu nền
+   phía sau nên rẻ hơn nhiều lần, mượt khi cuộn dù có rất nhiều thẻ. */
 .te-macro-head::before{
-  content:''; position:absolute; top:-55%; right:-15%; width:130px; height:130px;
-  background:radial-gradient(circle,rgba(255,255,255,.45),transparent 70%);
-  filter:blur(20px); pointer-events:none; z-index:0;
+  content:''; position:absolute; top:-65%; right:-20%; width:150px; height:150px;
+  background:radial-gradient(circle,rgba(255,255,255,.55),transparent 68%);
+  filter:blur(24px); pointer-events:none; z-index:0;
 }
 .te-macro-ico, .te-macro-name, .te-macro-count{ position:relative; z-index:1; }
 .te-macro-ico{ font-size:18px; flex-shrink:0; }
@@ -3041,18 +2909,18 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   display:flex; align-items:flex-start; gap:8px; padding:11px 13px 9px;
   width:100%; box-sizing:border-box; flex:0 0 auto;
   background:var(--tp-c,var(--accent));
-  background:linear-gradient(135deg,color-mix(in srgb,var(--tp-c,var(--accent)) 90%,transparent),color-mix(in srgb,var(--tp-c,var(--accent)) 58%,black) 88%);
-  backdrop-filter:blur(16px) saturate(170%);
-  -webkit-backdrop-filter:blur(16px) saturate(170%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
+  background:
+    radial-gradient(120% 160% at 15% -30%, rgba(255,255,255,.30), transparent 55%),
+    linear-gradient(135deg,color-mix(in srgb,var(--tp-c,var(--accent)) 82%,transparent),color-mix(in srgb,var(--tp-c,var(--accent)) 55%,black) 88%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
   overflow:hidden;
 }
 /* Cùng hiệu ứng kính mờ như đầu thẻ chủ đề (.te-macro-head) để 2 khu vực
    duyệt nội dung (Danh sách & Reading) nhìn đồng nhất. */
 .rd-card-head::before{
-  content:''; position:absolute; top:-55%; right:-15%; width:130px; height:130px;
-  background:radial-gradient(circle,rgba(255,255,255,.45),transparent 70%);
-  filter:blur(20px); pointer-events:none; z-index:0;
+  content:''; position:absolute; top:-65%; right:-20%; width:150px; height:150px;
+  background:radial-gradient(circle,rgba(255,255,255,.55),transparent 68%);
+  filter:blur(24px); pointer-events:none; z-index:0;
 }
 .rd-eyebrow, .rd-card-count{ position:relative; z-index:1; }
 .rd-eyebrow{ font-size:10px; font-weight:800; letter-spacing:.5px; text-transform:uppercase;
@@ -4505,6 +4373,20 @@ body.page-fs { overflow-x:hidden; }
   --ease-smooth: cubic-bezier(.4,0,.2,1);
 }
 html { scroll-behavior:smooth; }
+/* ---- Cuộn trang mượt hơn ----
+   - overscroll-behavior-y:none: chặn hiệu ứng "bật lại" (rubber-band)
+     kéo cả trang lún xuống ở đầu/cuối trên iOS/Android, hay xung đột
+     với header/nav dạng sticky gây giật khi cuộn nhanh tới đầu/cuối.
+   - transform:translateZ(0) trên header/nav sticky: ép trình duyệt
+     dựng riêng 1 lớp GPU (compositing layer) cho 2 thanh này, để khi
+     cuộn trình duyệt chỉ cần di chuyển lớp đã dựng sẵn thay vì vẽ lại
+     (repaint) toàn bộ mỗi khung hình — đây là chỗ tốn tài nguyên nhất
+     khi cuộn nhanh trên trang dài nhiều thẻ/màu như app này. */
+html { overscroll-behavior-y:none; }
+header, nav.tabs{
+  transform:translateZ(0); -webkit-transform:translateZ(0);
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+}
 
 /* Panel entrance — chỉ chạy opacity + translate (GPU), không đụng layout */
 .panel.active { animation:rise .38s cubic-bezier(.22,1,.36,1); }
@@ -7266,7 +7148,6 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
 <!-- ===== NÚT GHI CHÚ NHANH NỔI — vị trí đồng bộ bằng JS theo .qc-slot trong header ===== -->
 <div id="qcWidget" class="qc-widget">
   <button type="button" id="qcToggleBtn" class="qc-toggle-btn" onclick="qcToggle()" title="Ghi chú từ vựng nhanh">📝</button>
-  <button type="button" id="mmToggleBtn" class="qc-toggle-btn mm-toggle-btn" onclick="mmOpen()" title="Mind map từ vựng (từ Sổ ghi chú)">🧠</button>
 </div>
 <div id="qcOverlay" class="qc-overlay" style="display:none" onclick="qcOverlayClick(event)">
   <div class="qc-modal" id="qcModal">
@@ -7298,28 +7179,6 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
       <button type="button" class="btn primary qc-save-btn" onclick="qcSave()">💾 Lưu</button>
     </div>
     <div class="qc-panel-hint">Tự lưu vào 1 ghi chú ghim/ngày, xem ở ⚙️ Setting → 📒 Sổ ghi chú.</div>
-  </div>
-</div>
-
-<!-- ===== TRANG RIÊNG: MIND MAP TỪ VỰNG (không phải modal nổi) ===== -->
-<div id="mmPage" class="mm-page" style="display:none">
-  <div class="mm-header">
-    <button type="button" class="mm-back-btn" onclick="mmClose()" title="Đóng, quay lại">←</button>
-    <button type="button" class="mm-back-btn" id="mmCollapseBtn" onclick="mmToggleLeftPanel()" title="Thu gọn/mở rộng danh sách từ">☰</button>
-    <div class="mm-title">🧠 Mind Map từ vựng<small id="mmSubCount"></small></div>
-    <input type="text" id="mmSearchInput" class="mm-search" placeholder="🔍 Tìm từ trong mind map..." oninput="mmSearchFilter(this.value)">
-    <div class="mm-zoom-ctrl">
-      <button type="button" onclick="mmZoomStep(-1)" title="Thu nhỏ">－</button>
-      <span class="mm-zoom-val" id="mmZoomVal">100%</span>
-      <button type="button" onclick="mmZoomStep(1)" title="Phóng to">＋</button>
-      <button type="button" onclick="mmResetView()" title="Về vị trí ban đầu">⤾</button>
-    </div>
-  </div>
-  <div class="mm-body" id="mmBody">
-    <div class="mm-left" id="mmLeftList"></div>
-    <div class="mm-canvas-wrap" id="mmCanvasWrap">
-      <div class="mm-canvas" id="mmCanvas"></div>
-    </div>
   </div>
 </div>
 
@@ -45105,465 +44964,6 @@ function qcSave(){
   toast('📌 Đã lưu vào ghi chú nhanh hôm nay');
   qcClose();
 }
-/* ============================================================
-   MIND MAP TỪ VỰNG
-   ------------------------------------------------------------
-   Đọc lại toàn bộ Sổ ghi chú (NOTEBOOK_KEY), tách các dòng ghi
-   theo format:
-     syn1 = syn2 = ... (pos) : nghĩa1 / nghĩa2 → cụm1 (dịch1), cụm2 (dịch2), ...
-   thành các "entry", rồi vẽ mỗi entry thành 1 card mind-map dạng
-   toả tròn (center = từ gốc, nhánh trên = từ đồng nghĩa, nhánh
-   dưới = cụm liên quan). Toàn bộ canvas có thể kéo (pan) và
-   phóng to/thu nhỏ (zoom) bằng chuột/cảm ứng.
-   ============================================================ */
-let mmEntries = [];
-let mmSelectedIdx = -1;
-let mmScale = 1, mmTx = 0, mmTy = 0;
-const MM_ZOOM_MIN = 0.15, MM_ZOOM_MAX = 2.5, MM_ZOOM_STEP = 0.15;
-let mmDragging = false, mmDragStartX = 0, mmDragStartY = 0, mmStartTx = 0, mmStartTy = 0;
-let mmPinchStartDist = 0, mmPinchStartScale = 1;
-
-function mmStripHtml(html){
-  if(!html) return [];
-  let s = String(html)
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<(div|p|li|br)[^>]*>/gi, '\n')
-    .replace(/<\/(div|p|li)>/gi, '')
-    .replace(/<[^>]+>/g, '');
-  const ta = document.createElement('textarea');
-  ta.innerHTML = s;
-  s = ta.value;
-  return s.split('\n').map(x=>x.replace(/\u200b/g,'').trim()).filter(Boolean);
-}
-
-// Một mục đồng nghĩa đôi khi được ghi tắt kiểu "increasing/rising/escalating/soaring
-// demand" — nhiều tính từ cách nhau bởi dấu "/" nhưng dùng chung phần hậu tố
-// (ở đây là "demand", trùng với đuôi của từ gốc). Hàm này tách ra thành từng
-// cụm từ đầy đủ riêng biệt: "increasing demand", "rising demand", ... để mỗi
-// cụm trở thành 1 thẻ đồng nghĩa riêng trên mind map thay vì gộp chung 1 thẻ.
-function mmExpandSlashPhrase(s){
-  if(!s || s.indexOf('/') === -1) return [s];
-  const tokens = s.split(/\s+/);
-  const slashTokenCount = tokens.filter(t=>t.indexOf('/') !== -1).length;
-  // Chỉ tách khi CHỈ CÓ 1 vị trí biến đổi trong cả cụm (vd "increasing/rising/
-  // escalating/soaring demand"). Nếu có từ 2 vị trí "/" trở lên trong cùng 1
-  // cụm (thường là do các phương án nhiều-từ như "keep track of" bị dấu "/"
-  // cắt vụn theo khoảng trắng), việc ghép tổ hợp sẽ ra câu vô nghĩa — nên bỏ
-  // qua, giữ nguyên cả cụm thành 1 thẻ duy nhất thay vì tách sai.
-  if(slashTokenCount !== 1) return [s];
-  let combos = [''];
-  tokens.forEach(tok=>{
-    const opts = tok.split('/').map(x=>x.trim()).filter(Boolean);
-    if(opts.length === 0) return;
-    const next = [];
-    combos.forEach(c=>{
-      opts.forEach(o=>{ next.push(c ? c + ' ' + o : o); });
-    });
-    combos = next;
-  });
-  return combos.slice(0, 16);
-}
-
-function mmParseLine(line){
-  line = line.replace(/\s+/g, ' ').trim();
-  const m = line.match(/^(.+?)\s*\(([^()]{1,8})\)\s*:\s*(.+)$/);
-  if(!m) return null;
-  const synPart = m[1].trim();
-  const pos = m[2].trim();
-  let rest = m[3].trim();
-  let meaningPart = rest, colloPart = '';
-  const arrowIdx = rest.indexOf('→');
-  if(arrowIdx >= 0){
-    meaningPart = rest.slice(0, arrowIdx).trim();
-    colloPart = rest.slice(arrowIdx + 1).trim();
-  }
-  const rawSynonyms = synPart.split(/\s*=\s*/).map(x=>x.trim()).filter(Boolean);
-  const synonyms = [];
-  rawSynonyms.forEach(s=>{ mmExpandSlashPhrase(s).forEach(x=>{ if(x) synonyms.push(x); }); });
-  const meanings = meaningPart.split(/\s*\/\s*/).map(x=>x.trim()).filter(Boolean);
-  if(synonyms.length === 0 || meanings.length === 0) return null;
-  // Chỉ nhận đúng "mẫu gốc": bắt buộc phải có cụm collocation đi sau mũi tên
-  // "→ cụm1 (dịch1), cụm2 (dịch2), ..." — ghi chú thiếu phần này sẽ bị bỏ qua,
-  // không đưa vào mind map.
-  if(!colloPart) return null;
-  const collocations = [];
-  colloPart.split(/\),\s*/).forEach(p=>{
-    p = p.trim().replace(/,$/, '');
-    if(!p) return;
-    if(!p.endsWith(')')) p += ')';
-    const cm = p.match(/^(.+?)\(([^()]*)\)$/);
-    if(cm){
-      const phrase = cm[1].trim();
-      const trans = cm[2].trim();
-      if(phrase) collocations.push({ phrase, trans });
-    }
-  });
-  if(collocations.length === 0) return null;
-  return { synonyms, pos, meanings, collocations, raw: line };
-}
-
-function mmParseNotebook(){
-  const nb = loadNotebook();
-  const seen = new Set();
-  const entries = [];
-  Object.keys(nb).sort().reverse().forEach(day=>{
-    (nb[day] || []).forEach(item=>{
-      const lines = mmStripHtml(item.note);
-      lines.forEach(line=>{
-        const parsed = mmParseLine(line);
-        if(parsed && !seen.has(parsed.raw)){
-          seen.add(parsed.raw);
-          entries.push(parsed);
-        }
-      });
-    });
-  });
-  return entries;
-}
-
-function mmOpen(){
-  const page = document.getElementById('mmPage');
-  if(!page) return;
-  mmEntries = mmParseNotebook();
-  page.style.display = 'flex';
-  mmRenderAll();
-  const si = document.getElementById('mmSearchInput');
-  if(si) si.value = '';
-}
-function mmClose(){
-  const page = document.getElementById('mmPage');
-  if(!page) return;
-  page.style.display = 'none';
-}
-let mmLeftCollapsed = false;
-function mmIsMobile(){ return window.innerWidth <= 760; }
-function mmSetBackdrop(show){
-  let bd = document.getElementById('mmLeftBackdrop');
-  if(show){
-    if(!bd){
-      bd = document.createElement('div');
-      bd.id = 'mmLeftBackdrop';
-      bd.className = 'mm-left-backdrop';
-      bd.onclick = ()=>mmToggleLeftPanel();
-      const body = document.getElementById('mmBody');
-      if(body) body.appendChild(bd);
-    }
-  } else if(bd){
-    bd.remove();
-  }
-}
-function mmToggleLeftPanel(){
-  const left = document.getElementById('mmLeftList');
-  const btn = document.getElementById('mmCollapseBtn');
-  if(!left) return;
-  // Trên điện thoại: danh sách từ hiện dưới dạng ngăn kéo trượt từ trái,
-  // có lớp phủ tối phía sau — trước đây bị ẩn cứng bằng display:none nên
-  // không cách nào bấm để chọn từ trên mobile được nữa.
-  if(mmIsMobile()){
-    const opening = !left.classList.contains('mm-mobile-open');
-    left.classList.toggle('mm-mobile-open', opening);
-    mmSetBackdrop(opening);
-    if(btn) btn.classList.toggle('on', opening);
-    return;
-  }
-  mmLeftCollapsed = !mmLeftCollapsed;
-  left.classList.toggle('collapsed', mmLeftCollapsed);
-  if(btn) btn.classList.toggle('on', mmLeftCollapsed);
-  setTimeout(()=>{
-    if(mmSelectedIdx >= 0){ mmDrawLinks(mmSelectedIdx); mmFitToView(); }
-  }, 230);
-}
-
-function mmRenderAll(){
-  const left = document.getElementById('mmLeftList');
-  const canvas = document.getElementById('mmCanvas');
-  const sub = document.getElementById('mmSubCount');
-  if(!left || !canvas) return;
-  if(sub) sub.textContent = mmEntries.length ? ` · ${mmEntries.length} mục` : '';
-  if(mmEntries.length === 0){
-    left.innerHTML = `<div class="mm-empty">Chưa có ghi chú nào theo đúng định dạng<br>"từ = đồng nghĩa (pos) : nghĩa → cụm (dịch)"<br>Hãy thêm qua nút 📝 Ghi chú nhanh.</div>`;
-    canvas.innerHTML = `<div class="mm-empty-canvas">Chưa có dữ liệu để vẽ mind map.</div>`;
-    mmSelectedIdx = -1;
-    return;
-  }
-  left.innerHTML = `<div class="mm-count">${mmEntries.length} mục từ vựng</div>` +
-    mmEntries.map((en, i)=>`
-      <button type="button" class="mm-list-item" id="mmLi-${i}" onclick="mmFocusEntry(${i})">
-        <div class="mm-li-word"><span class="mm-li-pos">${esc(en.pos)}</span>${esc(en.synonyms[0])}</div>
-        <div class="mm-li-meaning">${esc(en.meanings.join(' / '))}</div>
-      </button>
-    `).join('');
-  // Luôn hiển thị TRỌN VẸN 1 từ trên toàn bộ khung bên phải — không vẽ tất cả
-  // các thẻ chồng lên nhau nữa, tránh phải kéo lên/xuống mới thấy được từ.
-  mmFocusEntry(0);
-}
-
-function mmHighlightRoot(phrase, rootWord){
-  if(!rootWord) return esc(phrase);
-  const idx = phrase.toLowerCase().indexOf(rootWord.toLowerCase());
-  if(idx === -1) return esc(phrase);
-  const before = phrase.slice(0, idx);
-  const match = phrase.slice(idx, idx + rootWord.length);
-  const after = phrase.slice(idx + rootWord.length);
-  return `${esc(before)}<span class="mm-colloc-match">${esc(match)}</span>${esc(after)}`;
-}
-
-// Tô màu phần nghĩa tiếng Việt của collocation KHÔNG khớp với nghĩa gốc của
-// từ trung tâm — ví dụ từ gốc "compulsory" = "bắt buộc", cụm "compulsory
-// education" dịch "giáo dục bắt buộc" thì phần "giáo dục" (không phải nghĩa
-// gốc) sẽ được tô màu nhấn, còn "bắt buộc" (đúng nghĩa gốc) giữ màu thường.
-function mmHighlightMeaningDiff(trans, meanings){
-  if(!trans) return '';
-  let best = null;
-  (meanings || []).forEach(m=>{
-    if(!m) return;
-    const idx = trans.toLowerCase().indexOf(m.toLowerCase());
-    if(idx !== -1 && (!best || m.length > best.text.length)){
-      best = { idx, text: trans.slice(idx, idx + m.length) };
-    }
-  });
-  if(!best) return esc(trans);
-  const before = trans.slice(0, best.idx);
-  const after = trans.slice(best.idx + best.text.length);
-  const wrap = s => s ? `<span class="mm-colloc-vi-diff">${esc(s)}</span>` : '';
-  return `${wrap(before)}${esc(best.text)}${wrap(after)}`;
-}
-
-// Tính độ lệch ngang cho từng node trong 1 nhánh theo đường cong sin, để cả
-// cột hiện thành 1 vòng cung phình ra giữa thay vì 1 đường thẳng dọc cứng —
-// vừa tận dụng khoảng trống 2 bên, vừa giống bố cục mind map tự nhiên hơn.
-function mmArcOffsets(n, maxPx){
-  if(n <= 1) return [0];
-  return Array.from({length:n}, (_, i)=>{
-    const t = i/(n-1);
-    return Math.round(Math.sin(t*Math.PI) * maxPx);
-  });
-}
-
-function mmBuildCard(entry, idx){
-  const rootWord = entry.synonyms[0];
-  const otherSyn = entry.synonyms.slice(1);
-  const meanText = entry.meanings.join(' / ');
-  const synArcMax = Math.min(64, 18 + otherSyn.length * 6);
-  const synOffsets = mmArcOffsets(otherSyn.length, synArcMax);
-  const colArcMax = Math.min(64, 18 + entry.collocations.length * 5);
-  const colOffsets = mmArcOffsets(entry.collocations.length, colArcMax);
-  const synCol = otherSyn.length ? `
-    <div class="mm-col mm-col-syn">
-      <div class="mm-col-title">Từ đồng nghĩa</div>
-      ${otherSyn.map((s,i)=>`
-        <div class="mm-node mm-node-syn" style="transform:translateX(${-synOffsets[i]}px)">
-          <span>${esc(s)}</span>
-          <button type="button" class="mm-speak-btn" data-w="${esc(s)}" onclick="event.stopPropagation();speak(this.dataset.w)" title="Phát âm">🔊</button>
-        </div>`).join('')}
-    </div>` : `<div class="mm-col mm-col-syn"></div>`;
-  const colCol = entry.collocations.length ? `
-    <div class="mm-col mm-col-colloc">
-      <div class="mm-col-title">Cụm collocation</div>
-      ${entry.collocations.map((c,i)=>`
-        <div class="mm-node mm-node-colloc" style="transform:translateX(${colOffsets[i]}px)">
-          <div class="mm-colloc-en">
-            <span>${mmHighlightRoot(c.phrase, rootWord)}</span>
-            <button type="button" class="mm-speak-btn" data-w="${esc(c.phrase)}" onclick="event.stopPropagation();speak(this.dataset.w)" title="Phát âm">🔊</button>
-          </div>
-          <div class="mm-colloc-vi">${mmHighlightMeaningDiff(c.trans, entry.meanings)}</div>
-        </div>`).join('')}
-    </div>` : `<div class="mm-col mm-col-colloc"></div>`;
-  return `
-    <div class="mm-card" id="mmCard-${idx}">
-      <div class="mm-diagram" id="mmDiagram-${idx}">
-        <svg class="mm-links" id="mmLinks-${idx}"></svg>
-        ${synCol}
-        <div class="mm-node mm-node-center">
-          <span class="mm-center-pos">${esc(entry.pos)}</span>
-          <div class="mm-center-word">
-            <span>${esc(rootWord)}</span>
-            <button type="button" class="mm-speak-btn" data-w="${esc(rootWord)}" onclick="event.stopPropagation();speak(this.dataset.w)" title="Phát âm">🔊</button>
-          </div>
-          <div class="mm-center-mean">${esc(meanText)}</div>
-        </div>
-        ${colCol}
-      </div>
-    </div>`;
-}
-
-function mmLinkPath(x1,y1,x2,y2){
-  const mx = (x1+x2)/2;
-  return `<path d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>`;
-}
-
-function mmDrawLinks(idx){
-  const card = document.getElementById('mmCard-'+idx);
-  const svg = document.getElementById('mmLinks-'+idx);
-  const center = card ? card.querySelector('.mm-node-center') : null;
-  if(!card || !svg || !center) return;
-  // QUAN TRỌNG: card đang nằm trong #mmCanvas, phần tử này bị scale bởi
-  // transform (mmScale) khi zoom/thu-phóng. getBoundingClientRect() trả về
-  // toạ độ ĐÃ NHÂN scale, nhưng bản thân <svg> lại là con của canvas nên
-  // cũng bị scale THÊM MỘT LẦN NỮA khi vẽ — nếu lấy thẳng số đo từ
-  // getBoundingClientRect() làm toạ độ path thì sẽ bị nhân đúp tỉ lệ,
-  // khiến các đường nối lệch hẳn khỏi node bất cứ khi nào mmScale != 1
-  // (chính là lỗi "vỡ nhánh" khi thu gọn/mở danh sách từ hay khi resize).
-  // Cách sửa: chia lại mọi khoảng cách đo được cho scale hiện tại để quy
-  // về đơn vị "layout gốc" (không phụ thuộc scale) trước khi ghi vào path.
-  const scale = mmScale || 1;
-  const cardRect = card.getBoundingClientRect();
-  svg.setAttribute('width', card.offsetWidth);
-  svg.setAttribute('height', card.offsetHeight);
-  const cRect = center.getBoundingClientRect();
-  const cLeftX = (cRect.left - cardRect.left) / scale;
-  const cRightX = (cRect.right - cardRect.left) / scale;
-  const cY = (cRect.top - cardRect.top) / scale + (cRect.height / scale) / 2;
-  let paths = '';
-  card.querySelectorAll('.mm-node-syn').forEach(node=>{
-    const r = node.getBoundingClientRect();
-    const x2 = (r.right - cardRect.left) / scale, y2 = (r.top - cardRect.top) / scale + (r.height / scale)/2;
-    paths += mmLinkPath(cLeftX, cY, x2, y2);
-  });
-  card.querySelectorAll('.mm-node-colloc').forEach(node=>{
-    const r = node.getBoundingClientRect();
-    const x2 = (r.left - cardRect.left) / scale, y2 = (r.top - cardRect.top) / scale + (r.height / scale)/2;
-    paths += mmLinkPath(cRightX, cY, x2, y2);
-  });
-  svg.innerHTML = paths;
-}
-
-function mmFitToView(){
-  const idx = mmSelectedIdx;
-  const card = document.getElementById('mmCard-'+idx);
-  const wrap = document.getElementById('mmCanvasWrap');
-  if(!card || !wrap) return;
-  const cardW = card.offsetWidth, cardH = card.offsetHeight;
-  const wrapRect = wrap.getBoundingClientRect();
-  const pad = 36;
-  const fit = Math.min((wrapRect.width - pad) / cardW, (wrapRect.height - pad) / cardH, 1.25);
-  mmScale = Math.max(MM_ZOOM_MIN, +fit.toFixed(3));
-  mmTx = 0; mmTy = 0;
-  mmApplyTransform(false);
-}
-
-/* ---- Pan / Zoom ---- */
-function mmApplyTransform(animate){
-  const canvas = document.getElementById('mmCanvas');
-  if(!canvas) return;
-  canvas.style.transition = animate ? 'transform .35s cubic-bezier(.22,.9,.3,1)' : 'none';
-  canvas.style.transform = `translate(${mmTx}px, ${mmTy}px) scale(${mmScale})`;
-  const zv = document.getElementById('mmZoomVal');
-  if(zv) zv.textContent = Math.round(mmScale*100) + '%';
-}
-function mmZoomStep(dir){
-  const wrap = document.getElementById('mmCanvasWrap');
-  const rect = wrap ? wrap.getBoundingClientRect() : {width:800, height:600};
-  const cx = rect.width/2, cy = rect.height/2;
-  const oldScale = mmScale;
-  mmScale = Math.min(MM_ZOOM_MAX, Math.max(MM_ZOOM_MIN, +(mmScale + dir*MM_ZOOM_STEP).toFixed(2)));
-  mmTx = cx - (cx - mmTx) * (mmScale/oldScale);
-  mmTy = cy - (cy - mmTy) * (mmScale/oldScale);
-  mmApplyTransform(true);
-}
-function mmResetView(){
-  mmFitToView();
-}
-function mmFocusEntry(idx){
-  const entry = mmEntries[idx];
-  if(!entry) return;
-  mmSelectedIdx = idx;
-  document.querySelectorAll('.mm-list-item').forEach(el=>el.classList.remove('active'));
-  const li = document.getElementById('mmLi-'+idx);
-  if(li){ li.classList.add('active'); li.scrollIntoView({behavior:'smooth', block:'nearest'}); }
-  if(mmIsMobile() && document.getElementById('mmLeftList')?.classList.contains('mm-mobile-open')){
-    mmToggleLeftPanel();
-  }
-  const canvas = document.getElementById('mmCanvas');
-  if(!canvas) return;
-  // Vẽ đúng 1 thẻ của từ được chọn, chiếm trọn khung bên phải — không còn
-  // các thẻ từ khác nằm phía trên/dưới nữa nên không cần kéo để xem.
-  mmScale = 1; mmTx = 0; mmTy = 0;
-  canvas.style.transition = 'none';
-  canvas.style.transform = 'translate(0px,0px) scale(1)';
-  canvas.innerHTML = mmBuildCard(entry, idx);
-  requestAnimationFrame(()=>{
-    mmDrawLinks(idx);
-    mmFitToView();
-    const card = document.getElementById('mmCard-'+idx);
-    if(card){ card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'), 1200); }
-  });
-}
-function mmSearchFilter(q){
-  q = (q||'').trim().toLowerCase();
-  document.querySelectorAll('.mm-list-item').forEach((el, i)=>{
-    const en = mmEntries[i];
-    if(!en) return;
-    const hay = (en.synonyms.join(' ') + ' ' + en.meanings.join(' ') + ' ' + en.collocations.map(c=>c.phrase+' '+c.trans).join(' ')).toLowerCase();
-    el.style.display = !q || hay.includes(q) ? '' : 'none';
-  });
-}
-(function mmInitCanvasEvents(){
-  document.addEventListener('DOMContentLoaded', ()=>{
-    const wrap = document.getElementById('mmCanvasWrap');
-    if(!wrap) return;
-    wrap.addEventListener('mousedown', e=>{
-      if(e.target.closest('.mm-card')) { /* still allow drag from card bg */ }
-      mmDragging = true; wrap.classList.add('dragging');
-      mmDragStartX = e.clientX; mmDragStartY = e.clientY;
-      mmStartTx = mmTx; mmStartTy = mmTy;
-    });
-    window.addEventListener('mousemove', e=>{
-      if(!mmDragging) return;
-      mmTx = mmStartTx + (e.clientX - mmDragStartX);
-      mmTy = mmStartTy + (e.clientY - mmDragStartY);
-      mmApplyTransform(false);
-    });
-    window.addEventListener('mouseup', ()=>{
-      if(mmDragging){ mmDragging = false; wrap.classList.remove('dragging'); }
-    });
-    wrap.addEventListener('wheel', e=>{
-      e.preventDefault();
-      const rect = wrap.getBoundingClientRect();
-      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-      const oldScale = mmScale;
-      const dir = e.deltaY < 0 ? 1 : -1;
-      mmScale = Math.min(MM_ZOOM_MAX, Math.max(MM_ZOOM_MIN, +(mmScale + dir*0.08).toFixed(2)));
-      mmTx = mx - (mx - mmTx) * (mmScale/oldScale);
-      mmTy = my - (my - mmTy) * (mmScale/oldScale);
-      mmApplyTransform(false);
-    }, {passive:false});
-    // touch: 1 finger pan, 2 finger pinch zoom
-    wrap.addEventListener('touchstart', e=>{
-      if(e.touches.length === 1){
-        mmDragging = true;
-        mmDragStartX = e.touches[0].clientX; mmDragStartY = e.touches[0].clientY;
-        mmStartTx = mmTx; mmStartTy = mmTy;
-      } else if(e.touches.length === 2){
-        mmDragging = false;
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        mmPinchStartDist = Math.hypot(dx, dy);
-        mmPinchStartScale = mmScale;
-      }
-    }, {passive:true});
-    wrap.addEventListener('touchmove', e=>{
-      if(e.touches.length === 1 && mmDragging){
-        mmTx = mmStartTx + (e.touches[0].clientX - mmDragStartX);
-        mmTy = mmStartTy + (e.touches[0].clientY - mmDragStartY);
-        mmApplyTransform(false);
-      } else if(e.touches.length === 2){
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const dist = Math.hypot(dx, dy);
-        mmScale = Math.min(MM_ZOOM_MAX, Math.max(MM_ZOOM_MIN, mmPinchStartScale * (dist/mmPinchStartDist)));
-        mmApplyTransform(false);
-      }
-    }, {passive:true});
-    wrap.addEventListener('touchend', ()=>{ mmDragging = false; });
-    let mmResizeT = null;
-    window.addEventListener('resize', ()=>{
-      if(mmSelectedIdx < 0) return;
-      clearTimeout(mmResizeT);
-      mmResizeT = setTimeout(()=>{ mmDrawLinks(mmSelectedIdx); mmFitToView(); }, 120);
-    });
-  });
-})();
 /* Nút 📝 nổi giờ luôn cố định ở mép phải, canh giữa theo chiều dọc màn
    hình (xem .qc-widget trong CSS) — không còn bám theo vị trí ô .qc-slot
    trong header như trước, nên không cần tính lại top/left theo slot mỗi
