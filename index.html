@@ -298,15 +298,18 @@
   background:rgba(255,255,255,.14); padding:6px 14px; border-radius:999px; max-width:100%;
 }
 .mm-node-syn, .mm-node-colloc{
-  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, max-width .18s ease;
 }
 .mm-node-syn{
   position:relative; background:var(--mm-c1-bg, var(--accent-bg)); border:1px solid var(--mm-c1, var(--accent)); color:var(--ink);
   font-weight:600; font-size:12.5px; padding:8px 30px 8px 14px; border-radius:12px; max-width:210px; text-align:right;
   display:flex; align-items:center; justify-content:flex-end; gap:2px;
 }
+/* --mm-colloc-w: bề rộng tối đa của ô collocation, chỉnh được bằng nút
+   ↔ trên thanh công cụ (mmCollocWidthStep) — mặc định 230px như cũ. */
 .mm-node-colloc{
-  position:relative; background:var(--card-sunken); border:1px solid var(--line); padding:8px 30px 8px 14px; border-radius:12px; max-width:230px;
+  position:relative; background:var(--card-sunken); border:1px solid var(--line); padding:8px 30px 8px 14px; border-radius:12px;
+  max-width:var(--mm-colloc-w, 230px);
 }
 .mm-node-syn:hover, .mm-node-colloc:hover{ box-shadow:var(--shadow); z-index:4; transform:translateY(-1px); border-color:var(--mm-c1, var(--accent)); }
 /* ô bị ẩn: loại hẳn khỏi luồng bố cục — flex + gap tự dồn các ô còn lại sát
