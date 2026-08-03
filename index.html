@@ -325,6 +325,90 @@
 /* ---- lớp phủ tối phía sau danh sách từ khi mở dạng ngăn kéo (mobile) ---- */
 .mm-left-backdrop{ position:fixed; inset:0; background:rgba(10,20,18,.42); z-index:19; }
 
+/* ---- overlay nhập/sửa dữ liệu mind map thủ công ---- */
+.mm-import-overlay{
+  position:fixed; inset:0; z-index:6500; background:rgba(10,20,18,.5);
+  display:flex; align-items:center; justify-content:center; padding:18px;
+}
+.mm-import-box{
+  width:100%; max-width:720px; max-height:88vh; background:var(--card);
+  border-radius:18px; box-shadow:var(--shadow-lg); display:flex; flex-direction:column;
+  overflow:hidden;
+}
+.mm-import-head{
+  display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--line);
+}
+.mm-import-title{ font-weight:800; font-size:15px; flex:1 1 auto; }
+.mm-import-close{
+  width:30px; height:30px; border:none; border-radius:9px; background:var(--card-sunken);
+  color:var(--ink); font-size:14px; cursor:pointer;
+}
+.mm-import-close:hover{ background:var(--accent-bg); color:var(--accent); }
+.mm-import-hint{
+  padding:10px 16px; font-size:11.5px; line-height:1.6; opacity:.8; background:var(--card-sunken);
+  border-bottom:1px solid var(--line);
+}
+.mm-import-hint code{
+  display:inline-block; background:var(--card); border:1px solid var(--line); border-radius:6px;
+  padding:2px 6px; font-size:11px; margin-top:2px; word-break:break-word;
+}
+.mm-import-hint-sub{ margin-top:6px; opacity:.75; }
+/* ---- danh sách các mục đã nạp: mỗi lần nạp = 1 thẻ riêng, không gộp
+   chung thành một khối văn bản dài ---- */
+.mm-import-list{
+  flex:1 1 auto; min-height:0; overflow-y:auto; padding:10px 16px; display:flex; flex-direction:column; gap:6px;
+  background:var(--card-sunken); border-bottom:1px solid var(--line);
+}
+.mm-import-empty{ padding:18px 4px; text-align:center; font-size:12.5px; opacity:.65; line-height:1.6; }
+.mm-import-entry{
+  display:flex; align-items:stretch; gap:6px; background:var(--card); border:1px solid var(--line);
+  border-radius:10px; overflow:hidden; transition:border-color .14s ease, box-shadow .14s ease;
+}
+.mm-import-entry:hover{ border-color:var(--accent); box-shadow:var(--shadow); }
+.mm-import-entry.mm-import-entry-editing{ border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-bg); }
+.mm-import-entry-main{ flex:1 1 auto; min-width:0; padding:8px 10px; cursor:pointer; display:flex; flex-direction:column; gap:2px; }
+.mm-import-entry-text{
+  font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:11.5px; line-height:1.4;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--ink);
+}
+.mm-import-entry-meta{ font-size:10.5px; opacity:.65; }
+.mm-import-entry-del{
+  flex:0 0 auto; width:32px; border:none; background:transparent; color:var(--muted); cursor:pointer;
+  font-size:13px; transition:background .14s ease, color .14s ease;
+}
+.mm-import-entry-del:hover{ background:var(--coral); color:#fff; }
+.mm-import-input-row{ flex:0 0 auto; display:flex; flex-direction:column; max-height:46vh; }
+.mm-import-textarea{
+  flex:1 1 auto; min-height:110px; resize:vertical; border:none; outline:none; padding:14px 16px;
+  font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12.5px; line-height:1.7;
+  background:var(--card); color:var(--ink);
+}
+.mm-import-report{
+  padding:0 16px; font-size:12px; line-height:1.6; max-height:110px; overflow-y:auto;
+}
+.mm-import-report .mm-ir-ok{ color:var(--accent); font-weight:700; }
+.mm-import-report .mm-ir-bad{ color:var(--coral); font-weight:700; }
+.mm-import-report .mm-ir-line{ opacity:.7; padding:2px 0; border-top:1px dashed var(--line); }
+.mm-import-actions{
+  display:flex; align-items:center; gap:8px; padding:12px 16px; border-top:1px solid var(--line);
+  flex-wrap:wrap;
+}
+.mm-import-spacer{ flex:1 1 auto; }
+.mm-import-autosave{ font-size:11px; opacity:.55; }
+.mm-import-btn{
+  padding:9px 16px; border-radius:11px; font-size:12.5px; font-weight:700; cursor:pointer; border:1px solid var(--line);
+}
+.mm-import-btn-ghost{ background:var(--card-sunken); color:var(--ink); }
+.mm-import-btn-ghost:hover{ background:var(--accent-bg); color:var(--accent); border-color:var(--accent); }
+.mm-import-btn-primary{ background:linear-gradient(135deg, var(--accent), #6366f1); color:#fff; border:none; }
+.mm-import-btn-primary:hover{ filter:brightness(1.06); }
+.mm-import-open-btn{ flex:0 0 auto; }
+@media (max-width:760px){
+  .mm-import-overlay{ padding:0; }
+  .mm-import-box{ max-width:none; max-height:100vh; height:100vh; border-radius:0; }
+  .mm-import-textarea{ min-height:160px; }
+}
+
 @media (max-width:760px){
   .mm-left{
     position:fixed; top:0; bottom:0; left:0; width:84%; max-width:340px; min-width:0;
@@ -7314,7 +7398,7 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
 <!-- ===== NÚT GHI CHÚ NHANH NỔI — vị trí đồng bộ bằng JS theo .qc-slot trong header ===== -->
 <div id="qcWidget" class="qc-widget">
   <button type="button" id="qcToggleBtn" class="qc-toggle-btn" onclick="qcToggle()" title="Ghi chú từ vựng nhanh">📝</button>
-  <button type="button" id="mmToggleBtn" class="qc-toggle-btn mm-toggle-btn" onclick="mmOpen()" title="Mind map từ vựng (từ Sổ ghi chú)">🧠</button>
+  <button type="button" id="mmToggleBtn" class="qc-toggle-btn mm-toggle-btn" onclick="mmOpen()" title="Mind map từ vựng (dữ liệu nhập thủ công)">🧠</button>
 </div>
 <div id="qcOverlay" class="qc-overlay" style="display:none" onclick="qcOverlayClick(event)">
   <div class="qc-modal" id="qcModal">
@@ -7356,6 +7440,7 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
     <button type="button" class="mm-back-btn" id="mmCollapseBtn" onclick="mmToggleLeftPanel()" title="Thu gọn/mở rộng danh sách từ">☰</button>
     <div class="mm-title">🧠 Mind Map từ vựng<small id="mmSubCount"></small></div>
     <input type="text" id="mmSearchInput" class="mm-search" placeholder="🔍 Tìm từ trong mind map..." oninput="mmSearchFilter(this.value)">
+    <button type="button" class="mm-back-btn mm-import-open-btn" id="mmImportBtn" onclick="mmImportOpen()" title="Nhập / sửa dữ liệu mind map (nạp thủ công)">📥</button>
     <div class="mm-zoom-ctrl">
       <button type="button" onclick="mmZoomStep(-1)" title="Thu nhỏ">－</button>
       <span class="mm-zoom-val" id="mmZoomVal">100%</span>
@@ -7367,6 +7452,35 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
     <div class="mm-left" id="mmLeftList"></div>
     <div class="mm-canvas-wrap" id="mmCanvasWrap">
       <div class="mm-canvas" id="mmCanvas"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OVERLAY: NHẬP / SỬA DỮ LIỆU MIND MAP THỦ CÔNG ===== -->
+<div id="mmImportOverlay" class="mm-import-overlay" style="display:none">
+  <div class="mm-import-box">
+    <div class="mm-import-head">
+      <div class="mm-import-title">📥 Nhập dữ liệu Mind Map</div>
+      <button type="button" class="mm-import-close" onclick="mmImportClose()" title="Đóng">✕</button>
+    </div>
+    <div class="mm-import-hint">
+      Mỗi lần dán/gõ, đúng mẫu:<br>
+      <code>từ đồng nghĩa 1 = từ đồng nghĩa 2 = ... (pos) : nghĩa 1 / nghĩa 2 → cụm 1 (dịch 1), cụm 2 (dịch 2), ...</code><br>
+      Ví dụ:<br>
+      <code>increasing/rising/soaring demand (n) : nhu cầu ngày càng tăng → meet growing demand (đáp ứng nhu cầu ngày càng tăng), cope with growing demand (đối phó với nhu cầu ngày càng tăng)</code>
+      <div class="mm-import-hint-sub">💡 Dán nội dung vào ô bên dưới rồi bấm <b>➕ Thêm vào danh sách</b> — mục đó được lưu riêng ngay vào danh sách phía trên, ô nhập tự trống lại để dán mục tiếp theo. Bấm vào một mục trong danh sách để sửa lại, hoặc bấm ✕ để xoá riêng mục đó.</div>
+    </div>
+    <div class="mm-import-list" id="mmImportList"></div>
+    <div class="mm-import-input-row">
+      <textarea id="mmImportTextarea" class="mm-import-textarea" placeholder="Dán 1 mục mới vào đây rồi bấm Thêm..." spellcheck="false"></textarea>
+      <div class="mm-import-report" id="mmImportReport"></div>
+      <div class="mm-import-actions">
+        <button type="button" class="mm-import-btn mm-import-btn-ghost" onclick="mmImportClear()">🗑 Xoá hết dữ liệu</button>
+        <div class="mm-import-spacer"></div>
+        <span class="mm-import-autosave" id="mmImportAutosave"></span>
+        <button type="button" class="mm-import-btn mm-import-btn-ghost" onclick="mmImportCancelEdit()" id="mmImportCancelBtn" style="display:none">Huỷ sửa</button>
+        <button type="button" class="mm-import-btn mm-import-btn-primary" id="mmImportAddBtn" onclick="mmImportAddEntry()">➕ Thêm vào danh sách</button>
+      </div>
     </div>
   </div>
 </div>
@@ -41395,6 +41509,20 @@ function mergeVocabValue(key, localRaw, importedRaw){
     if(key === 'vocab_gems'){
       return String(Math.max(parseInt(localRaw,10)||0, parseInt(importedRaw,10)||0));
     }
+    if(key === MM_DATA_KEY){
+      /* Mind map (nạp thủ công): mỗi bản ghi là 1 mảng các mục. Khi Gộp,
+         hợp nhất 2 mảng và loại các mục trùng nội dung (so sánh sau khi
+         cắt khoảng trắng đầu/cuối) — không mất mục nào của cả 2 bên. */
+      const parseList = raw => {
+        try{ const a = JSON.parse(raw); if(Array.isArray(a)) return a.filter(s=>typeof s==='string'); }catch(e){}
+        return mmMigrateLegacyText(raw);
+      };
+      const a = parseList(localRaw), b = parseList(importedRaw);
+      const have = new Set(a.map(s=>s.trim()));
+      const merged = a.slice();
+      b.forEach(s=>{ const t=(s||'').trim(); if(t && !have.has(t)){ have.add(t); merged.push(s); } });
+      return JSON.stringify(merged);
+    }
     if(key === 'vocab_reading_added'){
       const a = JSON.parse(localRaw)||[], b = JSON.parse(importedRaw)||[];
       const have = new Set(a.map(w=>(w.word||'').toLowerCase()));
@@ -45272,63 +45400,314 @@ function mmParseLine(line){
   return { synonyms, pos, meanings, collocations, raw: line };
 }
 
-function mmParseNotebook(){
-  const nb = loadNotebook();
+// ------------------------------------------------------------------
+// NGUỒN DỮ LIỆU: trước đây mind map tự động quét toàn bộ Sổ ghi chú để
+// trích các dòng đúng định dạng. Trên điện thoại, việc này khiến số
+// lượng thẻ nạp vào không kiểm soát được (lẫn cả ghi chú không liên
+// quan tới mind map) và dễ phát sinh lỗi bố cục/đường nối khi thẻ quá
+// nhiều hoặc quá dài. Giờ chuyển sang NẠP THỦ CÔNG: người dùng dán nội
+// dung đúng mẫu vào ô nhập (nút 📥), dữ liệu được lưu riêng trong
+// localStorage (không đụng tới Sổ ghi chú) và có thể sửa lại bất cứ lúc
+// nào bằng cách mở lại ô nhập.
+const MM_DATA_KEY = 'vocab_mindmap_data_v1';
+// Dữ liệu bản NHÁP đang gõ dở trong ô nhập (không phải mục đã "Thêm"),
+// lưu tách riêng để không mất nội dung nếu lỡ đóng overlay/tải lại trang,
+// nhưng KHÔNG được tự động gộp vào danh sách mục chính thức.
+const MM_DRAFT_KEY = 'vocab_mindmap_draft_v1';
+
+// Dữ liệu cũ (trước khi có danh sách riêng từng mục) là 1 chuỗi text dài,
+// các mục nối nhau bằng dòng trống mỗi lần mở lại ô nhập để dán thêm.
+// Tách theo ranh giới dòng trống để chuyển mỗi đoạn đó thành 1 mục riêng
+// trong danh sách mới — không mất dữ liệu cũ.
+function mmMigrateLegacyText(text){
+  return String(text||'').split(/\n\s*\n+/).map(s=>s.trim()).filter(Boolean);
+}
+// Đọc danh sách các mục đã nạp (mỗi lần nạp = 1 phần tử mảng). Tự động
+// nhận diện và chuyển đổi dữ liệu ở định dạng cũ (1 chuỗi text) sang
+// định dạng mới rồi lưu lại luôn, để lần sau không phải chuyển đổi nữa.
+function mmLoadEntries(){
+  let raw = null;
+  try{ raw = localStorage.getItem(MM_DATA_KEY); }catch(e){ raw = null; }
+  if(raw == null) return [];
+  try{
+    const parsed = JSON.parse(raw);
+    if(Array.isArray(parsed)) return parsed.filter(s=>typeof s === 'string');
+  }catch(e){ /* không phải JSON -> dữ liệu cũ dạng text thuần, xử lý bên dưới */ }
+  const migrated = mmMigrateLegacyText(raw);
+  mmSaveEntries(migrated);
+  return migrated;
+}
+function mmSaveEntries(list){
+  try{ localStorage.setItem(MM_DATA_KEY, JSON.stringify(list||[])); }catch(e){}
+}
+// Nối toàn bộ các mục lại thành 1 chuỗi (dùng nội bộ để phân tích ra các
+// thẻ mind map) — logic phân tích/gộp từ vựng bên dưới giữ nguyên như cũ.
+function mmLoadRawText(){
+  return mmLoadEntries().join('\n\n');
+}
+function mmLoadDraft(){
+  try{ return localStorage.getItem(MM_DRAFT_KEY) || ''; }catch(e){ return ''; }
+}
+function mmSaveDraft(text){
+  try{ localStorage.setItem(MM_DRAFT_KEY, text); }catch(e){}
+}
+
+// Gộp mọi dòng có cùng từ gốc (không phân biệt hoa/thường) thành 1 entry
+// duy nhất, cộng dồn toàn bộ đồng nghĩa + nghĩa + cụm collocation (loại
+// trùng lặp) — dùng chung cho cả nạp dữ liệu lẫn xem báo cáo phân tích.
+function mmMergeLines(lines){
   const merged = new Map(); // key: rootWord (chữ thường) → entry đã gộp
   const order = [];
-  // Trước đây mỗi DÒNG ghi chú tạo ra 1 entry riêng, dedupe theo đúng nguyên
-  // văn dòng đó — nên nếu người dùng ghi thêm cụm mới cho 1 từ vào lúc khác
-  // (dòng mới, đôi khi khác cả nghĩa/đồng nghĩa liệt kê), 2 dòng bị coi là 2
-  // "từ" khác nhau và mind map chỉ hiện được 1 trong 2 khi bấm vào — cụm ở
-  // dòng còn lại bị "mất tích". Giờ gộp mọi dòng có cùng từ gốc (không phân
-  // biệt hoa/thường) thành 1 entry duy nhất, cộng dồn toàn bộ đồng nghĩa +
-  // nghĩa + cụm collocation (loại trùng lặp) — không bỏ sót cụm nào nữa.
-  Object.keys(nb).sort().reverse().forEach(day=>{
-    (nb[day] || []).forEach(item=>{
-      const lines = mmStripHtml(item.note);
-      lines.forEach(line=>{
-        const parsed = mmParseLine(line);
-        if(!parsed) return;
-        const key = parsed.synonyms[0].toLowerCase();
-        if(!merged.has(key)){
-          merged.set(key, {
-            synonyms: parsed.synonyms.slice(),
-            pos: parsed.pos,
-            meanings: parsed.meanings.slice(),
-            collocations: parsed.collocations.slice(),
-            raw: parsed.raw
-          });
-          order.push(key);
-        } else {
-          const ex = merged.get(key);
-          parsed.synonyms.forEach(s=>{
-            if(!ex.synonyms.some(x=>x.toLowerCase()===s.toLowerCase())) ex.synonyms.push(s);
-          });
-          parsed.meanings.forEach(m=>{
-            if(!ex.meanings.some(x=>x.toLowerCase()===m.toLowerCase())) ex.meanings.push(m);
-          });
-          parsed.collocations.forEach(c=>{
-            if(!ex.collocations.some(x=>x.phrase.toLowerCase()===c.phrase.toLowerCase())) ex.collocations.push(c);
-          });
-        }
+  lines.forEach(line=>{
+    const parsed = mmParseLine(line);
+    if(!parsed) return;
+    const key = parsed.synonyms[0].toLowerCase();
+    if(!merged.has(key)){
+      merged.set(key, {
+        synonyms: parsed.synonyms.slice(),
+        pos: parsed.pos,
+        meanings: parsed.meanings.slice(),
+        collocations: parsed.collocations.slice(),
+        raw: parsed.raw
       });
-    });
+      order.push(key);
+    } else {
+      const ex = merged.get(key);
+      parsed.synonyms.forEach(s=>{
+        if(!ex.synonyms.some(x=>x.toLowerCase()===s.toLowerCase())) ex.synonyms.push(s);
+      });
+      parsed.meanings.forEach(m=>{
+        if(!ex.meanings.some(x=>x.toLowerCase()===m.toLowerCase())) ex.meanings.push(m);
+      });
+      parsed.collocations.forEach(c=>{
+        if(!ex.collocations.some(x=>x.phrase.toLowerCase()===c.phrase.toLowerCase())) ex.collocations.push(c);
+      });
+    }
   });
   return order.map(k=>merged.get(k));
+}
+// Khi dán nội dung từ nơi khác (Word, ghi chú, ứng dụng chat...), 1 mục có
+// thể bị NGẮT DÒNG THẬT (Enter) ở giữa chừng — ví dụ đứt ngay trước dấu →,
+// khiến 1 mục hợp lệ bị tách thành 2 "dòng" đều thiếu dữ liệu và bị coi là
+// sai định dạng. Hàm này thử ghép các dòng liên tiếp lại (nối bằng dấu
+// cách) cho tới khi khớp đủ mẫu 1 mục hoàn chỉnh, hoặc gặp dòng trống (ranh
+// giới cứng giữa các mục), hoặc vượt quá số dòng gộp tối đa (để tránh gộp
+// lan sang tận các mục khác nếu có dòng thật sự sai/thiếu cấu trúc).
+const MM_MAX_MERGE_LINES = 6;
+function mmSplitLogicalEntries(text){
+  const rawLines = String(text||'').split('\n').map(x=>x.replace(/\u200b/g,'').trim());
+  const entries = [];
+  const bad = [];
+  let buffer = '', bufStartLine = -1, mergedCount = 0;
+  const flushBad = ()=>{
+    if(buffer) bad.push({ n: bufStartLine + 1, line: buffer });
+    buffer = ''; bufStartLine = -1; mergedCount = 0;
+  };
+  rawLines.forEach((line, i)=>{
+    if(!line){ flushBad(); return; }
+    if(!buffer){ buffer = line; bufStartLine = i; mergedCount = 1; }
+    else { buffer += ' ' + line; mergedCount++; }
+    if(mmParseLine(buffer)){
+      entries.push(buffer);
+      buffer = ''; bufStartLine = -1; mergedCount = 0;
+    } else if(mergedCount >= MM_MAX_MERGE_LINES){
+      flushBad();
+    }
+  });
+  flushBad();
+  return { entries, bad };
+}
+function mmParseRawText(text){
+  const { entries } = mmSplitLogicalEntries(text);
+  return mmMergeLines(entries);
+}
+function mmLoadData(){
+  return mmParseRawText(mmLoadRawText());
 }
 
 function mmOpen(){
   const page = document.getElementById('mmPage');
   if(!page) return;
-  mmEntries = mmParseNotebook();
-  // Reset danh sách ô đã ẩn: thứ tự entry có thể đổi giữa các lần mở (thêm
-  // ghi chú mới), nên key "idx:type:i" cũ có thể trỏ nhầm sang từ khác.
+  mmEntries = mmLoadData();
+  // Reset danh sách ô đã ẩn: thứ tự entry có thể đổi giữa các lần sửa dữ
+  // liệu, nên key "idx:type:i" cũ có thể trỏ nhầm sang từ khác.
   mmHiddenKeys.clear();
   page.style.display = 'flex';
   mmRenderAll();
   const si = document.getElementById('mmSearchInput');
   if(si) si.value = '';
 }
+
+/* ---- Nhập / sửa dữ liệu thủ công: mỗi lần "Thêm" là 1 mục riêng ---- */
+// index >= 0: đang SỬA mục có vị trí đó trong danh sách; -1: đang thêm mục mới.
+let mmEditingIndex = -1;
+
+function mmImportOpen(){
+  const ov = document.getElementById('mmImportOverlay');
+  const ta = document.getElementById('mmImportTextarea');
+  if(!ov || !ta) return;
+  mmEditingIndex = -1;
+  mmImportSetEditUI(false);
+  ta.value = mmLoadDraft();
+  ov.style.display = 'flex';
+  mmImportRenderList();
+  mmImportUpdateReport();
+  setTimeout(()=>{
+    ta.focus();
+    const end = ta.value.length;
+    try{ ta.setSelectionRange(end, end); }catch(e){}
+  }, 60);
+}
+function mmImportClose(){
+  const ov = document.getElementById('mmImportOverlay');
+  if(ov) ov.style.display = 'none';
+}
+function mmImportSetEditUI(editing){
+  const addBtn = document.getElementById('mmImportAddBtn');
+  const cancelBtn = document.getElementById('mmImportCancelBtn');
+  if(addBtn) addBtn.textContent = editing ? '💾 Lưu thay đổi mục này' : '➕ Thêm vào danh sách';
+  if(cancelBtn) cancelBtn.style.display = editing ? '' : 'none';
+}
+function mmImportRenderList(){
+  const box = document.getElementById('mmImportList');
+  if(!box) return;
+  const entries = mmLoadEntries();
+  if(!entries.length){
+    box.innerHTML = `<div class="mm-import-empty">Chưa có mục nào trong danh sách.<br>Dán nội dung vào ô bên dưới rồi bấm <b>➕ Thêm vào danh sách</b>.</div>`;
+    return;
+  }
+  box.innerHTML = entries.map((text, i)=>{
+    const { entries: ok, bad } = mmSplitLogicalEntries(text);
+    const merged = mmMergeLines(ok);
+    const preview = esc(text.replace(/\s+/g,' ').trim().slice(0, 90)) + (text.trim().length > 90 ? '…' : '');
+    const metaHtml = bad.length
+      ? `<span class="mm-ir-bad">⚠ ${bad.length} dòng lỗi</span>`
+      : `✓ ${merged.length} từ vựng`;
+    const editingCls = (i === mmEditingIndex) ? ' mm-import-entry-editing' : '';
+    return `<div class="mm-import-entry${editingCls}" data-i="${i}">
+      <div class="mm-import-entry-main" onclick="mmImportEditEntry(${i})" title="Bấm để sửa mục này">
+        <div class="mm-import-entry-text">${preview || '<i>(trống)</i>'}</div>
+        <div class="mm-import-entry-meta">${metaHtml}</div>
+      </div>
+      <button type="button" class="mm-import-entry-del" onclick="event.stopPropagation(); mmImportDeleteEntry(${i})" title="Xoá mục này">✕</button>
+    </div>`;
+  }).join('');
+}
+function mmImportEditEntry(i){
+  const entries = mmLoadEntries();
+  const ta = document.getElementById('mmImportTextarea');
+  if(!ta || entries[i] === undefined) return;
+  mmEditingIndex = i;
+  ta.value = entries[i];
+  mmImportSetEditUI(true);
+  mmImportRenderList();
+  mmImportUpdateReport();
+  ta.focus();
+  const end = ta.value.length;
+  try{ ta.setSelectionRange(end, end); }catch(e){}
+}
+function mmImportCancelEdit(){
+  mmEditingIndex = -1;
+  mmImportSetEditUI(false);
+  const ta = document.getElementById('mmImportTextarea');
+  if(ta) ta.value = mmLoadDraft();
+  mmImportRenderList();
+  mmImportUpdateReport();
+}
+function mmImportDeleteEntry(i){
+  const entries = mmLoadEntries();
+  if(entries[i] === undefined) return;
+  if(!confirm('Xoá mục này khỏi mind map? Không thể hoàn tác.')) return;
+  entries.splice(i, 1);
+  mmSaveEntries(entries);
+  if(mmEditingIndex === i){ mmImportCancelEdit(); }
+  else if(mmEditingIndex > i){ mmEditingIndex--; }
+  mmImportRenderList();
+  toast('🗑 Đã xoá mục');
+  mmEntries = mmLoadData();
+  mmHiddenKeys.clear();
+  const page = document.getElementById('mmPage');
+  if(page && page.style.display !== 'none') mmRenderAll();
+}
+function mmImportAddEntry(){
+  const ta = document.getElementById('mmImportTextarea');
+  if(!ta) return;
+  const text = ta.value.trim();
+  if(!text){ toast('⚠️ Chưa có nội dung để thêm'); return; }
+  const entries = mmLoadEntries();
+  const wasEditing = mmEditingIndex >= 0 && entries[mmEditingIndex] !== undefined;
+  if(wasEditing){ entries[mmEditingIndex] = text; }
+  else { entries.push(text); }
+  mmSaveEntries(entries);
+  mmEditingIndex = -1;
+  mmImportSetEditUI(false);
+  // Ô nhập tự trống lại ngay, sẵn sàng để dán mục tiếp theo.
+  ta.value = '';
+  mmSaveDraft('');
+  mmImportRenderList();
+  mmImportUpdateReport();
+  toast(wasEditing ? '✓ Đã lưu thay đổi' : '✓ Đã thêm vào danh sách');
+  ta.focus();
+  mmEntries = mmLoadData();
+  mmHiddenKeys.clear();
+  const page = document.getElementById('mmPage');
+  if(page && page.style.display !== 'none') mmRenderAll();
+}
+function mmImportUpdateReport(){
+  const ta = document.getElementById('mmImportTextarea');
+  const rep = document.getElementById('mmImportReport');
+  if(!ta || !rep) return;
+  if(!ta.value.trim()){ rep.innerHTML = ''; return; }
+  const { entries, bad } = mmSplitLogicalEntries(ta.value);
+  const merged = mmMergeLines(entries);
+  let html = `<div><span class="mm-ir-ok">✓ ${entries.length} dòng hợp lệ</span> → <b>${merged.length}</b> từ vựng trong mục này`
+    + (bad.length ? ` &nbsp;·&nbsp; <span class="mm-ir-bad">✕ ${bad.length} dòng sai định dạng</span>` : '') + `</div>`;
+  if(bad.length){
+    html += bad.slice(0, 20).map(b=>`<div class="mm-ir-line">Dòng ${b.n}: ${esc(b.line.slice(0,140))}${b.line.length>140?'…':''}</div>`).join('');
+    if(bad.length > 20) html += `<div class="mm-ir-line">… và ${bad.length-20} dòng khác</div>`;
+  }
+  rep.innerHTML = html;
+}
+function mmImportClear(){
+  if(!confirm('Xoá toàn bộ dữ liệu mind map đã nhập? Không thể hoàn tác.')) return;
+  mmSaveEntries([]);
+  mmSaveDraft('');
+  mmEditingIndex = -1;
+  mmImportSetEditUI(false);
+  const ta = document.getElementById('mmImportTextarea');
+  if(ta) ta.value = '';
+  mmImportRenderList();
+  mmImportUpdateReport();
+  toast('🗑 Đã xoá dữ liệu mind map');
+  mmEntries = mmLoadData();
+  mmHiddenKeys.clear();
+  const page = document.getElementById('mmPage');
+  if(page && page.style.display !== 'none') mmRenderAll();
+}
+(function mmInitImportEvents(){
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const ta = document.getElementById('mmImportTextarea');
+    const auto = document.getElementById('mmImportAutosave');
+    if(!ta) return;
+    let t = null;
+    ta.addEventListener('input', ()=>{
+      mmImportUpdateReport();
+      // Chỉ tự lưu NHÁP (nội dung đang gõ dở, chưa bấm Thêm) để không mất
+      // nếu lỡ đóng overlay — bản nháp KHÔNG được tự động gộp vào danh
+      // sách mục chính thức, phải bấm "Thêm vào danh sách" mới tính.
+      if(mmEditingIndex < 0){
+        if(auto) auto.textContent = 'đang gõ…';
+        clearTimeout(t);
+        t = setTimeout(()=>{
+          mmSaveDraft(ta.value);
+          if(auto) auto.textContent = '✓ đã tự lưu nháp';
+        }, 800);
+      }
+    });
+    const ov = document.getElementById('mmImportOverlay');
+    if(ov) ov.addEventListener('click', e=>{ if(e.target === ov) mmImportClose(); });
+  });
+})();
 function mmClose(){
   const page = document.getElementById('mmPage');
   if(!page) return;
@@ -45380,8 +45759,8 @@ function mmRenderAll(){
   if(!left || !canvas) return;
   if(sub) sub.textContent = mmEntries.length ? ` · ${mmEntries.length} mục` : '';
   if(mmEntries.length === 0){
-    left.innerHTML = `<div class="mm-empty">Chưa có ghi chú nào theo đúng định dạng<br>"từ = đồng nghĩa (pos) : nghĩa → cụm (dịch)"<br>Hãy thêm qua nút 📝 Ghi chú nhanh.</div>`;
-    canvas.innerHTML = `<div class="mm-empty-canvas">Chưa có dữ liệu để vẽ mind map.</div>`;
+    left.innerHTML = `<div class="mm-empty">Chưa có dữ liệu mind map.<br>Bấm nút <b>📥</b> ở trên để dán nội dung theo mẫu:<br>"từ = đồng nghĩa (pos) : nghĩa → cụm (dịch)"</div>`;
+    canvas.innerHTML = `<div class="mm-empty-canvas">Chưa có dữ liệu để vẽ mind map.<br><button type="button" class="mm-import-btn mm-import-btn-primary" style="margin-top:10px" onclick="mmImportOpen()">📥 Nhập dữ liệu</button></div>`;
     mmSelectedIdx = -1;
     return;
   }
@@ -45694,21 +46073,36 @@ function mmFocusEntry(idx){
   canvas.style.transition = 'none';
   canvas.style.transform = 'translate(0px,0px) scale(1)';
   canvas.innerHTML = mmBuildCard(entry, idx);
-  requestAnimationFrame(()=>{
+  // Trên điện thoại, layout đôi khi CHƯA ổn định ngay ở khung hình rAF đầu
+  // tiên (đặc biệt sau khi vừa đóng ngăn kéo danh sách từ hoặc đổi hướng
+  // màn hình) — nếu mmFitToView() đổi mmScale rồi KHÔNG vẽ lại link ngay
+  // sau đó, đường nối sẽ dùng toạ độ tính theo tỉ lệ cũ trong khi khung
+  // hiển thị đã đổi, khiến nhánh bị "vỡ"/lệch xa khỏi ô. Vẽ link → fit
+  // view → vẽ link LẠI (theo layout cuối) mới đảm bảo luôn khớp mép ô.
+  const mmSettle = ()=>{
+    if(mmSelectedIdx !== idx) return;
     mmDrawLinks(idx);
     mmFitToView();
-    mmObserveDiagram(idx);
-    const card = document.getElementById('mmCard-'+idx);
-    if(card){ card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'), 1200); }
+    mmDrawLinks(idx);
+  };
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      mmSettle();
+      mmObserveDiagram(idx);
+      const card = document.getElementById('mmCard-'+idx);
+      if(card){ card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'), 1200); }
+    });
   });
+  // Lưới an toàn bổ sung cho các thiết bị/trình duyệt di động vẽ lại
+  // chữ/font muộn hơn 2 khung hình (Safari iOS đôi khi trả offsetWidth
+  // chưa chính xác ngay sau khi vừa chèn HTML lớn vào DOM).
+  setTimeout(mmSettle, 200);
   // Font "Be Vietnam Pro" đôi khi tải xong SAU lần vẽ đầu tiên, làm cỡ chữ/kích
   // thước ô đổi nhẹ → đường nối bị lệch khỏi mép ô. Vẽ lại đúng 1 lần nữa khi
   // mọi font đã sẵn sàng để khớp vị trí cuối cùng (ResizeObserver ở trên vẫn
   // là lưới an toàn cho mọi thay đổi kích thước khác về sau).
   if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(()=>{
-      if(mmSelectedIdx === idx){ mmDrawLinks(idx); mmFitToView(); }
-    });
+    document.fonts.ready.then(()=>{ mmSettle(); });
   }
 }
 function mmSearchFilter(q){
@@ -45779,11 +46173,18 @@ function mmSearchFilter(q){
     }, {passive:true});
     wrap.addEventListener('touchend', ()=>{ mmDragging = false; });
     let mmResizeT = null;
-    window.addEventListener('resize', ()=>{
+    const mmOnResize = ()=>{
       if(mmSelectedIdx < 0) return;
       clearTimeout(mmResizeT);
-      mmResizeT = setTimeout(()=>{ mmDrawLinks(mmSelectedIdx); mmFitToView(); }, 120);
-    });
+      mmResizeT = setTimeout(()=>{
+        mmDrawLinks(mmSelectedIdx); mmFitToView(); mmDrawLinks(mmSelectedIdx);
+      }, 120);
+    };
+    window.addEventListener('resize', mmOnResize);
+    // Xoay ngang/dọc trên điện thoại: kích thước khung xem đổi đột ngột,
+    // cần vẽ lại sau khi trình duyệt hoàn tất bố cục lại (không chỉ dựa
+    // vào sự kiện 'resize' vì 1 số trình duyệt bắn nó hơi sớm).
+    window.addEventListener('orientationchange', ()=>{ setTimeout(mmOnResize, 260); });
   });
 })();
 /* Nút 📝 nổi giờ luôn cố định ở mép phải, canh giữa theo chiều dọc màn
