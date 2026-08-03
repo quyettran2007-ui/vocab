@@ -180,7 +180,9 @@
   background:var(--card-sunken); color:var(--ink); font-size:18px; cursor:pointer;
   display:flex; align-items:center; justify-content:center; flex:0 0 auto;
 }
-.mm-back-btn:hover{ background:var(--accent-bg); color:var(--accent); }
+@media (hover:hover){
+  .mm-back-btn:hover{ background:var(--accent-bg); color:var(--accent); }
+}
 .mm-title{ font-weight:800; font-size:16px; white-space:nowrap; }
 .mm-title small{ font-weight:500; opacity:.65; margin-left:6px; }
 .mm-search{
@@ -192,7 +194,19 @@
   width:32px; height:32px; border-radius:9px; border:1px solid var(--line);
   background:var(--card-sunken); color:var(--ink); font-size:15px; cursor:pointer;
 }
-.mm-zoom-ctrl button:hover, .mm-width-ctrl button:hover{ background:var(--accent-bg); color:var(--accent); }
+/* @media (hover:hover) — chỉ áp dụng màu :hover trên thiết bị THẬT SỰ có
+   con trỏ chuột. Trên điện thoại (không có "hover" thật), trình duyệt mô
+   phỏng :hover ngay sau cú chạm rồi giữ nguyên trạng thái đó vì không có
+   sự kiện "rời chuột" nào xảy ra — khiến nút bị dính màu hồng/xanh sau khi
+   bấm, trông như nút bị "kẹt"/không phản hồi dù bấm vẫn hoạt động bình
+   thường. Đây chính là nút ↔ co giãn ô collocation bị người dùng tưởng
+   nhầm là "không hoạt động". */
+@media (hover:hover){
+  .mm-zoom-ctrl button:hover, .mm-width-ctrl button:hover{ background:var(--accent-bg); color:var(--accent); }
+}
+/* :active thay cho :hover để vẫn có phản hồi khi CHẠM trên điện thoại,
+   nhưng tự tắt ngay khi nhấc tay ra (không bị dính màu như :hover). */
+.mm-zoom-ctrl button:active, .mm-width-ctrl button:active{ background:var(--accent-bg); color:var(--accent); }
 .mm-zoom-val{ font-size:12px; opacity:.7; width:42px; text-align:center; }
 /* ---- nút giãn/co bề rộng các ô collocation (mmCollocWidthStep) ----
    Cùng phong cách với cụm phóng to/thu nhỏ, đặt ngay cạnh nó. Icon ↔ để
@@ -253,6 +267,14 @@
   background-image:radial-gradient(var(--line) 1px, transparent 1px);
   background-size:22px 22px;
   display:flex; align-items:center; justify-content:center;
+  /* touch-action:none — chặn hẳn cử chỉ cuộn/pinch-zoom MẶC ĐỊNH của trình
+     duyệt trên vùng này. Thiếu dòng này là nguyên nhân chính khiến zoom
+     trên điện thoại bị giật: trình duyệt vừa tự pinch-zoom cả trang (vì
+     viewport cho phép user-scalable) VỪA chạy code pan/zoom JS riêng của
+     mind map cùng lúc — 2 phép biến đổi chồng lên nhau mỗi khung hình, gây
+     giật và khiến toạ độ đường nối/thẻ bị tính sai lệch so với thực tế
+     hiển thị. */
+  touch-action:none;
 }
 .mm-canvas-wrap.dragging{ cursor:grabbing; }
 .mm-canvas{
@@ -46391,6 +46413,31 @@ function mmSearchFilter(q){
       mmApplyTransform(false);
     }, {passive:false});
     // touch: 1 finger pan, 2 finger pinch zoom
+    // ---- rAF throttle: gộp mọi touchmove trong cùng 1 khung hình thành
+    // đúng 1 lần ghi style, giống cách đã làm ở khối vuốt thẻ flashcard
+    // (fcCard touchmove) phía trên. Trước đây mỗi touchmove gọi thẳng
+    // mmApplyTransform() đồng bộ → ép trình duyệt tính lại layout/paint
+    // liên tục hàng chục lần/giây, đây là nguyên nhân chính gây giật khi
+    // zoom/kéo trên điện thoại (cùng lúc với việc thiếu touch-action:none
+    // ở CSS .mm-canvas-wrap khiến cử chỉ pinch mặc định của trình duyệt
+    // chạy chồng lên cử chỉ pinch tự viết trong JS). ----
+    let mmTouchRAF = null, mmPendingTouchEvent = null;
+    function mmFlushTouch(){
+      mmTouchRAF = null;
+      const e = mmPendingTouchEvent;
+      if(!e) return;
+      if(e.touches.length === 1 && mmDragging){
+        mmTx = mmStartTx + (e.touches[0].clientX - mmDragStartX);
+        mmTy = mmStartTy + (e.touches[0].clientY - mmDragStartY);
+        mmApplyTransform(false);
+      } else if(e.touches.length === 2){
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        mmScale = Math.min(MM_ZOOM_MAX, Math.max(MM_ZOOM_MIN, mmPinchStartScale * (dist/mmPinchStartDist)));
+        mmApplyTransform(false);
+      }
+    }
     wrap.addEventListener('touchstart', e=>{
       if(e.touches.length === 1){
         mmDragging = true;
@@ -46403,21 +46450,24 @@ function mmSearchFilter(q){
         mmPinchStartDist = Math.hypot(dx, dy);
         mmPinchStartScale = mmScale;
       }
-    }, {passive:true});
+    }, {passive:false});
     wrap.addEventListener('touchmove', e=>{
-      if(e.touches.length === 1 && mmDragging){
-        mmTx = mmStartTx + (e.touches[0].clientX - mmDragStartX);
-        mmTy = mmStartTy + (e.touches[0].clientY - mmDragStartY);
-        mmApplyTransform(false);
-      } else if(e.touches.length === 2){
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const dist = Math.hypot(dx, dy);
-        mmScale = Math.min(MM_ZOOM_MAX, Math.max(MM_ZOOM_MIN, mmPinchStartScale * (dist/mmPinchStartDist)));
-        mmApplyTransform(false);
-      }
-    }, {passive:true});
-    wrap.addEventListener('touchend', ()=>{ mmDragging = false; });
+      // preventDefault ở đây (listener KHÔNG passive) để chặn hẳn cử chỉ
+      // cuộn/pinch-zoom mặc định của trình duyệt trong lúc đang tự kéo/
+      // phóng to sơ đồ — cùng với touch-action:none ở CSS, đảm bảo chỉ có
+      // ĐÚNG 1 phép biến đổi (của JS) chạy tại một thời điểm.
+      e.preventDefault();
+      mmPendingTouchEvent = e;
+      if(mmTouchRAF == null) mmTouchRAF = requestAnimationFrame(mmFlushTouch);
+    }, {passive:false});
+    wrap.addEventListener('touchend', e=>{
+      mmDragging = false;
+      if(mmTouchRAF != null){ cancelAnimationFrame(mmTouchRAF); mmTouchRAF = null; }
+      mmPendingTouchEvent = null;
+      // Vẽ lại đường nối 1 lần cuối khi buông tay — lưới an toàn cuối cùng
+      // phòng khi khung hình rAF cuối cùng của thao tác kéo/pinch bị bỏ lỡ.
+      if(mmSelectedIdx >= 0) mmDrawLinks(mmSelectedIdx);
+    });
     let mmResizeT = null;
     const mmOnResize = ()=>{
       if(mmSelectedIdx < 0) return;
