@@ -188,12 +188,18 @@
   border:1px solid var(--line); background:var(--card-sunken); color:var(--ink); font-size:13px;
 }
 .mm-zoom-ctrl{ display:flex; align-items:center; gap:4px; margin-left:auto; flex:0 0 auto; }
-.mm-zoom-ctrl button{
+.mm-zoom-ctrl button, .mm-width-ctrl button{
   width:32px; height:32px; border-radius:9px; border:1px solid var(--line);
   background:var(--card-sunken); color:var(--ink); font-size:15px; cursor:pointer;
 }
-.mm-zoom-ctrl button:hover{ background:var(--accent-bg); color:var(--accent); }
+.mm-zoom-ctrl button:hover, .mm-width-ctrl button:hover{ background:var(--accent-bg); color:var(--accent); }
 .mm-zoom-val{ font-size:12px; opacity:.7; width:42px; text-align:center; }
+/* ---- nút giãn/co bề rộng các ô collocation (mmCollocWidthStep) ----
+   Cùng phong cách với cụm phóng to/thu nhỏ, đặt ngay cạnh nó. Icon ↔ để
+   phân biệt trực quan với kính lúp +/－ của zoom. */
+.mm-width-ctrl{ display:flex; align-items:center; gap:4px; flex:0 0 auto; padding-left:4px; margin-left:4px; border-left:1px solid var(--line); }
+.mm-width-ctrl .mm-width-ico{ font-size:13px; opacity:.55; margin-right:1px; }
+.mm-width-val{ font-size:12px; opacity:.7; width:48px; text-align:center; }
 .mm-body{ flex:1 1 auto; display:flex; min-height:0; }
 .mm-left{
   width:30%; min-width:220px; max-width:360px; flex:0 0 auto; border-right:1px solid var(--line);
@@ -434,9 +440,17 @@
   .mm-title small{ display:none; }
   .mm-search{ max-width:none; }
   .mm-node-syn{ max-width:150px; font-size:11.5px; padding:7px 26px 7px 10px; }
-  .mm-node-colloc{ max-width:168px; padding:7px 26px 7px 10px; }
+  /* Trên mobile, ô collocation vẫn tôn trọng bề rộng người dùng chỉnh bằng
+     nút ↔ (biến --mm-colloc-w) — chỉ dùng 168px làm giá trị TRẦN mặc định,
+     không ghi đè cứng như trước (khiến nút ↔ vô tác dụng trên điện thoại). */
+  .mm-node-colloc{ max-width:var(--mm-colloc-w, 168px); padding:7px 26px 7px 10px; }
   .mm-node-hide-btn{ opacity:.55; }
   .mm-colloc-en{ font-size:11.5px; }
+  /* Header đủ chỗ cho cụm nút ↔ mới: cho phép xuống dòng thay vì bị bóp méo/
+     tràn ra ngoài trên màn hẹp. */
+  .mm-header{ flex-wrap:wrap; row-gap:8px; }
+  .mm-search{ order:5; flex:1 1 100%; }
+  .mm-width-ctrl{ border-left:none; padding-left:0; margin-left:0; }
 }
 
 /* ---- Cửa sổ ghi chú nhanh: modal chiếm khoảng nửa diện tích màn hình ---- */
@@ -7457,7 +7471,15 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
       <span class="mm-zoom-val" id="mmZoomVal">100%</span>
       <button type="button" onclick="mmZoomStep(1)" title="Phóng to">＋</button>
       <button type="button" onclick="mmResetView()" title="Về vị trí ban đầu">⤾</button>
+      <button type="button" onclick="mmForceRedraw()" title="Vẽ lại đường nối (nếu bị lệch)">🔄</button>
     </div>
+    <div class="mm-width-ctrl">
+      <span class="mm-width-ico">↔</span>
+      <button type="button" onclick="mmCollocWidthStep(-1)" title="Thu hẹp ô collocation">－</button>
+      <span class="mm-width-val" id="mmWidthVal">230px</span>
+      <button type="button" onclick="mmCollocWidthStep(1)" title="Mở rộng ô collocation">＋</button>
+    </div>
+    <button type="button" class="mm-back-btn" id="mmExportBtn" onclick="mmExportImage()" title="Xuất ảnh dạng dọc (9:16+)">📷</button>
   </div>
   <div class="mm-body" id="mmBody">
     <div class="mm-left" id="mmLeftList"></div>
@@ -45307,6 +45329,169 @@ let mmEntries = [];
 let mmSelectedIdx = -1;
 let mmScale = 1, mmTx = 0, mmTy = 0;
 const MM_ZOOM_MIN = 0.15, MM_ZOOM_MAX = 2.5, MM_ZOOM_STEP = 0.15;
+// ---- Bề rộng ô collocation (biến CSS --mm-colloc-w) ----
+// Người dùng có thể giãn/co bề ngang các thẻ cụm collocation bằng nút ↔
+// trên thanh công cụ. Giá trị được lưu localStorage để giữ nguyên giữa
+// các lần mở lại trang, và áp lại ngay khi trang tải xong.
+const MM_WIDTH_KEY = 'vocab_mindmap_colloc_w_v1';
+const MM_WIDTH_MIN = 140, MM_WIDTH_MAX = 420, MM_WIDTH_STEP = 20, MM_WIDTH_DEFAULT = 230;
+let mmCollocWidth = MM_WIDTH_DEFAULT;
+try{
+  const savedW = parseInt(localStorage.getItem(MM_WIDTH_KEY), 10);
+  if(!isNaN(savedW) && savedW >= MM_WIDTH_MIN && savedW <= MM_WIDTH_MAX) mmCollocWidth = savedW;
+}catch(e){}
+function mmApplyCollocWidth(){
+  document.documentElement.style.setProperty('--mm-colloc-w', mmCollocWidth + 'px');
+  const val = document.getElementById('mmWidthVal');
+  if(val) val.textContent = mmCollocWidth + 'px';
+}
+function mmCollocWidthStep(dir){
+  mmCollocWidth = Math.min(MM_WIDTH_MAX, Math.max(MM_WIDTH_MIN, mmCollocWidth + dir*MM_WIDTH_STEP));
+  mmApplyCollocWidth();
+  try{ localStorage.setItem(MM_WIDTH_KEY, String(mmCollocWidth)); }catch(e){}
+  // Đổi bề rộng ô làm layout đổi kích thước → phải vẽ lại đường nối VÀ
+  // fit lại khung nhìn, đợi 1 khung hình để trình duyệt bố cục lại trước.
+  requestAnimationFrame(()=>{
+    if(mmSelectedIdx >= 0){ mmDrawLinks(mmSelectedIdx); mmFitToView(); mmDrawLinks(mmSelectedIdx); }
+  });
+}
+mmApplyCollocWidth();
+// Nút vẽ lại đường nối thủ công — lưới an toàn cuối cùng cho các trường
+// hợp hiếm khi mọi cơ chế tự động (ResizeObserver, font.ready, settle...)
+// đều lỡ nhịp, ví dụ trình duyệt trả kích thước ô sai ngay sau khi vừa
+// xoay màn hình hoặc đóng/mở bàn phím ảo trên điện thoại.
+function mmForceRedraw(){
+  if(mmSelectedIdx < 0) return;
+  mmDrawLinks(mmSelectedIdx);
+  mmFitToView();
+  mmDrawLinks(mmSelectedIdx);
+  requestAnimationFrame(()=>{ mmDrawLinks(mmSelectedIdx); });
+}
+
+/* ============================================================
+   XUẤT ẢNH DẠNG DỌC (9:16 trở lên) CHO 1 THẺ MIND MAP
+   ------------------------------------------------------------
+   Sơ đồ toả tròn (đồng nghĩa trái / cụm phải quanh từ trung tâm) vốn có
+   hình dạng NGANG — không hợp để lưu thành ảnh dọc kiểu story/reels.
+   Nên khi xuất ảnh, build lại NỘI DUNG của đúng thẻ đang xem thành 1 bố
+   cục CỘT DỌC riêng (không dùng lại DOM toả tròn + đường nối SVG), rồi
+   chụp bố cục đó bằng html2canvas. Việc này tránh luôn mọi vấn đề về
+   đường nối bị lệch khi chụp, vì ảnh xuất ra không hề chứa đường nối.
+   ============================================================ */
+let mmH2CLoading = null;
+function mmLoadHtml2Canvas(){
+  if(window.html2canvas) return Promise.resolve();
+  if(mmH2CLoading) return mmH2CLoading;
+  mmH2CLoading = new Promise((resolve, reject)=>{
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload = ()=>resolve();
+    s.onerror = ()=>reject(new Error('load fail'));
+    document.head.appendChild(s);
+  });
+  return mmH2CLoading;
+}
+
+function mmExportBuildVerticalHTML(entry, idx){
+  const theme = MM_THEMES[idx % MM_THEMES.length];
+  const rootWord = entry.synonyms[0];
+  const otherSyn = entry.synonyms.slice(1).filter((s,i)=>!mmHiddenKeys.has(`${idx}:syn:${i}`));
+  const cols = entry.collocations.filter((c,i)=>!mmHiddenKeys.has(`${idx}:col:${i}`));
+  const synChips = otherSyn.map(s=>`<div class="mm-ex-syn">${esc(s)}</div>`).join('');
+  const colCards = cols.map(c=>`
+    <div class="mm-ex-col">
+      <div class="mm-ex-col-en">${mmHighlightRoot(c.phrase, rootWord)}</div>
+      <div class="mm-ex-col-vi">${mmHighlightMeaningDiff(c.trans, entry.meanings)}</div>
+    </div>`).join('');
+  return `
+    <div class="mm-ex-wrap" style="--mm-c1:${theme.c1};--mm-c2:${theme.c2};--mm-c1-bg:${theme.bg}">
+      <div class="mm-ex-center">
+        <span class="mm-ex-pos">${esc(entry.pos)}</span>
+        <div class="mm-ex-word">${esc(rootWord)}</div>
+        <div class="mm-ex-mean">${esc(entry.meanings.join(' / '))}</div>
+      </div>
+      ${otherSyn.length ? `<div class="mm-ex-section-title">Từ đồng nghĩa</div><div class="mm-ex-syn-wrap">${synChips}</div>` : ''}
+      ${cols.length ? `<div class="mm-ex-section-title">Cụm collocation</div><div class="mm-ex-col-wrap">${colCards}</div>` : ''}
+      <div class="mm-ex-footer">IELTS VOCAB by Cris</div>
+    </div>`;
+}
+
+async function mmExportImage(){
+  const idx = mmSelectedIdx;
+  const entry = mmEntries[idx];
+  if(!entry){ toast('Chưa chọn từ nào để xuất ảnh'); return; }
+  const btn = document.getElementById('mmExportBtn');
+  if(btn){ btn.disabled = true; btn.style.opacity = '.5'; }
+  try{
+    await mmLoadHtml2Canvas();
+    const EXPORT_W = 720; // px, chiều rộng cố định của khung xuất
+    const host = document.createElement('div');
+    host.style.cssText = `position:fixed; left:-99999px; top:0; width:${EXPORT_W}px; z-index:-1;`;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const bg = isDark ? '#0a1210' : '#f4f6f4';
+    const cardBg = isDark ? '#141e1b' : '#ffffff';
+    const sunkBg = isDark ? '#0f1a17' : '#f4f7f5';
+    const inkColor = isDark ? '#e8f0ec' : '#10201c';
+    const inkSoft = isDark ? '#a5bab3' : '#46605a';
+    const lineColor = isDark ? '#22322d' : '#e3e8e5';
+    host.innerHTML = `
+      <style>
+        .mm-ex-wrap{ box-sizing:border-box; width:${EXPORT_W}px; padding:40px 32px 32px; background:${bg};
+          font-family:'Be Vietnam Pro',sans-serif; display:flex; flex-direction:column; align-items:stretch; }
+        .mm-ex-center{ background:linear-gradient(135deg,var(--mm-c1),var(--mm-c2)); color:#fff; text-align:center;
+          border-radius:24px; padding:26px 20px; box-shadow:0 10px 30px rgba(0,0,0,.18); }
+        .mm-ex-pos{ display:inline-block; font-size:13px; font-weight:700; background:rgba(255,255,255,.25); padding:4px 14px; border-radius:10px; margin-bottom:12px; }
+        .mm-ex-word{ font-weight:800; font-size:30px; line-height:1.3; }
+        .mm-ex-mean{ font-size:16px; opacity:.97; margin-top:12px; font-weight:600; }
+        .mm-ex-section-title{ font-size:14px; font-weight:800; opacity:.55; text-transform:uppercase; letter-spacing:.05em;
+          color:${inkColor}; margin:26px 0 12px 4px; }
+        .mm-ex-syn-wrap{ display:flex; flex-wrap:wrap; gap:10px; }
+        .mm-ex-syn{ background:var(--mm-c1-bg); border:1px solid var(--mm-c1); color:${inkColor}; font-weight:600;
+          font-size:15px; padding:10px 16px; border-radius:14px; }
+        .mm-ex-col-wrap{ display:flex; flex-direction:column; gap:12px; }
+        .mm-ex-col{ background:${sunkBg}; border:1px solid ${lineColor}; border-radius:14px; padding:14px 16px; }
+        .mm-ex-col-en{ font-weight:700; color:${inkColor}; font-size:16px; line-height:1.4; }
+        .mm-ex-col-en .mm-colloc-match{ color:var(--mm-c1); font-weight:800; }
+        .mm-ex-col-vi{ font-size:14px; margin-top:5px; line-height:1.5; font-weight:700; color:${inkSoft}; }
+        .mm-ex-col-vi .mm-colloc-vi-diff{ color:var(--mm-c2); }
+        .mm-ex-footer{ text-align:center; font-size:12px; opacity:.4; color:${inkColor}; margin-top:30px; font-weight:700; letter-spacing:.04em; }
+      </style>
+      ${mmExportBuildVerticalHTML(entry, idx)}`;
+    document.body.appendChild(host);
+    // Đợi 1 khung hình để trình duyệt bố cục xong nội dung vừa chèn trước
+    // khi chụp, tránh chụp phải trạng thái chưa layout ổn định.
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    const wrapEl = host.querySelector('.mm-ex-wrap');
+    const canvas = await window.html2canvas(wrapEl, { backgroundColor: bg, scale: 2, useCORS: true });
+    document.body.removeChild(host);
+    // Đảm bảo tỉ lệ DỌC tối thiểu 9:16 (cao ≥ rộng × 16/9) — nếu nội dung
+    // tự nhiên đã cao hơn mức đó thì giữ nguyên, chỉ đệm thêm nền khi
+    // nội dung chưa đủ cao.
+    const minH = Math.ceil(canvas.width * (16/9));
+    let finalCanvas = canvas;
+    if(canvas.height < minH){
+      finalCanvas = document.createElement('canvas');
+      finalCanvas.width = canvas.width;
+      finalCanvas.height = minH;
+      const ctx = finalCanvas.getContext('2d');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+      const offsetY = Math.round((minH - canvas.height) / 2);
+      ctx.drawImage(canvas, 0, offsetY);
+    }
+    const rootWord = entry.synonyms[0].replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+    const a = document.createElement('a');
+    a.download = `mindmap-${rootWord || 'tu-vung'}.png`;
+    a.href = finalCanvas.toDataURL('image/png');
+    a.click();
+    toast('📷 Đã xuất ảnh dạng dọc');
+  }catch(err){
+    console.error(err);
+    toast('Xuất ảnh thất bại, thử lại sau');
+  }finally{
+    if(btn){ btn.disabled = false; btn.style.opacity = ''; }
+  }
+}
 let mmDragging = false, mmDragStartX = 0, mmDragStartY = 0, mmStartTx = 0, mmStartTy = 0;
 let mmPinchStartDist = 0, mmPinchStartScale = 1;
 // Danh sách từ đã "đánh dấu" (bookmark) ở khung danh sách bên trái — lưu
@@ -46156,6 +46341,8 @@ function mmFocusEntry(idx){
   // chữ/font muộn hơn 2 khung hình (Safari iOS đôi khi trả offsetWidth
   // chưa chính xác ngay sau khi vừa chèn HTML lớn vào DOM).
   setTimeout(mmSettle, 200);
+  setTimeout(mmSettle, 500);
+  setTimeout(mmSettle, 900);
   // Font "Be Vietnam Pro" đôi khi tải xong SAU lần vẽ đầu tiên, làm cỡ chữ/kích
   // thước ô đổi nhẹ → đường nối bị lệch khỏi mép ô. Vẽ lại đúng 1 lần nữa khi
   // mọi font đã sẵn sàng để khớp vị trí cuối cùng (ResizeObserver ở trên vẫn
@@ -46244,6 +46431,12 @@ function mmSearchFilter(q){
     // cần vẽ lại sau khi trình duyệt hoàn tất bố cục lại (không chỉ dựa
     // vào sự kiện 'resize' vì 1 số trình duyệt bắn nó hơi sớm).
     window.addEventListener('orientationchange', ()=>{ setTimeout(mmOnResize, 260); });
+    // Thanh địa chỉ ẩn/hiện hoặc bàn phím ảo bật/tắt trên điện thoại đổi
+    // chiều cao khung xem thực tế mà không phải lúc nào cũng bắn sự kiện
+    // 'resize' của window — theo dõi riêng visualViewport để vẽ lại kịp.
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize', mmOnResize);
+    }
   });
 })();
 /* Nút 📝 nổi giờ luôn cố định ở mép phải, canh giữa theo chiều dọc màn
