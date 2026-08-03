@@ -173,7 +173,7 @@
 .mm-header{
   display:flex; align-items:center; gap:12px; padding:12px 16px;
   background:var(--card); border-bottom:1px solid var(--line); box-shadow:var(--shadow-sm);
-  flex:0 0 auto; z-index:2;
+  flex:0 0 auto; z-index:22;
 }
 .mm-back-btn{
   width:38px; height:38px; border-radius:11px; border:1px solid var(--line);
@@ -231,8 +231,9 @@
 }
 .mm-card.flash .mm-node-center{ box-shadow:0 0 0 6px var(--accent-bg), var(--shadow-lg); }
 .mm-diagram{
-  position:relative; display:flex; align-items:center; justify-content:center; gap:76px; padding:36px;
+  position:relative; display:flex; align-items:center; justify-content:center; gap:54px; padding:36px;
 }
+.mm-node-syn, .mm-node-colloc{ transition:transform .25s ease; }
 .mm-links{ position:absolute; top:0; left:0; pointer-events:none; z-index:1; overflow:visible; }
 .mm-links path{ fill:none; stroke:var(--line); stroke-width:1.7; }
 .mm-col{ display:flex; flex-direction:column; gap:14px; z-index:2; position:relative; }
@@ -252,6 +253,7 @@
 .mm-node-syn{
   background:var(--accent-bg); border:1px solid var(--accent); color:var(--ink);
   font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:12px; max-width:210px; text-align:right;
+  display:flex; align-items:center; justify-content:flex-end; gap:2px;
 }
 .mm-node-colloc{
   background:var(--card-sunken); border:1px solid var(--line); padding:8px 14px; border-radius:12px; max-width:230px;
@@ -259,8 +261,37 @@
 .mm-colloc-en{ font-weight:700; color:var(--ink); font-size:12.5px; line-height:1.35; }
 .mm-colloc-match{ color:var(--accent); font-weight:800; }
 .mm-colloc-vi{ opacity:.62; font-size:11px; margin-top:2px; line-height:1.35; }
+.mm-colloc-vi-diff{ opacity:1; color:var(--accent-2); font-weight:700; }
+
+/* ---- nút 🔊 phát âm gắn cạnh mỗi từ/cụm trong mind map ---- */
+.mm-speak-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:19px; height:19px; margin-left:5px; border:none; border-radius:50%;
+  background:rgba(255,255,255,.28); color:inherit; font-size:10px; cursor:pointer;
+  vertical-align:middle; padding:0; line-height:1; flex:0 0 auto;
+  transition:transform .12s ease, background .12s ease;
+}
+.mm-speak-btn:hover{ transform:scale(1.15); }
+.mm-speak-btn:active{ transform:scale(.88); }
+.mm-node-syn .mm-speak-btn,
+.mm-node-colloc .mm-speak-btn{ background:var(--accent-bg); color:var(--accent); }
+.mm-center-word{ display:inline-flex; align-items:center; }
+.mm-colloc-en{ display:flex; align-items:center; flex-wrap:wrap; gap:2px; }
+
+/* ---- lớp phủ tối phía sau danh sách từ khi mở dạng ngăn kéo (mobile) ---- */
+.mm-left-backdrop{ position:fixed; inset:0; background:rgba(10,20,18,.42); z-index:19; }
+
 @media (max-width:760px){
-  .mm-left{ display:none; }
+  .mm-left{
+    position:fixed; top:0; bottom:0; left:0; width:84%; max-width:340px; min-width:0;
+    z-index:20; padding:10px; border-right:1px solid var(--line);
+    box-shadow:var(--shadow-lg);
+    transform:translateX(-102%);
+    transition:transform .25s cubic-bezier(.22,.9,.3,1);
+    opacity:1; overflow-y:auto;
+  }
+  .mm-left.mm-mobile-open{ transform:translateX(0); }
+  .mm-left.collapsed{ width:84%; max-width:340px; padding:10px; opacity:1; overflow-y:auto; }
   .mm-title small{ display:none; }
   .mm-search{ max-width:none; }
 }
@@ -7284,7 +7315,7 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
       <button type="button" onclick="mmResetView()" title="Về vị trí ban đầu">⤾</button>
     </div>
   </div>
-  <div class="mm-body">
+  <div class="mm-body" id="mmBody">
     <div class="mm-left" id="mmLeftList"></div>
     <div class="mm-canvas-wrap" id="mmCanvasWrap">
       <div class="mm-canvas" id="mmCanvas"></div>
@@ -45205,10 +45236,36 @@ function mmClose(){
   page.style.display = 'none';
 }
 let mmLeftCollapsed = false;
+function mmIsMobile(){ return window.innerWidth <= 760; }
+function mmSetBackdrop(show){
+  let bd = document.getElementById('mmLeftBackdrop');
+  if(show){
+    if(!bd){
+      bd = document.createElement('div');
+      bd.id = 'mmLeftBackdrop';
+      bd.className = 'mm-left-backdrop';
+      bd.onclick = ()=>mmToggleLeftPanel();
+      const body = document.getElementById('mmBody');
+      if(body) body.appendChild(bd);
+    }
+  } else if(bd){
+    bd.remove();
+  }
+}
 function mmToggleLeftPanel(){
   const left = document.getElementById('mmLeftList');
   const btn = document.getElementById('mmCollapseBtn');
   if(!left) return;
+  // Trên điện thoại: danh sách từ hiện dưới dạng ngăn kéo trượt từ trái,
+  // có lớp phủ tối phía sau — trước đây bị ẩn cứng bằng display:none nên
+  // không cách nào bấm để chọn từ trên mobile được nữa.
+  if(mmIsMobile()){
+    const opening = !left.classList.contains('mm-mobile-open');
+    left.classList.toggle('mm-mobile-open', opening);
+    mmSetBackdrop(opening);
+    if(btn) btn.classList.toggle('on', opening);
+    return;
+  }
   mmLeftCollapsed = !mmLeftCollapsed;
   left.classList.toggle('collapsed', mmLeftCollapsed);
   if(btn) btn.classList.toggle('on', mmLeftCollapsed);
@@ -45251,22 +45308,65 @@ function mmHighlightRoot(phrase, rootWord){
   return `${esc(before)}<span class="mm-colloc-match">${esc(match)}</span>${esc(after)}`;
 }
 
+// Tô màu phần nghĩa tiếng Việt của collocation KHÔNG khớp với nghĩa gốc của
+// từ trung tâm — ví dụ từ gốc "compulsory" = "bắt buộc", cụm "compulsory
+// education" dịch "giáo dục bắt buộc" thì phần "giáo dục" (không phải nghĩa
+// gốc) sẽ được tô màu nhấn, còn "bắt buộc" (đúng nghĩa gốc) giữ màu thường.
+function mmHighlightMeaningDiff(trans, meanings){
+  if(!trans) return '';
+  let best = null;
+  (meanings || []).forEach(m=>{
+    if(!m) return;
+    const idx = trans.toLowerCase().indexOf(m.toLowerCase());
+    if(idx !== -1 && (!best || m.length > best.text.length)){
+      best = { idx, text: trans.slice(idx, idx + m.length) };
+    }
+  });
+  if(!best) return esc(trans);
+  const before = trans.slice(0, best.idx);
+  const after = trans.slice(best.idx + best.text.length);
+  const wrap = s => s ? `<span class="mm-colloc-vi-diff">${esc(s)}</span>` : '';
+  return `${wrap(before)}${esc(best.text)}${wrap(after)}`;
+}
+
+// Tính độ lệch ngang cho từng node trong 1 nhánh theo đường cong sin, để cả
+// cột hiện thành 1 vòng cung phình ra giữa thay vì 1 đường thẳng dọc cứng —
+// vừa tận dụng khoảng trống 2 bên, vừa giống bố cục mind map tự nhiên hơn.
+function mmArcOffsets(n, maxPx){
+  if(n <= 1) return [0];
+  return Array.from({length:n}, (_, i)=>{
+    const t = i/(n-1);
+    return Math.round(Math.sin(t*Math.PI) * maxPx);
+  });
+}
+
 function mmBuildCard(entry, idx){
   const rootWord = entry.synonyms[0];
   const otherSyn = entry.synonyms.slice(1);
   const meanText = entry.meanings.join(' / ');
+  const synArcMax = Math.min(64, 18 + otherSyn.length * 6);
+  const synOffsets = mmArcOffsets(otherSyn.length, synArcMax);
+  const colArcMax = Math.min(64, 18 + entry.collocations.length * 5);
+  const colOffsets = mmArcOffsets(entry.collocations.length, colArcMax);
   const synCol = otherSyn.length ? `
     <div class="mm-col mm-col-syn">
       <div class="mm-col-title">Từ đồng nghĩa</div>
-      ${otherSyn.map(s=>`<div class="mm-node mm-node-syn">${esc(s)}</div>`).join('')}
+      ${otherSyn.map((s,i)=>`
+        <div class="mm-node mm-node-syn" style="transform:translateX(${-synOffsets[i]}px)">
+          <span>${esc(s)}</span>
+          <button type="button" class="mm-speak-btn" data-w="${esc(s)}" onclick="event.stopPropagation();speak(this.dataset.w)" title="Phát âm">🔊</button>
+        </div>`).join('')}
     </div>` : `<div class="mm-col mm-col-syn"></div>`;
   const colCol = entry.collocations.length ? `
     <div class="mm-col mm-col-colloc">
       <div class="mm-col-title">Cụm collocation</div>
-      ${entry.collocations.map(c=>`
-        <div class="mm-node mm-node-colloc">
-          <div class="mm-colloc-en">${mmHighlightRoot(c.phrase, rootWord)}</div>
-          <div class="mm-colloc-vi">${esc(c.trans)}</div>
+      ${entry.collocations.map((c,i)=>`
+        <div class="mm-node mm-node-colloc" style="transform:translateX(${colOffsets[i]}px)">
+          <div class="mm-colloc-en">
+            <span>${mmHighlightRoot(c.phrase, rootWord)}</span>
+            <button type="button" class="mm-speak-btn" data-w="${esc(c.phrase)}" onclick="event.stopPropagation();speak(this.dataset.w)" title="Phát âm">🔊</button>
+          </div>
+          <div class="mm-colloc-vi">${mmHighlightMeaningDiff(c.trans, entry.meanings)}</div>
         </div>`).join('')}
     </div>` : `<div class="mm-col mm-col-colloc"></div>`;
   return `
@@ -45276,7 +45376,10 @@ function mmBuildCard(entry, idx){
         ${synCol}
         <div class="mm-node mm-node-center">
           <span class="mm-center-pos">${esc(entry.pos)}</span>
-          <div class="mm-center-word">${esc(rootWord)}</div>
+          <div class="mm-center-word">
+            <span>${esc(rootWord)}</span>
+            <button type="button" class="mm-speak-btn" data-w="${esc(rootWord)}" onclick="event.stopPropagation();speak(this.dataset.w)" title="Phát âm">🔊</button>
+          </div>
           <div class="mm-center-mean">${esc(meanText)}</div>
         </div>
         ${colCol}
@@ -45294,21 +45397,32 @@ function mmDrawLinks(idx){
   const svg = document.getElementById('mmLinks-'+idx);
   const center = card ? card.querySelector('.mm-node-center') : null;
   if(!card || !svg || !center) return;
+  // QUAN TRỌNG: card đang nằm trong #mmCanvas, phần tử này bị scale bởi
+  // transform (mmScale) khi zoom/thu-phóng. getBoundingClientRect() trả về
+  // toạ độ ĐÃ NHÂN scale, nhưng bản thân <svg> lại là con của canvas nên
+  // cũng bị scale THÊM MỘT LẦN NỮA khi vẽ — nếu lấy thẳng số đo từ
+  // getBoundingClientRect() làm toạ độ path thì sẽ bị nhân đúp tỉ lệ,
+  // khiến các đường nối lệch hẳn khỏi node bất cứ khi nào mmScale != 1
+  // (chính là lỗi "vỡ nhánh" khi thu gọn/mở danh sách từ hay khi resize).
+  // Cách sửa: chia lại mọi khoảng cách đo được cho scale hiện tại để quy
+  // về đơn vị "layout gốc" (không phụ thuộc scale) trước khi ghi vào path.
+  const scale = mmScale || 1;
   const cardRect = card.getBoundingClientRect();
   svg.setAttribute('width', card.offsetWidth);
   svg.setAttribute('height', card.offsetHeight);
   const cRect = center.getBoundingClientRect();
-  const cLeftX = cRect.left - cardRect.left, cRightX = cRect.right - cardRect.left;
-  const cY = cRect.top - cardRect.top + cRect.height/2;
+  const cLeftX = (cRect.left - cardRect.left) / scale;
+  const cRightX = (cRect.right - cardRect.left) / scale;
+  const cY = (cRect.top - cardRect.top) / scale + (cRect.height / scale) / 2;
   let paths = '';
   card.querySelectorAll('.mm-node-syn').forEach(node=>{
     const r = node.getBoundingClientRect();
-    const x2 = r.right - cardRect.left, y2 = r.top - cardRect.top + r.height/2;
+    const x2 = (r.right - cardRect.left) / scale, y2 = (r.top - cardRect.top) / scale + (r.height / scale)/2;
     paths += mmLinkPath(cLeftX, cY, x2, y2);
   });
   card.querySelectorAll('.mm-node-colloc').forEach(node=>{
     const r = node.getBoundingClientRect();
-    const x2 = r.left - cardRect.left, y2 = r.top - cardRect.top + r.height/2;
+    const x2 = (r.left - cardRect.left) / scale, y2 = (r.top - cardRect.top) / scale + (r.height / scale)/2;
     paths += mmLinkPath(cRightX, cY, x2, y2);
   });
   svg.innerHTML = paths;
@@ -45357,6 +45471,9 @@ function mmFocusEntry(idx){
   document.querySelectorAll('.mm-list-item').forEach(el=>el.classList.remove('active'));
   const li = document.getElementById('mmLi-'+idx);
   if(li){ li.classList.add('active'); li.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+  if(mmIsMobile() && document.getElementById('mmLeftList')?.classList.contains('mm-mobile-open')){
+    mmToggleLeftPanel();
+  }
   const canvas = document.getElementById('mmCanvas');
   if(!canvas) return;
   // Vẽ đúng 1 thẻ của từ được chọn, chiếm trọn khung bên phải — không còn
