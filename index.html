@@ -167,10 +167,9 @@
    rồi vẽ thành sơ đồ tư duy (radial) có thể phóng to/thu nhỏ & kéo xem.
    ============================================================ */
 .mm-page{
-  position:fixed; inset:0; z-index:6000; background:var(--bg);
-  display:flex; flex-direction:column; opacity:0; transition:opacity .2s ease;
+  position:fixed; inset:0; z-index:6000; background:var(--card);
+  display:flex; flex-direction:column;
 }
-.mm-page.show{ opacity:1; }
 .mm-header{
   display:flex; align-items:center; gap:12px; padding:12px 16px;
   background:var(--card); border-bottom:1px solid var(--line); box-shadow:var(--shadow-sm);
@@ -199,7 +198,10 @@
 .mm-left{
   width:30%; min-width:220px; max-width:360px; flex:0 0 auto; border-right:1px solid var(--line);
   background:var(--card); overflow-y:auto; padding:8px;
+  transition:width .22s ease, min-width .22s ease, max-width .22s ease, padding .22s ease, opacity .18s ease;
 }
+.mm-left.collapsed{ width:0; min-width:0; max-width:0; padding:0; opacity:0; overflow:hidden; border-right:none; }
+#mmCollapseBtn.on{ background:var(--accent-bg); color:var(--accent); border-color:var(--accent); }
 .mm-count{ font-size:12px; opacity:.6; padding:6px 8px 10px; }
 .mm-empty{ padding:24px 14px; text-align:center; opacity:.6; font-size:13px; line-height:1.6; }
 .mm-list-item{
@@ -255,6 +257,7 @@
   background:var(--card-sunken); border:1px solid var(--line); padding:8px 14px; border-radius:12px; max-width:230px;
 }
 .mm-colloc-en{ font-weight:700; color:var(--ink); font-size:12.5px; line-height:1.35; }
+.mm-colloc-match{ color:var(--accent); font-weight:800; }
 .mm-colloc-vi{ opacity:.62; font-size:11px; margin-top:2px; line-height:1.35; }
 @media (max-width:760px){
   .mm-left{ display:none; }
@@ -7271,6 +7274,7 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
 <div id="mmPage" class="mm-page" style="display:none">
   <div class="mm-header">
     <button type="button" class="mm-back-btn" onclick="mmClose()" title="Đóng, quay lại">←</button>
+    <button type="button" class="mm-back-btn" id="mmCollapseBtn" onclick="mmToggleLeftPanel()" title="Thu gọn/mở rộng danh sách từ">☰</button>
     <div class="mm-title">🧠 Mind Map từ vựng<small id="mmSubCount"></small></div>
     <input type="text" id="mmSearchInput" class="mm-search" placeholder="🔍 Tìm từ trong mind map..." oninput="mmSearchFilter(this.value)">
     <div class="mm-zoom-ctrl">
@@ -45101,6 +45105,34 @@ function mmStripHtml(html){
   return s.split('\n').map(x=>x.replace(/\u200b/g,'').trim()).filter(Boolean);
 }
 
+// Một mục đồng nghĩa đôi khi được ghi tắt kiểu "increasing/rising/escalating/soaring
+// demand" — nhiều tính từ cách nhau bởi dấu "/" nhưng dùng chung phần hậu tố
+// (ở đây là "demand", trùng với đuôi của từ gốc). Hàm này tách ra thành từng
+// cụm từ đầy đủ riêng biệt: "increasing demand", "rising demand", ... để mỗi
+// cụm trở thành 1 thẻ đồng nghĩa riêng trên mind map thay vì gộp chung 1 thẻ.
+function mmExpandSlashPhrase(s){
+  if(!s || s.indexOf('/') === -1) return [s];
+  const tokens = s.split(/\s+/);
+  const slashTokenCount = tokens.filter(t=>t.indexOf('/') !== -1).length;
+  // Chỉ tách khi CHỈ CÓ 1 vị trí biến đổi trong cả cụm (vd "increasing/rising/
+  // escalating/soaring demand"). Nếu có từ 2 vị trí "/" trở lên trong cùng 1
+  // cụm (thường là do các phương án nhiều-từ như "keep track of" bị dấu "/"
+  // cắt vụn theo khoảng trắng), việc ghép tổ hợp sẽ ra câu vô nghĩa — nên bỏ
+  // qua, giữ nguyên cả cụm thành 1 thẻ duy nhất thay vì tách sai.
+  if(slashTokenCount !== 1) return [s];
+  let combos = [''];
+  tokens.forEach(tok=>{
+    const opts = tok.split('/').map(x=>x.trim()).filter(Boolean);
+    if(opts.length === 0) return;
+    const next = [];
+    combos.forEach(c=>{
+      opts.forEach(o=>{ next.push(c ? c + ' ' + o : o); });
+    });
+    combos = next;
+  });
+  return combos.slice(0, 16);
+}
+
 function mmParseLine(line){
   line = line.replace(/\s+/g, ' ').trim();
   const m = line.match(/^(.+?)\s*\(([^()]{1,8})\)\s*:\s*(.+)$/);
@@ -45114,7 +45146,9 @@ function mmParseLine(line){
     meaningPart = rest.slice(0, arrowIdx).trim();
     colloPart = rest.slice(arrowIdx + 1).trim();
   }
-  const synonyms = synPart.split(/\s*=\s*/).map(x=>x.trim()).filter(Boolean);
+  const rawSynonyms = synPart.split(/\s*=\s*/).map(x=>x.trim()).filter(Boolean);
+  const synonyms = [];
+  rawSynonyms.forEach(s=>{ mmExpandSlashPhrase(s).forEach(x=>{ if(x) synonyms.push(x); }); });
   const meanings = meaningPart.split(/\s*\/\s*/).map(x=>x.trim()).filter(Boolean);
   if(synonyms.length === 0 || meanings.length === 0) return null;
   // Chỉ nhận đúng "mẫu gốc": bắt buộc phải có cụm collocation đi sau mũi tên
@@ -45160,17 +45194,27 @@ function mmOpen(){
   const page = document.getElementById('mmPage');
   if(!page) return;
   mmEntries = mmParseNotebook();
-  mmRenderAll();
   page.style.display = 'flex';
-  requestAnimationFrame(()=>page.classList.add('show'));
+  mmRenderAll();
   const si = document.getElementById('mmSearchInput');
   if(si) si.value = '';
 }
 function mmClose(){
   const page = document.getElementById('mmPage');
   if(!page) return;
-  page.classList.remove('show');
-  setTimeout(()=>{ if(!page.classList.contains('show')) page.style.display = 'none'; }, 200);
+  page.style.display = 'none';
+}
+let mmLeftCollapsed = false;
+function mmToggleLeftPanel(){
+  const left = document.getElementById('mmLeftList');
+  const btn = document.getElementById('mmCollapseBtn');
+  if(!left) return;
+  mmLeftCollapsed = !mmLeftCollapsed;
+  left.classList.toggle('collapsed', mmLeftCollapsed);
+  if(btn) btn.classList.toggle('on', mmLeftCollapsed);
+  setTimeout(()=>{
+    if(mmSelectedIdx >= 0){ mmDrawLinks(mmSelectedIdx); mmFitToView(); }
+  }, 230);
 }
 
 function mmRenderAll(){
@@ -45197,6 +45241,16 @@ function mmRenderAll(){
   mmFocusEntry(0);
 }
 
+function mmHighlightRoot(phrase, rootWord){
+  if(!rootWord) return esc(phrase);
+  const idx = phrase.toLowerCase().indexOf(rootWord.toLowerCase());
+  if(idx === -1) return esc(phrase);
+  const before = phrase.slice(0, idx);
+  const match = phrase.slice(idx, idx + rootWord.length);
+  const after = phrase.slice(idx + rootWord.length);
+  return `${esc(before)}<span class="mm-colloc-match">${esc(match)}</span>${esc(after)}`;
+}
+
 function mmBuildCard(entry, idx){
   const rootWord = entry.synonyms[0];
   const otherSyn = entry.synonyms.slice(1);
@@ -45211,7 +45265,7 @@ function mmBuildCard(entry, idx){
       <div class="mm-col-title">Cụm collocation</div>
       ${entry.collocations.map(c=>`
         <div class="mm-node mm-node-colloc">
-          <div class="mm-colloc-en">${esc(c.phrase)}</div>
+          <div class="mm-colloc-en">${mmHighlightRoot(c.phrase, rootWord)}</div>
           <div class="mm-colloc-vi">${esc(c.trans)}</div>
         </div>`).join('')}
     </div>` : `<div class="mm-col mm-col-colloc"></div>`;
