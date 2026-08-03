@@ -226,6 +226,22 @@
 }
 .mm-mark-btn:hover{ background:rgba(0,0,0,.06); transform:scale(1.1); }
 .mm-mark-btn.on{ color:var(--gold); }
+/* ---- nút sửa / xoá riêng từng từ, đặt ở góc phải mỗi thẻ trong danh sách
+   từ vựng bên trái — thay cho việc phải mở danh sách riêng trong overlay
+   nhập liệu. Mờ sẵn, hiện rõ khi hover/focus vào thẻ để đỡ rối mắt. ---- */
+.mm-li-actions{ flex:0 0 auto; display:flex; flex-direction:column; gap:2px; margin-top:1px; opacity:0; transition:opacity .14s ease; }
+.mm-list-item:hover .mm-li-actions,
+.mm-li-actions:focus-within{ opacity:1; }
+.mm-li-edit-btn, .mm-li-del-btn{
+  width:22px; height:22px; border:none; border-radius:7px; background:transparent; color:var(--muted);
+  font-size:11px; line-height:1; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center;
+  transition:background .14s ease, color .14s ease, transform .14s ease;
+}
+.mm-li-edit-btn:hover{ background:var(--accent-bg); color:var(--accent); transform:scale(1.12); }
+.mm-li-del-btn:hover{ background:var(--coral); color:#fff; transform:scale(1.12); }
+@media (max-width:760px){
+  .mm-li-actions{ opacity:.65; }
+}
 .mm-canvas-wrap{
   flex:1 1 auto; position:relative; overflow:hidden; cursor:grab;
   background-image:radial-gradient(var(--line) 1px, transparent 1px);
@@ -252,7 +268,7 @@
    trung tính — nhìn "gắn liền" vào mép ô rõ ràng thay vì 1 sợi mảnh dễ bị
    tưởng nhầm là đứt đoạn. */
 .mm-links path{
-  fill:none; stroke:var(--accent); stroke-opacity:.4; stroke-width:2;
+  fill:none; stroke:var(--mm-c1, var(--accent)); stroke-opacity:.4; stroke-width:2;
   stroke-linecap:round; vector-effect:non-scaling-stroke;
 }
 .mm-branch-col{ display:flex; flex-direction:column; gap:14px; z-index:2; position:relative; }
@@ -261,32 +277,48 @@
 .mm-branch-title{ font-size:10.5px; font-weight:800; opacity:.5; text-transform:uppercase; letter-spacing:.04em; }
 .mm-node{ position:relative; z-index:2; }
 .mm-node-center{
+  /* --mm-c1 / --mm-c2: 2 màu riêng của từng thẻ (gán inline theo idx trong
+     JS, xem MM_THEMES) — mỗi từ trung tâm 1 tông màu khác nhau cho sinh
+     động, có fallback về màu nhấn chung nếu chưa gán. */
   position:relative; z-index:3; flex:0 0 auto;
-  background:linear-gradient(135deg, var(--accent), #6366f1); color:#fff; text-align:center;
-  padding:16px 24px; border-radius:20px; box-shadow:var(--shadow-lg); max-width:280px;
+  background:linear-gradient(135deg, var(--mm-c1, var(--accent)), var(--mm-c2, #6366f1)); color:#fff; text-align:center;
+  padding:16px 22px; border-radius:20px; box-shadow:var(--shadow-lg); max-width:280px;
+  display:flex; flex-direction:column; align-items:center;
 }
-.mm-center-pos{ display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,.25); padding:2px 9px; border-radius:8px; margin-bottom:6px; }
-.mm-center-word{ font-weight:800; font-size:17px; line-height:1.3; display:inline-flex; align-items:center; }
-.mm-center-mean{ font-size:12px; opacity:.92; margin-top:6px; font-weight:500; line-height:1.4; }
+.mm-center-pos{ display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,.25); padding:2px 9px; border-radius:8px; margin-bottom:8px; }
+/* Bọc riêng từ trung tâm và phần nghĩa vào 2 "viên thuốc" (pill) mờ trên
+   nền gradient — tách bạch rõ ràng thay vì chữ nổi trần trên gradient,
+   nhìn có lớp lang, giống 1 cặp nút bo tròn đẹp mắt. */
+.mm-center-word{
+  font-weight:800; font-size:16.5px; line-height:1.3; display:inline-flex; align-items:center; gap:4px;
+  background:rgba(255,255,255,.18); padding:7px 16px; border-radius:999px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.mm-center-mean{
+  font-size:12px; opacity:.97; margin-top:9px; font-weight:600; line-height:1.4;
+  background:rgba(255,255,255,.14); padding:6px 14px; border-radius:999px; max-width:100%;
+}
 .mm-node-syn, .mm-node-colloc{
   transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 .mm-node-syn{
-  position:relative; background:var(--accent-bg); border:1px solid var(--accent); color:var(--ink);
+  position:relative; background:var(--mm-c1-bg, var(--accent-bg)); border:1px solid var(--mm-c1, var(--accent)); color:var(--ink);
   font-weight:600; font-size:12.5px; padding:8px 30px 8px 14px; border-radius:12px; max-width:210px; text-align:right;
   display:flex; align-items:center; justify-content:flex-end; gap:2px;
 }
 .mm-node-colloc{
   position:relative; background:var(--card-sunken); border:1px solid var(--line); padding:8px 30px 8px 14px; border-radius:12px; max-width:230px;
 }
-.mm-node-syn:hover, .mm-node-colloc:hover{ box-shadow:var(--shadow); z-index:4; transform:translateY(-1px); border-color:var(--accent); }
+.mm-node-syn:hover, .mm-node-colloc:hover{ box-shadow:var(--shadow); z-index:4; transform:translateY(-1px); border-color:var(--mm-c1, var(--accent)); }
 /* ô bị ẩn: loại hẳn khỏi luồng bố cục — flex + gap tự dồn các ô còn lại sát
    lại với nhau ngay lập tức, không để lại khoảng trống rỗng. */
 .mm-node.mm-hidden{ display:none !important; }
 .mm-colloc-en{ font-weight:700; color:var(--ink); font-size:12.5px; line-height:1.35; display:flex; align-items:center; justify-content:flex-start; flex-wrap:wrap; gap:2px; }
-.mm-colloc-match{ color:var(--accent); font-weight:800; }
-.mm-colloc-vi{ opacity:.62; font-size:11px; margin-top:2px; line-height:1.35; }
-.mm-colloc-vi-diff{ opacity:1; color:var(--accent-2); font-weight:700; }
+.mm-colloc-match{ color:var(--mm-c1, var(--accent)); font-weight:800; }
+/* Phần nghĩa (tiếng Việt) của collocation: đậm hẳn lên thay vì mờ nhạt
+   như trước (opacity .62) — đây là phần người học cần đọc rõ nhất khi
+   lướt nhanh qua từng ô cụm từ. */
+.mm-colloc-vi{ opacity:.92; font-size:11.5px; margin-top:3px; line-height:1.4; font-weight:700; color:var(--ink-soft); }
+.mm-colloc-vi-diff{ opacity:1; color:var(--mm-c2, var(--accent-2)); font-weight:800; }
 
 /* ---- nút ẩn từng ô trong mind map ---- */
 .mm-node-hide-btn{
@@ -320,7 +352,7 @@
 .mm-speak-btn:hover{ transform:scale(1.15); }
 .mm-speak-btn:active{ transform:scale(.88); }
 .mm-node-syn .mm-speak-btn,
-.mm-node-colloc .mm-speak-btn{ background:var(--accent-bg); color:var(--accent); }
+.mm-node-colloc .mm-speak-btn{ background:var(--mm-c1-bg, var(--accent-bg)); color:var(--mm-c1, var(--accent)); }
 
 /* ---- lớp phủ tối phía sau danh sách từ khi mở dạng ngăn kéo (mobile) ---- */
 .mm-left-backdrop{ position:fixed; inset:0; background:rgba(10,20,18,.42); z-index:19; }
@@ -353,33 +385,9 @@
   padding:2px 6px; font-size:11px; margin-top:2px; word-break:break-word;
 }
 .mm-import-hint-sub{ margin-top:6px; opacity:.75; }
-/* ---- danh sách các mục đã nạp: mỗi lần nạp = 1 thẻ riêng, không gộp
-   chung thành một khối văn bản dài ---- */
-.mm-import-list{
-  flex:1 1 auto; min-height:0; overflow-y:auto; padding:10px 16px; display:flex; flex-direction:column; gap:6px;
-  background:var(--card-sunken); border-bottom:1px solid var(--line);
-}
-.mm-import-empty{ padding:18px 4px; text-align:center; font-size:12.5px; opacity:.65; line-height:1.6; }
-.mm-import-entry{
-  display:flex; align-items:stretch; gap:6px; background:var(--card); border:1px solid var(--line);
-  border-radius:10px; overflow:hidden; transition:border-color .14s ease, box-shadow .14s ease;
-}
-.mm-import-entry:hover{ border-color:var(--accent); box-shadow:var(--shadow); }
-.mm-import-entry.mm-import-entry-editing{ border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-bg); }
-.mm-import-entry-main{ flex:1 1 auto; min-width:0; padding:8px 10px; cursor:pointer; display:flex; flex-direction:column; gap:2px; }
-.mm-import-entry-text{
-  font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:11.5px; line-height:1.4;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--ink);
-}
-.mm-import-entry-meta{ font-size:10.5px; opacity:.65; }
-.mm-import-entry-del{
-  flex:0 0 auto; width:32px; border:none; background:transparent; color:var(--muted); cursor:pointer;
-  font-size:13px; transition:background .14s ease, color .14s ease;
-}
-.mm-import-entry-del:hover{ background:var(--coral); color:#fff; }
-.mm-import-input-row{ flex:0 0 auto; display:flex; flex-direction:column; max-height:46vh; }
+.mm-import-input-row{ flex:1 1 auto; display:flex; flex-direction:column; }
 .mm-import-textarea{
-  flex:1 1 auto; min-height:110px; resize:vertical; border:none; outline:none; padding:14px 16px;
+  flex:1 1 auto; min-height:220px; resize:vertical; border:none; outline:none; padding:14px 16px;
   font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12.5px; line-height:1.7;
   background:var(--card); color:var(--ink);
 }
@@ -7460,7 +7468,7 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
 <div id="mmImportOverlay" class="mm-import-overlay" style="display:none">
   <div class="mm-import-box">
     <div class="mm-import-head">
-      <div class="mm-import-title">📥 Nhập dữ liệu Mind Map</div>
+      <div class="mm-import-title" id="mmImportTitle">📥 Nhập dữ liệu Mind Map</div>
       <button type="button" class="mm-import-close" onclick="mmImportClose()" title="Đóng">✕</button>
     </div>
     <div class="mm-import-hint">
@@ -7468,11 +7476,10 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
       <code>từ đồng nghĩa 1 = từ đồng nghĩa 2 = ... (pos) : nghĩa 1 / nghĩa 2 → cụm 1 (dịch 1), cụm 2 (dịch 2), ...</code><br>
       Ví dụ:<br>
       <code>increasing/rising/soaring demand (n) : nhu cầu ngày càng tăng → meet growing demand (đáp ứng nhu cầu ngày càng tăng), cope with growing demand (đối phó với nhu cầu ngày càng tăng)</code>
-      <div class="mm-import-hint-sub">💡 Dán nội dung vào ô bên dưới rồi bấm <b>➕ Thêm vào danh sách</b> — mục đó được lưu riêng ngay vào danh sách phía trên, ô nhập tự trống lại để dán mục tiếp theo. Bấm vào một mục trong danh sách để sửa lại, hoặc bấm ✕ để xoá riêng mục đó.</div>
+      <div class="mm-import-hint-sub" id="mmImportHintSub">💡 Dán 1 cụm hoặc cả một dãy nhiều dòng cùng lúc rồi bấm <b>➕ Thêm vào danh sách</b> — hệ thống sẽ tự <b>tách mỗi dòng thành 1 mục riêng</b>. Muốn sửa từ đã thêm, bấm nút ✏️ ngay trên thẻ của từ đó ở danh sách bên trái.</div>
     </div>
-    <div class="mm-import-list" id="mmImportList"></div>
-    <div class="mm-import-input-row">
-      <textarea id="mmImportTextarea" class="mm-import-textarea" placeholder="Dán 1 mục mới vào đây rồi bấm Thêm..." spellcheck="false"></textarea>
+    <div class="mm-import-input-row" id="mmImportInputRow">
+      <textarea id="mmImportTextarea" class="mm-import-textarea" placeholder="Dán nội dung mới vào đây rồi bấm Thêm..." spellcheck="false"></textarea>
       <div class="mm-import-report" id="mmImportReport"></div>
       <div class="mm-import-actions">
         <button type="button" class="mm-import-btn mm-import-btn-ghost" onclick="mmImportClear()">🗑 Xoá hết dữ liệu</button>
@@ -7484,6 +7491,7 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
     </div>
   </div>
 </div>
+
 
 <header>
   <div class="brand">
@@ -45524,6 +45532,19 @@ function mmParseRawText(text){
 function mmLoadData(){
   return mmParseRawText(mmLoadRawText());
 }
+// Tìm vị trí (index) trong danh sách dữ liệu THÔ (mmLoadEntries — mỗi phần
+// tử là 1 lần "Thêm" gốc) của mục có từ gốc trùng với `key` — dùng để nút
+// ✏️/🗑 ở danh sách bên trái biết chính xác cần sửa/xoá mục thô nào, vì
+// danh sách hiển thị (mmEntries) đã được GỘP theo từ gốc nên không còn
+// đúng 1-1 với thứ tự dữ liệu thô nữa.
+function mmFindRawIndexForKey(key){
+  const rawEntries = mmLoadEntries();
+  for(let i=0;i<rawEntries.length;i++){
+    const p = mmParseLine(rawEntries[i]);
+    if(p && p.synonyms[0] && p.synonyms[0].toLowerCase() === key) return i;
+  }
+  return -1;
+}
 
 function mmOpen(){
   const page = document.getElementById('mmPage');
@@ -45542,6 +45563,9 @@ function mmOpen(){
 // index >= 0: đang SỬA mục có vị trí đó trong danh sách; -1: đang thêm mục mới.
 let mmEditingIndex = -1;
 
+// Mở overlay để THÊM MỤC MỚI — ô nhập luôn trống (hoặc giữ nháp gõ dở nếu
+// có), không còn hiển thị danh sách các mục đã nhập bên trong overlay này
+// nữa (danh sách xem/sửa nằm ở panel bên trái của trang mind map).
 function mmImportOpen(){
   const ov = document.getElementById('mmImportOverlay');
   const ta = document.getElementById('mmImportTextarea');
@@ -45550,7 +45574,25 @@ function mmImportOpen(){
   mmImportSetEditUI(false);
   ta.value = mmLoadDraft();
   ov.style.display = 'flex';
-  mmImportRenderList();
+  mmImportUpdateReport();
+  setTimeout(()=>{
+    ta.focus();
+    const end = ta.value.length;
+    try{ ta.setSelectionRange(end, end); }catch(e){}
+  }, 60);
+}
+// Mở overlay để SỬA 1 mục đã có — gọi từ nút ✏️ trên mỗi thẻ ở danh sách
+// từ vựng bên trái (mmLeftList). Nạp sẵn nội dung gốc của mục đó vào ô
+// nhập để sửa lại rồi lưu đè.
+function mmImportOpenForEdit(i){
+  const entries = mmLoadEntries();
+  const ov = document.getElementById('mmImportOverlay');
+  const ta = document.getElementById('mmImportTextarea');
+  if(!ov || !ta || entries[i] === undefined) return;
+  mmEditingIndex = i;
+  ta.value = entries[i];
+  mmImportSetEditUI(true);
+  ov.style.display = 'flex';
   mmImportUpdateReport();
   setTimeout(()=>{
     ta.focus();
@@ -45561,93 +45603,84 @@ function mmImportOpen(){
 function mmImportClose(){
   const ov = document.getElementById('mmImportOverlay');
   if(ov) ov.style.display = 'none';
+  mmEditingIndex = -1;
+  mmImportSetEditUI(false);
 }
 function mmImportSetEditUI(editing){
   const addBtn = document.getElementById('mmImportAddBtn');
   const cancelBtn = document.getElementById('mmImportCancelBtn');
+  const title = document.getElementById('mmImportTitle');
+  const hintSub = document.getElementById('mmImportHintSub');
   if(addBtn) addBtn.textContent = editing ? '💾 Lưu thay đổi mục này' : '➕ Thêm vào danh sách';
   if(cancelBtn) cancelBtn.style.display = editing ? '' : 'none';
+  if(title) title.textContent = editing ? '✏️ Sửa mục từ vựng' : '📥 Nhập dữ liệu Mind Map';
+  if(hintSub) hintSub.style.display = editing ? 'none' : '';
 }
-function mmImportRenderList(){
-  const box = document.getElementById('mmImportList');
-  if(!box) return;
-  const entries = mmLoadEntries();
-  if(!entries.length){
-    box.innerHTML = `<div class="mm-import-empty">Chưa có mục nào trong danh sách.<br>Dán nội dung vào ô bên dưới rồi bấm <b>➕ Thêm vào danh sách</b>.</div>`;
-    return;
-  }
-  box.innerHTML = entries.map((text, i)=>{
-    const { entries: ok, bad } = mmSplitLogicalEntries(text);
-    const merged = mmMergeLines(ok);
-    const preview = esc(text.replace(/\s+/g,' ').trim().slice(0, 90)) + (text.trim().length > 90 ? '…' : '');
-    const metaHtml = bad.length
-      ? `<span class="mm-ir-bad">⚠ ${bad.length} dòng lỗi</span>`
-      : `✓ ${merged.length} từ vựng`;
-    const editingCls = (i === mmEditingIndex) ? ' mm-import-entry-editing' : '';
-    return `<div class="mm-import-entry${editingCls}" data-i="${i}">
-      <div class="mm-import-entry-main" onclick="mmImportEditEntry(${i})" title="Bấm để sửa mục này">
-        <div class="mm-import-entry-text">${preview || '<i>(trống)</i>'}</div>
-        <div class="mm-import-entry-meta">${metaHtml}</div>
-      </div>
-      <button type="button" class="mm-import-entry-del" onclick="event.stopPropagation(); mmImportDeleteEntry(${i})" title="Xoá mục này">✕</button>
-    </div>`;
-  }).join('');
-}
-function mmImportEditEntry(i){
-  const entries = mmLoadEntries();
-  const ta = document.getElementById('mmImportTextarea');
-  if(!ta || entries[i] === undefined) return;
-  mmEditingIndex = i;
-  ta.value = entries[i];
-  mmImportSetEditUI(true);
-  mmImportRenderList();
-  mmImportUpdateReport();
-  ta.focus();
-  const end = ta.value.length;
-  try{ ta.setSelectionRange(end, end); }catch(e){}
-}
+function mmImportEditEntry(i){ mmImportOpenForEdit(i); }
 function mmImportCancelEdit(){
   mmEditingIndex = -1;
   mmImportSetEditUI(false);
   const ta = document.getElementById('mmImportTextarea');
   if(ta) ta.value = mmLoadDraft();
-  mmImportRenderList();
   mmImportUpdateReport();
 }
+// Xoá 1 mục — gọi từ nút 🗑 trên thẻ ở danh sách từ vựng bên trái.
 function mmImportDeleteEntry(i){
   const entries = mmLoadEntries();
   if(entries[i] === undefined) return;
   if(!confirm('Xoá mục này khỏi mind map? Không thể hoàn tác.')) return;
   entries.splice(i, 1);
   mmSaveEntries(entries);
-  if(mmEditingIndex === i){ mmImportCancelEdit(); }
+  if(mmEditingIndex === i){ mmImportClose(); }
   else if(mmEditingIndex > i){ mmEditingIndex--; }
-  mmImportRenderList();
   toast('🗑 Đã xoá mục');
   mmEntries = mmLoadData();
   mmHiddenKeys.clear();
   const page = document.getElementById('mmPage');
   if(page && page.style.display !== 'none') mmRenderAll();
 }
+// Tách nội dung vừa dán/gõ thành TỪNG mục riêng theo từng cụm từ vựng hợp
+// lệ (dùng chung logic mmSplitLogicalEntries đã có) — nhờ vậy dán cả một
+// dãy nhiều dòng/nhiều cụm vào cùng lúc sẽ tự tạo ra cả loạt mục riêng
+// trong danh sách, không cần dán từng cụm một lần lượt.
+function mmImportSplitToItems(text){
+  const { entries: validLines, bad } = mmSplitLogicalEntries(text);
+  const items = validLines.slice();
+  if(bad.length){
+    // Các đoạn không nhận diện được vẫn giữ lại thành 1 mục riêng (gộp
+    // chung với nhau) để không mất nội dung — có thể mở ra sửa lại sau.
+    items.push(bad.map(b=>b.line).join('\n'));
+  }
+  if(!items.length && text.trim()) items.push(text.trim());
+  return items;
+}
 function mmImportAddEntry(){
   const ta = document.getElementById('mmImportTextarea');
   if(!ta) return;
   const text = ta.value.trim();
   if(!text){ toast('⚠️ Chưa có nội dung để thêm'); return; }
+  const newItems = mmImportSplitToItems(text);
   const entries = mmLoadEntries();
   const wasEditing = mmEditingIndex >= 0 && entries[mmEditingIndex] !== undefined;
-  if(wasEditing){ entries[mmEditingIndex] = text; }
-  else { entries.push(text); }
+  if(wasEditing){ entries.splice(mmEditingIndex, 1, ...newItems); }
+  else { entries.push(...newItems); }
   mmSaveEntries(entries);
   mmEditingIndex = -1;
   mmImportSetEditUI(false);
   // Ô nhập tự trống lại ngay, sẵn sàng để dán mục tiếp theo.
   ta.value = '';
   mmSaveDraft('');
-  mmImportRenderList();
   mmImportUpdateReport();
-  toast(wasEditing ? '✓ Đã lưu thay đổi' : '✓ Đã thêm vào danh sách');
-  ta.focus();
+  if(wasEditing){
+    toast(newItems.length > 1 ? `✓ Đã lưu, tách thành ${newItems.length} mục` : '✓ Đã lưu thay đổi');
+    // Sửa xong 1 mục đã có: đóng overlay lại, quay về xem danh sách bên
+    // trái ngay — sửa thường là thao tác dứt điểm.
+    mmImportClose();
+  } else {
+    toast(newItems.length > 1 ? `✓ Đã thêm ${newItems.length} mục vào danh sách` : '✓ Đã thêm vào danh sách');
+    // Đang thêm mục MỚI: giữ overlay mở, sẵn sàng dán tiếp mục khác ngay.
+    ta.focus();
+  }
   mmEntries = mmLoadData();
   mmHiddenKeys.clear();
   const page = document.getElementById('mmPage');
@@ -45676,7 +45709,6 @@ function mmImportClear(){
   mmImportSetEditUI(false);
   const ta = document.getElementById('mmImportTextarea');
   if(ta) ta.value = '';
-  mmImportRenderList();
   mmImportUpdateReport();
   toast('🗑 Đã xoá dữ liệu mind map');
   mmEntries = mmLoadData();
@@ -45768,6 +45800,9 @@ function mmRenderAll(){
     mmEntries.map((en, i)=>{
       const key = en.synonyms[0].toLowerCase();
       const marked = mmMarkedWords.has(key);
+      // Tìm lại vị trí của mục này trong danh sách dữ liệu THÔ (mmLoadEntries)
+      // để nút ✏️/🗑 thao tác đúng đúng mục gốc đã dán/gõ ban đầu.
+      const rawIdx = mmFindRawIndexForKey(key);
       return `
       <div class="mm-list-item${marked ? ' marked' : ''}" id="mmLi-${i}" role="button" tabindex="0"
            onclick="mmFocusEntry(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();mmFocusEntry(${i});}">
@@ -45776,6 +45811,11 @@ function mmRenderAll(){
           <div class="mm-li-word"><span class="mm-li-pos">${esc(en.pos)}</span>${esc(en.synonyms[0])}</div>
           <div class="mm-li-meaning">${esc(en.meanings.join(' / '))}</div>
         </div>
+        ${rawIdx >= 0 ? `
+        <div class="mm-li-actions">
+          <button type="button" class="mm-li-edit-btn" onclick="event.stopPropagation(); mmImportOpenForEdit(${rawIdx})" title="Sửa từ này">✏️</button>
+          <button type="button" class="mm-li-del-btn" onclick="event.stopPropagation(); mmImportDeleteEntry(${rawIdx})" title="Xoá từ này">🗑</button>
+        </div>` : ''}
       </div>
     `;
     }).join('');
@@ -45836,7 +45876,23 @@ function mmHighlightMeaningDiff(trans, meanings){
 let mmHiddenKeys = new Set();
 const MM_TYPE_CLASS = { syn: 'mm-node-syn', col: 'mm-node-colloc' };
 
+// Bảng nhiều màu cho các thẻ mind map — mỗi từ trung tâm được gán 1 tông
+// theo thứ tự vòng lặp (idx % số theme), để danh sách nhiều từ trông sinh
+// động, không bị lặp mãi 1 màu như trước. c1/c2 dùng cho gradient thẻ
+// trung tâm + đường nối, bg dùng làm nền nhạt cho ô đồng nghĩa.
+const MM_THEMES = [
+  { c1:'#0d6e5f', c2:'#6366f1', bg:'rgba(13,110,95,.12)'  },
+  { c1:'#7c3aed', c2:'#db2777', bg:'rgba(124,58,237,.12)' },
+  { c1:'#2563eb', c2:'#4f46e5', bg:'rgba(37,99,235,.12)'  },
+  { c1:'#ea580c', c2:'#e11d48', bg:'rgba(234,88,12,.12)'  },
+  { c1:'#059669', c2:'#0891b2', bg:'rgba(5,150,105,.12)'  },
+  { c1:'#a21caf', c2:'#7c3aed', bg:'rgba(162,28,175,.12)' },
+  { c1:'#d97706', c2:'#dc2626', bg:'rgba(217,119,6,.12)'  },
+  { c1:'#0284c7', c2:'#2563eb', bg:'rgba(2,132,199,.12)'  }
+];
+
 function mmBuildCard(entry, idx){
+  const theme = MM_THEMES[idx % MM_THEMES.length];
   const rootWord = entry.synonyms[0];
   const otherSyn = entry.synonyms.slice(1);
   const meanText = entry.meanings.join(' / ');
@@ -45879,7 +45935,7 @@ function mmBuildCard(entry, idx){
         <div class="mm-branch-title">Cụm collocation</div>${colNodes}${colChip}
       </div>` : '';
   return `
-    <div class="mm-card" id="mmCard-${idx}">
+    <div class="mm-card" id="mmCard-${idx}" style="--mm-c1:${theme.c1};--mm-c2:${theme.c2};--mm-c1-bg:${theme.bg}">
       <div class="mm-diagram" id="mmDiagram-${idx}">
         <svg class="mm-links" id="mmLinks-${idx}"></svg>
         ${synCol}
