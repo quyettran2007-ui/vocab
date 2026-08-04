@@ -45371,10 +45371,18 @@ function mmCollocWidthStep(dir){
   mmCollocWidth = Math.min(MM_WIDTH_MAX, Math.max(MM_WIDTH_MIN, mmCollocWidth + dir*MM_WIDTH_STEP));
   mmApplyCollocWidth();
   try{ localStorage.setItem(MM_WIDTH_KEY, String(mmCollocWidth)); }catch(e){}
-  // Đổi bề rộng ô làm layout đổi kích thước → phải vẽ lại đường nối VÀ
-  // fit lại khung nhìn, đợi 1 khung hình để trình duyệt bố cục lại trước.
+  // QUAN TRỌNG: KHÔNG gọi mmFitToView() ở đây. Trước đây hàm này tự động
+  // fit lại khung nhìn sau khi đổi bề rộng — nhưng vì ô collocation to ra
+  // làm cả thẻ to ra, mmFitToView() liền THU NHỎ tỉ lệ zoom để nhét vừa
+  // khung, bù trừ ngược lại đúng phần vừa giãn ra. Kết quả nhìn bằng mắt
+  // là bấm nút ↔ xong... gần như không thấy gì đổi (rõ nhất trên điện
+  // thoại vì khung nhìn hẹp, zoom fit vốn đã rất nhỏ) — đây chính là lý do
+  // người dùng tưởng nút này "không hoạt động". Giờ chỉ vẽ lại đường nối
+  // theo layout mới, giữ nguyên mức zoom hiện tại để người dùng thấy rõ ô
+  // to/nhỏ ra thật sự; nếu ô bị tràn ra ngoài khung, người dùng có thể tự
+  // bấm nút "Về vị trí ban đầu" (mmResetView) để fit lại theo ý mình.
   requestAnimationFrame(()=>{
-    if(mmSelectedIdx >= 0){ mmDrawLinks(mmSelectedIdx); mmFitToView(); mmDrawLinks(mmSelectedIdx); }
+    if(mmSelectedIdx >= 0) mmDrawLinks(mmSelectedIdx);
   });
 }
 mmApplyCollocWidth();
@@ -46473,8 +46481,24 @@ function mmSearchFilter(q){
       if(mmSelectedIdx < 0) return;
       clearTimeout(mmResizeT);
       mmResizeT = setTimeout(()=>{
-        mmDrawLinks(mmSelectedIdx); mmFitToView(); mmDrawLinks(mmSelectedIdx);
-      }, 120);
+        // QUAN TRỌNG: KHÔNG gọi mmFitToView() ở đây nữa. Trước đây mọi sự
+        // kiện 'resize' (kể cả visualViewport.resize) đều tự fit lại khung
+        // nhìn — nhưng 'resize' không chỉ bắn khi người dùng xoay máy: nó
+        // còn bắn khi thanh địa chỉ trình duyệt tự ẩn/hiện, hoặc khi NỘI
+        // DUNG bên trong đổi kích thước (vd. vừa giãn bề rộng ô collocation
+        // bằng nút ↔ làm khung cao/rộng hơn). Kết quả là mỗi lần người dùng
+        // chủ động giãn ô hoặc kéo/zoom, khung nhìn liền tự bị zoom bù lại
+        // ngay sau đó — khiến thao tác trông như "không có tác dụng gì".
+        // Giờ resize chỉ vẽ lại đường nối cho khớp layout mới, giữ nguyên
+        // mức zoom hiện tại; muốn fit lại, người dùng bấm nút ⤾ (Reset view).
+        mmDrawLinks(mmSelectedIdx);
+        // Lưới an toàn: một số thay đổi bố cục CHỮ mất nhiều thời gian hơn
+        // resize thường để trình duyệt xếp lại xong (vd. đổi cỡ chữ hệ
+        // thống trong Cài đặt điện thoại) — vẽ ngay lúc này có thể vẫn đo
+        // trúng kích thước ô CŨ, khiến đường nối bị lệch/"rớt" khỏi ô. Vẽ
+        // lại thêm 1 lần trễ hơn để bắt kịp layout thật sự cuối cùng.
+        setTimeout(()=>{ if(mmSelectedIdx >= 0) mmDrawLinks(mmSelectedIdx); }, 400);
+      }, 150);
     };
     window.addEventListener('resize', mmOnResize);
     // Xoay ngang/dọc trên điện thoại: kích thước khung xem đổi đột ngột,
