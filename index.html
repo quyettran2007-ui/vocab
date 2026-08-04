@@ -169,6 +169,20 @@
 .mm-page{
   position:fixed; inset:0; z-index:6000; background:var(--card);
   display:flex; flex-direction:column;
+  /* text-size-adjust:100% — TẮT cơ chế "phóng to chữ tự động" (font
+     boosting/text autosizing) mà Chrome/trình duyệt di động áp dụng RIÊNG
+     cho các trang có viewport hẹp (khác hẳn "chế độ giao diện máy tính",
+     nơi cơ chế này không kích hoạt vì viewport rộng — đúng như bạn quan
+     sát: bật desktop-site thì nút ↔ chạy, tắt đi thì không). Cơ chế này
+     tự ý phóng cỡ chữ bên trong các ô lớn hơn cả những gì CSS quy định,
+     khiến kích thước ô thực tế không khớp với bề rộng --mm-colloc-w mà
+     nút ↔ vừa đặt, và cũng khiến việc đo lại kích thước ô để vẽ đường nối
+     bị sai lệch bất cứ khi nào trình duyệt tính lại độ phóng chữ này —
+     kể cả khi người dùng chỉ đổi cỡ chữ hệ thống trong Cài đặt điện thoại
+     (một sự kiện có thể khiến trình duyệt tính lại font boosting). Tắt hẳn
+     cơ chế này để kích thước chữ luôn đúng 1:1 theo CSS, nhất quán giữa
+     mọi chế độ hiển thị. */
+  text-size-adjust:100%; -webkit-text-size-adjust:100%; -moz-text-size-adjust:100%;
 }
 .mm-header{
   display:flex; align-items:center; gap:12px; padding:12px 16px;
