@@ -347,11 +347,16 @@
   font-weight:600; font-size:12.5px; padding:8px 30px 8px 14px; border-radius:12px; max-width:210px; text-align:right;
   display:flex; align-items:center; justify-content:flex-end; gap:2px;
 }
-/* --mm-colloc-w: bề rộng tối đa của ô collocation, chỉnh được bằng nút
-   ↔ trên thanh công cụ (mmCollocWidthStep) — mặc định 230px như cũ. */
+/* --mm-colloc-w: bề rộng ô collocation, chỉnh được bằng nút ↔ trên thanh
+   công cụ (mmCollocWidthStep) — mặc định 230px như cũ.
+   QUAN TRỌNG: dùng width (không phải max-width). max-width chỉ đặt giới
+   hạn TRẦN — với nội dung ngắn, trình duyệt tự "vừa khít nội dung" (shrink-
+   to-fit) và không chủ động giãn ra hết mức max-width cho phép, nên tăng
+   max-width gần như không thấy ô đổi kích thước gì cả. width buộc ô LUÔN
+   đúng bằng giá trị đã đặt, không phụ thuộc nội dung dài hay ngắn. */
 .mm-node-colloc{
   position:relative; background:var(--card-sunken); border:1px solid var(--line); padding:8px 30px 8px 14px; border-radius:12px;
-  max-width:var(--mm-colloc-w, 230px);
+  width:var(--mm-colloc-w, 230px); flex:0 0 auto;
 }
 .mm-node-syn:hover, .mm-node-colloc:hover{ box-shadow:var(--shadow); z-index:4; transform:translateY(-1px); border-color:var(--mm-c1, var(--accent)); }
 /* ô bị ẩn: loại hẳn khỏi luồng bố cục — flex + gap tự dồn các ô còn lại sát
@@ -477,9 +482,9 @@
   .mm-search{ max-width:none; }
   .mm-node-syn{ max-width:150px; font-size:11.5px; padding:7px 26px 7px 10px; }
   /* Trên mobile, ô collocation vẫn tôn trọng bề rộng người dùng chỉnh bằng
-     nút ↔ (biến --mm-colloc-w) — chỉ dùng 168px làm giá trị TRẦN mặc định,
-     không ghi đè cứng như trước (khiến nút ↔ vô tác dụng trên điện thoại). */
-  .mm-node-colloc{ max-width:var(--mm-colloc-w, 168px); padding:7px 26px 7px 10px; }
+     nút ↔ (biến --mm-colloc-w) — dùng width (không phải max-width) để ô
+     LUÔN đúng bằng giá trị đã đặt, không bị co lại theo nội dung ngắn. */
+  .mm-node-colloc{ width:var(--mm-colloc-w, 168px); padding:7px 26px 7px 10px; }
   .mm-node-hide-btn{ opacity:.55; }
   .mm-colloc-en{ font-size:11.5px; }
   /* Header đủ chỗ cho cụm nút ↔ mới: cho phép xuống dòng thay vì bị bóp méo/
