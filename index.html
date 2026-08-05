@@ -325,7 +325,7 @@
   position:relative; z-index:3; flex:0 0 auto;
   background:linear-gradient(135deg, var(--mm-c1, var(--accent)), var(--mm-c2, #6366f1)); color:#fff; text-align:center;
   padding:16px 22px; border-radius:20px; box-shadow:var(--shadow-lg); max-width:280px;
-  display:flex; flex-direction:column; align-items:center;
+  display:flex; flex-direction:column; align-items:center; cursor:pointer; user-select:none;
 }
 .mm-center-pos{ display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,.25); padding:2px 9px; border-radius:8px; margin-bottom:8px; }
 /* Bọc riêng từ trung tâm và phần nghĩa vào 2 "viên thuốc" (pill) mờ trên
@@ -345,7 +345,7 @@
 .mm-node-syn{
   position:relative; background:var(--mm-c1-bg, var(--accent-bg)); border:1px solid var(--mm-c1, var(--accent)); color:var(--ink);
   font-weight:600; font-size:12.5px; padding:8px 30px 8px 14px; border-radius:12px; max-width:210px; text-align:right;
-  display:flex; align-items:center; justify-content:flex-end; gap:2px;
+  display:flex; align-items:center; justify-content:flex-end; gap:2px; cursor:pointer; user-select:none;
 }
 /* --mm-colloc-w: bề rộng ô collocation, chỉnh được bằng nút ↔ trên thanh
    công cụ (mmCollocWidthStep) — mặc định 230px như cũ.
@@ -356,7 +356,7 @@
    đúng bằng giá trị đã đặt, không phụ thuộc nội dung dài hay ngắn. */
 .mm-node-colloc{
   position:relative; background:var(--card-sunken); border:1px solid var(--line); padding:8px 30px 8px 14px; border-radius:12px;
-  width:var(--mm-colloc-w, 230px); flex:0 0 auto;
+  width:var(--mm-colloc-w, 230px); flex:0 0 auto; cursor:pointer; user-select:none;
 }
 .mm-node-syn:hover, .mm-node-colloc:hover{ box-shadow:var(--shadow); z-index:4; transform:translateY(-1px); border-color:var(--mm-c1, var(--accent)); }
 /* ô bị ẩn: loại hẳn khỏi luồng bố cục — flex + gap tự dồn các ô còn lại sát
@@ -390,19 +390,6 @@
   cursor:pointer; transition:background .14s ease, color .14s ease, border-color .14s ease;
 }
 .mm-hidden-chip:hover{ background:var(--accent-bg); color:var(--accent); border-color:var(--accent); }
-
-/* ---- nút 🔊 phát âm gắn cạnh mỗi từ/cụm trong mind map ---- */
-.mm-speak-btn{
-  display:inline-flex; align-items:center; justify-content:center;
-  width:19px; height:19px; margin-left:5px; border:none; border-radius:50%;
-  background:rgba(255,255,255,.28); color:inherit; font-size:10px; cursor:pointer;
-  vertical-align:middle; padding:0; line-height:1; flex:0 0 auto;
-  transition:transform .12s ease, background .12s ease;
-}
-.mm-speak-btn:hover{ transform:scale(1.15); }
-.mm-speak-btn:active{ transform:scale(.88); }
-.mm-node-syn .mm-speak-btn,
-.mm-node-colloc .mm-speak-btn{ background:var(--mm-c1-bg, var(--accent-bg)); color:var(--mm-c1, var(--accent)); }
 
 /* ---- lớp phủ tối phía sau danh sách từ khi mở dạng ngăn kéo (mobile) ---- */
 .mm-left-backdrop{ position:fixed; inset:0; background:rgba(10,20,18,.42); z-index:19; }
@@ -7513,6 +7500,7 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
       <button type="button" onclick="mmZoomStep(1)" title="Phóng to">＋</button>
       <button type="button" onclick="mmResetView()" title="Về vị trí ban đầu">⤾</button>
       <button type="button" onclick="mmForceRedraw()" title="Vẽ lại đường nối (nếu bị lệch)">🔄</button>
+      <button type="button" onclick="mmCycleCardColor()" title="Đổi màu sắc thẻ">🎨</button>
     </div>
     <div class="mm-width-ctrl">
       <span class="mm-width-ico">↔</span>
@@ -7520,7 +7508,6 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
       <span class="mm-width-val" id="mmWidthVal">230px</span>
       <button type="button" onclick="mmCollocWidthStep(1)" title="Mở rộng ô collocation">＋</button>
     </div>
-    <button type="button" class="mm-back-btn" id="mmExportBtn" onclick="mmExportImage()" title="Xuất ảnh dạng dọc (9:16+)">📷</button>
   </div>
   <div class="mm-body" id="mmBody">
     <div class="mm-left" id="mmLeftList"></div>
@@ -45417,130 +45404,6 @@ function mmForceRedraw(){
   requestAnimationFrame(()=>{ mmDrawLinks(mmSelectedIdx); });
 }
 
-/* ============================================================
-   XUẤT ẢNH DẠNG DỌC (9:16 trở lên) CHO 1 THẺ MIND MAP
-   ------------------------------------------------------------
-   Sơ đồ toả tròn (đồng nghĩa trái / cụm phải quanh từ trung tâm) vốn có
-   hình dạng NGANG — không hợp để lưu thành ảnh dọc kiểu story/reels.
-   Nên khi xuất ảnh, build lại NỘI DUNG của đúng thẻ đang xem thành 1 bố
-   cục CỘT DỌC riêng (không dùng lại DOM toả tròn + đường nối SVG), rồi
-   chụp bố cục đó bằng html2canvas. Việc này tránh luôn mọi vấn đề về
-   đường nối bị lệch khi chụp, vì ảnh xuất ra không hề chứa đường nối.
-   ============================================================ */
-let mmH2CLoading = null;
-function mmLoadHtml2Canvas(){
-  if(window.html2canvas) return Promise.resolve();
-  if(mmH2CLoading) return mmH2CLoading;
-  mmH2CLoading = new Promise((resolve, reject)=>{
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    s.onload = ()=>resolve();
-    s.onerror = ()=>reject(new Error('load fail'));
-    document.head.appendChild(s);
-  });
-  return mmH2CLoading;
-}
-
-function mmExportBuildVerticalHTML(entry, idx){
-  const theme = MM_THEMES[idx % MM_THEMES.length];
-  const rootWord = entry.synonyms[0];
-  const otherSyn = entry.synonyms.slice(1).filter((s,i)=>!mmHiddenKeys.has(`${idx}:syn:${i}`));
-  const cols = entry.collocations.filter((c,i)=>!mmHiddenKeys.has(`${idx}:col:${i}`));
-  const synChips = otherSyn.map(s=>`<div class="mm-ex-syn">${esc(s)}</div>`).join('');
-  const colCards = cols.map(c=>`
-    <div class="mm-ex-col">
-      <div class="mm-ex-col-en">${mmHighlightRoot(c.phrase, rootWord)}</div>
-      <div class="mm-ex-col-vi">${mmHighlightMeaningDiff(c.trans, entry.meanings)}</div>
-    </div>`).join('');
-  return `
-    <div class="mm-ex-wrap" style="--mm-c1:${theme.c1};--mm-c2:${theme.c2};--mm-c1-bg:${theme.bg}">
-      <div class="mm-ex-center">
-        <span class="mm-ex-pos">${esc(entry.pos)}</span>
-        <div class="mm-ex-word">${esc(rootWord)}</div>
-        <div class="mm-ex-mean">${esc(entry.meanings.join(' / '))}</div>
-      </div>
-      ${otherSyn.length ? `<div class="mm-ex-section-title">Từ đồng nghĩa</div><div class="mm-ex-syn-wrap">${synChips}</div>` : ''}
-      ${cols.length ? `<div class="mm-ex-section-title">Cụm collocation</div><div class="mm-ex-col-wrap">${colCards}</div>` : ''}
-      <div class="mm-ex-footer">IELTS VOCAB by Cris</div>
-    </div>`;
-}
-
-async function mmExportImage(){
-  const idx = mmSelectedIdx;
-  const entry = mmEntries[idx];
-  if(!entry){ toast('Chưa chọn từ nào để xuất ảnh'); return; }
-  const btn = document.getElementById('mmExportBtn');
-  if(btn){ btn.disabled = true; btn.style.opacity = '.5'; }
-  try{
-    await mmLoadHtml2Canvas();
-    const EXPORT_W = 720; // px, chiều rộng cố định của khung xuất
-    const host = document.createElement('div');
-    host.style.cssText = `position:fixed; left:-99999px; top:0; width:${EXPORT_W}px; z-index:-1;`;
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const bg = isDark ? '#0a1210' : '#f4f6f4';
-    const cardBg = isDark ? '#141e1b' : '#ffffff';
-    const sunkBg = isDark ? '#0f1a17' : '#f4f7f5';
-    const inkColor = isDark ? '#e8f0ec' : '#10201c';
-    const inkSoft = isDark ? '#a5bab3' : '#46605a';
-    const lineColor = isDark ? '#22322d' : '#e3e8e5';
-    host.innerHTML = `
-      <style>
-        .mm-ex-wrap{ box-sizing:border-box; width:${EXPORT_W}px; padding:40px 32px 32px; background:${bg};
-          font-family:'Be Vietnam Pro',sans-serif; display:flex; flex-direction:column; align-items:stretch; }
-        .mm-ex-center{ background:linear-gradient(135deg,var(--mm-c1),var(--mm-c2)); color:#fff; text-align:center;
-          border-radius:24px; padding:26px 20px; box-shadow:0 10px 30px rgba(0,0,0,.18); }
-        .mm-ex-pos{ display:inline-block; font-size:13px; font-weight:700; background:rgba(255,255,255,.25); padding:4px 14px; border-radius:10px; margin-bottom:12px; }
-        .mm-ex-word{ font-weight:800; font-size:30px; line-height:1.3; }
-        .mm-ex-mean{ font-size:16px; opacity:.97; margin-top:12px; font-weight:600; }
-        .mm-ex-section-title{ font-size:14px; font-weight:800; opacity:.55; text-transform:uppercase; letter-spacing:.05em;
-          color:${inkColor}; margin:26px 0 12px 4px; }
-        .mm-ex-syn-wrap{ display:flex; flex-wrap:wrap; gap:10px; }
-        .mm-ex-syn{ background:var(--mm-c1-bg); border:1px solid var(--mm-c1); color:${inkColor}; font-weight:600;
-          font-size:15px; padding:10px 16px; border-radius:14px; }
-        .mm-ex-col-wrap{ display:flex; flex-direction:column; gap:12px; }
-        .mm-ex-col{ background:${sunkBg}; border:1px solid ${lineColor}; border-radius:14px; padding:14px 16px; }
-        .mm-ex-col-en{ font-weight:700; color:${inkColor}; font-size:16px; line-height:1.4; }
-        .mm-ex-col-en .mm-colloc-match{ color:var(--mm-c1); font-weight:800; }
-        .mm-ex-col-vi{ font-size:14px; margin-top:5px; line-height:1.5; font-weight:700; color:${inkSoft}; }
-        .mm-ex-col-vi .mm-colloc-vi-diff{ color:var(--mm-c2); }
-        .mm-ex-footer{ text-align:center; font-size:12px; opacity:.4; color:${inkColor}; margin-top:30px; font-weight:700; letter-spacing:.04em; }
-      </style>
-      ${mmExportBuildVerticalHTML(entry, idx)}`;
-    document.body.appendChild(host);
-    // Đợi 1 khung hình để trình duyệt bố cục xong nội dung vừa chèn trước
-    // khi chụp, tránh chụp phải trạng thái chưa layout ổn định.
-    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-    const wrapEl = host.querySelector('.mm-ex-wrap');
-    const canvas = await window.html2canvas(wrapEl, { backgroundColor: bg, scale: 2, useCORS: true });
-    document.body.removeChild(host);
-    // Đảm bảo tỉ lệ DỌC tối thiểu 9:16 (cao ≥ rộng × 16/9) — nếu nội dung
-    // tự nhiên đã cao hơn mức đó thì giữ nguyên, chỉ đệm thêm nền khi
-    // nội dung chưa đủ cao.
-    const minH = Math.ceil(canvas.width * (16/9));
-    let finalCanvas = canvas;
-    if(canvas.height < minH){
-      finalCanvas = document.createElement('canvas');
-      finalCanvas.width = canvas.width;
-      finalCanvas.height = minH;
-      const ctx = finalCanvas.getContext('2d');
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-      const offsetY = Math.round((minH - canvas.height) / 2);
-      ctx.drawImage(canvas, 0, offsetY);
-    }
-    const rootWord = entry.synonyms[0].replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-    const a = document.createElement('a');
-    a.download = `mindmap-${rootWord || 'tu-vung'}.png`;
-    a.href = finalCanvas.toDataURL('image/png');
-    a.click();
-    toast('📷 Đã xuất ảnh dạng dọc');
-  }catch(err){
-    console.error(err);
-    toast('Xuất ảnh thất bại, thử lại sau');
-  }finally{
-    if(btn){ btn.disabled = false; btn.style.opacity = ''; }
-  }
-}
 let mmDragging = false, mmDragStartX = 0, mmDragStartY = 0, mmStartTx = 0, mmStartTy = 0;
 let mmPinchStartDist = 0, mmPinchStartScale = 1;
 // Danh sách từ đã "đánh dấu" (bookmark) ở khung danh sách bên trái — lưu
@@ -46128,9 +45991,52 @@ const MM_THEMES = [
   { c1:'#0284c7', c2:'#2563eb', bg:'rgba(2,132,199,.12)'  }
 ];
 
-function mmBuildCard(entry, idx){
-  const theme = MM_THEMES[idx % MM_THEMES.length];
+// Người dùng có thể đổi màu riêng cho từng thẻ bằng nút 🎨 trên thanh công
+// cụ (mmCycleCardColor) — mỗi lần bấm xoay sang màu kế tiếp trong bảng
+// MM_THEMES. Lưu theo TỪ GỐC (root word) chứ không theo idx, vì idx có thể
+// đổi khi danh sách từ vựng thay đổi (thêm/xoá/nhập lại dữ liệu) — dùng
+// idx làm khoá sẽ khiến màu bị "trôi" sang thẻ khác sau khi đổi dữ liệu.
+const MM_COLOR_KEY = 'vocab_mindmap_color_v1';
+let mmColorOverrides = {};
+try{
+  const rawColor = localStorage.getItem(MM_COLOR_KEY);
+  if(rawColor) mmColorOverrides = JSON.parse(rawColor) || {};
+}catch(e){}
+function mmSaveColorOverrides(){
+  try{ localStorage.setItem(MM_COLOR_KEY, JSON.stringify(mmColorOverrides)); }catch(e){}
+}
+function mmThemeFor(idx, rootWord){
+  const override = mmColorOverrides[rootWord];
+  if(typeof override === 'number'){
+    return MM_THEMES[((override % MM_THEMES.length) + MM_THEMES.length) % MM_THEMES.length];
+  }
+  return MM_THEMES[idx % MM_THEMES.length];
+}
+// Đổi màu thẻ đang xem sang tông kế tiếp trong bảng MM_THEMES. Áp trực
+// tiếp qua CSS variable (không build lại cả thẻ) để mượt, đồng thời lưu
+// lựa chọn vào localStorage để giữ nguyên khi mở lại trang.
+function mmCycleCardColor(){
+  const idx = mmSelectedIdx;
+  const entry = mmEntries[idx];
+  if(!entry){ toast('Hãy chọn 1 từ trước khi đổi màu'); return; }
   const rootWord = entry.synonyms[0];
+  const baseIdx = idx % MM_THEMES.length;
+  const current = typeof mmColorOverrides[rootWord] === 'number' ? mmColorOverrides[rootWord] : baseIdx;
+  const next = (current + 1) % MM_THEMES.length;
+  mmColorOverrides[rootWord] = next;
+  mmSaveColorOverrides();
+  const theme = MM_THEMES[next];
+  const card = document.getElementById('mmCard-'+idx);
+  if(card){
+    card.style.setProperty('--mm-c1', theme.c1);
+    card.style.setProperty('--mm-c2', theme.c2);
+    card.style.setProperty('--mm-c1-bg', theme.bg);
+  }
+}
+
+function mmBuildCard(entry, idx){
+  const rootWord = entry.synonyms[0];
+  const theme = mmThemeFor(idx, rootWord);
   const otherSyn = entry.synonyms.slice(1);
   const meanText = entry.meanings.join(' / ');
   let synHidden = 0, colHidden = 0;
@@ -46139,10 +46045,9 @@ function mmBuildCard(entry, idx){
     const isHidden = mmHiddenKeys.has(key);
     if(isHidden) synHidden++;
     return `
-        <div class="mm-node mm-node-syn${isHidden ? ' mm-hidden' : ''}" data-mmkey="${key}">
+        <div class="mm-node mm-node-syn${isHidden ? ' mm-hidden' : ''}" data-mmkey="${key}" data-mmword="${esc(s)}" onclick="mmHandleNodeClick(this)" ondblclick="event.stopPropagation();mmHandleNodeDblClick(this)" title="Bấm để phát âm · bấm đúp để ẩn">
           <button type="button" class="mm-node-hide-btn" onclick="event.stopPropagation();mmHideNode(${idx},'syn',${i})" title="Ẩn ô này">✕</button>
           <span>${esc(s)}</span>
-          <button type="button" class="mm-speak-btn" data-w="${esc(s)}" onclick="event.stopPropagation();speak(this.dataset.w)" title="Phát âm">🔊</button>
         </div>`;
   }).join('');
   const colNodes = entry.collocations.map((c,i)=>{
@@ -46150,11 +46055,10 @@ function mmBuildCard(entry, idx){
     const isHidden = mmHiddenKeys.has(key);
     if(isHidden) colHidden++;
     return `
-        <div class="mm-node mm-node-colloc${isHidden ? ' mm-hidden' : ''}" data-mmkey="${key}">
+        <div class="mm-node mm-node-colloc${isHidden ? ' mm-hidden' : ''}" data-mmkey="${key}" data-mmword="${esc(c.phrase)}" onclick="mmHandleNodeClick(this)" ondblclick="event.stopPropagation();mmHandleNodeDblClick(this)" title="Bấm để phát âm · bấm đúp để ẩn">
           <button type="button" class="mm-node-hide-btn" onclick="event.stopPropagation();mmHideNode(${idx},'col',${i})" title="Ẩn ô này">✕</button>
           <div class="mm-colloc-en">
             <span>${mmHighlightRoot(c.phrase, rootWord)}</span>
-            <button type="button" class="mm-speak-btn" data-w="${esc(c.phrase)}" onclick="event.stopPropagation();speak(this.dataset.w)" title="Phát âm">🔊</button>
           </div>
           <div class="mm-colloc-vi">${mmHighlightMeaningDiff(c.trans, entry.meanings)}</div>
         </div>`;
@@ -46176,17 +46080,49 @@ function mmBuildCard(entry, idx){
       <div class="mm-diagram" id="mmDiagram-${idx}">
         <svg class="mm-links" id="mmLinks-${idx}"></svg>
         ${synCol}
-        <div class="mm-node mm-node-center">
+        <div class="mm-node mm-node-center" data-mmword="${esc(rootWord)}" onclick="mmHandleNodeClick(this)" title="Bấm để phát âm">
           <span class="mm-center-pos">${esc(entry.pos)}</span>
           <div class="mm-center-word">
             <span>${esc(rootWord)}</span>
-            <button type="button" class="mm-speak-btn" data-w="${esc(rootWord)}" onclick="event.stopPropagation();speak(this.dataset.w)" title="Phát âm">🔊</button>
           </div>
           <div class="mm-center-mean">${esc(meanText)}</div>
         </div>
         ${colCol}
       </div>
     </div>`;
+}
+
+// ---- Bấm 1 lần = phát âm, bấm đúp = ẩn thẻ ----
+// Thay cho nút 🔊 riêng trước đây: giờ cả ô (mm-node-syn / mm-node-colloc /
+// mm-node-center) đều bấm được trực tiếp. Vì trình duyệt luôn bắn 2 sự
+// kiện "click" liên tiếp trước khi bắn "dblclick", phải trì hoãn việc phát
+// âm bằng setTimeout — nếu trong lúc chờ mà dblclick xảy ra, huỷ luôn việc
+// phát âm và chuyển sang ẩn ô, tránh vừa đọc từ vừa ẩn cùng lúc.
+const MM_CLICK_DELAY = 260;
+function mmHandleNodeClick(el){
+  if(el._mmClickTimer){
+    clearTimeout(el._mmClickTimer);
+    el._mmClickTimer = null;
+    return;
+  }
+  const word = el.dataset.mmword || '';
+  el._mmClickTimer = setTimeout(()=>{
+    el._mmClickTimer = null;
+    if(word) speak(word);
+  }, MM_CLICK_DELAY);
+}
+function mmHandleNodeDblClick(el){
+  if(el._mmClickTimer){
+    clearTimeout(el._mmClickTimer);
+    el._mmClickTimer = null;
+  }
+  const key = el.dataset.mmkey;
+  if(!key) return; // ô trung tâm không có data-mmkey -> không ẩn được
+  const parts = key.split(':');
+  const idx = parseInt(parts[0], 10);
+  const type = parts[1];
+  const i = parseInt(parts[2], 10);
+  mmHideNode(idx, type, i);
 }
 
 // Bấm ✕ trên 1 ô: đánh dấu ẩn, gỡ khỏi luồng hiển thị (CSS mm-hidden) —
@@ -46268,38 +46204,47 @@ function mmLinkPath(x1,y1,x2,y2){
   return `<path d="M${x1},${y1} C${c1x},${c1y} ${c2x},${c2y} ${x2},${y2}"/>`;
 }
 
+// Tính vị trí 1 phần tử SO VỚI 1 tổ tiên (ancestor) bằng cách CỘNG DỒN
+// offsetLeft/offsetTop dọc theo chuỗi offsetParent — thay vì trừ 2
+// getBoundingClientRect() như trước.
+// LÝ DO ĐỔI CÁCH TÍNH: getBoundingClientRect() trả về toạ độ đã tính theo
+// ĐỘ PHÓNG TO THỰC TẾ TRÊN MÀN HÌNH — tức là gộp CẢ transform scale nội bộ
+// (mmScale) LẪN mức "thu phóng trang web" mà người dùng chỉnh trong cài đặt
+// trình duyệt/hệ điều hành (page zoom / display zoom). Code cũ chỉ chia lại
+// cho mmScale nên khi thu phóng TRANG (không phải thu phóng trong app) khác
+// 100%, phần chênh lệch do zoom trang KHÔNG được chia ra, khiến toạ độ path
+// bị nhân lệch theo đúng tỉ lệ zoom trang đó — đường nối bắn ra rất xa khỏi
+// node thật, đúng như lỗi trong ảnh chụp màn hình.
+// offsetLeft/offsetTop hoàn toàn KHÔNG bị ảnh hưởng bởi transform scale hay
+// zoom trang/hệ điều hành — chúng là số đo bố cục "gốc", đúng cùng đơn vị
+// với offsetWidth/offsetHeight mà ta đang dùng để đặt width/height cho
+// <svg>. Dùng cách này thì đường nối luôn khớp bất kể mmScale hay mức thu
+// phóng trang web là bao nhiêu.
+function mmOffsetIn(el, ancestor){
+  let left = 0, top = 0, node = el;
+  let guard = 0;
+  while(node && node !== ancestor && guard < 40){
+    left += node.offsetLeft || 0;
+    top += node.offsetTop || 0;
+    node = node.offsetParent;
+    guard++;
+  }
+  return { left, top, width: el.offsetWidth, height: el.offsetHeight };
+}
+
 function mmDrawLinks(idx){
   const card = document.getElementById('mmCard-'+idx);
   const svg = document.getElementById('mmLinks-'+idx);
   const center = card ? card.querySelector('.mm-node-center') : null;
   if(!card || !svg || !center) return;
-  // QUAN TRỌNG: card đang nằm trong #mmCanvas, phần tử này bị scale bởi
-  // transform (mmScale) khi zoom/thu-phóng. getBoundingClientRect() trả về
-  // toạ độ ĐÃ NHÂN scale, nhưng bản thân <svg> lại là con của canvas nên
-  // cũng bị scale THÊM MỘT LẦN NỮA khi vẽ — nếu lấy thẳng số đo từ
-  // getBoundingClientRect() làm toạ độ path thì sẽ bị nhân đúp tỉ lệ,
-  // khiến các đường nối lệch hẳn khỏi node bất cứ khi nào mmScale != 1
-  // (chính là lỗi "vỡ nhánh" khi thu gọn/mở danh sách từ, khi resize, hay
-  // trên điện thoại — nơi mmFitToView gần như luôn để scale khác 1 vì
-  // sơ đồ toả tròn thường lớn hơn khung xem trên màn hẹp).
-  // Cách sửa: chia lại mọi khoảng cách đo được cho scale hiện tại để quy
-  // về đơn vị "layout gốc" (không phụ thuộc scale) trước khi ghi vào path.
-  const scale = mmScale || 1;
-  const cardRect = card.getBoundingClientRect();
   svg.setAttribute('width', card.offsetWidth);
   svg.setAttribute('height', card.offsetHeight);
-  const norm = r => ({
-    left: (r.left - cardRect.left) / scale,
-    top: (r.top - cardRect.top) / scale,
-    width: r.width / scale,
-    height: r.height / scale
-  });
-  const cRect = norm(center.getBoundingClientRect());
+  const cRect = mmOffsetIn(center, card);
   const cLeftMid = mmSideMidPoint(cRect, 'left');
   const cRightMid = mmSideMidPoint(cRect, 'right');
   let paths = '';
   card.querySelectorAll('.mm-node-syn:not(.mm-hidden), .mm-node-colloc:not(.mm-hidden)').forEach(node=>{
-    const nRect = norm(node.getBoundingClientRect());
+    const nRect = mmOffsetIn(node, card);
     const isSyn = node.classList.contains('mm-node-syn');
     // Đồng nghĩa nằm bên trái trung tâm → xuất phát từ mép TRÁI của ô
     // trung tâm, chạm vào mép PHẢI của ô đồng nghĩa. Collocation nằm bên
