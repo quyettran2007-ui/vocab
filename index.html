@@ -301,6 +301,28 @@
   touch-action:none;
 }
 .mm-canvas-wrap.dragging{ cursor:grabbing; }
+/* ---- Chế độ "xem toàn bộ 1 chủ đề trên 1 trang" (bấm 1 lần vào tiêu đề
+   chủ đề — mmShowTopicOverview) ---- khác hẳn chế độ 1-thẻ-kéo/zoom mặc
+   định: ở đây nhiều thẻ xếp DỌC liên tiếp nên cần cuộn dọc tự nhiên thay
+   vì transform pan/zoom (vốn chỉ hợp với đúng 1 thẻ căn giữa). */
+.mm-canvas-wrap.mm-overview{
+  overflow-y:auto; overflow-x:hidden; cursor:default; touch-action:pan-y;
+  align-items:stretch; justify-content:flex-start;
+}
+.mm-canvas.mm-overview-canvas{
+  display:flex; flex-direction:column; align-items:stretch; gap:26px;
+  width:100%; height:auto; min-height:100%; padding:18px 14px 48px;
+  transform:none !important;
+}
+.mm-overview-header{ text-align:center; padding:2px 0 4px; }
+.mm-overview-title{ font-weight:800; font-size:16px; color:var(--accent); }
+.mm-overview-sub{ font-size:11.5px; opacity:.6; margin-top:4px; }
+/* Mỗi thẻ trong trang tổng quan tự cuộn NGANG riêng nếu quá khổ (nhiều
+   đồng nghĩa/cụm từ) — không ảnh hưởng tới các thẻ khác hay layout chung. */
+.mm-overview-item-scroll{
+  overflow-x:auto; overflow-y:hidden; padding:6px 4px 10px;
+  display:flex; justify-content:center;
+}
 .mm-canvas{
   position:relative; width:100%; height:100%; transform-origin:center center;
   display:flex; align-items:center; justify-content:center;
@@ -45376,6 +45398,10 @@ function qcSave(){
    ============================================================ */
 let mmEntries = [];
 let mmSelectedIdx = -1;
+// Khác null khi đang ở chế độ "xem toàn bộ 1 chủ đề trên 1 trang" (bấm 1
+// lần vào tiêu đề chủ đề) — chứa mảng index các mục thuộc chủ đề đó, để
+// biết cần vẽ lại đường nối cho những thẻ nào khi resize/xoay màn hình.
+let mmOverviewIdxs = null;
 let mmScale = 1, mmTx = 0, mmTy = 0;
 const MM_ZOOM_MIN = 0.15, MM_ZOOM_MAX = 2.5, MM_ZOOM_STEP = 0.15;
 // ---- Bề rộng ô collocation (biến CSS --mm-colloc-w) ----
@@ -46581,8 +46607,9 @@ function mmRenderAll(){
         const isOpen = mmExpandedTopics.has(topic);
         html += `
         <div class="mm-topic-header${isOpen ? ' mm-topic-open' : ''}" data-topic="${esc(topic)}" role="button" tabindex="0"
-             ondblclick="mmToggleTopic(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();mmToggleTopic(this);}"
-             title="Bấm đúp để ${isOpen ? 'thu gọn' : 'mở rộng'} chủ đề này">
+             onclick="mmHandleTopicClick(this)" ondblclick="mmHandleTopicDblClick(this)"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();mmShowTopicOverview(this.dataset.topic);}"
+             title="Bấm 1 lần để xem cả chủ đề trên 1 trang · bấm đúp để ${isOpen ? 'thu gọn' : 'mở rộng'} danh sách">
           <span class="mm-topic-arrow">${isOpen ? '▾' : '▸'}</span>
           <span class="mm-topic-title">${esc(topic)}</span>
           <span class="mm-topic-count">${count}</span>
@@ -46607,12 +46634,90 @@ function mmToggleTopic(headerEl){
   const willOpen = !mmExpandedTopics.has(topic);
   if(willOpen) mmExpandedTopics.add(topic); else mmExpandedTopics.delete(topic);
   headerEl.classList.toggle('mm-topic-open', willOpen);
-  headerEl.title = `Bấm đúp để ${willOpen ? 'thu gọn' : 'mở rộng'} chủ đề này`;
+  headerEl.title = `Bấm 1 lần để xem cả chủ đề trên 1 trang · bấm đúp để ${willOpen ? 'thu gọn' : 'mở rộng'} danh sách`;
   const arrow = headerEl.querySelector('.mm-topic-arrow');
   if(arrow) arrow.textContent = willOpen ? '▾' : '▸';
   const body = headerEl.nextElementSibling;
   if(body && body.classList.contains('mm-topic-body')){
     body.style.display = willOpen ? '' : 'none';
+  }
+}
+
+// Bấm 1 lần vs bấm đúp vào TIÊU ĐỀ chủ đề (mục "to") làm 2 việc khác nhau,
+// nên phải tự phân biệt: trình duyệt luôn bắn 2 sự kiện "click" liên tiếp
+// TRƯỚC KHI bắn "dblclick" — nếu xử lý click ngay lập tức thì thao tác bấm
+// đúp sẽ luôn kích hoạt luôn cả hành động của bấm đơn trước đó. Cách sửa
+// giống hệt mmHandleNodeClick/mmHandleNodeDblClick đã dùng cho các ô từ
+// vựng: trì hoãn hành động của click đơn bằng setTimeout, huỷ nếu dblclick
+// xảy ra trong lúc chờ.
+const MM_TOPIC_CLICK_DELAY = 260;
+function mmHandleTopicClick(headerEl){
+  if(!headerEl) return;
+  if(headerEl._mmClickTimer){
+    clearTimeout(headerEl._mmClickTimer);
+    headerEl._mmClickTimer = null;
+    return;
+  }
+  const topic = headerEl.dataset.topic || '';
+  headerEl._mmClickTimer = setTimeout(()=>{
+    headerEl._mmClickTimer = null;
+    if(topic) mmShowTopicOverview(topic);
+  }, MM_TOPIC_CLICK_DELAY);
+}
+function mmHandleTopicDblClick(headerEl){
+  if(!headerEl) return;
+  if(headerEl._mmClickTimer){
+    clearTimeout(headerEl._mmClickTimer);
+    headerEl._mmClickTimer = null;
+  }
+  mmToggleTopic(headerEl);
+}
+
+// Bấm 1 lần vào tiêu đề chủ đề: hiện TOÀN BỘ các từ của chủ đề đó trên 1
+// trang duy nhất (xếp dọc từng thẻ, cuộn để xem hết) thay vì phải bấm vào
+// từng từ một. Đây là chế độ xem RIÊNG, khác hẳn chế độ "1 thẻ chiếm trọn
+// khung + kéo/zoom" của mmFocusEntry — nên tắt hẳn phép biến đổi
+// transform/pan-zoom (không hợp với danh sách nhiều thẻ xếp dọc) và để
+// khung cuộn tự nhiên theo chiều dọc; thẻ nào quá khổ ngang (nhiều đồng
+// nghĩa/cụm từ) thì tự cuộn ngang RIÊNG bên trong thẻ đó, không ảnh hưởng
+// các thẻ khác.
+function mmShowTopicOverview(topic){
+  if(!topic) return;
+  const canvas = document.getElementById('mmCanvas');
+  const wrap = document.getElementById('mmCanvasWrap');
+  if(!canvas || !wrap) return;
+  const idxs = [];
+  mmEntries.forEach((en, i)=>{ if((en.topic || '') === topic) idxs.push(i); });
+  if(idxs.length === 0) return;
+  mmSelectedIdx = -1;
+  mmOverviewIdxs = idxs;
+  document.querySelectorAll('.mm-list-item').forEach(el=>el.classList.remove('active'));
+  if(mmIsMobile() && document.getElementById('mmLeftList')?.classList.contains('mm-mobile-open')){
+    mmToggleLeftPanel();
+  }
+  wrap.classList.add('mm-overview');
+  canvas.classList.add('mm-overview-canvas');
+  canvas.style.transition = 'none';
+  canvas.style.transform = 'none';
+  const header = `
+    <div class="mm-overview-header">
+      <div class="mm-overview-title">${esc(topic)}</div>
+      <div class="mm-overview-sub">${idxs.length} mục — bấm vào 1 từ ở danh sách bên trái để xem riêng từng thẻ</div>
+    </div>`;
+  canvas.innerHTML = header + idxs.map(i=>`
+    <div class="mm-overview-item">
+      <div class="mm-overview-item-scroll">${mmBuildCard(mmEntries[i], i)}</div>
+    </div>
+  `).join('');
+  const drawAll = ()=>{ if(mmOverviewIdxs === idxs) idxs.forEach(i=>mmDrawLinks(i)); };
+  requestAnimationFrame(()=>{ requestAnimationFrame(drawAll); });
+  // Cùng lưới an toàn cho font/layout tải chậm như mmFocusEntry — 1 trang
+  // xem toàn bộ chứa nhiều thẻ cùng lúc nên càng dễ bị lệch nếu chỉ vẽ 1 lần.
+  setTimeout(drawAll, 200);
+  setTimeout(drawAll, 500);
+  setTimeout(drawAll, 900);
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(drawAll);
   }
 }
 
@@ -46993,6 +47098,12 @@ function mmFocusEntry(idx){
   const entry = mmEntries[idx];
   if(!entry) return;
   mmSelectedIdx = idx;
+  // Thoát chế độ "xem toàn bộ chủ đề trên 1 trang" nếu đang bật — chọn 1
+  // từ cụ thể luôn quay lại đúng kiểu xem 1 thẻ duy nhất, chiếm trọn khung
+  // và dùng lại được zoom/kéo như trước.
+  mmOverviewIdxs = null;
+  const wrapEl = document.getElementById('mmCanvasWrap');
+  if(wrapEl) wrapEl.classList.remove('mm-overview');
   document.querySelectorAll('.mm-list-item').forEach(el=>el.classList.remove('active'));
   const li = document.getElementById('mmLi-'+idx);
   if(li){ li.classList.add('active'); li.scrollIntoView({behavior:'smooth', block:'nearest'}); }
@@ -47001,6 +47112,7 @@ function mmFocusEntry(idx){
   }
   const canvas = document.getElementById('mmCanvas');
   if(!canvas) return;
+  canvas.classList.remove('mm-overview-canvas');
   // Vẽ đúng 1 thẻ của từ được chọn, chiếm trọn khung bên phải — không còn
   // các thẻ từ khác nằm phía trên/dưới nữa nên không cần kéo để xem.
   mmScale = 1; mmTx = 0; mmTy = 0;
@@ -47055,6 +47167,9 @@ function mmSearchFilter(q){
     const wrap = document.getElementById('mmCanvasWrap');
     if(!wrap) return;
     wrap.addEventListener('mousedown', e=>{
+      // Ở chế độ "xem toàn bộ chủ đề" (mmOverviewIdxs), KHÔNG kích hoạt kéo
+      // pan — để chuột cuộn dọc trang tự nhiên như 1 trang web bình thường.
+      if(mmOverviewIdxs) return;
       if(e.target.closest('.mm-card')) { /* still allow drag from card bg */ }
       mmDragging = true; wrap.classList.add('dragging');
       mmDragStartX = e.clientX; mmDragStartY = e.clientY;
@@ -47070,6 +47185,9 @@ function mmSearchFilter(q){
       if(mmDragging){ mmDragging = false; wrap.classList.remove('dragging'); }
     });
     wrap.addEventListener('wheel', e=>{
+      // Cùng lý do như mousedown ở trên: chế độ xem toàn bộ chủ đề cần lăn
+      // chuột để CUỘN TRANG bình thường, không phải để zoom.
+      if(mmOverviewIdxs) return;
       e.preventDefault();
       const rect = wrap.getBoundingClientRect();
       const mx = e.clientX - rect.left, my = e.clientY - rect.top;
@@ -47107,6 +47225,10 @@ function mmSearchFilter(q){
       }
     }
     wrap.addEventListener('touchstart', e=>{
+      // Chế độ xem toàn bộ chủ đề: để trình duyệt tự xử lý cuộn chạm dọc
+      // (đã bật touch-action:pan-y ở CSS .mm-overview), không chặn/point
+      // pan-zoom tự viết ở đây nữa.
+      if(mmOverviewIdxs) return;
       if(e.touches.length === 1){
         mmDragging = true;
         mmDragStartX = e.touches[0].clientX; mmDragStartY = e.touches[0].clientY;
@@ -47120,6 +47242,7 @@ function mmSearchFilter(q){
       }
     }, {passive:false});
     wrap.addEventListener('touchmove', e=>{
+      if(mmOverviewIdxs) return;
       // preventDefault ở đây (listener KHÔNG passive) để chặn hẳn cử chỉ
       // cuộn/pinch-zoom mặc định của trình duyệt trong lúc đang tự kéo/
       // phóng to sơ đồ — cùng với touch-action:none ở CSS, đảm bảo chỉ có
@@ -47138,6 +47261,14 @@ function mmSearchFilter(q){
     });
     let mmResizeT = null;
     const mmOnResize = ()=>{
+      if(mmOverviewIdxs){
+        clearTimeout(mmResizeT);
+        mmResizeT = setTimeout(()=>{
+          mmOverviewIdxs.forEach(i=>mmDrawLinks(i));
+          setTimeout(()=>{ if(mmOverviewIdxs) mmOverviewIdxs.forEach(i=>mmDrawLinks(i)); }, 400);
+        }, 150);
+        return;
+      }
       if(mmSelectedIdx < 0) return;
       clearTimeout(mmResizeT);
       mmResizeT = setTimeout(()=>{
