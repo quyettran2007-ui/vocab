@@ -304,14 +304,25 @@
 /* ---- Chế độ "xem toàn bộ 1 chủ đề trên 1 trang" (bấm 1 lần vào tiêu đề
    chủ đề — mmShowTopicOverview) ---- khác hẳn chế độ 1-thẻ-kéo/zoom mặc
    định: ở đây nhiều thẻ xếp DỌC liên tiếp nên cần cuộn dọc tự nhiên thay
-   vì transform pan/zoom (vốn chỉ hợp với đúng 1 thẻ căn giữa). */
+   vì transform pan/zoom (vốn chỉ hợp với đúng 1 thẻ căn giữa).
+   QUAN TRỌNG: đổi hẳn display của KHUNG NGOÀI (wrap) từ flex sang block.
+   Lý do lỗi trước đây chỉ hiện được ~7-8 mục dù chủ đề có tới 20-30 mục:
+   .mm-canvas-wrap vốn là flex container (row), và flex mặc định
+   align-items:stretch + min-height:auto trên phần tử con khiến .mm-canvas
+   (dù đã đặt height:auto) vẫn bị ÉP CỨNG đúng bằng chiều cao khung nhìn
+   thay vì cao tự nhiên theo tổng nội dung — phần thẻ vượt quá khung nhìn
+   bị cắt mất thay vì đẩy khung cuộn xuống thấp hơn. Đây là hạn chế/quirk
+   kinh điển của flexbox khi kết hợp overflow:auto trên container flex.
+   Chuyển wrap sang display:block loại bỏ hoàn toàn kiểu ép chiều cao đó —
+   phần tử con cao đúng theo nội dung thật, overflow-y:auto hoạt động
+   đúng kiểu cuộn trang thông thường, không giới hạn số thẻ hiển thị. */
 .mm-canvas-wrap.mm-overview{
+  display:block;
   overflow-y:auto; overflow-x:hidden; cursor:default; touch-action:pan-y;
-  align-items:stretch; justify-content:flex-start;
 }
 .mm-canvas.mm-overview-canvas{
   display:flex; flex-direction:column; align-items:stretch; gap:26px;
-  width:100%; height:auto; min-height:100%; padding:18px 14px 48px;
+  width:100%; height:auto; padding:18px 14px 48px;
   transform:none !important;
 }
 .mm-overview-header{ text-align:center; padding:2px 0 4px; }
@@ -46187,6 +46198,87 @@ function mmApplySeedDataOnceV2(){
   return mmApplySeedBatch(MM_SEED_WRITING_V2, MM_SEED_WRITING_V2_FLAG);
 }
 
+// ------------------------------------------------------------------
+// THỨ TỰ CHUẨN của các chủ đề trong danh sách bên trái. Trước đây thứ tự
+// chỉ đơn giản là "lô nào nạp trước thì hiện trước" (V1 400 mục nạp trước
+// nên luôn đứng trước lô V2 150 mục) — kể cả khi hợp lý về mặt kỹ thuật,
+// thứ tự đó không PHÙ HỢP VỀ NỘI DUNG: 4 chủ đề nội dung mới trong V2 (Tội
+// phạm & pháp luật, Gia đình, Toàn cầu hóa, Động vật) lẽ ra nên đứng CÙNG
+// nhóm với 10 chủ đề nội dung Task 2 của V1, thay vì bị đẩy xuống tít cuối
+// sau cả 9 nhóm Task 1 và 8 nhóm "công cụ ngôn ngữ" của V2.
+// Mảng dưới đây liệt kê chủ đề theo đúng trình tự MONG MUỐN: 14 chủ đề nội
+// dung Task 2 (10 gốc + 4 mới) đứng đầu, rồi đến 9 nhóm Task 1, cuối cùng
+// là 8 nhóm ngôn ngữ chức năng — mmNormalizeTopicOrder() sắp xếp lại dữ
+// liệu đã lưu theo đúng mảng này mỗi khi mở mind map, bất kể dữ liệu được
+// nạp/nhập vào theo thứ tự nào trước đó.
+const MM_TOPIC_ORDER = [
+  '🌍 CHỦ ĐỀ MÔI TRƯỜNG (Environment)',
+  '🎓 CHỦ ĐỀ GIÁO DỤC (Education)',
+  '💻 CHỦ ĐỀ CÔNG NGHỆ (Technology)',
+  '🏛️ CHỦ ĐỀ XÃ HỘI & CHÍNH PHỦ (Society & Government)',
+  '💰 CHỦ ĐỀ KINH TẾ & VIỆC LÀM (Economy & Employment)',
+  '🏙️ CHỦ ĐỀ ĐÔ THỊ & ĐỜI SỐNG (City Life & Urbanisation)',
+  '🧠 CHỦ ĐỀ SỨC KHỎE (Health)',
+  '📱 CHỦ ĐỀ TRUYỀN THÔNG (Media & Communication)',
+  '🎨 CHỦ ĐỀ VĂN HÓA & DU LỊCH (Culture & Tourism)',
+  '🌱 CHỦ ĐỀ PHÁT TRIỂN CÁ NHÂN (Personal Development)',
+  '⚖️ TỘI PHẠM & PHÁP LUẬT (Crime & Law)',
+  '👪 GIA ĐÌNH & NUÔI DẠY CON (Family & Parenting)',
+  '🌐 TOÀN CẦU HÓA (Globalisation)',
+  '🐾 ĐỘNG VẬT & ĐA DẠNG SINH HỌC (Wildlife & Biodiversity)',
+  'A. MIÊU TẢ XU HƯỚNG TĂNG (Increase/Upward Trend)',
+  'B. MIÊU TẢ XU HƯỚNG GIẢM (Decrease/Downward Trend)',
+  'C. MIÊU TẢ DAO ĐỘNG & ỔN ĐỊNH (Fluctuation & Stability)',
+  'D. MIÊU TẢ MỨC ĐỘ (Degree/Extent)',
+  'E. MIÊU TẢ SO SÁNH (Comparison)',
+  'F. MIÊU TẢ SỐ LIỆU (Data Description)',
+  'G. MIÊU TẢ BIỂU ĐỒ (Chart Description)',
+  'H. MIÊU TẢ QUY TRÌNH (Process Description)',
+  'I. MIÊU TẢ BẢN ĐỒ (Map Description)',
+  '🔗 LIÊN KẾT Ý TƯỞNG NÂNG CAO (Advanced Cohesion & Linking)',
+  '💬 NÊU QUAN ĐIỂM & LẬP LUẬN NÂNG CAO (Stating Opinions & Argumentation)',
+  '⚖️ NHƯỢNG BỘ & PHẢN BIỆN (Concession & Counter-argument)',
+  '🔄 NGUYÊN NHÂN - KẾT QUẢ NÂNG CAO (Advanced Cause & Effect)',
+  '📝 MỞ BÀI & KẾT BÀI (Introduction & Conclusion)',
+  '🧩 GIẢI PHÁP & KIẾN NGHỊ (Solutions & Recommendations)',
+  '⚠️ VẤN ĐỀ & HẬU QUẢ (Problems & Consequences)',
+  '📊 DIỄN ĐẠT MỨC ĐỘ & SỐ LIỆU HỌC THUẬT (Academic Hedging & Quantifying)',
+];
+// Sắp xếp lại danh sách dữ liệu THÔ (mmLoadEntries) theo đúng MM_TOPIC_ORDER
+// ở trên, rồi lưu lại nếu thứ tự có thay đổi. Chạy được AN TOÀN mỗi lần mở
+// mind map (không chỉ 1 lần) vì luôn cho ra cùng 1 kết quả với cùng dữ
+// liệu đầu vào — nhờ vậy tự "chữa lành" thứ tự bất cứ khi nào có thêm dữ
+// liệu mới (kể cả người dùng tự dán thêm mục có gắn nhãn [Chủ đề] khớp
+// 1 trong các tên ở trên).
+// - Mục KHÔNG gắn nhãn chủ đề (dữ liệu tự nhập tay, không có "[...]" ở đầu
+//   dòng) luôn được giữ NGUYÊN VỊ TRÍ ĐẦU danh sách như từ trước tới giờ.
+// - Mục có nhãn nhưng KHÔNG khớp tên nào trong MM_TOPIC_ORDER (chủ đề do
+//   người dùng tự đặt) xếp ở CUỐI, giữ nguyên thứ tự tương đối lúc nhập.
+function mmNormalizeTopicOrder(){
+  const raw = mmLoadEntries();
+  if(raw.length < 2) return;
+  const extractTopic = line=>{
+    const m = line.match(/^\[([^\[\]]{1,80})\]/);
+    return m ? m[1].trim() : '';
+  };
+  const priorityOf = topic=>{
+    if(!topic) return -1;
+    const idx = MM_TOPIC_ORDER.indexOf(topic);
+    return idx === -1 ? MM_TOPIC_ORDER.length : idx;
+  };
+  // Array.prototype.sort ổn định (stable) trong mọi trình duyệt hiện đại
+  // (bắt buộc theo đặc tả từ ES2019) — các dòng cùng mức ưu tiên GIỮ
+  // NGUYÊN thứ tự tương đối ban đầu, không bị xáo trộn lẫn nhau.
+  const withPriority = raw.map((line, i)=>({ line, p: priorityOf(extractTopic(line)) }));
+  withPriority.sort((a, b)=>a.p - b.p);
+  const sorted = withPriority.map(x=>x.line);
+  let changed = false;
+  for(let k = 0; k < sorted.length; k++){
+    if(sorted[k] !== raw[k]){ changed = true; break; }
+  }
+  if(changed) mmSaveEntries(sorted);
+}
+
 
 function mmLoadEntries(){
   let raw = null;
@@ -46308,6 +46400,7 @@ function mmOpen(){
   if(!page) return;
   mmApplySeedDataOnce();
   mmApplySeedDataOnceV2();
+  mmNormalizeTopicOrder();
   mmEntries = mmLoadData();
   // Reset danh sách ô đã ẩn: thứ tự entry có thể đổi giữa các lần sửa dữ
   // liệu, nên key "idx:type:i" cũ có thể trỏ nhầm sang từ khác.
