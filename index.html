@@ -46802,13 +46802,17 @@ function mmShowTopicOverview(topic){
       <div class="mm-overview-item-scroll">${mmBuildCard(mmEntries[i], i)}</div>
     </div>
   `).join('');
-  const drawAll = ()=>{ if(mmOverviewIdxs === idxs) idxs.forEach(i=>mmDrawLinks(i)); };
-  requestAnimationFrame(()=>{ requestAnimationFrame(drawAll); });
-  // Cùng lưới an toàn cho font/layout tải chậm như mmFocusEntry — 1 trang
-  // xem toàn bộ chứa nhiều thẻ cùng lúc nên càng dễ bị lệch nếu chỉ vẽ 1 lần.
-  setTimeout(drawAll, 200);
-  setTimeout(drawAll, 500);
-  setTimeout(drawAll, 900);
+  // Chỉ vẽ lại 2 lần (thay vì 5 lần như trước) — mỗi lần dùng
+  // mmDrawLinksBatch (đọc hết rồi mới ghi hết, xem giải thích ở hàm đó)
+  // thay vì gọi mmDrawLinks() riêng từng thẻ trong vòng lặp (đọc-ghi xen
+  // kẽ liên tục, rất chậm khi có hàng chục thẻ cùng lúc). 1 lần ngay sau
+  // khi trình duyệt vẽ xong khung đầu tiên, 1 lần trễ hơn để bắt kịp
+  // trường hợp font tải chậm hoặc layout ổn định muộn.
+  const drawAll = ()=>{ if(mmOverviewIdxs === idxs) mmDrawLinksBatch(idxs); };
+  requestAnimationFrame(drawAll);
+  setTimeout(drawAll, 350);
+  // document.fonts.ready đã resolve NGAY nếu font tải xong từ trước (không
+  // tốn gì thêm) — chỉ thật sự hữu ích khi font còn đang tải dở.
   if(document.fonts && document.fonts.ready){
     document.fonts.ready.then(drawAll);
   }
@@ -47126,13 +47130,20 @@ function mmOffsetIn(el, ancestor){
   return { left, top, width: el.offsetWidth, height: el.offsetHeight };
 }
 
-function mmDrawLinks(idx){
+// Tách riêng ĐỌC vị trí (mmComputeLinks — chỉ đọc offsetLeft/Top, không
+// đụng tới DOM) và GHI kết quả ra <svg> (mmDrawLinks). Khi cần vẽ NHIỀU
+// thẻ cùng lúc (trang xem toàn bộ 1 chủ đề), gộp toàn bộ bước ĐỌC của mọi
+// thẻ lại trước, rồi mới GHI toàn bộ — tránh kiểu đọc-ghi xen kẽ liên tục
+// (đọc thẻ 1 → ghi thẻ 1 → đọc thẻ 2 → ghi thẻ 2 → ...) vốn buộc trình
+// duyệt phải tính lại layout cả trang giữa MỖI lần đọc/ghi xen kẽ đó
+// ("layout thrashing") — nguyên nhân chính khiến trang xem toàn bộ chủ đề
+// (nhiều chục thẻ) bị load chậm hẳn so với xem 1 thẻ.
+function mmComputeLinks(idx){
   const card = document.getElementById('mmCard-'+idx);
   const svg = document.getElementById('mmLinks-'+idx);
   const center = card ? card.querySelector('.mm-node-center') : null;
-  if(!card || !svg || !center) return;
-  svg.setAttribute('width', card.offsetWidth);
-  svg.setAttribute('height', card.offsetHeight);
+  if(!card || !svg || !center) return null;
+  const width = card.offsetWidth, height = card.offsetHeight;
   const cRect = mmOffsetIn(center, card);
   const cLeftMid = mmSideMidPoint(cRect, 'left');
   const cRightMid = mmSideMidPoint(cRect, 'right');
@@ -47148,7 +47159,25 @@ function mmDrawLinks(idx){
     const p2 = isSyn ? mmSideMidPoint(nRect, 'right') : mmSideMidPoint(nRect, 'left');
     paths += mmLinkPath(p1.x, p1.y, p2.x, p2.y);
   });
-  svg.innerHTML = paths;
+  return { svg, width, height, paths };
+}
+function mmDrawLinks(idx){
+  const r = mmComputeLinks(idx);
+  if(!r) return;
+  r.svg.setAttribute('width', r.width);
+  r.svg.setAttribute('height', r.height);
+  r.svg.innerHTML = r.paths;
+}
+// Vẽ đường nối cho NHIỀU thẻ cùng lúc, gộp mọi phép đọc lại trước rồi mới
+// ghi — dùng cho trang xem toàn bộ 1 chủ đề (mmShowTopicOverview).
+function mmDrawLinksBatch(idxs){
+  const results = idxs.map(i=>mmComputeLinks(i));
+  results.forEach(r=>{
+    if(!r) return;
+    r.svg.setAttribute('width', r.width);
+    r.svg.setAttribute('height', r.height);
+    r.svg.innerHTML = r.paths;
+  });
 }
 
 function mmFitToView(){
@@ -47357,8 +47386,8 @@ function mmSearchFilter(q){
       if(mmOverviewIdxs){
         clearTimeout(mmResizeT);
         mmResizeT = setTimeout(()=>{
-          mmOverviewIdxs.forEach(i=>mmDrawLinks(i));
-          setTimeout(()=>{ if(mmOverviewIdxs) mmOverviewIdxs.forEach(i=>mmDrawLinks(i)); }, 400);
+          mmDrawLinksBatch(mmOverviewIdxs);
+          setTimeout(()=>{ if(mmOverviewIdxs) mmDrawLinksBatch(mmOverviewIdxs); }, 400);
         }, 150);
         return;
       }
