@@ -318,23 +318,55 @@
    đúng kiểu cuộn trang thông thường, không giới hạn số thẻ hiển thị. */
 .mm-canvas-wrap.mm-overview{
   display:block;
-  /* touch-action:pan-y pinch-zoom — pan-y đơn thuần (không kèm pinch-zoom)
-     sẽ CHẶN LUÔN cử chỉ zoom bằng 2 ngón tay mặc định của trình duyệt trên
-     điện thoại, chỉ còn lại cuộn dọc — đây chính là lý do người dùng report
-     không zoom được ở trang xem toàn bộ 1 chủ đề. Thêm pinch-zoom vào giá
-     trị để giữ nguyên cuộn dọc bình thường NHƯNG vẫn cho phép trình duyệt xử
-     lý pinch-to-zoom gốc (trang này không có code JS zoom riêng như chế độ
-     xem từng thẻ, nên phải dựa vào zoom mặc định của trình duyệt). */
-  overflow-y:auto; overflow-x:hidden; cursor:default; touch-action:pan-y pinch-zoom;
+  /* touch-action:auto — thử pan-y pinch-zoom trước đó KHÔNG ăn thua trên
+     Safari iOS vì Safari không hỗ trợ đầy đủ keyword "pinch-zoom" trong
+     touch-action (chỉ hỗ trợ auto/none/manipulation/pan-x/pan-y đúng chuẩn,
+     giá trị kết hợp với pinch-zoom bị bỏ qua hoặc xử lý sai trên nhiều bản
+     Safari). Cách chắc ăn trên MỌI trình duyệt là bỏ hẳn giới hạn — dùng
+     auto (giá trị mặc định gốc) để trình duyệt tự xử lý toàn bộ cử chỉ
+     chạm (cuộn dọc + pinch-zoom) y hệt một trang web bình thường, không cần
+     JS can thiệp. Trang này chỉ là danh sách thẻ xếp dọc, không có logic
+     pan/zoom JS riêng nên không sợ xung đột như .mm-canvas-wrap gốc (nơi
+     touch-action:none là bắt buộc vì có JS pan/zoom tự viết).
+  */
+  overflow-y:auto; overflow-x:hidden; cursor:default; touch-action:auto;
 }
 .mm-canvas.mm-overview-canvas{
   display:flex; flex-direction:column; align-items:stretch; gap:26px;
   width:100%; height:auto; padding:18px 14px 48px;
   transform:none !important;
 }
-.mm-overview-header{ text-align:center; padding:2px 0 4px; }
+.mm-overview-header{ text-align:center; padding:2px 0 4px; position:relative; }
 .mm-overview-title{ font-weight:800; font-size:16px; color:var(--accent); }
 .mm-overview-sub{ font-size:11.5px; opacity:.6; margin-top:4px; }
+/* ---- Nút thu phóng riêng cho trang "xem toàn bộ 1 chủ đề" ----
+   Pinch-zoom bằng 2 ngón tay của trình duyệt không đáng tin cậy trên mọi
+   điện thoại/trình duyệt (đặc biệt Safari iOS không hỗ trợ đầy đủ các giá
+   trị touch-action liên quan tới pinch-zoom). Thay vì phụ thuộc vào cử chỉ
+   gốc của trình duyệt, dùng lại đúng cơ chế nút +/－ đã có sẵn và hoạt động
+   ổn định cho Flashcard (--fc-zoom ở trên) — áp dụng CSS `zoom` lên toàn bộ
+   khung nội dung, lưu lựa chọn vào localStorage để lần sau mở lại vẫn giữ. */
+:root{ --mm-ov-zoom:1; }
+.mm-canvas.mm-overview-canvas{ zoom:var(--mm-ov-zoom); }
+.mm-ov-zoom-ctrl{
+  display:flex; align-items:center; gap:2px; position:absolute; right:0; top:0;
+  padding:4px; font-family:var(--font-body);
+  background:var(--card); border:1.5px solid var(--line);
+  border-radius:15px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.mm-ov-zoom-ctrl .fz-btn{
+  width:28px; height:28px; display:flex; align-items:center; justify-content:center;
+  border:none; background:transparent; border-radius:11px; cursor:pointer;
+  font-size:16px; font-weight:800; color:var(--ink-soft); transition:.15s;
+}
+.mm-ov-zoom-ctrl .fz-btn:hover{ background:var(--accent-bg); color:var(--accent); }
+.mm-ov-zoom-ctrl .fz-btn:disabled{ opacity:.35; cursor:default; }
+.mm-ov-zoom-ctrl .fz-btn:disabled:hover{ background:transparent; color:var(--ink-soft); }
+.mm-ov-zoom-ctrl .fz-val{ font-size:12px; font-weight:700; opacity:.7; width:38px; text-align:center; }
+@media(max-width:600px){
+  .mm-overview-header{ padding-top:38px; }
+  .mm-ov-zoom-ctrl{ right:50%; transform:translateX(50%); top:-2px; }
+}
 /* Mỗi thẻ trong trang tổng quan tự cuộn NGANG riêng nếu quá khổ (nhiều
    đồng nghĩa/cụm từ) — không ảnh hưởng tới các thẻ khác hay layout chung. */
 .mm-overview-item-scroll{
@@ -46813,6 +46845,31 @@ function mmHandleTopicDblClick(headerEl){
 // khung cuộn tự nhiên theo chiều dọc; thẻ nào quá khổ ngang (nhiều đồng
 // nghĩa/cụm từ) thì tự cuộn ngang RIÊNG bên trong thẻ đó, không ảnh hưởng
 // các thẻ khác.
+/* ---------- Thu phóng cỡ chữ trang "xem toàn bộ 1 chủ đề" — tự lưu lại lựa chọn ---------- */
+const LS_MM_OV_ZOOM = 'vocab_mm_ov_zoom';
+const MM_OV_ZOOM_MIN = 0.7, MM_OV_ZOOM_MAX = 1.6, MM_OV_ZOOM_STEP = 0.1;
+let mmOvZoom = 1;
+(function loadMmOvZoom(){
+  try{
+    const saved = parseFloat(localStorage.getItem(LS_MM_OV_ZOOM));
+    if(!isNaN(saved) && saved >= MM_OV_ZOOM_MIN && saved <= MM_OV_ZOOM_MAX) mmOvZoom = saved;
+  }catch(e){}
+})();
+function applyMmOvZoom(){
+  document.documentElement.style.setProperty('--mm-ov-zoom', mmOvZoom);
+  const val = document.getElementById('mmOvZoomVal');
+  if(val) val.textContent = Math.round(mmOvZoom*100)+'%';
+  const out = document.getElementById('mmOvZoomOut'), inn = document.getElementById('mmOvZoomIn');
+  if(out) out.disabled = mmOvZoom <= MM_OV_ZOOM_MIN + 1e-9;
+  if(inn) inn.disabled = mmOvZoom >= MM_OV_ZOOM_MAX - 1e-9;
+}
+function mmOvZoomStep(dir){
+  mmOvZoom = Math.min(MM_OV_ZOOM_MAX, Math.max(MM_OV_ZOOM_MIN, +(mmOvZoom + dir*MM_OV_ZOOM_STEP).toFixed(2)));
+  try{ localStorage.setItem(LS_MM_OV_ZOOM, mmOvZoom); }catch(e){}
+  applyMmOvZoom();
+  // Cỡ chữ đổi làm chiều cao các thẻ đổi theo → vẽ lại đường nối cho khớp.
+  if(mmOverviewIdxs) setTimeout(()=>mmDrawLinksBatch(mmOverviewIdxs), 60);
+}
 function mmShowTopicOverview(topic){
   if(!topic) return;
   const canvas = document.getElementById('mmCanvas');
@@ -46835,12 +46892,18 @@ function mmShowTopicOverview(topic){
     <div class="mm-overview-header">
       <div class="mm-overview-title">${esc(topic)}</div>
       <div class="mm-overview-sub">${idxs.length} mục — bấm vào 1 từ ở danh sách bên trái để xem riêng từng thẻ</div>
+      <div class="mm-ov-zoom-ctrl" title="Thu phóng cỡ chữ">
+        <button type="button" class="fz-btn" onclick="mmOvZoomStep(-1)" id="mmOvZoomOut">－</button>
+        <span class="fz-val" id="mmOvZoomVal">100%</span>
+        <button type="button" class="fz-btn" onclick="mmOvZoomStep(1)" id="mmOvZoomIn">＋</button>
+      </div>
     </div>`;
   canvas.innerHTML = header + idxs.map(i=>`
     <div class="mm-overview-item">
       <div class="mm-overview-item-scroll">${mmBuildCard(mmEntries[i], i)}</div>
     </div>
   `).join('');
+  applyMmOvZoom();
   // Chỉ vẽ lại 2 lần (thay vì 5 lần như trước) — mỗi lần dùng
   // mmDrawLinksBatch (đọc hết rồi mới ghi hết, xem giải thích ở hàm đó)
   // thay vì gọi mmDrawLinks() riêng từng thẻ trong vòng lặp (đọc-ghi xen
