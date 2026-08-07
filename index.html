@@ -334,7 +334,6 @@
 .mm-canvas.mm-overview-canvas{
   display:flex; flex-direction:column; align-items:stretch; gap:26px;
   width:100%; height:auto; padding:18px 14px 48px;
-  transform:none !important;
 }
 .mm-overview-header{ text-align:center; padding:2px 0 4px; position:relative; }
 .mm-overview-title{ font-weight:800; font-size:16px; color:var(--accent); }
@@ -347,7 +346,20 @@
    ổn định cho Flashcard (--fc-zoom ở trên) — áp dụng CSS `zoom` lên toàn bộ
    khung nội dung, lưu lựa chọn vào localStorage để lần sau mở lại vẫn giữ. */
 :root{ --mm-ov-zoom:1; }
-.mm-canvas.mm-overview-canvas{ zoom:var(--mm-ov-zoom); }
+/* CSS `zoom` không đáng tin cậy trên Safari/iOS khi áp dụng lên container
+   display:flex (bug đã biết của WebKit: nội dung không reflow lại chiều
+   rộng đúng theo tỉ lệ zoom, khiến các thẻ bị cắt mất phần bên phải thay
+   vì thu nhỏ lại vừa màn hình — đúng triệu chứng "không thể zoom để nhìn
+   toàn bộ cụm"). Dùng transform:scale() thay thế vì được MỌI trình duyệt
+   hỗ trợ đầy đủ và ổn định. Vì transform không tự thay đổi kích thước hộp
+   bố cục, bù lại bằng width:calc(100%/zoom) để khi scale xuống, nội dung
+   thật sự được đo/reflow ở chiều rộng lớn hơn rồi mới thu nhỏ lại đúng
+   100% khung nhìn — mô phỏng đúng hành vi zoom trình duyệt thật. */
+.mm-canvas.mm-overview-canvas{
+  transform:scale(var(--mm-ov-zoom));
+  transform-origin:top center;
+  width:calc(100% / var(--mm-ov-zoom));
+}
 .mm-ov-zoom-ctrl{
   display:flex; align-items:center; gap:2px; position:absolute; right:0; top:0;
   padding:4px; font-family:var(--font-body);
@@ -46887,7 +46899,12 @@ function mmShowTopicOverview(topic){
   wrap.classList.add('mm-overview');
   canvas.classList.add('mm-overview-canvas');
   canvas.style.transition = 'none';
-  canvas.style.transform = 'none';
+  // Xoá transform inline còn sót lại từ chế độ pan/zoom bình thường —
+  // dùng removeProperty (không phải gán 'none') để CSS `.mm-canvas.mm-
+  // overview-canvas{ transform:scale(...) }` (thu phóng bằng nút +/－)
+  // có thể áp dụng; inline style luôn thắng CSS thường nên nếu gán cứng
+  // 'none' ở đây, nút zoom overview sẽ không bao giờ có tác dụng.
+  canvas.style.removeProperty('transform');
   const header = `
     <div class="mm-overview-header">
       <div class="mm-overview-title">${esc(topic)}</div>
