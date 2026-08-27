@@ -2671,6 +2671,102 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   .lsb-chips{ grid-template-columns:repeat(2,1fr); }
   .lv-study-btn, .lv-remain-btn{ min-width:0; }
 }
+
+/* ============================================================
+   TẠO DANH SÁCH HỌC TỪ CÁC TỪ VỰNG TÙY Ý (đầu tab Danh sách)
+   ------------------------------------------------------------
+   Người dùng gõ vào ô tìm kiếm để tra ra từ đã có trong kho VOCAB,
+   bấm nút ➕ trên từng kết quả để thêm vào "danh sách đang tạo" —
+   không giới hạn số từ, gom được từ nhiều chủ đề khác nhau. Danh
+   sách này học ngay được hoặc lưu lại (localStorage) để dùng nhiều
+   lần. Dùng lại khung .topic-explorer/.te-toggle/.te-body cho đồng
+   bộ, nhưng đổi tiền tố class riêng thành "ucl-" (User Custom List)
+   để không đụng "cl-" (đã dùng cho Flashcard/Card ở nơi khác). ==== */
+.ucl-hint{ font-size:12px; line-height:1.6; color:var(--muted); margin-bottom:10px; }
+
+.ucl-search-wrap{ position:relative; }
+.ucl-search-input{
+  width:100%; box-sizing:border-box; border:1px solid var(--line); border-radius:var(--radius-sm);
+  outline:none; padding:11px 38px 11px 14px; font-family:var(--font-body); font-size:13px;
+  background:var(--card-sunken); color:var(--ink);
+}
+.ucl-search-input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
+.ucl-search-clear{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  width:24px; height:24px; border:none; border-radius:50%; cursor:pointer;
+  background:var(--card); color:var(--muted); font-size:12px;
+}
+.ucl-search-clear:hover{ background:var(--accent-bg); color:var(--accent); }
+.ucl-search-results{
+  margin-top:8px; max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;
+}
+.ucl-sr-item{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:8px 10px;
+}
+.ucl-sr-main{ display:flex; align-items:baseline; gap:8px; min-width:0; flex-wrap:wrap; }
+.ucl-sr-word{ font-family:var(--font-word); font-weight:700; font-size:13.5px; color:var(--ink); }
+.ucl-sr-vn{ font-size:12px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ucl-sr-add{
+  flex-shrink:0; width:30px; height:30px; border-radius:9px; border:1px solid var(--accent);
+  background:var(--accent-bg); color:var(--accent); font-size:15px; font-weight:700; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:filter .15s, transform .15s;
+}
+.ucl-sr-add:hover{ filter:brightness(1.05); transform:translateY(-1px); }
+.ucl-sr-item.added{ opacity:.55; }
+.ucl-sr-add:disabled{ border-color:var(--line); background:var(--card-sunken); color:var(--muted); cursor:default; }
+
+.ucl-current{ margin-top:14px; }
+.ucl-current-head{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+.ucl-current-title{ font-size:12.5px; font-weight:700; color:var(--ink-soft); }
+.ucl-current-count{ font-size:11.5px; color:var(--muted); }
+.ucl-clear-all-btn{
+  margin-left:auto; background:none; border:none; cursor:pointer; font-size:11.5px;
+  color:var(--coral); font-weight:700;
+}
+.ucl-clear-all-btn:hover{ text-decoration:underline; }
+.ucl-current-list{
+  display:flex; flex-direction:column; gap:6px; max-height:280px; overflow-y:auto; padding-right:2px;
+}
+.ucl-cur-item{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  background:var(--card-sunken); border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:8px 10px;
+}
+.ucl-cur-main{ display:flex; align-items:baseline; gap:8px; min-width:0; flex-wrap:wrap; cursor:pointer; }
+.ucl-cur-word{ font-family:var(--font-word); font-weight:700; font-size:13.5px; color:var(--ink); }
+.ucl-cur-vn{ font-size:12px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ucl-cur-remove{
+  flex-shrink:0; width:26px; height:26px; border-radius:8px; border:1px solid var(--line);
+  background:var(--card); color:var(--muted); font-size:12px; cursor:pointer;
+}
+.ucl-cur-remove:hover{ border-color:var(--coral); color:var(--coral); }
+
+.ucl-empty{ font-size:12px; color:var(--muted); padding:8px 2px; }
+.ucl-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.ucl-name-input{
+  flex:1 1 200px; min-width:0; border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:9px 12px; font-family:var(--font-body); font-size:12.5px;
+  background:var(--card); color:var(--ink); outline:none;
+}
+.ucl-name-input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
+.ucl-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.ucl-saved{ margin-top:16px; padding-top:14px; border-top:1px dashed var(--line); }
+.ucl-saved-title{ font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:8px; }
+.ucl-saved-list{ display:flex; flex-direction:column; gap:8px; }
+.ucl-saved-item{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  background:var(--card-sunken); border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:9px 12px;
+}
+.ucl-saved-info{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.ucl-saved-name{ font-size:13px; font-weight:700; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ucl-saved-count{ font-size:11px; color:var(--muted); }
+.ucl-saved-btns{ display:flex; gap:6px; flex-shrink:0; }
+.ucl-saved-btns .btn{ padding:6px 10px; font-size:12px; }
+.ucl-danger:hover{ border-color:var(--coral) !important; color:var(--coral) !important; }
+
 /* ===== TOGGLE thẻ chi tiết/thu gọn — vẫn dùng ở tab "Cần học" ===== */
 .list-view-toggle{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; }
 .lv-seg{
@@ -7886,6 +7982,48 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
   </section>
 
   <section class="panel" id="panel-list">
+    <!-- ===== TẠO DANH SÁCH HỌC TỪ CÁC TỪ VỰNG TÙY Ý =====
+         Gõ vào ô tìm kiếm để tra từ đã có trong kho, bấm ➕ để thêm
+         vào danh sách đang tạo, rồi học ngay hoặc lưu lại dùng nhiều lần. -->
+    <div class="topic-explorer" id="uclBox">
+      <button type="button" class="te-toggle" id="uclToggleBtn" onclick="toggleCustomListBox()">
+        <span class="te-toggle-ico">✍️</span>
+        <span class="te-toggle-text">Tạo danh sách học từ từ vựng tùy ý</span>
+        <span class="te-toggle-sum" id="uclToggleSum"></span>
+        <span class="te-toggle-chev" id="uclToggleChev">▾</span>
+      </button>
+      <div class="te-body" id="uclBody" style="display:none">
+        <div class="ucl-hint">Gõ từ cần tìm (tiếng Anh hoặc nghĩa tiếng Việt) vào ô bên dưới, bấm ➕ trên từ đúng ý để thêm vào danh sách đang tạo — có thể thêm bao nhiêu từ tùy ý, gom từ nhiều chủ đề khác nhau.</div>
+        <div class="ucl-search-wrap">
+          <input type="text" id="uclSearchInput" class="ucl-search-input" placeholder="🔍 Gõ để tìm từ..." oninput="uclOnSearchInput(this.value)" autocomplete="off">
+          <button type="button" class="ucl-search-clear" id="uclSearchClear" style="display:none" onclick="uclClearSearch()" title="Xoá tìm kiếm">✕</button>
+        </div>
+        <div class="ucl-search-results" id="uclSearchResults"></div>
+
+        <div class="ucl-current">
+          <div class="ucl-current-head">
+            <span class="ucl-current-title">📝 Danh sách đang tạo</span>
+            <span class="ucl-current-count" id="uclCurrentCount">0 từ</span>
+            <button type="button" class="ucl-clear-all-btn" id="uclClearAllBtn" style="display:none" onclick="uclClearList()">🗑️ Xoá hết</button>
+          </div>
+          <div class="ucl-current-list" id="uclCurrentList"><div class="ucl-empty">Chưa có từ nào — tìm và bấm ➕ ở trên để thêm.</div></div>
+        </div>
+
+        <div class="ucl-row">
+          <input type="text" id="uclNameInput" class="ucl-name-input" placeholder="Đặt tên danh sách (không bắt buộc, để lưu lại)">
+        </div>
+        <div class="ucl-actions" id="uclActions" style="display:none">
+          <button type="button" class="lv-study-btn" onclick="uclStudyNow()">🎯 Học ngay danh sách này</button>
+          <button type="button" class="btn" onclick="uclSaveList()">💾 Lưu danh sách để dùng lại</button>
+        </div>
+
+        <div class="ucl-saved" id="uclSavedWrap" style="display:none">
+          <div class="ucl-saved-title">📁 Danh sách tùy ý đã lưu</div>
+          <div class="ucl-saved-list" id="uclSavedList"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="topic-explorer" id="topicExplorer">
       <button type="button" class="te-toggle" id="teToggleBtn" onclick="toggleTopicExplorer()">
         <span class="te-toggle-ico">🗂️</span>
@@ -7929,6 +8067,7 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
         </div>
       </div>
     </div>
+
     <div class="lwc-detail-overlay" id="lwcDetailOverlay" onclick="if(event.target===this) lwcCloseDetail()">
       <div class="lwc-detail-panel" id="lwcDetailPanel">
         <button type="button" class="lwc-detail-close" onclick="lwcCloseDetail()" title="Đóng">✕</button>
@@ -37254,6 +37393,244 @@ function goStudyRemainingInTopic(){
   document.querySelector('.tab-btn[data-mode="learn"]').click();
 }
 
+/* ============================================================
+   TẠO DANH SÁCH HỌC TỪ CÁC TỪ VỰNG TÙY Ý (đầu tab Danh sách)
+   ------------------------------------------------------------
+   Khác với "Duyệt theo chủ đề" (chỉ đi theo cây chủ đề có sẵn),
+   khối này cho người dùng GÕ TÌM bất kỳ từ nào họ muốn ôn, rồi bấm
+   ➕ trên đúng kết quả để thêm vào "danh sách đang tạo" (gom được
+   từ nhiều chủ đề khác nhau, không giới hạn số từ). Danh sách này
+   học ngay được — qua đúng cơ chế "Theo bộ lọc" (biến `filtered` +
+   _pendingScope, giống nút "🎯 Học chủ đề này") — hoặc lưu lại
+   (localStorage) để mở lại học nhiều lần sau này. Không giới hạn
+   số danh sách lưu. ============================================ */
+const LS_UCL_LISTS = 'vocab_custom_word_lists';
+const UCL_SEARCH_LIMIT = 30;   // giới hạn số kết quả hiện ra mỗi lần gõ tìm, tránh render quá nặng
+let _uclOpen = localStorage.getItem('vocab_ucl_open') === '1';   // mặc định đóng, đỡ chiếm chỗ
+let _uclList = [];      // các mục VOCAB đã được bấm ➕ thêm vào danh sách đang tạo (giữ thứ tự thêm)
+let _uclSearchT = null; // debounce timer cho ô tìm kiếm
+
+function toggleCustomListBox(force){
+  _uclOpen = typeof force === 'boolean' ? force : !_uclOpen;
+  try{ localStorage.setItem('vocab_ucl_open', _uclOpen ? '1' : '0'); }catch(e){}
+  syncCustomListBoxOpen();
+}
+function syncCustomListBoxOpen(){
+  const body = document.getElementById('uclBody');
+  const btn  = document.getElementById('uclToggleBtn');
+  if(!body || !btn) return;
+  body.style.display = _uclOpen ? '' : 'none';
+  btn.classList.toggle('open', _uclOpen);
+  if(_uclOpen) uclRenderSavedLists();
+}
+
+function loadCustomWordLists(){
+  try{ return JSON.parse(localStorage.getItem(LS_UCL_LISTS)) || {}; }catch(e){ return {}; }
+}
+function saveCustomWordLists(obj){
+  try{ localStorage.setItem(LS_UCL_LISTS, JSON.stringify(obj)); }catch(e){}
+}
+
+/* Đối chiếu 1 mảng chữ (word string, dùng khi mở lại danh sách đã lưu)
+   với kho VOCAB hiện có — khớp đúng nguyên cụm, không phân biệt hoa/
+   thường. Trả về { matched: [mục VOCAB...], notFound: ['chữ không còn khớp'...] } */
+function uclMatchWords(words){
+  const byKey = {};
+  VOCAB.forEach(v=>{ byKey[v.word.toLowerCase()] = v; });
+  const matched = [], notFound = [];
+  (words||[]).forEach(w=>{
+    const v = byKey[String(w).toLowerCase()];
+    if(v) matched.push(v); else notFound.push(w);
+  });
+  return { matched, notFound };
+}
+
+/* ---- Ô tìm kiếm để tra từ có sẵn trong kho (debounce 160ms, giống
+   ô tìm kiếm ở trang chủ) ---- */
+function uclOnSearchInput(q){
+  clearTimeout(_uclSearchT);
+  _uclSearchT = setTimeout(()=>uclRunSearch(q), 160);
+}
+function uclClearSearch(){
+  const inp = document.getElementById('uclSearchInput');
+  if(inp) inp.value = '';
+  uclRunSearch('');
+  if(inp) inp.focus();
+}
+function uclRunSearch(q){
+  const box = document.getElementById('uclSearchResults');
+  const clr = document.getElementById('uclSearchClear');
+  if(!box) return;
+  q = (q||'').trim().toLowerCase();
+  if(clr) clr.style.display = q ? '' : 'none';
+  if(!q){ box.innerHTML = ''; return; }
+  const inListSet = new Set(_uclList.map(v=>v.word.toLowerCase()));
+  const hits = VOCAB.filter(v=>
+    v.word.toLowerCase().includes(q) || (v.vn||'').toLowerCase().includes(q)
+  ).slice(0, UCL_SEARCH_LIMIT);
+  if(!hits.length){
+    box.innerHTML = `<div class="ucl-empty">Không tìm thấy từ nào khớp "<b>${esc(q)}</b>" trong kho.</div>`;
+    return;
+  }
+  box.innerHTML = hits.map(v=>uclSearchResultItemHTML(v, inListSet.has(v.word.toLowerCase()))).join('');
+}
+function uclSearchResultItemHTML(v, added){
+  const safeWord = esc(v.word).replace(/'/g,"\\'");
+  return `<div class="ucl-sr-item${added?' added':''}">
+    <div class="ucl-sr-main">
+      <span class="ucl-sr-word">${esc(v.word)}</span>
+      ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
+      <span class="ucl-sr-vn">${esc(v.vn||'')}</span>
+    </div>
+    <button type="button" class="ucl-sr-add" ${added?'disabled':''} onclick="uclAddWord('${safeWord}')" title="${added?'Đã có trong danh sách':'Thêm vào danh sách'}">${added?'✓':'➕'}</button>
+  </div>`;
+}
+
+/* ---- Thêm/bớt từ khỏi "danh sách đang tạo" ---- */
+function uclAddWord(word){
+  const already = _uclList.some(v=>v.word.toLowerCase()===String(word).toLowerCase());
+  if(already) return;
+  const v = VOCAB.find(x=>x.word.toLowerCase()===String(word).toLowerCase());
+  if(!v) return;
+  _uclList.push(v);
+  uclRenderCurrentList();
+  // cập nhật lại trạng thái ➕/✓ trên ô kết quả tìm kiếm đang hiện, không cần chạy lại tìm kiếm
+  const inp = document.getElementById('uclSearchInput');
+  if(inp && inp.value.trim()) uclRunSearch(inp.value);
+}
+function uclRemoveWord(word){
+  _uclList = _uclList.filter(v=>v.word.toLowerCase()!==String(word).toLowerCase());
+  uclRenderCurrentList();
+  const inp = document.getElementById('uclSearchInput');
+  if(inp && inp.value.trim()) uclRunSearch(inp.value);
+}
+function uclClearList(){
+  if(!_uclList.length) return;
+  if(!confirm('Xoá hết từ đang có trong danh sách này?')) return;
+  _uclList = [];
+  uclRenderCurrentList();
+  const inp = document.getElementById('uclSearchInput');
+  if(inp && inp.value.trim()) uclRunSearch(inp.value);
+}
+function uclCurrentItemHTML(v){
+  const safeWord = esc(v.word).replace(/'/g,"\\'");
+  return `<div class="ucl-cur-item">
+    <div class="ucl-cur-main" onclick="lwcShowDetail('${safeWord}')" title="Xem thẻ chi tiết của từ này">
+      <span class="ucl-cur-word">${esc(v.word)}</span>
+      ${v.pos?`<span class="pos">${esc(v.pos)}</span>`:''}
+      <span class="ucl-cur-vn">${esc(v.vn||'')}</span>
+    </div>
+    <button type="button" class="ucl-cur-remove" onclick="uclRemoveWord('${safeWord}')" title="Bỏ từ này khỏi danh sách">✕</button>
+  </div>`;
+}
+function uclRenderCurrentList(){
+  const box = document.getElementById('uclCurrentList');
+  const cnt = document.getElementById('uclCurrentCount');
+  const clearBtn = document.getElementById('uclClearAllBtn');
+  const actions = document.getElementById('uclActions');
+  if(cnt) cnt.textContent = _uclList.length + ' từ';
+  if(clearBtn) clearBtn.style.display = _uclList.length ? '' : 'none';
+  if(actions) actions.style.display = _uclList.length ? '' : 'none';
+  if(box){
+    box.innerHTML = _uclList.length
+      ? _uclList.map(uclCurrentItemHTML).join('')
+      : `<div class="ucl-empty">Chưa có từ nào — tìm và bấm ➕ ở trên để thêm.</div>`;
+  }
+}
+
+/* Học ngay 1 danh sách từ (mảng mục VOCAB) — dùng chung cơ chế "Theo bộ
+   lọc" như nút "🎯 Học chủ đề này": gán vào biến `filtered`, đặt
+   _pendingScope rồi nhảy sang tab Học ngay. */
+function uclStudyWords(list){
+  if(!list || !list.length){ toast('Danh sách này chưa có từ nào khớp trong kho.'); return; }
+  filtered = list.slice();
+  const fc = document.getElementById('filterCount');
+  if(fc) fc.textContent = filtered.length + ' từ';
+  updateFilterBadge();
+  _pendingScope = 'filtered';
+  document.querySelector('.tab-btn[data-mode="learn"]').click();
+}
+function uclStudyNow(){ uclStudyWords(_uclList); }
+
+function uclSaveList(){
+  if(!_uclList.length){ toast('Chưa có từ nào trong danh sách — tìm và bấm ➕ để thêm trước đã.'); return; }
+  const nameInput = document.getElementById('uclNameInput');
+  let name = nameInput ? nameInput.value.trim() : '';
+  if(!name) name = (prompt('Đặt tên cho danh sách này:', '') || '').trim();
+  if(!name){ toast('Cần đặt tên để lưu danh sách.'); return; }
+  const all = loadCustomWordLists();
+  const isNew = !all[name];
+  all[name] = _uclList.map(v=>v.word);
+  saveCustomWordLists(all);
+  if(nameInput) nameInput.value = name;
+  toast(isNew ? `💾 Đã lưu danh sách "${name}"` : `💾 Đã cập nhật danh sách "${name}"`);
+  uclRenderSavedLists();
+}
+
+function uclRenderSavedLists(){
+  const wrap = document.getElementById('uclSavedWrap');
+  const box  = document.getElementById('uclSavedList');
+  const sum  = document.getElementById('uclToggleSum');
+  if(!wrap || !box) return;
+  const all = loadCustomWordLists();
+  const names = Object.keys(all);
+  if(sum) sum.textContent = names.length ? `${names.length} danh sách đã lưu` : '';
+  if(!names.length){ wrap.style.display = 'none'; box.innerHTML=''; return; }
+  wrap.style.display = '';
+  box.innerHTML = names.map(name=>{
+    const words = all[name] || [];
+    const { matched } = uclMatchWords(words);
+    const safeName = esc(name).replace(/'/g,"\\'");
+    return `
+    <div class="ucl-saved-item">
+      <div class="ucl-saved-info">
+        <span class="ucl-saved-name">📋 ${esc(name)}</span>
+        <span class="ucl-saved-count">${matched.length}/${words.length} từ khớp trong kho</span>
+      </div>
+      <div class="ucl-saved-btns">
+        <button type="button" class="btn" onclick="uclStudySavedList('${safeName}')" title="Học ngay danh sách này">🎯 Học</button>
+        <button type="button" class="btn" onclick="uclEditSavedList('${safeName}')" title="Mở lại để xem/sửa">✏️ Sửa</button>
+        <button type="button" class="btn ucl-danger" onclick="uclDeleteSavedList('${safeName}')" title="Xoá danh sách này (không ảnh hưởng kho từ chính)">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function uclStudySavedList(name){
+  const all = loadCustomWordLists();
+  const words = all[name];
+  if(!words){ toast('Không tìm thấy danh sách này.'); return; }
+  const { matched, notFound } = uclMatchWords(words);
+  if(notFound.length) toast(`⚠️ ${notFound.length} từ trong danh sách "${name}" hiện không còn khớp trong kho.`);
+  uclStudyWords(matched);
+}
+
+/* Mở lại 1 danh sách đã lưu để xem/sửa: nạp các từ còn khớp vào
+   "danh sách đang tạo" (thay thế danh sách đang tạo hiện tại), điền
+   sẵn tên, rồi cuộn tới khu vực này. */
+function uclEditSavedList(name){
+  const all = loadCustomWordLists();
+  const words = all[name];
+  if(!words) return;
+  const { matched, notFound } = uclMatchWords(words);
+  _uclList = matched;
+  const nameInput = document.getElementById('uclNameInput');
+  if(nameInput) nameInput.value = name;
+  uclRenderCurrentList();
+  if(notFound.length) toast(`⚠️ ${notFound.length} từ trong danh sách "${name}" hiện không còn khớp trong kho, đã bỏ qua.`);
+  const box = document.getElementById('uclCurrentList');
+  if(box) box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function uclDeleteSavedList(name){
+  if(!confirm(`Xoá danh sách "${name}"? (Chỉ xoá danh sách này, không ảnh hưởng tới kho từ chính)`)) return;
+  const all = loadCustomWordLists();
+  delete all[name];
+  saveCustomWordLists(all);
+  toast(`🗑️ Đã xoá danh sách "${name}"`);
+  uclRenderSavedLists();
+}
+
 
 /* ---------- Tìm kiếm ngay trên trang chủ ---------- */
 let _dsT = null;
@@ -38278,6 +38655,7 @@ function lwcTileHTML(v){
 }
 function renderList(){
   renderTopicExplorer();
+  syncCustomListBoxOpen();
 }
 
 /* ---- Thanh lọc nhanh theo trạng thái (Tất cả/Chưa học/Đang học/Đã thuộc) ----
