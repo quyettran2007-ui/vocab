@@ -2618,7 +2618,60 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 }
 .rd-toast.on{ opacity:1; transform:translate(-50%, 0); }
 
-/* ===== TOGGLE 2 CHẾ ĐỘ XEM Ở TAB DANH SÁCH: theo từ / theo danh mục ===== */
+/* ===== 4 THẺ TRẠNG THÁI Ở TAB DANH SÁCH ===============================
+   Mỗi thẻ = số liệu Tất cả/Chưa học/Đang học/Đã thuộc CHỈ TÍNH TRÊN CHỦ ĐỀ
+   ĐANG CHỌN ở cây bên trái (không phải toàn bộ kho từ — đây là chỗ trước
+   đây bị lệch, vì hàm đếm cũ đọc nhầm từ <select> ẩn của Bộ lọc thay vì
+   đọc đúng mục đang chọn trên cây). Dùng lại đúng 3 màu ý nghĩa
+   (--stat-new/doing/learned) như 4 ô ở Tổng quan để nhất quán ngôn ngữ
+   màu trong toàn app, và đổi từ khối "chip" bo tròn nhồi nhét sang lưới
+   thẻ phẳng — rõ số liệu hơn, đỡ rối mắt, và bấm trúng đích hơn trên di
+   động. Bên dưới là 2 nút hành động: học đúng tập đang lọc, và học dứt
+   điểm mọi từ CÒN LẠI (chưa thuộc) của đúng chủ đề đang xem. =============*/
+.list-status-bar{ display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+.lsb-chips{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.lsb-chip{
+  display:flex; flex-direction:column; align-items:flex-start; gap:5px; cursor:pointer;
+  text-align:left; font-family:var(--font-heading);
+  background:var(--card); border:1.5px solid var(--line); border-radius:var(--radius-sm);
+  padding:9px 11px 10px;
+  transition:border-color .16s var(--ease-smooth), background-color .16s var(--ease-smooth), transform .16s;
+}
+.lsb-chip:hover{ border-color:var(--line-strong); transform:translateY(-1px); }
+.lsb-top{ display:flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lsb-ico{ font-size:12px; flex-shrink:0; }
+.lsb-count{ font-family:var(--font-mono); font-size:19px; font-weight:800; color:var(--ink); line-height:1.05; }
+.lsb-chip.lsb-new .lsb-count{ color:var(--stat-new); }
+.lsb-chip.lsb-learning .lsb-count{ color:var(--stat-doing); }
+.lsb-chip.lsb-mastered .lsb-count{ color:var(--stat-learned); }
+.lsb-chip.active{ border-color:var(--accent); background:var(--accent-bg); }
+.lsb-chip.active .lsb-top{ color:var(--accent); }
+.lsb-chip.lsb-new.active{ border-color:var(--stat-new); background:var(--stat-new-bg); }
+.lsb-chip.lsb-new.active .lsb-top{ color:var(--stat-new); }
+.lsb-chip.lsb-learning.active{ border-color:var(--stat-doing); background:var(--stat-doing-bg); }
+.lsb-chip.lsb-learning.active .lsb-top{ color:var(--stat-doing); }
+.lsb-chip.lsb-mastered.active{ border-color:var(--stat-learned); background:var(--stat-learned-bg); }
+.lsb-chip.lsb-mastered.active .lsb-top{ color:var(--stat-learned); }
+.lsb-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.lv-study-btn, .lv-remain-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px; cursor:pointer; flex:1;
+  font-family:var(--font-heading); font-size:13px; font-weight:700; color:#fff;
+  border:1px solid transparent; border-radius:11px; padding:10px 14px; min-width:150px;
+  transition:filter .16s, transform .16s, opacity .16s;
+}
+.lv-study-btn{ background:var(--accent-grad); }
+.lv-remain-btn{ background:var(--ember-grad); }
+.lv-study-btn:hover, .lv-remain-btn:hover{ filter:brightness(1.07); transform:translateY(-1px); }
+.lv-remain-btn:disabled{ opacity:.4; cursor:default; filter:none; transform:none; }
+.lv-remain-count{
+  font-family:var(--font-mono); font-size:11px; font-weight:800; color:#fff;
+  background:rgba(255,255,255,.28); border-radius:99px; padding:1px 7px;
+}
+@media(max-width:600px){
+  .lsb-chips{ grid-template-columns:repeat(2,1fr); }
+  .lv-study-btn, .lv-remain-btn{ min-width:0; }
+}
+/* ===== TOGGLE thẻ chi tiết/thu gọn — vẫn dùng ở tab "Cần học" ===== */
 .list-view-toggle{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; }
 .lv-seg{
   display:inline-flex; gap:4px; padding:5px;
@@ -2637,29 +2690,6 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   box-shadow:2px 2px 6px var(--neo-dark-soft), -1px -1px 4px var(--neo-light), 0 4px 10px -4px rgba(13,110,95,.5);
   transform:translateY(-1px);
 }
-.lv-actions{ display:flex; align-items:center; gap:8px; margin-left:auto; }
-/* Nút hành động riêng (không phải toggle chuyển view) — cố tình khác kiểu
-   .lv-toggle-btn để không bị hiểu nhầm là 1 view thứ 3, luôn nổi màu accent. */
-.lv-study-btn{
-  display:inline-flex; align-items:center; gap:7px; cursor:pointer;
-  font-family:var(--font-heading); font-size:13.5px; font-weight:700; color:#fff;
-  background:var(--accent-grad); border:1px solid transparent; border-radius:11px; padding:9px 15px;
-  box-shadow:var(--shadow-sm); transition:filter .18s, transform .18s;
-}
-.lv-study-btn:hover{ filter:brightness(1.07); transform:translateY(-1px); }
-.lv-info-btn{
-  width:34px; height:34px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center;
-  font-size:15px; color:var(--muted); background:var(--card); border:1px solid var(--line);
-  border-radius:10px; cursor:pointer; transition:.15s;
-}
-.lv-info-btn:hover, .lv-info-btn.active{ color:var(--accent); border-color:var(--accent); }
-.lv-study-hint{
-  display:flex; align-items:center; gap:6px; flex-basis:100%;
-  font-size:11.5px; line-height:1.5; color:var(--muted);
-  background:var(--paper-2); border:1px dashed var(--line); border-radius:10px; padding:9px 12px;
-}
-.lv-study-hint b{ color:var(--ink-soft); font-weight:700; }
-@media(max-width:600px){ .lv-actions{ margin-left:0; width:100%; } .lv-study-btn{ flex:1; justify-content:center; } }
 #dashRoot > .topic-section{ margin:0 !important; }
 
 /* ===== BỘ DUYỆT CHỦ ĐỀ Ở ĐẦU TAB DANH SÁCH =====
@@ -2700,85 +2730,94 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 }
 .te-pill-static b{ color:var(--ink-soft); }
 
-.te-macro-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr)); gap:11px; }
-.te-macro-card{
-  border:2px solid var(--tp-c,var(--line-strong));
-  border-radius:14px; background:var(--card);
-  overflow:hidden; transition:box-shadow .15s, transform .15s;
+.te2-wrap{ display:flex; gap:16px; align-items:flex-start; }
+.te2-tree{
+  flex:0 0 34%; max-width:340px; min-width:200px;
+  border:1px solid var(--line); border-radius:16px; background:var(--card);
+  max-height:660px; overflow-y:auto; padding:10px;
+  scrollbar-width:thin;
 }
-[data-theme="dark"] .te-macro-card{ background:var(--card); }
-.te-macro-card[data-color="0"]{ --tp-c:var(--cc0); } .te-macro-card[data-color="1"]{ --tp-c:var(--cc1); }
-.te-macro-card[data-color="2"]{ --tp-c:var(--cc2); } .te-macro-card[data-color="3"]{ --tp-c:var(--cc3); }
-.te-macro-card[data-color="4"]{ --tp-c:var(--cc4); } .te-macro-card[data-color="5"]{ --tp-c:var(--cc5); }
-.te-macro-card[data-color="6"]{ --tp-c:var(--cc6); } .te-macro-card[data-color="7"]{ --tp-c:var(--cc7); }
-.te-macro-card[data-color="8"]{ --tp-c:var(--cc8); } .te-macro-card[data-color="9"]{ --tp-c:var(--cc9); }
-.te-macro-card:hover{ box-shadow:var(--shadow-sm); transform:translateY(-2px); }
-/* Tiêu đề mỗi thẻ chủ đề: nền gradient theo ĐÚNG màu riêng của thẻ đó
-   (biến --tp-c lấy từ data-color, mỗi chủ đề 1 màu trong bảng --cc0..--cc9
-   — bảng này giờ chỉ khai báo DUY NHẤT 1 lần ở đầu file nên không còn bị
-   đè lẫn lộn khiến mọi thẻ cùng ngả về 1 màu cam mặc định như trước).
-   Có dòng nền đặc (không dùng color-mix) đứng trước làm dự phòng — nếu
-   trình duyệt không hỗ trợ color-mix()/gradient thì vẫn còn màu nền đặc
-   đúng của thẻ đó, không bao giờ trắng trơn mất chữ. */
-.te-macro-head{
-  position:relative; isolation:isolate;
-  width:100%; display:flex; align-items:center; gap:8px; cursor:pointer;
-  background:var(--tp-c,var(--accent));
-  background:linear-gradient(135deg,color-mix(in srgb,var(--tp-c,var(--accent)) 90%,transparent),color-mix(in srgb,var(--tp-c,var(--accent)) 58%,black) 88%);
-  backdrop-filter:blur(16px) saturate(170%);
-  -webkit-backdrop-filter:blur(16px) saturate(170%);
-  border:none; padding:12px 13px 10px; text-align:left; font:inherit; color:#fff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
-  overflow:hidden;
+.te2-col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:12px; }
+.te2-col .list-status-bar{ margin-bottom:0; }
+.te2-panel{
+  flex:1; min-width:0;
+  border:1px solid var(--line); border-radius:16px; background:var(--card);
+  padding:16px; min-height:280px;
 }
-/* Quầng sáng mờ ở góc trên-phải, làm loang bằng blur -> đầu thẻ trông
-   như kính mờ (frosted glass) thay vì mảng màu gradient phẳng cứng. */
-.te-macro-head::before{
-  content:''; position:absolute; top:-55%; right:-15%; width:130px; height:130px;
-  background:radial-gradient(circle,rgba(255,255,255,.45),transparent 70%);
-  filter:blur(20px); pointer-events:none; z-index:0;
+@media(max-width:760px){
+  .te2-wrap{ flex-direction:column; }
+  .te2-tree{ flex:none; max-width:none; width:100%; max-height:280px; }
 }
-.te-macro-ico, .te-macro-name, .te-macro-count{ position:relative; z-index:1; }
-.te-macro-ico{ font-size:18px; flex-shrink:0; }
-.te-macro-name{ font-size:13px; font-weight:800; line-height:1.3; flex:1; color:#fff; }
-.te-macro-count{
-  font-size:11px; font-weight:800; color:#fff; white-space:nowrap;
-  background:rgba(255,255,255,.28); border-radius:99px; padding:3px 9px;
+.te2-macro-block{
+  margin-bottom:5px; border-radius:11px; overflow:hidden;
+  transition:background-color .15s;
 }
-.te-macro-pos{ display:flex; flex-wrap:wrap; gap:4px; padding:0 13px 8px; margin-top:-4px; }
-.pos-badge{
-  font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.2px;
-  color:var(--tp-c,var(--accent)); background:color-mix(in srgb,var(--tp-c,var(--accent)) 16%,transparent);
-  border-radius:5px; padding:1px 6px; line-height:1.6;
+.te2-macro-block:hover{ background:var(--card-sunken); }
+.te2-macro-row{
+  display:flex; align-items:center; gap:9px; width:100%; cursor:pointer;
+  padding:9px 8px; border-radius:11px; border:none; background:transparent; text-align:left;
+  font:inherit; font-size:12.5px; font-weight:700; color:var(--ink-soft);
+  transition:background-color .15s, color .15s;
 }
-.te-sub-pos{
-  font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.2px; margin-left:3px;
-  color:var(--tp-c,var(--accent)); background:color-mix(in srgb,var(--tp-c,var(--accent)) 16%,transparent);
-  border-radius:5px; padding:0 4px; line-height:1.6;
+.te2-macro-row:hover{ color:var(--ink); }
+.te2-macro-row.selected{
+  background:color-mix(in srgb,var(--tp-c,var(--accent)) 14%,transparent);
+  color:var(--tp-c,var(--accent));
+  box-shadow:inset 2px 0 0 var(--tp-c,var(--accent));
 }
-.te-macro-progress{ padding:10px 13px 10px; }
-.te-macro-expand{
-  width:100%; display:flex; align-items:center; justify-content:space-between; cursor:pointer;
-  font-size:11.5px; font-weight:700; color:var(--muted); background:transparent;
-  border:none; border-top:1px dashed var(--line); padding:8px 13px; font-family:inherit;
+.te2-ico{
+  font-size:15px; flex-shrink:0; width:28px; height:28px; display:flex; align-items:center; justify-content:center;
+  border-radius:9px; background:color-mix(in srgb,var(--tp-c,var(--accent)) 14%,var(--card-sunken));
 }
-.te-macro-expand:hover{ color:var(--accent); }
-.te-macro-expand .te-chev{ font-size:10px; transition:transform .18s; }
-.te-macro-expand.open .te-chev{ transform:rotate(180deg); }
-.te-sub-chips{ flex-wrap:wrap; gap:6px; padding:2px 13px 12px; }
-.te-sub-chip{
-  display:inline-flex; align-items:center; gap:5px; cursor:pointer; max-width:230px;
-  font-size:11.5px; font-weight:600; color:var(--ink-soft);
-  background:color-mix(in srgb,var(--tp-c,var(--line)) 8%,var(--card)); border:1px solid var(--line); border-radius:9px; padding:5px 9px;
-  transition:.15s;
+.te2-name{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.te2-count{ font-size:10px; font-weight:800; color:var(--muted); flex-shrink:0; background:var(--card-sunken); border-radius:99px; padding:2px 8px; }
+.te2-macro-row.selected .te2-count, .te2-sub-row.selected .te2-count{ color:var(--tp-c,var(--accent)); background:color-mix(in srgb,var(--tp-c,var(--accent)) 16%,var(--card-sunken)); }
+.te2-chev{
+  font-size:10px; color:var(--muted); flex-shrink:0; transition:transform .18s, background-color .15s;
+  width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:50%;
 }
-.te-sub-chip > span:first-child, .te-sub-chip-label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.te-sub-chip:hover{ border-color:var(--tp-c,var(--accent)); color:var(--tp-c,var(--accent)); }
-.te-sub-chip em{ font-style:normal; font-weight:800; color:var(--muted); }
-.te-sub-chip:hover em{ color:inherit; }
-@media(max-width:600px){ .te-macro-grid{ grid-template-columns:1fr 1fr; } }
-@media(max-width:420px){ .te-macro-grid{ grid-template-columns:1fr; } }
+.te2-chev:hover{ background:var(--card-sunken); color:var(--ink); }
+.te2-chev.open{ transform:rotate(90deg); }
+.te2-sub-list{
+  display:flex; flex-direction:column; gap:1px; margin:2px 0 4px;
+  padding-left:19px; border-left:1px dashed var(--line); margin-left:23px;
+}
+.te2-sub-row{
+  display:flex; align-items:center; gap:6px; width:100%; cursor:pointer;
+  padding:7px 9px; border-radius:9px; border:none; background:transparent; text-align:left;
+  font:inherit; font-size:11.5px; font-weight:600; color:var(--ink-soft);
+  transition:background-color .15s, color .15s;
+}
+.te2-sub-row:hover{ background:var(--card-sunken); color:var(--ink); }
+.te2-sub-row.selected{ background:color-mix(in srgb,var(--tp-c,var(--accent)) 14%,transparent); color:var(--tp-c,var(--accent)); font-weight:800; }
 
+.te2-panel-empty{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  padding:70px 10px; color:var(--muted); font-size:12.5px; text-align:center; line-height:1.6;
+}
+.te2-panel-empty span{ font-size:30px; opacity:.85; }
+.te2-panel-head{ display:flex; align-items:center; gap:11px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+.te2-panel-ico{
+  font-size:20px; width:40px; height:40px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  border-radius:12px; background:color-mix(in srgb,var(--tp-c,var(--accent)) 16%,var(--card-sunken));
+}
+.te2-panel-title{ font-size:15.5px; font-weight:800; flex:1; min-width:140px; color:var(--ink); }
+.te2-panel-count{ font-size:11px; font-weight:800; color:#fff; background:var(--tp-c,var(--accent)); border-radius:99px; padding:4px 11px; flex-shrink:0; }
+.te2-panel-openlink{
+  font-size:11px; font-weight:700; color:var(--tp-c,var(--accent)); background:transparent; border:none; cursor:pointer; padding:0; flex-shrink:0;
+}
+.te2-panel-openlink:hover{ text-decoration:underline; }
+.te2-panel-progress{ margin-bottom:16px; }
+.te2-panel-progress .cl-topic-bar-track{ height:7px; border-radius:99px; }
+.te2-panel-legend{ display:flex; gap:12px; margin-top:8px; font-size:11px; font-weight:700; color:var(--muted); flex-wrap:wrap; }
+.te2-panel-legend .pct{ margin-left:auto; font-weight:800; color:var(--tp-c,var(--accent)); }
+.te2-more-btn{
+  display:block; margin:16px auto 0; font-size:12px; font-weight:700; color:var(--tp-c,var(--accent));
+  background:color-mix(in srgb,var(--tp-c,var(--accent)) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--tp-c,var(--accent)) 35%,var(--line));
+  border-radius:9px; padding:8px 16px; cursor:pointer; font-family:inherit;
+}
+.te2-more-btn:hover{ background:color-mix(in srgb,var(--tp-c,var(--accent)) 20%,transparent); }
 /* ===== CHẾ ĐỘ XEM "GỌN THEO CHỦ ĐỀ" Ở TAB DANH SÁCH =====
    Mỗi từ chỉ còn 1 ô nhỏ: từ + loại từ + nghĩa — bỏ IPA/collocation/ví dụ
    để lướt nhanh, gom theo từng chủ đề để dễ ôn theo mạch. */
@@ -2802,6 +2841,10 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .lwc-tile{
   position:relative; border:2px solid var(--line-strong); border-radius:12px; padding:10px 11px 9px;
   background:color-mix(in srgb,var(--tc,var(--line)) 8%,var(--card)); box-shadow:var(--shadow-xs); transition:.15s; cursor:pointer;
+  /* Giống .vocab-card: bỏ layout/paint cho ô đang ngoài màn hình — chế độ
+     Gọn hay có hàng nghìn ô cùng lúc, không có tối ưu này thì cuộn rất giật. */
+  content-visibility:auto;
+  contain-intrinsic-size:auto 88px;
 }
 [data-theme="dark"] .lwc-tile{ background:color-mix(in srgb,var(--tc,var(--line)) 15%,var(--card)); }
 .lwc-tile:hover{ box-shadow:var(--shadow-sm); transform:translateY(-2px); border-color:var(--tc,var(--accent)); }
@@ -4152,26 +4195,6 @@ body.page-fs { overflow-x:hidden; }
   font-weight:800; font-family:var(--font-heading);
 }
 
-/* ============================================================
-   LIST
-   ============================================================ */
-.list-scroll { padding-right:2px; }
-.date-group-head {
-  font-family:var(--font-heading); font-size:16px; font-weight:700; color:var(--ink);
-  margin:30px 0 14px; padding-bottom:10px;
-  border-bottom:1px solid var(--line);
-  display:flex; align-items:center; gap:12px; letter-spacing:-.4px;
-}
-.date-group-head::before{
-  content:''; width:4px; height:18px; border-radius:99px;
-  background:var(--accent-grad); flex-shrink:0;
-}
-.date-group-head:first-child { margin-top:0; }
-.date-group-head .count {
-  font-family:var(--font-body); font-size:10.5px; color:var(--muted); font-weight:700;
-  margin-left:auto; padding:4px 11px; background:var(--paper);
-  border:1px solid var(--line); border-radius:999px;
-}
 .vocab-card {
   background:var(--card); border:1px solid var(--line);
   border-radius:var(--radius); padding:18px 22px 18px 24px; margin-bottom:12px;
@@ -7448,34 +7471,38 @@ header{
 }
 
 /* ============================================================
-   THẺ CHỦ ĐỀ (tab Danh sách — .te-macro-card) &
+   BỘ DUYỆT CHỦ ĐỀ (tab Danh sách — .te2-tree/.te2-panel) &
    THẺ BÀI ĐỌC (tab Reading — .rd-card) — Neomorphism
    Thân thẻ chuyển sang bề mặt nổi --neo-surface + bóng đổ mềm,
    GIỮ NGUYÊN viền màu + đầu thẻ gradient theo màu riêng từng
    chủ đề/bài đọc (--tp-c) để không mất tín hiệu phân loại màu —
    cùng cách tiếp cận đã dùng cho .fn-step, .funnel-card...
    ============================================================ */
-.te-macro-card, .rd-card{
+.rd-card{
   background:var(--neo-surface) !important;
   box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light) !important;
 }
-.te-macro-card:hover, .rd-card:hover{
+.rd-card:hover{
   transform:translateY(-3px) !important;
   box-shadow:7px 7px 16px var(--neo-dark), -7px -7px 16px var(--neo-light), 0 10px 22px -14px rgba(13,110,95,.4) !important;
 }
-.te-macro-card .cl-topic-bar-track, .rd-progress-track{
+.rd-progress-track{
   background:var(--neo-surface) !important; border:none !important;
   box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light) !important;
 }
-.te-macro-expand, .rd-badge{
+.rd-badge{
   background:var(--neo-surface) !important; border:none !important;
   box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light) !important;
 }
-.te-sub-chip{
+.te2-tree, .te2-panel{
   background:var(--neo-surface) !important; border:none !important;
-  box-shadow:2px 2px 5px var(--neo-dark-soft), -2px -2px 5px var(--neo-light) !important;
+  box-shadow:6px 6px 14px var(--neo-dark), -6px -6px 14px var(--neo-light) !important;
 }
-.te-sub-chip:hover{
+.te2-panel-progress .cl-topic-bar-track{
+  background:var(--neo-surface) !important; border:none !important;
+  box-shadow:inset 2px 2px 5px var(--neo-dark), inset -2px -2px 5px var(--neo-light) !important;
+}
+.te2-macro-row.selected, .te2-sub-row.selected{
   box-shadow:inset 1px 1px 3px var(--neo-dark-soft), inset -1px -1px 3px var(--neo-light) !important;
 }
 
@@ -7868,23 +7895,39 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
       </button>
       <div class="te-body" id="teBody">
         <div class="te-pills" id="tePills"></div>
-        <div class="te-macro-grid" id="teMacroGrid"></div>
+        <div class="te2-wrap">
+          <div class="te2-tree" id="te2Tree"></div>
+          <div class="te2-col">
+            <div class="list-status-bar" id="listStatusBar">
+              <div class="lsb-chips" id="lsbChips">
+                <button type="button" class="lsb-chip active" data-status="all" onclick="setListStatusFilter('all')">
+                  <span class="lsb-top"><span class="lsb-ico">🗂️</span><span class="lsb-txt">Tất cả</span></span>
+                  <span class="lsb-count" id="lsbCountAll">0</span>
+                </button>
+                <button type="button" class="lsb-chip lsb-new" data-status="new" onclick="setListStatusFilter('new')">
+                  <span class="lsb-top"><span class="lsb-ico">⬜</span><span class="lsb-txt">Chưa học</span></span>
+                  <span class="lsb-count" id="lsbCountNew">0</span>
+                </button>
+                <button type="button" class="lsb-chip lsb-learning" data-status="learning" onclick="setListStatusFilter('learning')">
+                  <span class="lsb-top"><span class="lsb-ico">📗</span><span class="lsb-txt">Đang học</span></span>
+                  <span class="lsb-count" id="lsbCountLearning">0</span>
+                </button>
+                <button type="button" class="lsb-chip lsb-mastered" data-status="mastered" onclick="setListStatusFilter('mastered')">
+                  <span class="lsb-top"><span class="lsb-ico">✅</span><span class="lsb-txt">Đã thuộc</span></span>
+                  <span class="lsb-count" id="lsbCountMastered">0</span>
+                </button>
+              </div>
+              <div class="lsb-actions">
+                <button type="button" class="lv-study-btn" onclick="goStudyThisTopic()" title="Học ngay đúng các từ đang hiển thị ở Danh sách từ">🎯 Học chủ đề này</button>
+                <button type="button" class="lv-remain-btn" id="lvRemainBtn" onclick="goStudyRemainingInTopic()" title="Gom hết các từ CHƯA THUỘC của chủ đề đang chọn thành 1 phiên học để học dứt điểm">
+                  📚 Học hết từ còn lại<span class="lv-remain-count" id="lvRemainCount"></span>
+                </button>
+              </div>
+            </div>
+            <div class="te2-panel" id="te2Panel"></div>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="list-view-toggle">
-      <div class="lv-seg" id="lvViewSeg">
-        <button type="button" class="lv-toggle-btn" data-view="cards" onclick="setListViewMode('cards')">📇 Thẻ chi tiết</button>
-        <button type="button" class="lv-toggle-btn" data-view="compact" onclick="setListViewMode('compact')">🧩 Gọn theo chủ đề</button>
-      </div>
-      <div class="lv-actions">
-        <button class="lv-study-btn" onclick="goStudyThisTopic()" title="Học ngay đúng các từ đang hiển thị ở Danh sách từ">🎯 Học chủ đề này</button>
-        <button type="button" class="lv-info-btn" id="lvInfoBtn" onclick="toggleLvHint()" title="Xem hướng dẫn">ⓘ</button>
-      </div>
-      <div class="lv-study-hint" id="lvStudyHint" style="display:none">💡 Lọc theo <b>Chủ đề</b> ở thanh Bộ lọc phía trên, rồi bấm <b>🎯 Học chủ đề này</b> để bắt đầu học đúng chủ đề đó.</div>
-    </div>
-    <div id="listWordsView">
-      <div class="list-scroll"><div id="listContainer"></div></div>
     </div>
     <div class="lwc-detail-overlay" id="lwcDetailOverlay" onclick="if(event.target===this) lwcCloseDetail()">
       <div class="lwc-detail-panel" id="lwcDetailPanel">
@@ -35414,7 +35457,23 @@ function posBreakdownHTML(counts, cls){
 }
 function computeTopicCatalog(){
   if(_teCatalogCache && _teCatalogLen === VOCAB.length) return _teCatalogCache;
-  const used = new Set(VOCAB.map(v=>v._topic).filter(Boolean));
+  /* Trước đây mỗi chủ đề nhỏ/lớn tự gọi VOCAB.filter(v=>v._topic===X) riêng
+     — với ~170 chủ đề (topic + bài đọc + Listening + đợt mới thêm) thì đó
+     là ~170 lượt quét lại TOÀN BỘ mảng VOCAB (hàng nghìn từ) chỉ để dựng
+     xong 1 lần cây chủ đề — đây chính là phần nặng nhất mỗi khi mở tab
+     Danh sách lần đầu (hoặc sau khi thêm/sửa từ làm cache bị vô hiệu).
+     Gom lại thành ĐÚNG 1 lượt quét duy nhất bằng Map (topic -> mảng từ),
+     sau đó mọi nơi cần danh sách từ theo topic chỉ cần tra map (O(1))
+     thay vì lọc lại — giảm từ O(số_chủ_đề × số_từ) xuống O(số_từ). */
+  const topicMap = new Map();
+  VOCAB.forEach(v=>{
+    const t = v._topic;
+    if(!t) return;
+    let arr = topicMap.get(t);
+    if(!arr){ arr = []; topicMap.set(t, arr); }
+    arr.push(v);
+  });
+  const wordsOfTopic = t => topicMap.get(t) || [];
   /* Mọi nhóm theo TOPIC_TREE — GỒM CẢ W&S và Reading — dùng chung 1 kiểu
      thẻ có thể bấm mở ra xem chủ đề nhỏ. Trước đây 2 nhóm này bị loại
      riêng ra thành pill phẳng không mở được, gây lệch giao diện và đúng
@@ -35426,25 +35485,25 @@ function computeTopicCatalog(){
       // Chủ đề nhỏ của "Từ vựng Reading" = tên bài đọc -> thêm tiền tố
       // C{quyển}-T{test}-P{bài} và sắp xếp theo đúng thứ tự quyển/test/bài.
       const byTitle = {}; RD().forEach(r=>{ byTitle[r.title] = r; });
-      subs = g.subs.filter(s=>used.has(s)).map(s=>{
-        const words = VOCAB.filter(v=>v._topic===s);
+      subs = g.subs.filter(s=>topicMap.has(s)).map(s=>{
+        const words = wordsOfTopic(s);
         const r = byTitle[s];
         const prefix = r ? `C${r.book||'?'}-T${r.test||'?'}-P${r.psg||'?'}-` : '';
         const label = prefix + truncateTopicLabel(s, 24);
         return { name:label, fullName:(prefix+s), count:words.length, words, go:s, posCounts:posBreakdown(words), _b:r?+r.book||0:0, _t:r?+r.test||0:0, _p:r?+r.psg||0:0 };
       }).filter(s=>s.count>0)
         .sort((a,b)=> a._b-b._b || a._t-b._t || a._p-b._p);
-      extraOwnWords = VOCAB.filter(v=>v._topic===g.key);
+      extraOwnWords = wordsOfTopic(g.key);
     } else {
-      subs = g.subs.filter(s=>used.has(s)).map(s=>{
-        const words = VOCAB.filter(v=>v._topic===s);
+      subs = g.subs.filter(s=>topicMap.has(s)).map(s=>{
+        const words = wordsOfTopic(s);
         return { name:truncateTopicLabel(s, 26), fullName:s, count:words.length, words, go:s, posCounts:posBreakdown(words) };
       }).filter(s=>s.count>0);
       /* Các từ verb/adj/adv/cụm từ gắn thẳng vào chủ đề lớn (không thuộc
          chủ đề nhỏ danh từ nào) trước đây chỉ cộng vào ownCount chứ không
          duyệt/bấm vào được — nay gom thành 1 "chủ đề con" ảo để hiện và
          bấm vào xem/học như mọi chủ đề con danh từ khác. */
-      const ownWordsForSub = VOCAB.filter(v=>v._topic===g.key);
+      const ownWordsForSub = wordsOfTopic(g.key);
       if(ownWordsForSub.length){
         subs.push({ name:'V/Adj/Adv/Phrase', count:ownWordsForSub.length, words:ownWordsForSub, go:g.key, posCounts:posBreakdown(ownWordsForSub) });
       }
@@ -35497,7 +35556,7 @@ function computeTopicCatalog(){
 }
 
 let _teOpen = localStorage.getItem('vocab_te_open') !== '0';   // mặc định mở lần đầu
-let _teExpanded = new Set();   // các nhóm chủ đề lớn đang mở rộng xem chủ đề nhỏ
+let _teExpanded = new Set();   // các nhóm chủ đề lớn đang mở rộng xem chủ đề nhỏ (cột trái)
 function toggleTopicExplorer(force){
   _teOpen = typeof force === 'boolean' ? force : !_teOpen;
   try{ localStorage.setItem('vocab_te_open', _teOpen ? '1' : '0'); }catch(e){}
@@ -35510,41 +35569,43 @@ function syncTopicExplorerOpen(){
   body.style.display = _teOpen ? '' : 'none';
   btn.classList.toggle('open', _teOpen);
 }
-function teToggleMacro(key, ev){
-  if(ev) ev.stopPropagation();
-  if(_teExpanded.has(key)) _teExpanded.delete(key); else _teExpanded.add(key);
-  renderTopicExplorer();
-}
 /* Sau khi lọc từ khu "Duyệt theo chủ đề", cuộn xuống thẳng phần danh sách
    kết quả bên dưới thay vì để trang nhảy lên đầu (tab-click mặc định
    cuộn top:0) — đợi qua vài khung hình để chắc chắn sau khi panel đã
    chuyển + renderList đã dựng xong DOM rồi mới cuộn. */
 function teScrollToListSoon(){
   requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    const el = document.getElementById('listWordsView') || document.querySelector('.list-view-toggle');
+    const el = document.getElementById('topicExplorer');
     if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   })));
 }
-/* Bấm 1 nhóm/chủ đề (loại 'topic', gồm cả W&S và Reading) trong bộ duyệt
-   -> lọc đúng chủ đề đó và chuyển luôn sang chế độ xem "Gọn theo chủ đề"
-   vì đây đúng là mục đích của khu này. */
-function teGoTopic(value){
-  goTopic(value, 'list');
-  setListViewMode('compact');
-  teScrollToListSoon();
-}
-/* Bấm phần đầu 1 thẻ nhóm -> xem TẤT CẢ từ trong nhóm đó, tuỳ loại nhóm
-   mà dùng đúng cơ chế lọc tương ứng (chủ đề / bộ nghe / đợt mới thêm). */
-function teGoGroupHead(kind, go){
-  if(kind==='listening') goListening('*');
-  else if(kind==='new') goNewDate('*');
-  else teGoTopic(go);
-}
-/* Bấm 1 chip chủ đề nhỏ bên trong thẻ nhóm. */
-function teGoGroupSub(kind, go){
-  if(kind==='listening') goListening(go);
-  else if(kind==='new') goNewDate(go);
-  else teGoTopic(go);
+/* Chọn sẵn đúng chủ đề/nhóm trong Bộ duyệt chủ đề (cột trái) tương ứng với
+   1 "value" bộ lọc (topic thường, 'macro:X', hoặc go đặc biệt như bộ nghe/
+   ngày mới thêm) — dùng khi có nơi khác trong app điều hướng thẳng vào 1
+   chủ đề cụ thể, để cột phải hiện đúng danh sách từ đó luôn thay vì phải
+   tự bấm lại trên cây. */
+function te2SelectByValue(value){
+  if(value==null || value==='all') return;
+  const cat = computeTopicCatalog();
+  if(String(value).startsWith('macro:')){
+    const mk = String(value).slice(6);
+    if(cat.macros.some(m=>m.key===mk)){
+      _te2Sel = { macroKey:mk, subGo:null }; _teExpanded.add(mk); _te2ShowCount = TE2_TILE_CHUNK;
+      _teOpen = true;
+    }
+    return;
+  }
+  for(const g of cat.macros){
+    if(String(g.go)===String(value)){
+      _te2Sel = { macroKey:g.key, subGo:null }; _teExpanded.add(g.key); _te2ShowCount = TE2_TILE_CHUNK;
+      _teOpen = true; return;
+    }
+    const s = g.subs.find(x=>String(x.go)===String(value));
+    if(s){
+      _te2Sel = { macroKey:g.key, subGo:s.go }; _teExpanded.add(g.key); _te2ShowCount = TE2_TILE_CHUNK;
+      _teOpen = true; return;
+    }
+  }
 }
 let _teLastSig = null;
 /* Lấy màu HEX thật của --cc0..--cc9 bằng JS (đọc giá trị ĐÃ TÍNH TOÁN từ
@@ -35579,75 +35640,243 @@ function teShade(hex, factor){
   const c = teHexToRgb(hex);
   return `rgb(${Math.round(c.r*factor)},${Math.round(c.g*factor)},${Math.round(c.b*factor)})`;
 }
+
+/* ============================================================
+   BỘ DUYỆT CHỦ ĐỀ — GIAO DIỆN 2 CỘT (thay cho lưới thẻ cũ, vốn dựng
+   HTML + tính tiến độ (topicProgress quét srsState từng từ) cho TẤT CẢ
+   chủ đề lớn + chủ đề nhỏ + toàn bộ ô từ đang mở CÙNG LÚC -> càng nhiều
+   mục mở càng lag. Bản mới: cột trái CHỈ là cây tên (không tính tiến độ
+   chi tiết từng dòng), cột phải mới thật sự tính tiến độ + dựng danh
+   sách từ, và CHỈ làm việc đó cho ĐÚNG 1 chủ đề đang được chọn tại 1
+   thời điểm -> chi phí không tăng theo số chủ đề có trong kho từ. */
+let _te2Sel = null;          // {macroKey, subGo|null} — mục đang chọn ở cột phải
+const TE2_TILE_CHUNK = 120;  // hiện dần từng đợt để tránh dựng hàng nghìn ô 1 lúc
+let _te2ShowCount = TE2_TILE_CHUNK;
+
+/* ---- Tuỳ chọn: KHÔNG gộp hiện toàn bộ từ của 1 chủ đề lớn khi bấm thẳng
+   vào nó (nếu chủ đề lớn đó có nhiều hơn 1 chủ đề con) — bắt buộc phải mở
+   ▸ rồi bấm đúng 1 chủ đề con mới thấy từ. Một chủ đề lớn có thể gộp tới
+   hàng trăm/hàng nghìn từ từ rất nhiều chủ đề con cộng lại, nên bấm thẳng
+   vào nó là nguyên nhân chính gây tải/giật nặng nhất ở tab Danh sách.
+   Mặc định BẬT (an toàn về hiệu năng); người dùng có thể tắt lại. */
+let _teMacroWordsOff = (localStorage.getItem('vocab_te_macro_words_off') ?? '1') === '1';
+function toggleTeMacroWordsOff(){
+  _teMacroWordsOff = !_teMacroWordsOff;
+  try{ localStorage.setItem('vocab_te_macro_words_off', _teMacroWordsOff ? '1' : '0'); }catch(e){}
+  renderTopicExplorer();
+}
+
+function te2SelKey(){ return _te2Sel ? _te2Sel.macroKey+'§'+(_te2Sel.subGo==null?'':_te2Sel.subGo) : ''; }
+/* Danh sách từ THÔ (chưa lọc theo chip trạng thái) của đúng mục đang chọn
+   trên cây Duyệt theo chủ đề — dùng chung cho: đếm số ở 4 thẻ trạng thái,
+   nút "Học chủ đề này", và nút "Học hết từ còn lại". Trả về null nếu
+   chưa chọn chủ đề nào (khi đó các nơi gọi tự hiểu là "toàn kho"/vô hiệu). */
+function te2CurrentScopeWords(){
+  if(!_te2Sel) return null;
+  const cat = computeTopicCatalog();
+  const g = cat.macros.find(m=>m.key===_te2Sel.macroKey);
+  if(!g) return null;
+  if(_te2Sel.subGo==null) return g.words;
+  const s = g.subs.find(x=>String(x.go)===String(_te2Sel.subGo));
+  return s ? s.words : null;
+}
+function te2SelectMacro(macroKey, ev){
+  if(ev) ev.stopPropagation();
+  _te2Sel = { macroKey, subGo:null };
+  _te2ShowCount = TE2_TILE_CHUNK;
+  _teExpanded.add(macroKey);
+  renderTopicExplorer();
+}
+function te2ToggleMacroTree(macroKey, ev){
+  if(ev) ev.stopPropagation();
+  if(_teExpanded.has(macroKey)) _teExpanded.delete(macroKey); else _teExpanded.add(macroKey);
+  renderTopicExplorer();
+}
+function te2SelectSub(macroKey, subGo, ev){
+  if(ev) ev.stopPropagation();
+  _te2Sel = { macroKey, subGo };
+  _te2ShowCount = TE2_TILE_CHUNK;
+  renderTopicExplorer();
+}
+function te2ShowMore(){
+  _te2ShowCount += TE2_TILE_CHUNK;
+  renderTopicExplorer();
+}
+/* Tìm lại đúng object (chủ đề lớn hoặc chủ đề nhỏ) đang được chọn, tính
+   TƯƠI ở mỗi lần render (không cache) để số liệu tiến độ luôn khớp -
+   nhưng vì chỉ tính cho 1 mục nên vẫn rẻ. */
+/* Lọc danh sách từ của mục đang chọn theo trạng thái học đang bật ở
+   thanh chip (Tất cả/Chưa học/Đang học/Đã thuộc), để bấm chip lọc thẳng
+   danh sách bên phải. */
+function te2FilterByStatus(words){
+  if(_statusFilter === 'all') return words;
+  return words.filter(v=>{
+    const st = srsState(v.word);
+    if(_statusFilter==='mastered') return st==='mastered';
+    if(_statusFilter==='learning') return st==='learning' || st==='review';
+    if(_statusFilter==='new') return st==='new';
+    if(_statusFilter==='due') return srsIsDue(v.word);
+    return true;
+  });
+}
+function te2FindSelection(cat){
+  if(!_te2Sel) return null;
+  const g = cat.macros.find(m=>m.key===_te2Sel.macroKey);
+  if(!g) return null;
+  if(_te2Sel.subGo==null){
+    if(_teMacroWordsOff && g.subs.length>1){
+      // Chặn gộp: không tính/khong trả từ nào cả -> cột phải sẽ hiện lời
+      // nhắc chọn 1 chủ đề con thay vì dựng hàng trăm/nghìn ô cùng lúc.
+      return { icon:g.icon, label:g.key, words:[], kind:g.kind, go:g.go, count:0, rawCount:g.total, macroBlocked:true, subsCount:g.subs.length };
+    }
+    const words = te2FilterByStatus(g.words);
+    return { icon:g.icon, label:g.key, words, kind:g.kind, go:g.go, count:words.length, rawCount:g.total };
+  }
+  const s = g.subs.find(x=>String(x.go)===String(_te2Sel.subGo));
+  if(!s) return null;
+  const words = te2FilterByStatus(s.words);
+  return { icon:g.icon, label:s.fullName||s.name, words, kind:g.kind, go:s.go, count:words.length, rawCount:s.count, macroKey:g.key };
+}
+/* Chữ ký PHẦN CÂY bên trái — CHỈ đổi khi danh sách chủ đề hoặc trạng thái
+   mở-rộng (▸) đổi. Tách riêng khỏi chữ ký đầy đủ (_teLastSig) để: bấm
+   chọn 1 chủ đề khác, đổi chip trạng thái (Tất cả/Chưa học/...), hay bấm
+   "Xem thêm" — vốn KHÔNG làm đổi hình dạng cây — sẽ không còn phải dựng
+   lại toàn bộ HTML cây (có thể tới hàng trăm nút chủ đề lớn/nhỏ) mỗi lần,
+   mà chỉ tô lại đúng 1 dòng đang chọn + dựng lại cột phải (vốn chỉ tính
+   cho đúng 1 chủ đề nên rất rẻ). Đây chính là nguyên nhân chính khiến tab
+   Danh sách bị giật khi thao tác trước đây. */
+let _teTreeSig = null;
+/* Escape an toàn cho giá trị bên trong bộ chọn CSS attribute (fallback nếu
+   trình duyệt cũ thiếu CSS.escape). */
+function cssEsc(s){
+  try{ if(window.CSS && CSS.escape) return CSS.escape(String(s)); }catch(e){}
+  return String(s).replace(/["\\\]]/g,'\\$&');
+}
+/* Chỉ tô lại đúng 1 dòng đang chọn trên cây (bằng class .selected) thay vì
+   dựng lại toàn bộ HTML cây — dùng data-macro/data-go gắn sẵn trên mỗi
+   dòng khi dựng cây (xem treeSig ở trên). */
+function te2SyncTreeSelection(treeEl){
+  treeEl = treeEl || document.getElementById('te2Tree');
+  if(!treeEl) return;
+  treeEl.querySelectorAll('.selected').forEach(el=>el.classList.remove('selected'));
+  if(!_te2Sel) return;
+  const macroAttr = cssEsc(_te2Sel.macroKey);
+  if(_te2Sel.subGo==null){
+    const row = treeEl.querySelector(`.te2-macro-row[data-macro="${macroAttr}"]`);
+    if(row) row.classList.add('selected');
+  } else {
+    const row = treeEl.querySelector(`.te2-sub-row[data-macro="${macroAttr}"][data-go="${cssEsc(String(_te2Sel.subGo))}"]`);
+    if(row) row.classList.add('selected');
+  }
+}
 function renderTopicExplorer(){
+  const treeEl  = document.getElementById('te2Tree');
+  const panelEl = document.getElementById('te2Panel');
   const pillsEl = document.getElementById('tePills');
-  const gridEl  = document.getElementById('teMacroGrid');
   const sumEl   = document.getElementById('teToggleSum');
-  if(!pillsEl || !gridEl) return;
+  if(!treeEl || !panelEl) return;
   const cat = computeTopicCatalog();
 
-  // Chữ ký gọn để biết có cần dựng lại HTML hay không: đổi khi số từ đổi,
-  // khi mở/đóng 1 chủ đề nhỏ, hoặc khi có tiến độ học mới (_srsVersion).
-  const sig = cat.grand+'|'+cat.macros.length+'|'+_srsVersion+'|'+[..._teExpanded].sort().join(',');
+  // Chữ ký gọn để biết có cần dựng lại gì hay không.
+  const treeSig = cat.grand+'|'+cat.macros.length+'|'+[..._teExpanded].sort().join(',');
+  const sig = treeSig+'|'+_srsVersion+'|'+te2SelKey()+'|'+_te2ShowCount+'|'+_statusFilter+'|'+(_teMacroWordsOff?1:0);
   if(sig === _teLastSig){ syncTopicExplorerOpen(); return; }
   _teLastSig = sig;
 
-  pillsEl.innerHTML = `<button type="button" class="te-pill te-pill-all" onclick="clearAllFilters()">🗂️ Tất cả <b>${cat.grand}</b> từ</button>`;
+  if(pillsEl) pillsEl.innerHTML = `<button type="button" class="te-pill te-pill-all" onclick="clearAllFilters()">🗂️ Tất cả <b>${cat.grand}</b> từ</button>
+    <button type="button" class="te-pill te-pill-perf" onclick="toggleTeMacroWordsOff()" title="Khi BẬT: bấm thẳng vào 1 chủ đề LỚN sẽ không gộp hiện từ của mọi chủ đề con cùng lúc nữa — phải mở ▸ rồi chọn đúng 1 chủ đề con mới thấy từ. Giúp tab Danh sách đỡ giật với kho từ lớn.">${_teMacroWordsOff ? '⚡ Chỉ hiện theo chủ đề con' : '⚠️ Đang gộp cả chủ đề lớn'}</button>`;
 
-  gridEl.innerHTML = cat.macros.map(g=>{
-    const open = _teExpanded.has(g.key);
-    const ci = topicColorIndex(g.key);
+  // ---- Cột trái: cây tên chủ đề (rẻ — không tính tiến độ từng dòng) ----
+  // Chỉ dựng lại HTML khi treeSig đổi (thêm/bớt chủ đề hoặc mở/đóng ▸);
+  // đổi lựa chọn thì chỉ tô lại class .selected bằng te2SyncTreeSelection().
+  if(treeSig !== _teTreeSig){
+    _teTreeSig = treeSig;
+    treeEl.innerHTML = cat.macros.map(g=>{
+      const open = _teExpanded.has(g.key);
+      const ci = topicColorIndex(g.key);
+      const baseColor = teColorHex(ci);
+      const keyEsc = g.key.replace(/'/g,"\\'");
+      const keyAttr = esc(g.key);
+      return `
+      <div class="te2-macro-block" style="--tp-c:${baseColor}">
+        <button type="button" class="te2-macro-row" data-macro="${keyAttr}" onclick="te2SelectMacro('${keyEsc}',event)" title="Xem tất cả ${g.total} từ trong ${esc(g.key)}">
+          <span class="te2-ico">${g.icon}</span>
+          <span class="te2-name">${esc(g.key)}</span>
+          <span class="te2-count">${g.total}</span>
+          ${g.subs.length ? `<span class="te2-chev ${open?'open':''}" onclick="te2ToggleMacroTree('${keyEsc}',event)">▸</span>` : ''}
+        </button>
+        ${g.subs.length && open ? `
+        <div class="te2-sub-list">
+          ${g.subs.map(s=>{
+            const goEsc2 = String(s.go).replace(/'/g,"\\'");
+            const goAttr = esc(String(s.go));
+            return `<button type="button" class="te2-sub-row" data-macro="${keyAttr}" data-go="${goAttr}" onclick="te2SelectSub('${keyEsc}','${goEsc2}',event)" title="${esc(s.fullName||s.name)}">
+              <span class="te2-name">${esc(s.name)}</span><span class="te2-count">${s.count}</span>
+            </button>`;
+          }).join('')}
+        </div>` : ''}
+      </div>`;
+    }).join('');
+  }
+  te2SyncTreeSelection(treeEl);
+
+  // ---- Cột phải: tiến độ + danh sách từ, CHỈ cho mục đang chọn ----
+  const sel = te2FindSelection(cat);
+  if(!sel){
+    panelEl.innerHTML = `<div class="te2-panel-empty"><span>👈</span>Chọn 1 chủ đề bên trái<br>để xem danh sách từ &amp; tiến độ học</div>`;
+  } else if(sel.macroBlocked){
+    const ci = topicColorIndex(sel.macroKey || sel.go || sel.label);
     const baseColor = teColorHex(ci);
-    const darkColor = teShade(baseColor, 0.6);
-    const P = topicProgress(g.words);
+    panelEl.innerHTML = `
+    <div class="te2-panel-head" style="--tp-c:${baseColor}">
+      <span class="te2-panel-ico">${sel.icon||'🗂️'}</span>
+      <span class="te2-panel-title">${esc(sel.label)}</span>
+      <span class="te2-panel-count">${sel.rawCount} từ · ${sel.subsCount} chủ đề con</span>
+    </div>
+    <div class="te2-panel-empty"><span>⚡</span>Đã tắt hiện gộp toàn bộ từ của chủ đề lớn để tránh tải nặng.<br>Bấm ▸ cạnh tên chủ đề bên trái rồi chọn đúng <b>1 chủ đề con</b> để xem từ.</div>`;
+  } else if(!sel.words.length){
+    const ci = topicColorIndex(sel.macroKey || sel.go || sel.label);
+    const baseColor = teColorHex(ci);
+    panelEl.innerHTML = `
+    <div class="te2-panel-head" style="--tp-c:${baseColor}">
+      <span class="te2-panel-ico">${sel.icon||'🗂️'}</span>
+      <span class="te2-panel-title">${esc(sel.label)}</span>
+      <span class="te2-panel-count">0 từ</span>
+    </div>
+    <div class="te2-panel-empty"><span>🔍</span>Không có từ nào khớp bộ lọc trạng thái đang chọn<br>trong chủ đề này.</div>`;
+  } else {
+    const ci = topicColorIndex(sel.macroKey || sel.go || sel.label);
+    const baseColor = teColorHex(ci);
+    const P = topicProgress(sel.words);
     const pctM = P.total ? Math.round(P.learned/P.total*100) : 0;
     const pctD = P.total ? Math.round(P.doing/P.total*100) : 0;
-    const keyEsc = g.key.replace(/'/g,"\\'");
-    const goEsc  = g.go.replace(/'/g,"\\'");
-    return `
-    <div class="te-macro-card" data-color="${ci}" style="border-color:${baseColor} !important">
-      <button type="button" class="te-macro-head" onclick="teGoGroupHead('${g.kind}','${goEsc}')" title="Xem tất cả ${g.total} từ trong ${esc(g.key)}" style="background:linear-gradient(135deg,${baseColor},${darkColor}) !important">
-        <span class="te-macro-ico">${g.icon}</span>
-        <span class="te-macro-name">${esc(g.key)}</span>
-        <span class="te-macro-count">${g.total} từ</span>
-      </button>
-      <div class="te-macro-progress" title="${P.learned} đã thuộc · ${P.doing} đang học · ${P.newN} chưa học">
-        <div class="cl-topic-bar-track">
-          <span class="cl-topic-bar-seg mastered" style="width:${pctM}%"></span>
-          <span class="cl-topic-bar-seg learning" style="width:${pctD}%"></span>
-          <span class="cl-topic-bar-seg unseen" style="width:${Math.max(0,100-pctM-pctD)}%"></span>
-        </div>
+    const shown = sel.words.slice(0, _te2ShowCount);
+    const hasMore = sel.words.length > shown.length;
+    panelEl.innerHTML = `
+    <div class="te2-panel-head" style="--tp-c:${baseColor}">
+      <span class="te2-panel-ico">${sel.icon||'🗂️'}</span>
+      <span class="te2-panel-title">${esc(sel.label)}</span>
+      <span class="te2-panel-count">${sel.count} từ</span>
+    </div>
+    <div class="te2-panel-progress" style="--tp-c:${baseColor}">
+      <div class="cl-topic-bar-track">
+        <span class="cl-topic-bar-seg mastered" style="width:${pctM}%"></span>
+        <span class="cl-topic-bar-seg learning" style="width:${pctD}%"></span>
+        <span class="cl-topic-bar-seg unseen" style="width:${Math.max(0,100-pctM-pctD)}%"></span>
       </div>
-      ${g.subs.length ? `
-      <button type="button" class="te-macro-expand ${open?'open':''}" onclick="teToggleMacro('${keyEsc}',event)">
-        <span>${g.subs.length} chủ đề nhỏ</span><span class="te-chev">▾</span>
-      </button>
-      <div class="te-sub-chips" style="display:${open?'flex':'none'}">
-        ${g.subs.map(s=>`<button type="button" class="te-sub-chip" title="${esc(s.fullName||s.name)}" onclick="event.stopPropagation();teGoGroupSub('${g.kind}','${String(s.go).replace(/'/g,"\\'")}')" style="border-color:color-mix(in srgb,${baseColor} 35%,var(--line))"><span class="te-sub-chip-label">${esc(s.name)}</span> <em>${s.count}</em></button>`).join('')}
-      </div>` : ''}
-    </div>`;
-  }).join('');
+      <div class="te2-panel-legend">
+        <span>✅ ${P.learned} thuộc</span><span>🕓 ${P.doing} đang học</span><span>⚪ ${P.newN} chưa học</span>
+        <span class="pct">${pctM}%</span>
+      </div>
+    </div>
+    <div class="lwc-grid">${shown.map(lwcTileHTML).join('')}</div>
+    ${hasMore ? `<button type="button" class="te2-more-btn" onclick="te2ShowMore()">Xem thêm ${Math.min(TE2_TILE_CHUNK, sel.words.length-shown.length)} từ (còn ${sel.words.length-shown.length})</button>` : ''}
+    `;
+  }
 
   if(sumEl) sumEl.textContent = `${cat.macros.length} nhóm · ${cat.grand.toLocaleString('vi-VN')} từ`;
   syncTopicExplorerOpen();
-}
-
-/* ============================================================
-   CHẾ ĐỘ XEM Ở TAB DANH SÁCH: "📇 Thẻ chi tiết" (đầy đủ IPA, ví dụ,
-   collocation…) hoặc "🧩 Gọn theo chủ đề" (mỗi từ 1 ô nhỏ: từ + loại
-   từ + nghĩa, gom theo từng chủ đề) — ghi nhớ lựa chọn qua localStorage.
-   ============================================================ */
-let _listViewMode = localStorage.getItem('vocab_list_view_mode') || 'cards';
-function setListViewMode(mode){
-  _listViewMode = mode;
-  try{ localStorage.setItem('vocab_list_view_mode', mode); }catch(e){}
-  syncListViewSeg();
-  renderList();
-}
-function syncListViewSeg(){
-  document.querySelectorAll('#lvViewSeg .lv-toggle-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.view === _listViewMode);
-  });
+  renderListStatusBar();
 }
 
 /* ====== ĐIỀU HƯỚNG TỪ DASHBOARD ====== */
@@ -35666,6 +35895,7 @@ function goTopic(value, mode){
   document.getElementById('levelFilter').value = 'all';
   document.getElementById('searchBox').value = '';
   fcIndex = 0; _shufCache = null;
+  te2SelectByValue(value);
   applyFilter();
   document.querySelector(`.tab-btn[data-mode="${mode||'flashcard'}"]`).click();
 }
@@ -35734,41 +35964,6 @@ function goDate(d, mode){
   fcIndex = 0; _shufCache = null;
   applyFilter();
   document.querySelector(`.tab-btn[data-mode="${mode||'flashcard'}"]`).click();
-}
-/* Mở Danh sách lọc đúng 1 bộ Listening (hoặc '*' = mọi từ có gắn Listening) —
-   dùng cho khu "Duyệt theo chủ đề" (nhóm 🎧 Từ vựng Listening). */
-function goListening(key){
-  _pinnedWord = null; _statusFilter = 'all'; _stageFilter = 'all'; _dateFilter = 'all';
-  const sf = document.getElementById('statusFilter'); if(sf) sf.value = 'all';
-  document.getElementById('topicFilter').value = 'all';
-  document.getElementById('posFilter').value = 'all';
-  document.getElementById('levelFilter').value = 'all';
-  document.getElementById('starFilter').value = 'all';
-  document.getElementById('searchBox').value = '';
-  _lsSetFilter = key || '*';
-  fcIndex = 0; _shufCache = null;
-  applyFilter();
-  document.querySelector('.tab-btn[data-mode="list"]').click();
-  setListViewMode('compact');
-  teScrollToListSoon();
-}
-/* Mở Danh sách lọc đúng 1 đợt "Mới thêm" theo ngày (hoặc '*' = mọi từ mới) —
-   dùng cho khu "Duyệt theo chủ đề" (nhóm 🆕 Từ mới thêm). */
-function goNewDate(d){
-  _pinnedWord = null; _statusFilter = 'all'; _stageFilter = 'all'; _lsSetFilter = null;
-  const sf = document.getElementById('statusFilter'); if(sf) sf.value = 'all';
-  document.getElementById('topicFilter').value = 'all';
-  document.getElementById('posFilter').value = 'all';
-  document.getElementById('levelFilter').value = 'all';
-  document.getElementById('starFilter').value = 'all';
-  document.getElementById('searchBox').value = '';
-  document.getElementById('sortOrder').value = 'newest';
-  _dateFilter = 'new:' + (d || '*');
-  fcIndex = 0; _shufCache = null;
-  applyFilter();
-  document.querySelector('.tab-btn[data-mode="list"]').click();
-  setListViewMode('compact');
-  teScrollToListSoon();
 }
 function goSRS(){ goLearnScope('path'); }   // nút chính -> Lộ trình
 function goCollocType(){
@@ -37023,9 +37218,38 @@ function goPickTopic(){
 }
 
 /* ---------- Nút "Học chủ đề này" cạnh khu Danh sách/Danh mục: nhảy sang
-   tab Học ngay và mở sẵn phiên "🗂️ Theo bộ lọc" — đúng tập từ đang được lọc
-   (vd sau khi bấm 📖 Danh sách trên 1 thẻ chủ đề) mà không cần chọn lại tay. ---- */
+   tab Học ngay và mở sẵn phiên "🗂️ Theo bộ lọc" — đúng tập từ đang được lọc.
+   Ưu tiên đọc thẳng chủ đề đang chọn trên cây (te2CurrentScopeWords, có áp
+   đúng chip trạng thái Tất cả/Chưa học/Đang học/Đã thuộc đang bật) — trước
+   đây nút này chỉ dựa vào biến `filtered` do <select> Bộ lọc ẩn tạo ra,
+   nên nếu chọn chủ đề bằng cách bấm trên cây (cách dùng chính) thì `filtered`
+   không được cập nhật và nút học nhầm sang TOÀN BỘ kho từ. Còn nếu chưa
+   chọn chủ đề nào trên cây (vd nhảy tới từ goTopic() ở nơi khác) thì vẫn
+   dùng `filtered` như cũ để không phá các luồng điều hướng khác. ---- */
 function goStudyThisTopic(){
+  const scopeWords = te2CurrentScopeWords();
+  if(scopeWords){
+    filtered = te2FilterByStatus(scopeWords).slice();
+    const fc = document.getElementById('filterCount');
+    if(fc) fc.textContent = filtered.length + ' từ';
+    updateFilterBadge();
+  }
+  _pendingScope = 'filtered';
+  document.querySelector('.tab-btn[data-mode="learn"]').click();
+}
+/* ---------- Nút "Học hết từ còn lại": gom MỌI từ CHƯA THUỘC (bỏ qua chip
+   trạng thái đang bật — luôn lấy cả Chưa học lẫn Đang học) của đúng chủ đề
+   đang chọn trên cây thành 1 phiên học, để học dứt điểm nốt phần còn thiếu
+   của chủ đề đó thay vì phải tự lọc/đếm bằng tay. ---- */
+function goStudyRemainingInTopic(){
+  const scopeWords = te2CurrentScopeWords();
+  if(!scopeWords || !scopeWords.length){ toast('👈 Chọn 1 chủ đề bên trái trước đã.'); return; }
+  const remain = scopeWords.filter(v=>srsState(v.word)!=='mastered');
+  if(!remain.length){ toast('🎉 Chủ đề này đã học hết rồi!'); return; }
+  filtered = remain.slice();
+  const fc = document.getElementById('filterCount');
+  if(fc) fc.textContent = filtered.length + ' từ';
+  updateFilterBadge();
   _pendingScope = 'filtered';
   document.querySelector('.tab-btn[data-mode="learn"]').click();
 }
@@ -38054,117 +38278,65 @@ function lwcTileHTML(v){
 }
 function renderList(){
   renderTopicExplorer();
-  syncListViewSeg();
-  if(_listViewMode === 'compact'){ renderListCompact(); return; }
-  const c = document.getElementById('listContainer');
-  if(!filtered.length){ c.innerHTML='<div class="empty">Không có từ nào.</div>'; return; }
-  const sort = document.getElementById('sortOrder').value;
-  const cardHTML = vocabCardHTML;
-  // ---- Render tăng dần + DỰNG HTML LƯỜI (lazy).
-  // Trước đây map() dựng sẵn chuỗi HTML cho CẢ 3000+ thẻ ngay lần đầu (~700ms).
-  // Giờ chỉ lưu THAM CHIẾU từ, HTML được dựng đúng lúc chèn vào DOM.
-  const CHUNK = 40;
-  _listCardHTML = cardHTML;
-  if(sort==='newest' || sort==='oldest'){
-    const groups=[], map={};
-    filtered.forEach(v=>{ const key=fmtDateGroup(v.date); if(!map[key]){map[key]=[];groups.push(key);} map[key].push(v); });
-    const queue=[];
-    groups.forEach(g=>{
-      queue.push({h:`<div class="date-group-head">${g} <span class="count">${map[g].length} từ</span></div>`});
-      map[g].forEach(v=>queue.push(v));
-    });
-    _listBuild = queue;
-  } else {
-    _listBuild = filtered;                 // không copy mảng, không dựng HTML
-  }
-  _listPos = 0;
-  c.innerHTML = '';
-  c.classList.remove('no-anim');
-  listAppend(CHUNK * 2);   // first paint: enough to fill the screen
-  // các lô nạp thêm khi cuộn -> tắt animation cho mượt
-  requestAnimationFrame(()=>c.classList.add('no-anim'));
-  return;
 }
 
-/* Chủ đề con dạng "CamX-TestY" = nhóm từ vựng Listening thô (đúng thứ tự
-   xuất hiện trong đề nghe) — KHÔNG sắp lại A-Z vì thứ tự này có ý nghĩa
-   (theo mạch nghe), sắp lại sẽ mất tác dụng khi luyện nghe.
-   (Dùng lại CAM_TEST_TOPIC_RE đã khai báo ở phần hợp nhất từ Reading.) */
-/* Sắp xếp danh sách từ trong 1 nhóm ở chế độ "Gọn theo chủ đề":
-   - Nhóm Listening (topic dạng CamX-TestY): giữ nguyên thứ tự gốc.
-   - Nhóm "V/Adj/Adv/Phrase" (topic con = chính topic lớn, tức các từ
-     verb/adj/adv/phrase gắn thẳng vào chủ đề lớn chứ không có chủ đề
-     con danh từ riêng): sắp lần lượt theo loại từ V -> Adj -> Adv ->
-     Phrase, rồi A-Z trong từng loại.
-   - Các nhóm còn lại: sắp A-Z bình thường. */
-const _COMPACT_POS_ORDER = { verb:0, adj:1, adv:2, phrase:3, 'phrasal verb':3, idiom:3 };
-function sortCompactGroupWords(topic, macro, words){
-  if(CAM_TEST_TOPIC_RE.test(topic)) return words;
-  const arr = words.slice();
-  if(macro && macro === topic){
-    arr.sort((a,b)=>{
-      const pa = _COMPACT_POS_ORDER[a.pos] ?? 4, pb = _COMPACT_POS_ORDER[b.pos] ?? 4;
-      if(pa !== pb) return pa - pb;
-      return a.word.toLowerCase().localeCompare(b.word.toLowerCase(),'vi');
-    });
-  } else {
-    arr.sort((a,b)=> a.word.toLowerCase().localeCompare(b.word.toLowerCase(),'vi'));
+/* ---- Thanh lọc nhanh theo trạng thái (Tất cả/Chưa học/Đang học/Đã thuộc) ----
+   ĐẾM TRÊN ĐÚNG CHỦ ĐỀ ĐANG CHỌN ở cây "Duyệt theo chủ đề" (_te2Sel) —
+   trước đây hàm này đọc nhầm từ <select id="topicFilter"> ẩn (thuộc Bộ lọc
+   cũ, không hề đồng bộ với việc bấm chọn chủ đề trên cây), nên 4 thẻ luôn
+   hiện số liệu của TOÀN BỘ kho từ bất kể đang xem chủ đề nào. Giờ đọc
+   thẳng danh sách từ của mục đang chọn trên cây (rẻ hơn nhiều so với quét
+   lại toàn bộ VOCAB mỗi lần bấm — tiện thể vá luôn phần giật/lag khi bấm
+   đổi thẻ trạng thái). Chưa chọn chủ đề nào -> coi như "toàn kho". */
+function computeListStatusCounts(){
+  const scopeWords = te2CurrentScopeWords();
+  const src = scopeWords || VOCAB;
+  const counts = {all:0, new:0, learning:0, mastered:0};
+  for(let i=0;i<src.length;i++){
+    const v = src[i];
+    counts.all++;
+    const st = srsState(v.word);
+    if(st==='mastered') counts.mastered++;
+    else if(st==='learning' || st==='review') counts.learning++;
+    else counts.new++;
   }
-  return arr;
+  return counts;
 }
-
-/* Chế độ xem "🧩 Gọn theo chủ đề": gom các từ đang lọc theo _topic, mỗi
-   từ chỉ còn 1 ô nhỏ (từ + loại từ + nghĩa) — bỏ IPA/forms/đồng nghĩa/
-   collocation/ví dụ để lướt nhanh và ôn liền mạch theo từng chủ đề. */
-function renderListCompact(){
-  const c = document.getElementById('listContainer');
-  if(!filtered.length){ c.innerHTML='<div class="empty">Không có từ nào.</div>'; return; }
-  const groups = [], map = {};
-  filtered.forEach(v=>{
-    const key = v._topic || 'Tổng hợp';
-    if(!map[key]){ map[key]=[]; groups.push(key); }
-    map[key].push(v);
+function renderListStatusBar(){
+  const bar = document.getElementById('lsbChips');
+  if(!bar) return;
+  const counts = computeListStatusCounts();
+  const setCount = (id,n)=>{ const el=document.getElementById(id); if(el) el.textContent = n.toLocaleString('vi-VN'); };
+  setCount('lsbCountAll', counts.all);
+  setCount('lsbCountNew', counts.new);
+  setCount('lsbCountLearning', counts.learning);
+  setCount('lsbCountMastered', counts.mastered);
+  bar.querySelectorAll('.lsb-chip').forEach(b=>{
+    b.classList.toggle('active', b.dataset.status === _statusFilter);
   });
-  groups.sort((a,b)=>{
-    const ma = map[a][0]._macro || '', mb = map[b][0]._macro || '';
-    return ma.localeCompare(mb,'vi') || a.localeCompare(b,'vi');
-  });
-  const tileHTML = lwcTileHTML;
-  const html = groups.map(topic=>{
-    const macro = map[topic][0]._macro;
-    const words = sortCompactGroupWords(topic, macro, map[topic]);
-    const dispName = truncateTopicLabel(topic, 34);
-    return `
-    <div class="lwc-group">
-      <button type="button" class="lwc-group-head" style="--tc:var(--cc${topicColorIndex(topic)})" onclick="goTopic('${topic.replace(/'/g,"\\'")}','list')" title="${esc(topic)} — Chỉ lọc riêng chủ đề này">
-        <span class="lwc-gico">${TOPIC_ICONS[topic]||'🗂️'}</span>
-        <span class="lwc-gname">${esc(dispName)}</span>
-        ${macro && macro!==topic ? `<span class="lwc-gmacro">— ${esc(macro)}</span>`:''}
-        <span class="lwc-gcount">${words.length} từ</span>
-      </button>
-      <div class="lwc-grid">${words.map(tileHTML).join('')}</div>
-    </div>`;
-  }).join('');
-  c.innerHTML = html;
-  c.classList.add('no-anim');
-  // Chế độ gọn không dùng cơ chế nạp lười theo cuộn của chế độ Thẻ chi tiết.
-  _listBuild = null; _listPos = 0;
+  // Nút "Học hết từ còn lại": số = Chưa học + Đang học (mọi từ trong đúng
+  // chủ đề đang chọn mà CHƯA đạt trạng thái Đã thuộc), vô hiệu hoá khi
+  // chưa chọn chủ đề nào hoặc chủ đề đã học hết 100%.
+  const remainBtn = document.getElementById('lvRemainBtn');
+  const remainCountEl = document.getElementById('lvRemainCount');
+  if(remainBtn){
+    const remain = counts.new + counts.learning;
+    const hasTopic = !!_te2Sel;
+    remainBtn.disabled = !hasTopic || remain===0;
+    if(remainCountEl) remainCountEl.textContent = hasTopic ? remain.toLocaleString('vi-VN') : '';
+    remainBtn.title = !hasTopic
+      ? 'Chọn 1 chủ đề bên trái trước đã'
+      : (remain===0 ? 'Chủ đề này đã học hết rồi 🎉' : `Gom ${remain} từ chưa thuộc của chủ đề này thành 1 phiên học`);
+  }
+}
+function setListStatusFilter(st){
+  _statusFilter = st;
+  const sf = document.getElementById('statusFilter'); if(sf) sf.value = st;
+  applyFilter();
 }
 
-/* Streamed list rendering — appends chunks as the user scrolls. */
-let _listBuild = null, _listPos = 0, _listBusy = false, _listCardHTML = null;
-function listAppend(n){
-  if(!_listBuild || !_listCardHTML || _listPos >= _listBuild.length) return;
-  const c = document.getElementById('listContainer');
-  const end = Math.min(_listPos + n, _listBuild.length);
-  let html = '';
-  for(let i=_listPos; i<end; i++){
-    const it = _listBuild[i];
-    html += it.h !== undefined ? it.h : _listCardHTML(it);
-  }
-  _listPos = end;
-  c.insertAdjacentHTML('beforeend', html);
-}
+/* Cuộn vô hạn cho tab Cấu trúc câu (Structures) — nạp dần từng lô khi
+   cuộn gần chạm đáy trang, thay vì dựng toàn bộ danh sách 1 lần. */
 let _listTick = false;
 window.addEventListener('scroll', ()=>{
   if(_listTick) return;                       // gộp nhiều sự kiện scroll vào 1 khung hình
@@ -38172,32 +38344,19 @@ window.addEventListener('scroll', ()=>{
   requestAnimationFrame(()=>{
     _listTick = false;
 
-    // Trước đây bước dưới đọc document.body.offsetHeight (bắt buộc trình
-    // duyệt tính lại layout) trên MỌI lần cuộn, ở BẤT KỲ khu vực nào đang
-    // mở (kể cả Danh mục từ vựng, Dashboard...) dù 2 panel dưới đây
-    // (Danh sách / Cấu trúc câu) không hề hiển thị lúc đó -> đây là 1
-    // nguồn giật khi cuộn ở những khu vực khác. Giờ kiểm tra 2 panel có
-    // đang mở hay không TRƯỚC; nếu không panel nào đang mở thì thoát
-    // ngay, không đụng tới layout của trang.
-    const p  = document.getElementById('panel-list');
+    // Đọc document.body.offsetHeight bắt buộc trình duyệt tính lại layout,
+    // nên chỉ làm việc này khi panel Cấu trúc câu đang thực sự mở — tránh
+    // gây giật khi cuộn ở những khu vực khác của trang.
     const sp = document.getElementById('panel-structures');
-    const pActive  = p  && p.classList.contains('active')  && !_listBusy  && _listBuild  && _listPos  < _listBuild.length;
     const spActive = sp && sp.classList.contains('active') && _stMode==='all' && !_stAllBusy && _stAllBuild && _stAllPos < _stAllBuild.length;
-    if(!pActive && !spActive) return;
+    if(!spActive) return;
 
     const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 1400;
     if(!nearBottom) return;
 
-    if(pActive){
-      _listBusy = true;
-      listAppend(60);
-      _listBusy = false;
-    }
-    if(spActive){
-      _stAllBusy = true;
-      stAllAppend(50);
-      _stAllBusy = false;
-    }
+    _stAllBusy = true;
+    stAllAppend(50);
+    _stAllBusy = false;
   });
 }, {passive:true});
 
