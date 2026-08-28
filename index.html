@@ -2767,6 +2767,57 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .ucl-saved-btns .btn{ padding:6px 10px; font-size:12px; }
 .ucl-danger:hover{ border-color:var(--coral) !important; color:var(--coral) !important; }
 
+/* ============================================================
+   THÊM TỪ VỰNG CỦA BẠN (đầu tab Danh sách, khung thu gọn "uvBox")
+   ------------------------------------------------------------
+   Form cho người dùng tự nhập 1 từ vựng mới, lưu thẳng vào
+   localStorage (không cần sửa code gốc) và hợp nhất vào VOCAB ngay
+   khi tải trang — giống hệt cơ chế "từ lấy từ bài đọc" (RVOCAB) đã
+   có sẵn trong app, chỉ khác nguồn là do người dùng tự gõ tay.
+   Tiền tố class "uv-" (User Vocab) để không đụng "ucl-"/"cl-". ==== */
+.uv-form{ display:flex; flex-direction:column; gap:12px; margin-top:14px; max-width:640px; }
+.uv-field{ display:flex; flex-direction:column; gap:5px; }
+.uv-field label{ font-size:12px; font-weight:700; color:var(--ink-soft); }
+.uv-field .uv-hint-sm{ font-size:11px; font-weight:400; color:var(--muted); }
+.uv-row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.uv-row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+.uv-input, .uv-select, .uv-textarea{
+  width:100%; box-sizing:border-box; border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:10px 12px; font-family:var(--font-body); font-size:13px; outline:none;
+  background:var(--card-sunken); color:var(--ink);
+}
+.uv-textarea{ resize:vertical; min-height:60px; font-family:var(--font-body); }
+.uv-input:focus, .uv-select:focus, .uv-textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
+.uv-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+.uv-msg{ font-size:12.5px; margin-top:2px; min-height:1em; }
+.uv-msg.err{ color:var(--coral); }
+.uv-msg.ok{ color:#16a34a; }
+.uv-list-wrap{ margin-top:22px; padding-top:16px; border-top:1px dashed var(--line); }
+.uv-list-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.uv-list-title{ font-size:13px; font-weight:700; color:var(--ink-soft); }
+.uv-list-count{ font-size:11.5px; color:var(--muted); }
+.uv-list{ display:flex; flex-direction:column; gap:8px; }
+.uv-item{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  background:var(--card-sunken); border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:9px 12px;
+}
+.uv-item-info{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.uv-item-word{ font-family:var(--font-word); font-size:13.5px; font-weight:700; color:var(--ink); }
+.uv-item-meta{ font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.uv-item-btns{ display:flex; gap:6px; flex-shrink:0; }
+.uv-item-btns .btn{ padding:6px 10px; font-size:12px; }
+.uv-ai-box{
+  margin-top:14px; padding:14px 16px; border:1px dashed var(--accent); border-radius:var(--radius-sm);
+  background:var(--accent-bg);
+}
+.uv-ai-head{ font-size:13.5px; font-weight:700; color:var(--accent); margin-bottom:6px; }
+.uv-field-btn{ justify-content:flex-end; }
+.uv-mono{ font-family:var(--font-mono); font-size:12px; line-height:1.6; min-height:120px; }
+@media(max-width:600px){
+  .uv-row2, .uv-row3{ grid-template-columns:1fr; }
+}
+
 /* ===== TOGGLE thẻ chi tiết/thu gọn — vẫn dùng ở tab "Cần học" ===== */
 .list-view-toggle{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px; }
 .lv-seg{
@@ -7982,6 +8033,134 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
   </section>
 
   <section class="panel" id="panel-list">
+    <!-- ===== THÊM TỪ VỰNG CỦA BẠN =====
+         Chuyển từ Cài đặt sang đầu tab Danh sách để dễ truy cập hơn,
+         thu gọn/mở rộng theo cùng khung .topic-explorer/.te-toggle/.te-body
+         như mục "Tạo danh sách học từ từ vựng tùy ý" ngay bên dưới. -->
+    <div class="topic-explorer" id="uvBox">
+      <button type="button" class="te-toggle" id="uvToggleBtn" onclick="toggleAddWordBox()">
+        <span class="te-toggle-ico">➕</span>
+        <span class="te-toggle-text">Thêm từ vựng của bạn</span>
+        <span class="te-toggle-sum" id="uvToggleSum"></span>
+        <span class="te-toggle-chev" id="uvToggleChev">▾</span>
+      </button>
+      <div class="te-body" id="uvBoxBody" style="display:none">
+      <p style="margin-top:0">Tự nhập trực tiếp 1 từ vựng mới ngay tại đây — <b>không cần sửa file/code gốc</b>. Từ được lưu vào bộ nhớ của trình duyệt (localStorage) trên đúng máy/trình duyệt này, và tự động xuất hiện ở Flashcard, Trắc nghiệm, Gõ từ, Cần học, Dashboard... giống hệt mọi từ có sẵn.</p>
+      <p style="color:var(--muted);font-size:12.5px">⚠️ Vì dữ liệu chỉ lưu trên trình duyệt hiện tại, hãy dùng <b>💾 Sao lưu &amp; Khôi phục</b> (trong Cài đặt) nếu muốn mang từ đã thêm sang máy/trình duyệt khác, hoặc phòng khi xoá dữ liệu duyệt web.</p>
+
+      <div class="uv-ai-box">
+        <div class="uv-ai-head">🤖 Nhờ AI khác soạn sẵn dữ liệu (Gemini, DeepSeek, ChatGPT...)</div>
+        <p class="uv-hint-sm" style="margin:0 0 12px">Gõ từ cần tra, bấm <b>"Tạo prompt"</b> rồi sao chép sang Gemini/DeepSeek/ChatGPT. Dán kết quả AI trả về (dạng JSON) vào ô bên dưới và bấm <b>"Phân tích &amp; điền vào form"</b> — app sẽ tự điền sẵn mọi trường (đồng nghĩa, collocation, ví dụ...) để bạn kiểm tra lại trước khi lưu.</p>
+        <div class="uv-row2">
+          <div class="uv-field">
+            <label>Từ cần tạo dữ liệu</label>
+            <input type="text" id="uvAiWord" class="uv-input" placeholder="Ví dụ: endangered" autocomplete="off">
+          </div>
+          <div class="uv-field uv-field-btn">
+            <button type="button" class="btn primary" onclick="uvGenPrompt()">📝 Tạo prompt</button>
+          </div>
+        </div>
+        <div class="uv-field" id="uvPromptWrap" style="display:none">
+          <label>Prompt đã tạo — sao chép rồi dán sang AI khác</label>
+          <textarea id="uvPromptOut" class="uv-textarea uv-mono" readonly></textarea>
+          <div class="uv-actions">
+            <button type="button" class="btn" id="uvCopyPromptBtn" onclick="uvCopyPrompt()">📋 Sao chép prompt</button>
+            <a class="btn" href="https://chatgpt.com/" target="_blank" rel="noopener">Mở ChatGPT ↗</a>
+            <a class="btn" href="https://gemini.google.com/app" target="_blank" rel="noopener">Mở Gemini ↗</a>
+            <a class="btn" href="https://chat.deepseek.com/" target="_blank" rel="noopener">Mở DeepSeek ↗</a>
+          </div>
+        </div>
+        <div class="uv-field">
+          <label>Dán kết quả AI trả về vào đây (object JSON)</label>
+          <textarea id="uvAiResult" class="uv-textarea uv-mono" placeholder='{"word":"endangered","ipa":"/ɪnˈdeɪndʒərd/","pos":"adj","level":"B2","vn":"có nguy cơ tuyệt chủng","synonyms":["...","..."],"collocations":[{"en":"...","vi":"..."}],"example":{"en":"...","vi":"..."},"topic":"Ô nhiễm & Bảo tồn"}'></textarea>
+        </div>
+        <div class="uv-msg" id="uvAiMsgBox"></div>
+        <div class="uv-actions">
+          <button type="button" class="btn primary" onclick="uvParseAiResult()">📥 Phân tích &amp; điền vào form bên dưới</button>
+        </div>
+      </div>
+
+      <div class="uv-form">
+        <input type="hidden" id="uvEditingId" value="">
+        <div class="uv-row2">
+          <div class="uv-field">
+            <label>Từ tiếng Anh *</label>
+            <input type="text" id="uvWord" class="uv-input" placeholder="Ví dụ: endangered" autocomplete="off">
+          </div>
+          <div class="uv-field">
+            <label>Nghĩa tiếng Việt *</label>
+            <input type="text" id="uvVn" class="uv-input" placeholder="Ví dụ: có nguy cơ tuyệt chủng" autocomplete="off">
+          </div>
+        </div>
+        <div class="uv-row3">
+          <div class="uv-field">
+            <label>Loại từ</label>
+            <select id="uvPos" class="uv-select">
+              <option value="noun">noun</option>
+              <option value="verb">verb</option>
+              <option value="adj">adj</option>
+              <option value="adv">adv</option>
+              <option value="phrase">phrase</option>
+              <option value="phrasal verb">phrasal verb</option>
+              <option value="idiom">idiom</option>
+            </select>
+          </div>
+          <div class="uv-field">
+            <label>Trình độ (CEFR)</label>
+            <select id="uvLevel" class="uv-select">
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2" selected>B2</option>
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
+            </select>
+          </div>
+          <div class="uv-field">
+            <label>Phiên âm IPA</label>
+            <input type="text" id="uvIpa" class="uv-input" placeholder="/ɪnˈdeɪndʒərd/" autocomplete="off">
+          </div>
+        </div>
+        <div class="uv-field">
+          <label>Chủ đề <span class="uv-hint-sm">(chọn từ danh sách có sẵn để từ hiện đúng khi Duyệt theo chủ đề — để trống cũng được, từ vẫn xuất hiện ở "🆕 Từ mới thêm")</span></label>
+          <input type="text" id="uvTopic" class="uv-input" list="uvTopicOptions" placeholder="Gõ hoặc chọn 1 chủ đề..." autocomplete="off">
+          <datalist id="uvTopicOptions"></datalist>
+        </div>
+        <div class="uv-field">
+          <label>Từ đồng nghĩa <span class="uv-hint-sm">(cách nhau bằng dấu phẩy, không bắt buộc)</span></label>
+          <input type="text" id="uvSynonyms" class="uv-input" placeholder="dry spell, water shortage, aridity" autocomplete="off">
+        </div>
+        <div class="uv-field">
+          <label>Collocations <span class="uv-hint-sm">(mỗi dòng 1 cụm, định dạng "tiếng Anh | nghĩa tiếng Việt", không bắt buộc)</span></label>
+          <textarea id="uvCollocations" class="uv-textarea" placeholder="severe drought | hạn hán nghiêm trọng&#10;prolonged drought | hạn hán kéo dài"></textarea>
+        </div>
+        <div class="uv-row2">
+          <div class="uv-field">
+            <label>Câu ví dụ (tiếng Anh)</label>
+            <textarea id="uvExEn" class="uv-textarea" placeholder="The species is now classified as endangered."></textarea>
+          </div>
+          <div class="uv-field">
+            <label>Dịch câu ví dụ (tiếng Việt)</label>
+            <textarea id="uvExVi" class="uv-textarea" placeholder="Loài này hiện được xếp vào diện có nguy cơ tuyệt chủng."></textarea>
+          </div>
+        </div>
+        <div class="uv-msg" id="uvFormMsg"></div>
+        <div class="uv-actions">
+          <button type="button" class="btn primary" id="uvSubmitBtn" onclick="uvSubmitForm()">➕ Thêm vào kho từ vựng</button>
+          <button type="button" class="btn" id="uvCancelBtn" onclick="uvCancelEdit()" style="display:none">Huỷ sửa</button>
+        </div>
+      </div>
+
+      <div class="uv-list-wrap">
+        <div class="uv-list-head">
+          <span class="uv-list-title">📋 Từ vựng bạn đã tự thêm</span>
+          <span class="uv-list-count" id="uvListCount"></span>
+        </div>
+        <div class="uv-list" id="uvList"></div>
+      </div>
+      </div><!-- /uvBoxBody -->
+    </div><!-- /uvBox -->
+
     <!-- ===== TẠO DANH SÁCH HỌC TỪ CÁC TỪ VỰNG TÙY Ý =====
          Gõ vào ô tìm kiếm để tra từ đã có trong kho, bấm ➕ để thêm
          vào danh sách đang tạo, rồi học ngay hoặc lưu lại dùng nhiều lần. -->
@@ -8649,6 +8828,7 @@ VÍ DỤ:
 
       <p style="margin-top:18px;color:var(--muted);font-size:13px">💡 Riêng <b>bài đọc (Reading)</b> được thêm bằng script <code>extract_reading.py</code> chạy trên thư mục chứa các bài đọc gốc, tạo ra file <code>readings_data.js</code> để dán vào thẻ <code>&lt;script id="readingsData"&gt;</code> ở cuối trang — không thêm thủ công từng object như 3 mục trên.</p>
       </div><!-- /settingsGroup-prompt -->
+
     </div>
     </div>
   </section>
@@ -34474,6 +34654,30 @@ function saveRVocab(){
 })();
 
 /* ============================================================
+   TỪ VỰNG DO NGƯỜI DÙNG TỰ THÊM (đầu tab Danh sách, khung "uvBox")
+   ------------------------------------------------------------
+   Người dùng tự gõ 1 từ mới vào form -> lưu vào localStorage rồi
+   HỢP NHẤT vào VOCAB ngay lúc mở trang, y hệt cơ chế "từ lấy từ bài
+   đọc" (RVOCAB) ở trên — không cần sửa file/code gốc. Nhờ vậy các từ
+   này dùng chung mọi tính năng (Flashcard, Trắc nghiệm, SRS, Dashboard,
+   Duyệt theo chủ đề, "🆕 Từ mới thêm"...) như từ có sẵn trong app.
+   ============================================================ */
+const LS_UVOCAB = 'vocab_user_added';
+let UVOCAB = [];
+try{ UVOCAB = JSON.parse(localStorage.getItem(LS_UVOCAB) || '[]'); }catch(e){ UVOCAB = []; }
+function saveUVocab(){
+  try{ localStorage.setItem(LS_UVOCAB, JSON.stringify(UVOCAB)); }catch(e){}
+}
+(function mergeUserVocab(){
+  const have = new Set(VOCAB.map(v => (v.word||'').toLowerCase()));
+  UVOCAB.forEach(u => {
+    if(have.has((u.word||'').toLowerCase())) return;   // đã trùng từ có sẵn -> bỏ qua bản này
+    have.add((u.word||'').toLowerCase());
+    VOCAB.push(u);
+  });
+})();
+
+/* ============================================================
    CHUẨN HOÁ LOẠI TỪ (pos) + TRÌNH ĐỘ (level) — chạy mỗi lần tải trang.
    Từ vựng lấy từ bài đọc (rdAddWords) dùng nhãn pos viết tắt riêng
    (n, v, adj, adv, phr, v/n...) và không có level -> khiến bộ lọc
@@ -37424,6 +37628,23 @@ function syncCustomListBoxOpen(){
   if(_uclOpen) uclRenderSavedLists();
 }
 
+/* ---- Khung thu gọn/mở rộng "➕ Thêm từ vựng của bạn" (đầu tab Danh sách,
+   ngay trên mục Tạo danh sách tùy ý) — cùng cơ chế te-toggle/te-body. ---- */
+let _uvBoxOpen = localStorage.getItem('vocab_uv_open') === '1';   // mặc định đóng, đỡ chiếm chỗ
+function toggleAddWordBox(force){
+  _uvBoxOpen = typeof force === 'boolean' ? force : !_uvBoxOpen;
+  try{ localStorage.setItem('vocab_uv_open', _uvBoxOpen ? '1' : '0'); }catch(e){}
+  syncAddWordBoxOpen();
+}
+function syncAddWordBoxOpen(){
+  const body = document.getElementById('uvBoxBody');
+  const btn  = document.getElementById('uvToggleBtn');
+  if(!body || !btn) return;
+  body.style.display = _uvBoxOpen ? '' : 'none';
+  btn.classList.toggle('open', _uvBoxOpen);
+  if(_uvBoxOpen && typeof uvOnOpen === 'function') uvOnOpen();
+}
+
 function loadCustomWordLists(){
   try{ return JSON.parse(localStorage.getItem(LS_UCL_LISTS)) || {}; }catch(e){ return {}; }
 }
@@ -38655,6 +38876,7 @@ function lwcTileHTML(v){
 }
 function renderList(){
   renderTopicExplorer();
+  syncAddWordBoxOpen();
   syncCustomListBoxOpen();
 }
 
@@ -39928,10 +40150,50 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   };
 });
 
-/* ---------- Copy prompt ---------- */
+/* ---------- Copy prompt ----------
+   navigator.clipboard chỉ hoạt động ở "secure context" (https hoặc
+   localhost) — khi mở app trực tiếp bằng file:// (trường hợp phổ biến
+   với 1 file HTML độc lập) navigator.clipboard có thể là undefined,
+   khiến .writeText ném lỗi đồng bộ và nút bấm im lặng không làm gì.
+   copyTextToClipboard() luôn thử clipboard API trước, nếu không có/
+   thất bại thì tự fallback sang document.execCommand('copy') qua 1
+   textarea ẩn — cách này vẫn chạy được trên file://. */
+function copyTextToClipboard(text){
+  return new Promise((resolve, reject)=>{
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(resolve).catch(()=>{
+        fallbackCopyToClipboard(text) ? resolve() : reject();
+      });
+    } else {
+      fallbackCopyToClipboard(text) ? resolve() : reject();
+    }
+  });
+}
+function fallbackCopyToClipboard(text){
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  }catch(e){ return false; }
+}
 function copyPrompt(ev, targetId){
   const t = document.getElementById(targetId || 'promptText').textContent;
-  navigator.clipboard.writeText(t).then(()=>{ const b=ev.target,o=b.textContent; b.textContent='✓ Đã sao chép'; setTimeout(()=>b.textContent=o,1500); });
+  const b = ev.target, o = b.textContent;
+  copyTextToClipboard(t).then(()=>{
+    b.textContent='✓ Đã sao chép'; setTimeout(()=>b.textContent=o,1500);
+  }).catch(()=>{
+    toast('Không sao chép được — hãy chọn thủ công trong ô rồi Ctrl+C.');
+  });
 }
 
 /* ---------- Voice controls ---------- */
@@ -42437,6 +42699,266 @@ function resetProgress(){
     backupMsg('✅ Đã xoá tiến độ. Đang tải lại trang...', true);
     setTimeout(()=>location.reload(), 700);
   }catch(e){ backupMsg('❌ Lỗi: '+e.message, false); }
+}
+
+/* ============================================================
+   FORM "➕ THÊM TỪ VỰNG" (Cài đặt) — thêm/sửa/xoá từ tự nhập,
+   lưu vào UVOCAB (localStorage, xem khối merge ở gần VOCAB/RVOCAB).
+   ============================================================ */
+function uvGenId(){ return 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
+
+/* Tính lại các trường phái sinh (_topic/_macro/_isNew, chuẩn hoá pos/level)
+   cho ĐÚNG 1 mục — dùng khi thêm mới hoặc sửa, để không phải tải lại trang. */
+function uvRecomputeDerived(v){
+  v.pos = normalizePos(v.pos);
+  v.level = normalizeLevel(v.level);
+  v._topic = normTopic(v.topic);
+  v._macro = SUB2MACRO[v._topic] || (TOPIC_LARGE.includes(v._topic) ? v._topic : 'Tổng hợp');
+  v._isNew = !!(v.date && v.date >= NEW_SINCE_DATE);
+}
+
+function uvOnOpen(){
+  const dl = document.getElementById('uvTopicOptions');
+  if(dl && !dl.childElementCount){
+    dl.innerHTML = [...TOPIC_SMALL, ...TOPIC_LARGE].map(t=>`<option value="${esc(t)}"></option>`).join('');
+  }
+  uvRenderList();
+}
+
+function uvMsg(text, ok){
+  const el = document.getElementById('uvFormMsg');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'uv-msg' + (text ? (ok ? ' ok' : ' err') : '');
+}
+
+function uvClearForm(){
+  ['uvWord','uvVn','uvIpa','uvSynonyms','uvExEn','uvExVi','uvTopic','uvCollocations'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  const pos = document.getElementById('uvPos'); if(pos) pos.value = 'noun';
+  const lvl = document.getElementById('uvLevel'); if(lvl) lvl.value = 'B2';
+  document.getElementById('uvEditingId').value = '';
+}
+
+/* Chuyển textarea "en | vi" (mỗi dòng 1 cụm) -> mảng [{en,vi}], bỏ dòng trống.
+   Nếu 1 dòng không có dấu "|" thì coi cả dòng là "en", vi để trống. */
+function uvParseCollocationsText(text){
+  return String(text||'').split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{
+    const parts = line.split('|');
+    return { en: (parts[0]||'').trim(), vi: (parts[1]||'').trim() };
+  });
+}
+/* Chiều ngược lại: mảng [{en,vi}] (hoặc mảng chuỗi) -> text để hiện trong textarea */
+function uvCollocationsToText(arr){
+  return (arr||[]).map(c=>{
+    if(typeof c === 'string') return c;
+    return [c.en||'', c.vi||''].filter(Boolean).join(' | ');
+  }).join('\n');
+}
+
+function uvSubmitForm(){
+  const word = document.getElementById('uvWord').value.trim();
+  const vn   = document.getElementById('uvVn').value.trim();
+  if(!word){ uvMsg('⚠️ Cần nhập từ tiếng Anh.', false); return; }
+  if(!vn){ uvMsg('⚠️ Cần nhập nghĩa tiếng Việt.', false); return; }
+
+  const editingId = document.getElementById('uvEditingId').value;
+  const dup = VOCAB.find(v => v.word.toLowerCase() === word.toLowerCase() && v._uid !== editingId);
+  if(dup){ uvMsg(`⚠️ Từ "${dup.word}" đã có sẵn trong kho, không thể thêm trùng.`, false); return; }
+
+  const ipa = document.getElementById('uvIpa').value.trim();
+  const pos = document.getElementById('uvPos').value;
+  const level = document.getElementById('uvLevel').value;
+  const topic = document.getElementById('uvTopic').value.trim();
+  const synonyms = document.getElementById('uvSynonyms').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const collocations = uvParseCollocationsText(document.getElementById('uvCollocations').value);
+  const exEn = document.getElementById('uvExEn').value.trim();
+  const exVi = document.getElementById('uvExVi').value.trim();
+  const example = exEn ? { en: exEn, vi: exVi } : null;
+
+  if(editingId){
+    // Sửa từ đã có: object trong UVOCAB và VOCAB là CÙNG 1 tham chiếu (được
+    // push chung lúc thêm mới), nên chỉ cần sửa trực tiếp trên đó.
+    const v = UVOCAB.find(u => u._uid === editingId);
+    if(!v){ uvMsg('⚠️ Không tìm thấy từ đang sửa (có thể đã bị xoá).', false); return; }
+    Object.assign(v, { word, ipa, pos, level, vn, topic, synonyms, collocations, example });
+    uvRecomputeDerived(v);
+    saveUVocab();
+    _teCatalogCache = null;   // độ dài VOCAB không đổi khi sửa -> phải tự tay làm mới cache cây chủ đề
+    _deckSetStale = true; _dashStale = true;
+    initFilters(); applyFilter();
+    uvMsg(`✅ Đã cập nhật từ "${word}".`, true);
+  } else {
+    const v = {
+      word, ipa, pos, level, vn, synonyms, topic,
+      collocations, wordforms: [], example,
+      date: new Date().toISOString().slice(0,10),
+      _fromUser: true, _uid: uvGenId()
+    };
+    uvRecomputeDerived(v);
+    VOCAB.push(v); UVOCAB.push(v);
+    saveUVocab();
+    _deckSetStale = true; _dashStale = true;
+    initFilters(); applyFilter();
+    uvMsg(`✅ Đã thêm từ "${word}" vào kho từ vựng.`, true);
+  }
+  uvClearForm();
+  document.getElementById('uvSubmitBtn').textContent = '➕ Thêm vào kho từ vựng';
+  document.getElementById('uvCancelBtn').style.display = 'none';
+  uvRenderList();
+}
+
+function uvEditWord(uid){
+  const v = UVOCAB.find(u => u._uid === uid);
+  if(!v) return;
+  document.getElementById('uvEditingId').value = uid;
+  document.getElementById('uvWord').value = v.word || '';
+  document.getElementById('uvVn').value = v.vn || '';
+  document.getElementById('uvIpa').value = v.ipa || '';
+  document.getElementById('uvPos').value = v.pos || 'noun';
+  document.getElementById('uvLevel').value = v.level || 'B2';
+  document.getElementById('uvTopic').value = v.topic || '';
+  document.getElementById('uvSynonyms').value = (v.synonyms||[]).join(', ');
+  document.getElementById('uvCollocations').value = uvCollocationsToText(v.collocations);
+  document.getElementById('uvExEn').value = v.example ? (v.example.en||'') : '';
+  document.getElementById('uvExVi').value = v.example ? (v.example.vi||'') : '';
+  document.getElementById('uvSubmitBtn').textContent = '💾 Cập nhật từ này';
+  document.getElementById('uvCancelBtn').style.display = '';
+  uvMsg('', false);
+  document.querySelector('.uv-form').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ---------- Nhờ AI khác (Gemini/DeepSeek/ChatGPT...) soạn sẵn dữ liệu ----------
+   Sinh 1 prompt yêu cầu trả về ĐÚNG 1 object JSON (không markdown, không giải
+   thích) rồi cho người dùng dán ngược kết quả vào để tự động điền vào form
+   thêm từ vựng ở trên — không gọi API AI nào từ app (không có khoá API),
+   người dùng tự copy/paste thủ công giữa 2 trang. */
+function uvGenPrompt(){
+  const word = document.getElementById('uvAiWord').value.trim();
+  if(!word){ toast('Gõ từ cần tạo dữ liệu trước đã.'); return; }
+  const prompt = `Tạo dữ liệu từ vựng tiếng Anh cho từ/cụm từ: "${word}".
+Chỉ trả về ĐÚNG 1 object JSON hợp lệ, KHÔNG bọc trong dấu \`\`\`, KHÔNG giải thích gì thêm, KHÔNG có chữ nào ngoài object JSON. Object có đúng các trường sau:
+
+{
+  "word": "${word}",
+  "ipa": "phiên âm IPA, đặt trong dấu / /",
+  "pos": "CHỌN ĐÚNG 1 trong: noun, verb, adj, adv, phrase, phrasal verb, idiom",
+  "level": "trình độ CEFR: A1, A2, B1, B2, C1 hoặc C2",
+  "vn": "nghĩa tiếng Việt, ngắn gọn",
+  "synonyms": ["3-4 từ đồng nghĩa tiếng Anh"],
+  "collocations": [
+    {"en": "cụm collocation tiếng Anh 1", "vi": "nghĩa tiếng Việt"},
+    {"en": "cụm collocation tiếng Anh 2", "vi": "nghĩa tiếng Việt"},
+    {"en": "cụm collocation tiếng Anh 3", "vi": "nghĩa tiếng Việt"}
+  ],
+  "example": {"en": "1 câu ví dụ tiếng Anh trình độ IELTS dùng đúng từ này", "vi": "dịch câu ví dụ đó sang tiếng Việt"},
+  "topic": "gợi ý 1 chủ đề ngắn gọn bằng tiếng Việt cho từ này (không bắt buộc đúng danh sách có sẵn)"
+}`;
+  document.getElementById('uvPromptOut').value = prompt;
+  document.getElementById('uvPromptWrap').style.display = '';
+}
+function uvCopyPrompt(){
+  const t = document.getElementById('uvPromptOut').value;
+  if(!t) return;
+  const b = document.getElementById('uvCopyPromptBtn');
+  const old = b.textContent;
+  copyTextToClipboard(t).then(()=>{
+    b.textContent = '✓ Đã sao chép';
+    setTimeout(()=>b.textContent = old, 1500);
+  }).catch(()=> toast('Không sao chép được — chọn thủ công trong ô rồi Ctrl+C nhé.'));
+}
+function uvAiMsg(text, ok){
+  const el = document.getElementById('uvAiMsgBox');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'uv-msg' + (text ? (ok ? ' ok' : ' err') : '');
+}
+/* Bóc tách JSON từ nội dung AI trả về — chấp nhận cả khi AI lỡ bọc trong
+   ```json ... ``` hoặc có thêm vài dòng giải thích thừa trước/sau object. */
+function uvExtractJson(raw){
+  let t = String(raw||'').trim();
+  t = t.replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
+  const s = t.indexOf('{'), e = t.lastIndexOf('}');
+  if(s !== -1 && e !== -1 && e > s) t = t.slice(s, e+1);
+  return JSON.parse(t);
+}
+function uvParseAiResult(){
+  const raw = document.getElementById('uvAiResult').value;
+  if(!raw.trim()){ uvAiMsg('⚠️ Chưa dán kết quả AI trả về.', false); return; }
+  let data;
+  try{ data = uvExtractJson(raw); }
+  catch(e){ uvAiMsg('❌ Không đọc được JSON — kiểm tra lại đã dán đúng/đủ object AI trả về chưa.', false); return; }
+  if(!data || typeof data !== 'object' || Array.isArray(data)){
+    uvAiMsg('❌ Nội dung dán vào không phải 1 object JSON hợp lệ.', false); return;
+  }
+  const word = (data.word || document.getElementById('uvAiWord').value || '').trim();
+  if(!word){ uvAiMsg('❌ Thiếu trường "word" trong dữ liệu.', false); return; }
+
+  document.getElementById('uvWord').value = word;
+  document.getElementById('uvVn').value = data.vn || '';
+  document.getElementById('uvIpa').value = data.ipa || '';
+  if(data.pos) document.getElementById('uvPos').value = normalizePos(data.pos);
+  if(data.level) document.getElementById('uvLevel').value = normalizeLevel(data.level);
+  document.getElementById('uvTopic').value = data.topic || '';
+  const syn = Array.isArray(data.synonyms) ? data.synonyms : String(data.synonyms||'').split(',').map(s=>s.trim()).filter(Boolean);
+  document.getElementById('uvSynonyms').value = syn.join(', ');
+  document.getElementById('uvCollocations').value = uvCollocationsToText(data.collocations);
+  const ex = data.example || {};
+  document.getElementById('uvExEn').value = ex.en || '';
+  document.getElementById('uvExVi').value = ex.vi || '';
+
+  uvAiMsg(`✅ Đã điền dữ liệu của "${word}" vào form bên dưới — kiểm tra lại rồi bấm "Thêm vào kho từ vựng".`, true);
+  uvMsg('', false);
+  document.querySelector('.uv-form').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function uvCancelEdit(){
+  uvClearForm();
+  document.getElementById('uvSubmitBtn').textContent = '➕ Thêm vào kho từ vựng';
+  document.getElementById('uvCancelBtn').style.display = 'none';
+  uvMsg('', false);
+}
+
+function uvDeleteWord(uid){
+  const v = UVOCAB.find(u => u._uid === uid);
+  if(!v) return;
+  if(!confirm(`Xoá từ "${v.word}" khỏi kho từ vựng của bạn?\n\nMọi tiến độ học (SRS) của từ này cũng sẽ không còn ý nghĩa.`)) return;
+  UVOCAB = UVOCAB.filter(u => u._uid !== uid);
+  const idx = VOCAB.findIndex(x => x._uid === uid);
+  if(idx !== -1) VOCAB.splice(idx, 1);
+  saveUVocab();
+  _teCatalogCache = null; _deckSetStale = true; _dashStale = true;
+  initFilters(); applyFilter();
+  if(document.getElementById('uvEditingId').value === uid) uvCancelEdit();
+  toast(`🗑️ Đã xoá từ "${v.word}"`);
+  uvRenderList();
+}
+
+function uvRenderList(){
+  const box = document.getElementById('uvList');
+  const cnt = document.getElementById('uvListCount');
+  if(!box) return;
+  if(cnt) cnt.textContent = UVOCAB.length ? `${UVOCAB.length} từ` : '';
+  if(!UVOCAB.length){
+    box.innerHTML = `<div class="ucl-empty">Bạn chưa tự thêm từ nào — điền form ở trên rồi bấm "➕ Thêm vào kho từ vựng".</div>`;
+    return;
+  }
+  const list = UVOCAB.slice().reverse();  // mới thêm hiện lên đầu
+  box.innerHTML = list.map(v=>{
+    const safeId = String(v._uid).replace(/'/g,"\\'");
+    return `<div class="uv-item">
+      <div class="uv-item-info">
+        <span class="uv-item-word">${esc(v.word)}</span>
+        <span class="uv-item-meta">${esc(v.vn||'')}${v.topic?' · '+esc(v.topic):''}</span>
+      </div>
+      <div class="uv-item-btns">
+        <button type="button" class="btn" onclick="lwcShowDetail('${esc(v.word).replace(/'/g,"\\'")}')" title="Xem thẻ chi tiết">👁️</button>
+        <button type="button" class="btn" onclick="uvEditWord('${safeId}')" title="Sửa từ này">✏️ Sửa</button>
+        <button type="button" class="btn ucl-danger" onclick="uvDeleteWord('${safeId}')" title="Xoá từ này">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 loadStarred(); loadSRS(); refreshGemUI(); refreshUserUI();
