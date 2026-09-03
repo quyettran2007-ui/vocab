@@ -1245,6 +1245,26 @@ nav.tabs::-webkit-scrollbar { display:none; }
 .tab-btn.active:hover { color:#fff; }
 .tab-btn .tab-icon { font-size:15px; line-height:1; }
 
+/* ---- Thanh phụ "🎯 Công cụ luyện" (Flashcard/Trắc nghiệm/Gõ từ/Đồng
+   nghĩa gộp chung dưới 1 tab chính) — hiện ngay dưới nav chính khi 1
+   trong 4 công cụ đang mở. ---- */
+.tab-subnav{
+  position:sticky; top:calc(var(--header-h) + 46px); z-index:98;
+  display:flex; align-items:center; gap:6px; padding:8px 26px;
+  background:var(--card); border-bottom:1px solid var(--line);
+  overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.tab-subnav::-webkit-scrollbar{ display:none; }
+.tsn-label{
+  font-size:12px; font-weight:800; color:var(--muted); white-space:nowrap;
+  margin-right:2px; letter-spacing:-.1px;
+}
+.tab-btn.sub{ padding:7px 13px; font-size:12.5px; border-radius:9px; }
+@media (max-width:820px){
+  .tab-subnav{ padding:8px 12px; }
+  .tsn-label{ display:none; }
+}
+
 /* ============================================================
    MAIN
    ============================================================ */
@@ -1394,6 +1414,14 @@ main {
   font-family:var(--font-heading);
 }
 .filter-panel-grid.fp-advanced{ margin-top:10px; }
+/* ---- Bộ lọc khi được nhúng vào khu "Duyệt theo chủ đề" (tab Danh sách):
+   luôn hiện sẵn (không phải bảng thả xuống), ẩn field Chủ đề vì cây bên
+   dưới đã đảm nhiệm việc đó, và ẩn nút "Xong ✓" (không có gì để đóng). ---- */
+.te-inline-filters{ margin-bottom:14px; }
+.te-inline-filters:empty{ display:none; }
+.filter-panel.te-embedded{ margin:0; animation:none; }
+.filter-panel.te-embedded .ff-topic-field{ display:none; }
+.filter-panel.te-embedded .filter-panel-actions .fp-btn.primary{ display:none; }
 select, .search-box {
   font-family:var(--font-body); font-size:13.5px; font-weight:600;
   padding:10px 14px; border:1px solid var(--line); border-radius:12px;
@@ -5329,6 +5357,13 @@ html { scroll-behavior:smooth; }
   border:1px solid var(--accent); border-radius:999px; padding:4px 13px;
   margin-top:12px; margin-bottom:10px;
 }
+/* Hàng chứa nhiều "viên" cùng lúc (VD: phiên âm + loại từ) ở cửa Trắc
+   nghiệm trong Học ngay — để không phải xếp mỗi viên 1 dòng riêng. */
+.tq-pos-row{
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+  gap:8px; margin-top:12px; margin-bottom:10px;
+}
+.tq-pos-row .tq-pos{ margin-top:0; margin-bottom:0; }
 .type-actions{
   display:flex; justify-content:center; gap:9px; flex-wrap:wrap; margin-top:18px;
 }
@@ -7883,13 +7918,14 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
 
 <!-- Tab được xếp lại theo yêu cầu: Danh sách -> Flashcard -> Trắc nghiệm ->
      Gõ từ -> Học ngay -> Cần học -> Tổng quan -> Listening -> Reading ->
-     Writing -> Setting. -->
+     Writing -> Setting.
+     4 tab Flashcard/Trắc nghiệm/Gõ từ/Đồng nghĩa đã được GỘP thành 1 nút
+     "🎯 Công cụ luyện" cho gọn thanh tab — bấm vào sẽ mở đúng công cụ dùng
+     gần nhất (mặc định Flashcard), rồi chuyển đổi giữa 4 công cụ bằng
+     thanh phụ (Công cụ luyện) hiện ngay dưới, xem #practiceSubnav. -->
 <nav class="tabs">
   <button class="tab-btn" data-mode="list"><span class="tab-icon">📖</span> <span class="tab-label">Danh sách</span></button>
-  <button class="tab-btn" data-mode="flashcard"><span class="tab-icon">🃏</span> <span class="tab-label">① Flashcard</span></button>
-  <button class="tab-btn" data-mode="quiz"><span class="tab-icon">❓</span> <span class="tab-label">② Trắc nghiệm</span></button>
-  <button class="tab-btn" data-mode="typing"><span class="tab-icon">⌨️</span> <span class="tab-label">③ Gõ từ</span></button>
-  <button class="tab-btn" data-mode="synonym"><span class="tab-icon">🔤</span> <span class="tab-label">Đồng nghĩa</span></button>
+  <button class="tab-btn" data-mode="flashcard" id="practiceTabBtn"><span class="tab-icon">🎯</span> <span class="tab-label">Công cụ luyện</span></button>
   <span class="tab-div"></span>
   <button class="tab-btn is-primary" data-mode="learn"><span class="tab-icon">🚀</span> <span class="tab-label">Học ngay</span></button>
   <button class="tab-btn" data-mode="need"><span class="tab-icon">⭐</span> <span class="tab-label">Cần học</span><span class="need-badge" id="needBadge" style="display:none">0</span></button>
@@ -7901,6 +7937,18 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
 </nav>
 
 <main>
+  <!-- Thanh phụ của "🎯 Công cụ luyện" — chỉ hiện khi 1 trong 4 công cụ
+       (Flashcard/Trắc nghiệm/Gõ từ/Đồng nghĩa) đang mở, xem toggle trong
+       phần "Mode switching". Vẫn dùng đúng các nút .tab-btn + data-mode
+       cũ -> mọi logic renderPanel()/applyFilter()/điều hướng hiện có hoạt
+       động y hệt trước, chỉ đổi vị trí hiển thị. -->
+  <nav class="tab-subnav" id="practiceSubnav" style="display:none">
+    <span class="tsn-label">🎯 Công cụ luyện:</span>
+    <button class="tab-btn sub" data-mode="flashcard"><span class="tab-icon">🃏</span> <span class="tab-label">① Flashcard</span></button>
+    <button class="tab-btn sub" data-mode="quiz"><span class="tab-icon">❓</span> <span class="tab-label">② Trắc nghiệm</span></button>
+    <button class="tab-btn sub" data-mode="typing"><span class="tab-icon">⌨️</span> <span class="tab-label">③ Gõ từ</span></button>
+    <button class="tab-btn sub" data-mode="synonym"><span class="tab-icon">🔤</span> <span class="tab-label">Đồng nghĩa</span></button>
+  </nav>
   <div class="search-filter-row" id="searchFilterRow" style="display:none">
     <button type="button" class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleFilterPanel()">
       <span class="ft-ico">🧰</span><span class="ft-label">Bộ lọc</span><span class="ft-badge" id="filterBadge" style="display:none">0</span><span class="ft-chev">▾</span>
@@ -8211,6 +8259,12 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
         <span class="te-toggle-chev" id="teToggleChev">▾</span>
       </button>
       <div class="te-body" id="teBody">
+        <!-- Bộ lọc (Trạng thái/Sắp xếp/Loại từ/Trình độ/Bậc lộ trình/Cần học)
+             được CHUYỂN THẲNG vào đây khi ở tab Danh sách (xem embedFilterPanelInTopicExplorer()
+             trong JS) — để lọc và duyệt chủ đề nằm chung 1 chỗ, không phải bấm nút
+             "🧰 Bộ lọc" riêng để mở 1 bảng lơ lửng khác nữa. Field "🗂️ Chủ đề" trong
+             bảng lọc bị ẩn khi ở đây vì cây bên dưới đã đảm nhiệm việc chọn chủ đề rồi. -->
+        <div class="te-inline-filters" id="teInlineFilters"></div>
         <div class="te-pills" id="tePills"></div>
         <div class="te2-wrap">
           <div class="te2-tree" id="te2Tree"></div>
@@ -35421,6 +35475,7 @@ document.addEventListener('click', e=>{
   const panel = document.getElementById('filterPanel');
   const btn = document.getElementById('filterToggleBtn');
   if(!panel || panel.style.display==='none') return;
+  if(panel.classList.contains('te-embedded')) return;   // nhúng trong tab Danh sách -> luôn mở, không tự đóng khi bấm ra ngoài
   if(panel.contains(e.target) || (btn && btn.contains(e.target))) return;
   closeFilterPanel();
 });
@@ -36019,9 +36074,9 @@ function te2CurrentScopeWords(){
   const cat = computeTopicCatalog();
   const g = cat.macros.find(m=>m.key===_te2Sel.macroKey);
   if(!g) return null;
-  if(_te2Sel.subGo==null) return g.words;
+  if(_te2Sel.subGo==null) return te2AdvFilterWords(g.words);
   const s = g.subs.find(x=>String(x.go)===String(_te2Sel.subGo));
-  return s ? s.words : null;
+  return s ? te2AdvFilterWords(s.words) : null;
 }
 function te2SelectMacro(macroKey, ev){
   if(ev) ev.stopPropagation();
@@ -36062,6 +36117,37 @@ function te2FilterByStatus(words){
     return true;
   });
 }
+/* ---- Áp các tiêu chí "nâng cao" của Bộ lọc (loại từ / trình độ / cần học /
+   tìm kiếm) vào danh sách từ của 1 chủ đề đang chọn trên cây "Duyệt theo
+   chủ đề". TRƯỚC ĐÂY khu Duyệt theo chủ đề (cây + panel bên phải + 4 thẻ
+   trạng thái + nút "Học chủ đề này"/"Học hết từ còn lại") chỉ lọc theo
+   chủ đề + chip trạng thái, HOÀN TOÀN bỏ qua các trường Loại từ/Trình độ/
+   Cần học/Tìm kiếm trong Bộ lọc phía trên — nên khi người dùng chọn ví dụ
+   trình độ B2 rồi bấm vào 1 chủ đề, số từ/tiến độ hiện ra vẫn là của CẢ
+   chủ đề (mọi trình độ), không khớp với bộ lọc đang bật. Hàm này là điểm
+   áp dụng chung duy nhất, dùng ở mọi nơi lấy từ theo chủ đề để số liệu
+   luôn khớp với Bộ lọc. */
+function te2AdvFiltersActive(){
+  const pos = (document.getElementById('posFilter')||{}).value || 'all';
+  const level = (document.getElementById('levelFilter')||{}).value || 'all';
+  const starOnly = (document.getElementById('starFilter')||{}).value === 'star';
+  const q = (document.getElementById('searchBox')||{}).value || '';
+  return pos!=='all' || level!=='all' || starOnly || q.trim()!=='';
+}
+function te2AdvFilterWords(words){
+  const pos = (document.getElementById('posFilter')||{}).value || 'all';
+  const level = (document.getElementById('levelFilter')||{}).value || 'all';
+  const starOnly = (document.getElementById('starFilter')||{}).value === 'star';
+  const q = (document.getElementById('searchBox')||{}).value.trim().toLowerCase();
+  if(pos==='all' && level==='all' && !starOnly && !q) return words;
+  return words.filter(v=>{
+    const okP = pos==='all' || v.pos===pos;
+    const okL = level==='all' || (v.level||'').toUpperCase()===level;
+    const okS = !starOnly || starred.has(v.word);
+    const okQ = !q || v.word.toLowerCase().includes(q) || (v.vn||'').toLowerCase().includes(q);
+    return okP && okL && okS && okQ;
+  });
+}
 function te2FindSelection(cat){
   if(!_te2Sel) return null;
   const g = cat.macros.find(m=>m.key===_te2Sel.macroKey);
@@ -36072,12 +36158,12 @@ function te2FindSelection(cat){
       // nhắc chọn 1 chủ đề con thay vì dựng hàng trăm/nghìn ô cùng lúc.
       return { icon:g.icon, label:g.key, words:[], kind:g.kind, go:g.go, count:0, rawCount:g.total, macroBlocked:true, subsCount:g.subs.length };
     }
-    const words = te2FilterByStatus(g.words);
+    const words = te2FilterByStatus(te2AdvFilterWords(g.words));
     return { icon:g.icon, label:g.key, words, kind:g.kind, go:g.go, count:words.length, rawCount:g.total };
   }
   const s = g.subs.find(x=>String(x.go)===String(_te2Sel.subGo));
   if(!s) return null;
-  const words = te2FilterByStatus(s.words);
+  const words = te2FilterByStatus(te2AdvFilterWords(s.words));
   return { icon:g.icon, label:s.fullName||s.name, words, kind:g.kind, go:s.go, count:words.length, rawCount:s.count, macroKey:g.key };
 }
 /* Chữ ký PHẦN CÂY bên trái — CHỈ đổi khi danh sách chủ đề hoặc trạng thái
@@ -36122,7 +36208,8 @@ function renderTopicExplorer(){
 
   // Chữ ký gọn để biết có cần dựng lại gì hay không.
   const treeSig = cat.grand+'|'+cat.macros.length+'|'+[..._teExpanded].sort().join(',');
-  const sig = treeSig+'|'+_srsVersion+'|'+te2SelKey()+'|'+_te2ShowCount+'|'+_statusFilter+'|'+(_teMacroWordsOff?1:0);
+  const advSig = ['posFilter','levelFilter','starFilter'].map(id=>(document.getElementById(id)||{}).value||'').join(',')+'|'+((document.getElementById('searchBox')||{}).value||'');
+  const sig = treeSig+'|'+_srsVersion+'|'+te2SelKey()+'|'+_te2ShowCount+'|'+_statusFilter+'|'+(_teMacroWordsOff?1:0)+'|'+advSig;
   if(sig === _teLastSig){ syncTopicExplorerOpen(); return; }
   _teLastSig = sig;
 
@@ -36186,7 +36273,7 @@ function renderTopicExplorer(){
       <span class="te2-panel-title">${esc(sel.label)}</span>
       <span class="te2-panel-count">0 từ</span>
     </div>
-    <div class="te2-panel-empty"><span>🔍</span>Không có từ nào khớp bộ lọc trạng thái đang chọn<br>trong chủ đề này.</div>`;
+    <div class="te2-panel-empty"><span>🔍</span>Không có từ nào khớp bộ lọc đang áp dụng (trạng thái/loại từ/trình độ/tìm kiếm...)<br>trong chủ đề này.${te2AdvFiltersActive()?' <a href="javascript:void(0)" onclick="clearAllFilters()">Xoá bộ lọc nâng cao?</a>':''}</div>`;
   } else {
     const ci = topicColorIndex(sel.macroKey || sel.go || sel.label);
     const baseColor = teColorHex(ci);
@@ -36195,11 +36282,12 @@ function renderTopicExplorer(){
     const pctD = P.total ? Math.round(P.doing/P.total*100) : 0;
     const shown = sel.words.slice(0, _te2ShowCount);
     const hasMore = sel.words.length > shown.length;
+    const advActive = te2AdvFiltersActive();
     panelEl.innerHTML = `
     <div class="te2-panel-head" style="--tp-c:${baseColor}">
       <span class="te2-panel-ico">${sel.icon||'🗂️'}</span>
       <span class="te2-panel-title">${esc(sel.label)}</span>
-      <span class="te2-panel-count">${sel.count} từ</span>
+      <span class="te2-panel-count">${sel.count} từ${advActive && sel.rawCount!=null ? ` <small style="opacity:.7;font-weight:400">(đã lọc, trong ${sel.rawCount} từ của chủ đề)</small>` : ''}</span>
     </div>
     <div class="te2-panel-progress" style="--tp-c:${baseColor}">
       <div class="cl-topic-bar-track">
@@ -38890,7 +38978,7 @@ function renderList(){
    đổi thẻ trạng thái). Chưa chọn chủ đề nào -> coi như "toàn kho". */
 function computeListStatusCounts(){
   const scopeWords = te2CurrentScopeWords();
-  const src = scopeWords || VOCAB;
+  const src = scopeWords || te2AdvFilterWords(VOCAB);
   const counts = {all:0, new:0, learning:0, mastered:0};
   for(let i=0;i<src.length;i++){
     const v = src[i];
@@ -40111,6 +40199,33 @@ function fcZoomStep(dir){
 }
 applyFcZoom();
 
+/* ---------- Gộp Bộ lọc vào khu "Duyệt theo chủ đề" khi ở tab Danh sách ----------
+   Ở tab Danh sách, việc phải bấm nút "🧰 Bộ lọc" riêng để mở 1 bảng lơ lửng
+   phía trên, TÁCH RỜI khỏi khu Duyệt theo chủ đề bên dưới, là nguyên nhân
+   chính khiến người dùng dễ quên là Bộ lọc đang bật (Trình độ/Loại từ/...)
+   trong lúc xem 1 chủ đề — nay dời hẳn bảng lọc đó (bớt field Chủ đề — dư
+   thừa vì cây chủ đề bên dưới đã làm việc đó) xuống nằm NGAY TRÊN cây/panel
+   chủ đề, luôn hiện sẵn, không cần bấm mở. Ở các tab khác (Flashcard/Trắc
+   nghiệm/Gõ từ, không có cây chủ đề) bảng lọc trả lại vị trí + kiểu bảng
+   thả xuống như cũ. Element vẫn giữ nguyên id -> mọi hàm applyFilter()/
+   onchange... hoạt động y hệt bất kể đang nằm ở đâu trong DOM. */
+let _fpHomeParent = null, _fpHomeNext = null;
+function embedFilterPanelInTopicExplorer(embed){
+  const fp = document.getElementById('filterPanel');
+  const dest = document.getElementById('teInlineFilters');
+  if(!fp || !dest) return;
+  if(!_fpHomeParent){ _fpHomeParent = fp.parentNode; _fpHomeNext = fp.nextSibling; }
+  if(embed){
+    dest.appendChild(fp);
+    fp.classList.add('te-embedded');
+    fp.style.display = '';
+  } else {
+    if(_fpHomeNext) _fpHomeParent.insertBefore(fp, _fpHomeNext); else _fpHomeParent.appendChild(fp);
+    fp.classList.remove('te-embedded');
+    fp.style.display = 'none';   // trả lại hành vi bảng thả xuống (đóng theo mặc định)
+  }
+}
+
 /* ---------- Mode switching ---------- */
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.onclick = ()=>{
@@ -40121,11 +40236,25 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     const mode = btn.dataset.mode;
     const panel = document.getElementById('panel-'+mode);
     panel.classList.add('active');
+    // "🎯 Công cụ luyện": 4 công cụ Flashcard/Trắc nghiệm/Gõ từ/Đồng nghĩa
+    // gộp chung 1 nút trên nav chính -> hiện thanh phụ để chọn đúng công cụ,
+    // và giữ nút nhóm trên nav chính sáng (active) dù đang ở công cụ nào
+    // trong 4 công cụ đó (nút nhóm bị bỏ .active bởi vòng lặp phía trên vì
+    // nó cũng mang class .tab-btn, nên phải tô lại ở đây).
+    const PRACTICE_MODES = ['flashcard','quiz','typing','synonym'];
+    const inPractice = PRACTICE_MODES.includes(mode);
+    const practiceSubnav = document.getElementById('practiceSubnav');
+    if(practiceSubnav) practiceSubnav.style.display = inPractice ? 'flex' : 'none';
+    const practiceTabBtn = document.getElementById('practiceTabBtn');
+    if(practiceTabBtn) practiceTabBtn.classList.toggle('active', inPractice);
     // Show toolbar only for content tabs
     const showToolbar = ['flashcard','list','quiz','typing'].includes(mode);
     const row = document.getElementById('searchFilterRow');
     row.style.display = showToolbar ? 'flex' : 'none';
-    closeFilterPanel();
+    if(mode!=='list') closeFilterPanel();   // đóng bảng thả xuống trước khi trả nó về vị trí cũ
+    embedFilterPanelInTopicExplorer(mode==='list');
+    const filterToggleBtn = document.getElementById('filterToggleBtn');
+    if(filterToggleBtn) filterToggleBtn.style.display = mode==='list' ? 'none' : '';
     // Chỉ tab Danh sách cần ô tìm kiếm to; Flashcard/Trắc nghiệm/Gõ từ chỉ cần
     // thanh Bộ lọc, co ngắn lại và nằm giữa hàng.
     const showSearch = mode==='list';
@@ -41171,7 +41300,10 @@ function learnStepQuiz(item){
     <div class="quiz-q learn-q">
       <div class="prompt-label">${askVN?'Nghĩa của từ này là gì?':'Từ tiếng Anh của nghĩa này?'}</div>
       <div class="prompt-word ${askVN?'':'small'}">${askVN?esc(v.word):esc(v.vn)}</div>
-      ${askVN&&v.ipa?`<div class="tq-pos">${esc(v.ipa)}</div>`:''}
+      ${(askVN&&v.ipa)||v.pos?`<div class="tq-pos-row">
+        ${askVN&&v.ipa?`<span class="tq-pos">${esc(v.ipa)}</span>`:''}
+        ${v.pos?`<span class="tq-pos">${esc(v.pos)}</span>`:''}
+      </div>`:''}
       <div style="margin-top:8px">
         <button class="star-btn ${isStarred(v.word)?'on':''}" data-w="${esc(v.word)}" onclick="onStarClick(event,this)" title="Cần học">${isStarred(v.word)?'★':'☆'}</button>
       </div>
