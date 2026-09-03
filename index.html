@@ -2920,8 +2920,9 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
   padding:16px; min-height:280px;
 }
 @media(max-width:760px){
-  .te2-wrap{ flex-direction:column; }
+  .te2-wrap{ flex-direction:column; align-items:stretch; }
   .te2-tree{ flex:none; max-width:none; width:100%; max-height:280px; }
+  .te2-col{ width:100%; }
 }
 .te2-macro-block{
   margin-bottom:5px; border-radius:11px; overflow:hidden;
@@ -8290,7 +8291,7 @@ html:not([data-theme="dark"]) .rd-search:focus-within{
               </div>
               <div class="lsb-actions">
                 <button type="button" class="lv-study-btn" onclick="goStudyThisTopic()" title="Học ngay đúng các từ đang hiển thị ở Danh sách từ">🎯 Học chủ đề này</button>
-                <button type="button" class="lv-remain-btn" id="lvRemainBtn" onclick="goStudyRemainingInTopic()" title="Gom hết các từ CHƯA THUỘC của chủ đề đang chọn thành 1 phiên học để học dứt điểm">
+                <button type="button" class="lv-remain-btn" id="lvRemainBtn" onclick="goStudyRemainingInTopic()" title="Gom hết các từ CHƯA HỌC của chủ đề đang chọn thành 1 phiên học để học dứt điểm">
                   📚 Học hết từ còn lại<span class="lv-remain-count" id="lvRemainCount"></span>
                 </button>
               </div>
@@ -35048,18 +35049,18 @@ let GEMS = parseInt(localStorage.getItem(LS_GEMS) || '0', 10) || 0;
 
 const GEM_REWARD = { typing:3, learn:2, quiz:1, quiz_rev:2, flashcard:1, mastered:10 };
 
-/* Ngưỡng cấp: tăng dần (mỗi cấp cần nhiều hơn cấp trước) */
+/* Ngưỡng cấp: chia đều 80.000 💎 thành 10 cấp (cấp 10 = 80.000, mức tối đa) */
 const LEVELS = [
   {lv:1,  need:0,     name:'Tân binh',      ic:'🌱'},
-  {lv:2,  need:100,   name:'Học việc',      ic:'📗'},
-  {lv:3,  need:300,   name:'Chăm chỉ',      ic:'✏️'},
-  {lv:4,  need:700,   name:'Tiến bộ',       ic:'📘'},
-  {lv:5,  need:1400,  name:'Vững vàng',     ic:'🎯'},
-  {lv:6,  need:2400,  name:'Thành thạo',    ic:'⭐'},
-  {lv:7,  need:4000,  name:'Cao thủ',       ic:'🔥'},
-  {lv:8,  need:6400,  name:'Chuyên gia',    ic:'💠'},
-  {lv:9,  need:10000, name:'Bậc thầy',      ic:'👑'},
-  {lv:10, need:15000, name:'Huyền thoại',   ic:'🏆'}
+  {lv:2,  need:8900,  name:'Học việc',      ic:'📗'},
+  {lv:3,  need:17800, name:'Chăm chỉ',      ic:'✏️'},
+  {lv:4,  need:26700, name:'Tiến bộ',       ic:'📘'},
+  {lv:5,  need:35600, name:'Vững vàng',     ic:'🎯'},
+  {lv:6,  need:44400, name:'Thành thạo',    ic:'⭐'},
+  {lv:7,  need:53300, name:'Cao thủ',       ic:'🔥'},
+  {lv:8,  need:62200, name:'Chuyên gia',    ic:'💠'},
+  {lv:9,  need:71100, name:'Bậc thầy',      ic:'👑'},
+  {lv:10, need:80000, name:'Huyền thoại',   ic:'🏆'}
 ];
 function levelOf(gems){
   let cur = LEVELS[0];
@@ -37668,14 +37669,15 @@ function goStudyThisTopic(){
   _pendingScope = 'filtered';
   document.querySelector('.tab-btn[data-mode="learn"]').click();
 }
-/* ---------- Nút "Học hết từ còn lại": gom MỌI từ CHƯA THUỘC (bỏ qua chip
-   trạng thái đang bật — luôn lấy cả Chưa học lẫn Đang học) của đúng chủ đề
-   đang chọn trên cây thành 1 phiên học, để học dứt điểm nốt phần còn thiếu
-   của chủ đề đó thay vì phải tự lọc/đếm bằng tay. ---- */
+/* ---------- Nút "Học hết từ còn lại": gom MỌI từ CHƯA HỌC (status 'new',
+   bỏ qua chip trạng thái đang bật) của đúng chủ đề đang chọn trên cây
+   thành 1 phiên học, để học dứt điểm nốt các từ chưa từng bắt đầu của
+   chủ đề đó — KHÔNG gồm các từ đang học dở (learning/review), vì những
+   từ đó đã có trong hàng đợi ôn tập riêng rồi. ---- */
 function goStudyRemainingInTopic(){
   const scopeWords = te2CurrentScopeWords();
   if(!scopeWords || !scopeWords.length){ toast('👈 Chọn 1 chủ đề bên trái trước đã.'); return; }
-  const remain = scopeWords.filter(v=>srsState(v.word)!=='mastered');
+  const remain = scopeWords.filter(v=>srsState(v.word)==='new');
   if(!remain.length){ toast('🎉 Chủ đề này đã học hết rồi!'); return; }
   filtered = remain.slice();
   const fc = document.getElementById('filterCount');
@@ -39002,19 +39004,19 @@ function renderListStatusBar(){
   bar.querySelectorAll('.lsb-chip').forEach(b=>{
     b.classList.toggle('active', b.dataset.status === _statusFilter);
   });
-  // Nút "Học hết từ còn lại": số = Chưa học + Đang học (mọi từ trong đúng
-  // chủ đề đang chọn mà CHƯA đạt trạng thái Đã thuộc), vô hiệu hoá khi
-  // chưa chọn chủ đề nào hoặc chủ đề đã học hết 100%.
+  // Nút "Học hết từ còn lại": số = Chưa học (status 'new' — chưa từng học
+  // qua, KHÔNG tính Đang học), vô hiệu hoá khi chưa chọn chủ đề nào hoặc
+  // chủ đề đã hết từ mới.
   const remainBtn = document.getElementById('lvRemainBtn');
   const remainCountEl = document.getElementById('lvRemainCount');
   if(remainBtn){
-    const remain = counts.new + counts.learning;
+    const remain = counts.new;
     const hasTopic = !!_te2Sel;
     remainBtn.disabled = !hasTopic || remain===0;
     if(remainCountEl) remainCountEl.textContent = hasTopic ? remain.toLocaleString('vi-VN') : '';
     remainBtn.title = !hasTopic
       ? 'Chọn 1 chủ đề bên trái trước đã'
-      : (remain===0 ? 'Chủ đề này đã học hết rồi 🎉' : `Gom ${remain} từ chưa thuộc của chủ đề này thành 1 phiên học`);
+      : (remain===0 ? 'Chủ đề này đã học hết từ mới rồi 🎉' : `Gom ${remain} từ chưa học của chủ đề này thành 1 phiên học`);
   }
 }
 function setListStatusFilter(st){
