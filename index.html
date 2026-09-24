@@ -45903,9 +45903,22 @@ function stNextTranslate(){
     fb.appendChild(nextBtn);
     logAttempt(pct, 'revealed', val);
   };
+  /* Số từ (theo đúng thứ tự từ đầu câu) mà người dùng đã gõ khớp liên tục —
+     dùng để gợi ý tiếp nối đúng chỗ đang làm dở, thay vì luôn bắt đầu lại
+     từ từ đầu tiên của câu. */
+  function stTrTypedWordProgress(val){
+    const valWords = (val.match(/[A-Za-zÀ-ỹ']+/g) || []).map(w=>w.toLowerCase());
+    let n = 0;
+    for(let i=0;i<wordIdxs.length && i<valWords.length;i++){
+      if(valWords[i] === targetTokens[wordIdxs[i]].toLowerCase()) n++;
+      else break;
+    }
+    return n;
+  }
   hintBtn.onclick = ()=>{
     if(solved || revealed || _stTrHintsUsed >= wordIdxs.length) return;
-    _stTrHintsUsed++;
+    const typedN = stTrTypedWordProgress(inp.value);
+    _stTrHintsUsed = Math.min(wordIdxs.length, Math.max(_stTrHintsUsed, typedN) + 1);
     renderHintMode();
     inp.focus();
   };
