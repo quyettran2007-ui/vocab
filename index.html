@@ -3502,7 +3502,6 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .st-tr-direct-display{ font-family:var(--font-mono); font-size:15.5px; line-height:2; letter-spacing:.5px;
   padding:14px 16px; margin-bottom:8px; border:2px dashed var(--line-strong); border-radius:12px;
   background:var(--card-sunken); word-break:break-word; min-height:24px; }
-.st-tr-field textarea.st-direct-hidden{ color:transparent; caret-color:var(--accent); text-shadow:none; }
 .st-direct-char{ display:inline-block; }
 .st-direct-char.pending{ color:var(--line-strong); }
 .st-direct-char.ok{ color:var(--green); font-weight:700; }
@@ -45683,7 +45682,7 @@ function stNextTranslate(){
     <div class="st-hint-row" id="stHintRow"></div>
     <div class="st-tr-field">
       ${_stTrDirectMode ? `<div class="st-tr-direct-display" id="stTrDirectDisplay"></div>` : ''}
-      <textarea id="stTrInput" rows="3" class="${_stTrDirectMode?'st-direct-hidden':''}" placeholder="${_stTrDirectMode ? 'Gõ trực tiếp câu tiếng Anh — đúng ký tự nào, ký tự đó hiện xanh ở khung trên.' : 'Đọc câu tiếng Việt, gõ lại đúng câu tiếng Anh gốc. Bí quá thì bấm 💡 Gợi ý để mở dần từng từ, hoặc 👁 Hiện đáp án nếu muốn xem luôn (sẽ tính là câu chưa thuộc). Sau khi bấm Kiểm tra, khung bên dưới sẽ chấm từng từ: xanh = đúng, đỏ = sai/thiếu.'}" autocomplete="off" spellcheck="false">${esc(_stTrDraft)}</textarea>
+      <textarea id="stTrInput" rows="3" placeholder="${_stTrDirectMode ? 'Gõ trực tiếp câu tiếng Anh — đúng ký tự nào (kể cả dấu cách/dấu câu), ký tự đó hiện xanh ở khung trên.' : 'Đọc câu tiếng Việt, gõ lại đúng câu tiếng Anh gốc. Bí quá thì bấm 💡 Gợi ý để mở dần từng từ, hoặc 👁 Hiện đáp án nếu muốn xem luôn (sẽ tính là câu chưa thuộc). Sau khi bấm Kiểm tra, khung bên dưới sẽ chấm từng từ: xanh = đúng, đỏ = sai/thiếu.'}" autocomplete="off" spellcheck="false">${esc(_stTrDraft)}</textarea>
     </div>
     <div class="st-tr-feedback" id="stTrFeedback"></div>
     <div class="type-actions">
@@ -45709,23 +45708,26 @@ function stNextTranslate(){
   setTimeout(()=>inp.focus(), 30);
 
   const directDisplay = document.getElementById('stTrDirectDisplay');
-  /* Vẽ lại khung "gõ trực tiếp": từng ký tự của câu gốc hiện ★ khi chưa gõ tới,
-     xanh khi gõ đúng ký tự đó (đúng vị trí), đỏ khi gõ sai. Dấu cách/dấu câu
-     luôn hiện sẵn, không bị ẩn. */
+  /* Vẽ lại khung "gõ trực tiếp": so khớp TỪNG ký tự của câu gốc — kể cả dấu
+     cách/dấu câu — với đúng vị trí tương ứng người dùng đã gõ. Chưa gõ tới
+     thì hiện ★ (riêng dấu cách chưa gõ tới thì để trống cho dễ đọc). Gõ
+     đúng ký tự nào ở đúng vị trí thì ký tự đó hiện xanh; gõ thừa/sai/thiếu
+     (kể cả thiếu dấu cách) sẽ làm lệch vị trí và hiện đỏ ngay từ chỗ sai. */
   function renderDirectDisplay(){
     if(!_stTrDirectMode || !directDisplay) return;
     const val = inp.value;
     let html = '';
     for(let i=0;i<cur.en.length;i++){
       const tc = cur.en[i];
-      if(!/[A-Za-zÀ-ỹ0-9]/.test(tc)){
-        html += tc===' ' ? '<span class="st-direct-char space">&nbsp;</span>' : `<span class="st-direct-char">${esc(tc)}</span>`;
-        continue;
-      }
+      const isSpace = tc === ' ';
       const uc = val[i];
-      if(uc === undefined) html += '<span class="st-direct-char pending">★</span>';
-      else if(uc.toLowerCase() === tc.toLowerCase()) html += `<span class="st-direct-char ok">${esc(tc)}</span>`;
-      else html += `<span class="st-direct-char bad">${esc(uc)}</span>`;
+      if(uc === undefined){
+        html += isSpace ? '<span class="st-direct-char space">&nbsp;</span>' : '<span class="st-direct-char pending">★</span>';
+      } else if(uc.toLowerCase() === tc.toLowerCase()){
+        html += isSpace ? '<span class="st-direct-char space ok">&nbsp;</span>' : `<span class="st-direct-char ok">${esc(tc)}</span>`;
+      } else {
+        html += `<span class="st-direct-char bad">${esc(uc === ' ' ? '␣' : uc)}</span>`;
+      }
     }
     directDisplay.innerHTML = html;
   }
