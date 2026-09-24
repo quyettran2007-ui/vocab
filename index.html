@@ -3496,6 +3496,17 @@ mark.rd-q{ background:var(--rd-hl-line); color:#1a1206; font-weight:800;
 .st-tr-result.low .st-tr-pct{ color:var(--coral); }
 .st-tr-answer{ font-size:13.5px; color:var(--ink); line-height:1.6; }
 .st-tr-feedback .btn{ margin-top:12px; }
+
+/* ---- Chế độ gõ trực tiếp: đáp án hiện dạng dấu sao, gõ đúng ký tự nào hiện xanh ký tự đó ---- */
+.st-tr-direct-toggle.on{ color:#fff; background:var(--accent-grad); border-style:solid; border-color:transparent; }
+.st-tr-direct-display{ font-family:var(--font-mono); font-size:15.5px; line-height:2; letter-spacing:.5px;
+  padding:14px 16px; margin-bottom:8px; border:2px dashed var(--line-strong); border-radius:12px;
+  background:var(--card-sunken); word-break:break-word; min-height:24px; }
+.st-tr-field textarea.st-direct-hidden{ color:transparent; caret-color:var(--accent); text-shadow:none; }
+.st-direct-char{ display:inline-block; }
+.st-direct-char.pending{ color:var(--line-strong); }
+.st-direct-char.ok{ color:var(--green); font-weight:700; }
+.st-direct-char.bad{ color:var(--coral); font-weight:700; text-decoration:underline wavy; }
 /* ---- Listening dùng chung khung .topic-grid / .tp-card với các thẻ danh mục
    khác (Writing&Speaking, Theo chủ đề, Reading, Từ mới) để đồng bộ giao diện.
    Hàng 4 Test bên trong mỗi thẻ Cambridge giờ dùng lại đúng kiểu hàng
@@ -45253,6 +45264,17 @@ let _stTrSaveTimer = null;
 
 const ST_TR_ACTIVE_KEY = 'vocab_st_translate_active';
 const ST_TR_DRAFT_KEY = 'vocab_st_translate_draft';
+const ST_TR_DIRECT_MODE_KEY = 'vocab_st_translate_direct_mode';
+
+/* Chế độ "Gõ trực tiếp": đáp án hiện dạng dấu sao (★) ẩn từng ký tự, gõ tới
+   đâu đúng ký tự đó thì hiện lên màu xanh (sai thì hiện đỏ). Bật/tắt được,
+   trạng thái lưu vào localStorage để nhớ giữa các phiên. */
+let _stTrDirectMode = false;
+try{ _stTrDirectMode = localStorage.getItem(ST_TR_DIRECT_MODE_KEY) === '1'; }catch(e){}
+function stTrToggleDirectMode(){
+  _stTrDirectMode = !_stTrDirectMode;
+  try{ localStorage.setItem(ST_TR_DIRECT_MODE_KEY, _stTrDirectMode ? '1' : '0'); }catch(e){}
+}
 
 /* Lưu phiên đang luyện dở vào localStorage để: (1) chuyển qua tab khác rồi
    quay lại không mất tiến độ, (2) sống sót qua việc tải lại trang. */
@@ -45644,6 +45666,7 @@ function stNextTranslate(){
     <div class="st-tr-meaning-toggle-row">
       <button class="st-tr-meaning-toggle" id="stTrMeaningToggle">👁️ Hiện nghĩa &amp; cấu trúc tương đương</button>
       ${relatedColloc.length ? `<button class="st-tr-meaning-toggle" id="stTrCollocToggle">💡 Gợi ý collocation</button>` : ''}
+      <button class="st-tr-meaning-toggle st-tr-direct-toggle ${_stTrDirectMode?'on':''}" id="stTrDirectToggle">⌨️ Gõ trực tiếp: ${_stTrDirectMode?'Bật':'Tắt'}</button>
     </div>
     <div class="st-tr-meaning-panel" id="stTrMeaningPanel" style="display:none">
       <div class="st-tr-meaning-label">Nghĩa cấu trúc</div>
@@ -45659,7 +45682,8 @@ function stNextTranslate(){
     </div>` : ''}
     <div class="st-hint-row" id="stHintRow"></div>
     <div class="st-tr-field">
-      <textarea id="stTrInput" rows="3" placeholder="Đọc câu tiếng Việt, gõ lại đúng câu tiếng Anh gốc. Bí quá thì bấm 💡 Gợi ý để mở dần từng từ, hoặc 👁 Hiện đáp án nếu muốn xem luôn (sẽ tính là câu chưa thuộc). Sau khi bấm Kiểm tra, khung bên dưới sẽ chấm từng từ: xanh = đúng, đỏ = sai/thiếu." autocomplete="off" spellcheck="false">${esc(_stTrDraft)}</textarea>
+      ${_stTrDirectMode ? `<div class="st-tr-direct-display" id="stTrDirectDisplay"></div>` : ''}
+      <textarea id="stTrInput" rows="3" class="${_stTrDirectMode?'st-direct-hidden':''}" placeholder="${_stTrDirectMode ? 'Gõ trực tiếp câu tiếng Anh — đúng ký tự nào, ký tự đó hiện xanh ở khung trên.' : 'Đọc câu tiếng Việt, gõ lại đúng câu tiếng Anh gốc. Bí quá thì bấm 💡 Gợi ý để mở dần từng từ, hoặc 👁 Hiện đáp án nếu muốn xem luôn (sẽ tính là câu chưa thuộc). Sau khi bấm Kiểm tra, khung bên dưới sẽ chấm từng từ: xanh = đúng, đỏ = sai/thiếu.'}" autocomplete="off" spellcheck="false">${esc(_stTrDraft)}</textarea>
     </div>
     <div class="st-tr-feedback" id="stTrFeedback"></div>
     <div class="type-actions">
@@ -45684,7 +45708,32 @@ function stNextTranslate(){
   let solved = false, revealed = false;
   setTimeout(()=>inp.focus(), 30);
 
-  inp.addEventListener('input', ()=>{ _stTrDraft = inp.value; stTrPersistActiveSoon(); });
+  const directDisplay = document.getElementById('stTrDirectDisplay');
+  /* Vẽ lại khung "gõ trực tiếp": từng ký tự của câu gốc hiện ★ khi chưa gõ tới,
+     xanh khi gõ đúng ký tự đó (đúng vị trí), đỏ khi gõ sai. Dấu cách/dấu câu
+     luôn hiện sẵn, không bị ẩn. */
+  function renderDirectDisplay(){
+    if(!_stTrDirectMode || !directDisplay) return;
+    const val = inp.value;
+    let html = '';
+    for(let i=0;i<cur.en.length;i++){
+      const tc = cur.en[i];
+      if(!/[A-Za-zÀ-ỹ0-9]/.test(tc)){
+        html += tc===' ' ? '<span class="st-direct-char space">&nbsp;</span>' : `<span class="st-direct-char">${esc(tc)}</span>`;
+        continue;
+      }
+      const uc = val[i];
+      if(uc === undefined) html += '<span class="st-direct-char pending">★</span>';
+      else if(uc.toLowerCase() === tc.toLowerCase()) html += `<span class="st-direct-char ok">${esc(tc)}</span>`;
+      else html += `<span class="st-direct-char bad">${esc(uc)}</span>`;
+    }
+    directDisplay.innerHTML = html;
+  }
+  renderDirectDisplay();
+  const directToggleBtn = document.getElementById('stTrDirectToggle');
+  if(directToggleBtn) directToggleBtn.onclick = ()=>{ stTrToggleDirectMode(); stNextTranslate(); };
+
+  inp.addEventListener('input', ()=>{ _stTrDraft = inp.value; stTrPersistActiveSoon(); renderDirectDisplay(); });
   document.getElementById('stBmToggle').onclick = (e)=>{
     const btn = e.currentTarget;
     const on = stTrToggleBookmark(cur);
